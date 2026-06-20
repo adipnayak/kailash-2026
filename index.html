@@ -4952,7 +4952,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
   <h2>Completion</h2>
   <div class="callout good">
     <span class="ct-label">Yatra completed</span>
-    13 days. 6 locations. 5,630 m max altitude. Yatra Sampoorna (yatra complete).
+    13 days. 6 locations. 5,630m / 18,471ft max altitude.
   </div>
 </section>
 
@@ -5333,6 +5333,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
 <footer>
   <p>Single-file page. No tracking. No analytics. Weather refreshes on every load via Open Meteo.</p>
   <p>Built with restraint. <button class="refresh-btn" id="refresh-weather" type="button"><svg class="icon icon-16"><use href="#icon-refresh"/></svg> Refresh weather</button></p>
+  <p id="om-namah" style="font-family:'Inter Tight',sans-serif;font-size:1.25rem;color:var(--yellow);margin-top:var(--s-4)">ॐ नमः शिवाय</p>
 </footer>
 
 <script>
@@ -8366,17 +8367,7 @@ function applyDevotionalBudget() {
   /* Journey complete section */
   var jsum = document.querySelector(".journey-summary-title");
   if (jsum) jsum.textContent = "Yatra Sampoorna (yatra complete)";
-  /* Footer: add Devanagari if not present */
-  var footer = document.querySelector("footer");
-  if (footer && footer.innerHTML.indexOf("om-namah") === -1) {
-    var omEl = document.createElement("p");
-    omEl.id = "om-namah";
-    omEl.style.fontFamily = "'Inter Tight',sans-serif";
-    omEl.style.fontSize = "1.25rem";
-    omEl.style.color = "var(--yellow)";
-    omEl.textContent = "ॐ नमः शिवाय";
-    footer.appendChild(omEl);
-  }
+  /* Footer: ॐ नमः शिवाय is now static HTML (id=om-namah); no-op here */
 }
 
 /* =========================================================
