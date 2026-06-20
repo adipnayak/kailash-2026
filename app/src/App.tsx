@@ -6,7 +6,6 @@ import { OverviewTab } from './components/tabs/OverviewTab';
 import { ItineraryTab } from './components/tabs/ItineraryTab';
 import { PrepareTab } from './components/tabs/PrepareTab';
 import { ReferenceTab } from './components/tabs/ReferenceTab';
-import { AliimamHero } from './components/aliimam/AliimamHero';
 
 export default function App() {
   const phase = useJourneyState();
@@ -14,14 +13,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <AliimamHero
-        title="Kailash Mansarovar 2026"
-        subtitle="A pilgrimage to the abode of Lord Shiva. 7 to 19 July 2026 batch."
-        primaryLabel="View Itinerary"
-        primaryHref="#itinerary"
-        secondaryLabel="Prepare"
-        secondaryHref="#prepare"
-      />
       <Hero phase={phase} />
       <Nav tab={tab} onTab={setTab} />
       <main>
