@@ -1,5 +1,4 @@
 import { useJourneyState, useTabPersist } from './hooks/useJourneyState';
-import { Hero } from './components/Hero';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { OverviewTab } from './components/tabs/OverviewTab';
@@ -13,7 +12,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <Hero phase={phase} />
       <Nav tab={tab} onTab={setTab} />
       <main>
         {tab === 'overview' && <OverviewTab phase={phase} />}
