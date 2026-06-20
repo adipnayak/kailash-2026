@@ -8,3 +8,5 @@ export { AliimamStats } from './AliimamStats';
 export { AliimamFeature } from './AliimamFeature';
 export { AliimamCta } from './AliimamCta';
 export { AliimamFooter } from './AliimamFooter';
+export { BentoGrid, BentoGridItem } from './Bento';
+export type { BentoGridProps, BentoGridItemProps, BentoGridCols } from './Bento';
