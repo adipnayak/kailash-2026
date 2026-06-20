@@ -655,6 +655,61 @@
   .day-wx-chip.sev-warn { border-color: var(--red); color: var(--red); }
   .day-wx-chip .icon { width: 14px; height: 14px; }
 
+  /* v3.9 §0.13.9 · layering chip + exposure mini-grid */
+  .day-layering {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    margin: 0.75rem 0 0.5rem;
+  }
+  .day-layering-lab { color: var(--muted); }
+  .day-layering-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--muted); display: inline-block;
+  }
+  .day-layering-dot.light { background: var(--green); }
+  .day-layering-dot.standard { background: var(--muted); }
+  .day-layering-dot.cold { background: var(--yellow); }
+  .day-layering-dot.winter { background: var(--red); }
+  .day-layering-val.light { color: var(--green); }
+  .day-layering-val.cold { color: var(--yellow); }
+  .day-layering-val.winter { color: var(--red); }
+
+  .day-exposure-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 0.75rem;
+    margin: 0.5rem 0 0.75rem;
+    font-family: var(--font-mono);
+  }
+  .day-exposure-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .day-exposure-cell .icon { width: 14px; height: 14px; }
+  .day-exposure-cell .axis { color: var(--ink); font-weight: 500; }
+  .day-exposure-cell .sev { font-weight: 600; }
+  .day-exposure-cell .sev.low      { color: var(--muted); }
+  .day-exposure-cell .sev.moderate { color: var(--ink); }
+  .day-exposure-cell .sev.high     { color: var(--yellow); }
+  .day-exposure-cell .sev.severe,
+  .day-exposure-cell .sev.extreme  { color: var(--red); }
+
+  /* Full connectivity ribbon (Reference tab) */
+  .conn-ribbon-full {
+    margin: 0.5rem 0 1.25rem;
+  }
+
   .day-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
   .day-num {
     font-family: var(--font-body);
@@ -3161,6 +3216,14 @@
 
 <!-- Connectivity playbook (collapsed by default per #42) -->
 <section class="not-after" id="ref-connectivity">
+  <h2>Connectivity</h2>
+  <!-- v3.9 §0.13.5 · full connectivity ribbon (Reference tab) -->
+  <div class="conn-ribbon conn-ribbon-full">
+    <div class="conn-ribbon-title">Connectivity &middot; 13 day view</div>
+    <div class="conn-ribbon-track" id="conn-ribbon-track-full">
+      <!-- Populated by JS -->
+    </div>
+  </div>
   <details class="disclosure" data-section-key="ref-connectivity">
     <summary>Connectivity playbook</summary>
     <div class="disc-body">
@@ -4221,6 +4284,66 @@
     return '<div class="day-wx-chips" aria-label="Weather chips">' + inner + '</div>';
   }
 
+  /* v3.9 §0.13.9 · layering chip per-day */
+  var DAY_LAYERING = {
+    1:{key:"light",    label:"LIGHT LAYERS"},
+    2:{key:"light",    label:"LIGHT LAYERS"},
+    3:{key:"standard", label:"STANDARD LAYERS"},
+    4:{key:"standard", label:"STANDARD LAYERS"},
+    5:{key:"cold",     label:"COLD LAYERS"},
+    6:{key:"cold",     label:"COLD LAYERS"},
+    7:{key:"cold",     label:"COLD LAYERS"},
+    8:{key:"winter",   label:"FULL WINTER SYSTEM"},
+    9:{key:"standard", label:"STANDARD LAYERS"},
+    10:{key:"standard",label:"STANDARD LAYERS"},
+    11:{key:"light",   label:"LIGHT LAYERS"},
+    12:{key:"light",   label:"LIGHT LAYERS"},
+    13:{key:"light",   label:"LIGHT LAYERS"}
+  };
+  function layeringHtml(dayNum) {
+    var l = DAY_LAYERING[dayNum] || {key:"standard", label:"STANDARD LAYERS"};
+    return '<div class="day-block"><h4>Layering level</h4>' +
+      '<div class="day-layering">' +
+      '<span class="day-layering-dot ' + l.key + '" aria-hidden="true"></span>' +
+      '<span class="day-layering-val ' + l.key + '">' + l.label + '</span>' +
+      '</div></div>';
+  }
+  /* v3.9 §0.13.9 · exposure mini-grid per-day */
+  var DAY_EXPOSURE = {
+    1: {sun:"high",     wind:"low",     rain:"high",    cold:"low"},
+    2: {sun:"high",     wind:"low",     rain:"high",    cold:"low"},
+    3: {sun:"extreme",  wind:"moderate",rain:"low",     cold:"moderate"},
+    4: {sun:"extreme",  wind:"moderate",rain:"low",     cold:"moderate"},
+    5: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    6: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    7: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    8: {sun:"extreme",  wind:"high",    rain:"low",     cold:"severe"},
+    9: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    10:{sun:"high",     wind:"moderate",rain:"low",     cold:"moderate"},
+    11:{sun:"moderate", wind:"low",     rain:"moderate",cold:"low"},
+    12:{sun:"high",     wind:"low",     rain:"high",    cold:"low"},
+    13:{sun:"moderate", wind:"low",     rain:"moderate",cold:"low"}
+  };
+  function exposureHtml(dayNum) {
+    var e = DAY_EXPOSURE[dayNum] || {sun:"moderate", wind:"moderate", rain:"moderate", cold:"moderate"};
+    var rows = [
+      {axis:"SUN",  sev:e.sun,  icon:"icon-sun"},
+      {axis:"WIND", sev:e.wind, icon:"icon-wind"},
+      {axis:"RAIN", sev:e.rain, icon:"icon-droplet"},
+      {axis:"COLD", sev:e.cold, icon:"icon-thermometer"}
+    ];
+    var cells = rows.map(function(r){
+      return '<div class="day-exposure-cell">' +
+        '<svg class="icon"><use href="#' + r.icon + '"/></svg>' +
+        '<span class="axis">' + r.axis + ':</span>' +
+        '<span class="sev ' + r.sev + '">' + r.sev.toUpperCase() + '</span>' +
+        '</div>';
+    }).join("");
+    return '<div class="day-block"><h4>Exposure</h4>' +
+      '<div class="day-exposure-grid">' + cells + '</div>' +
+      '</div>';
+  }
+
   function renderDayCard(d, todayIdx) {
     var chip = chipFor(d.day_type);
     var isToday = todayIdx === d.day;
@@ -4275,16 +4398,16 @@
     html += weatherChipsHtml(d);
     html += '</div>';
 
-    // Climate / layering + Recommended (kept as fallback detail).
-    html += '<div class="day-block"><h4>Climate</h4><div class="wear-grid">';
-    html += '<div class="wlab">Layering level</div><div class="wval">' + escapeHtml(cl.layering || "standard") + '</div>';
-    html += '</div>';
+    // v3.9 §0.13.9 · Layering chip + Exposure mini-grid (replaces v3.6 Climate top line).
+    html += layeringHtml(d.day);
+    html += exposureHtml(d.day);
+
+    // Recommended gear (fallback detail).
     if (cl.recommended && cl.recommended.length) {
-      html += '<h4>Recommended</h4><ul class="bullets" style="margin:0 0 0 0">';
+      html += '<div class="day-block"><h4>Recommended</h4><ul class="bullets" style="margin:0">';
       cl.recommended.forEach(function(r){ html += '<li>' + escapeHtml(r) + '</li>'; });
-      html += '</ul>';
+      html += '</ul></div>';
     }
-    html += '</div>';
 
     // Food.
     html += '<div class="day-block"><h4>Food</h4><div class="food-grid">';
@@ -4568,20 +4691,31 @@
     });
   }
 
-  /* Render connectivity ribbon. */
-  function renderConnRibbon() {
-    var el = document.getElementById("conn-ribbon-track");
-    if (!el) return;
-    var conn = ["good","good","good","good","intermittent","intermittent","offline","offline","intermittent","intermittent","good","good","good"];
+  /* v3.9 §0.13.5 · Render connectivity ribbon (compact + full versions). */
+  var CONN_DAYS = ["good","good","good","good","intermittent","intermittent","offline","offline","intermittent","intermittent","good","good","good"];
+  var CONN_NOTES = {
+    "good":         "Likely reachable",
+    "intermittent": "Intermittent. VPN required in Tibet",
+    "offline":      "Offline by design. Operator sat phone only"
+  };
+  function buildConnRibbon() {
     var html = "";
-    conn.forEach(function(c, i) {
-      html += '<div class="conn-ribbon-cell" title="Day ' + (i+1) + ': ' + c + '">';
+    CONN_DAYS.forEach(function(c, i) {
+      var note = CONN_NOTES[c] || c;
+      html += '<div class="conn-ribbon-cell" title="Day ' + (i+1) + ': ' + note + '" tabindex="0">';
       html += '<span class="cr-day">D' + (i+1) + '</span>';
       html += '<span class="cr-dot ' + c + '"></span>';
       html += '</div>';
       if (i < 12) html += '<div class="conn-ribbon-line"></div>';
     });
-    el.innerHTML = html;
+    return html;
+  }
+  function renderConnRibbon() {
+    var html = buildConnRibbon();
+    var el  = document.getElementById("conn-ribbon-track");
+    var el2 = document.getElementById("conn-ribbon-track-full");
+    if (el)  el.innerHTML  = html;
+    if (el2) el2.innerHTML = html;
   }
 
   /* Legacy hero/today helpers kept for reference but replaced by v3.8 functions above. */
