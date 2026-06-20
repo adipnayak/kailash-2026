@@ -33,8 +33,8 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
               className={
                 'flex items-center gap-1.5 border-b-2 px-3 py-3 font-mono text-sm uppercase tracking-wider transition-colors ' +
                 (active
-                  ? 'border-ink text-ink'
-                  : 'border-transparent text-muted hover:text-ink')
+                  ? 'border-foreground text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground')
               }
             >
               {t.icon}

@@ -44,10 +44,10 @@ function usePrepProgress(): { completed: number; total: number } {
 // ---------------------------------------------------------------------------
 function ConnIcon({ status }: { status: 'good' | 'intermittent' | 'offline' }) {
   if (status === 'good')
-    return <Radio size={12} className="text-green" aria-label="Good connectivity" />;
+    return <Radio size={12} className="text-emerald-600" aria-label="Good connectivity" />;
   if (status === 'intermittent')
-    return <Radio size={12} className="text-accent" aria-label="Intermittent connectivity" />;
-  return <TriangleAlert size={12} className="text-red" aria-label="No connectivity" />;
+    return <Radio size={12} className="text-accent-foreground" aria-label="Intermittent connectivity" />;
+  return <TriangleAlert size={12} className="text-destructive" aria-label="No connectivity" />;
 }
 
 // ---------------------------------------------------------------------------
@@ -92,37 +92,37 @@ function BeforeHero({ state }: { state: JourneyState }) {
       <div className="flex items-baseline gap-3">
         <span
           ref={countdownRef}
-          className="font-sans text-7xl font-medium text-ink leading-none tabular-nums"
+          className="font-sans text-7xl font-medium text-foreground leading-none tabular-nums"
           aria-live="polite"
         >
           {state.daysToDeparture}
         </span>
-        <span className="font-sans text-2xl font-medium text-muted">
+        <span className="font-sans text-2xl font-medium text-muted-foreground">
           days to Kailash
         </span>
       </div>
 
       {/* Subhead: JAI_BHOLE_NATH x1 total */}
-      <p className="font-mono text-sm text-accent uppercase tracking-widest">
+      <p className="font-mono text-sm text-accent-foreground uppercase tracking-widest">
         {JAI_BHOLE_NATH}
       </p>
 
       {/* Inline route + peak strip (fold-fix) */}
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted border border-border rounded px-3 py-2 bg-card">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded px-3 py-2 bg-card">
         {['KTM', 'LHASA', 'MANSAROVAR', 'KAILASH', 'KTM'].map((stop, i, arr) => (
           <span key={i} className="flex items-center gap-x-1">
-            <span className="text-ink font-medium">{stop}</span>
+            <span className="text-foreground font-medium">{stop}</span>
             {i < arr.length - 1 && <span className="text-border">{'>'}</span>}
           </span>
         ))}
-        <span className="ml-auto text-accent font-medium">
+        <span className="ml-auto text-accent-foreground font-medium">
           Peak: Dolma La 5,630m / {mToFt(5630).toLocaleString('en-US')}ft Day 8
         </span>
       </div>
 
       {/* Outstanding prep list */}
       <div>
-        <p className="font-mono text-xs text-muted uppercase tracking-widest mb-2">
+        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-2">
           {PREP_ITEMS.length - completed} of {PREP_ITEMS.length} things left
         </p>
         <ul ref={listRef} className="space-y-1">
@@ -135,13 +135,13 @@ function BeforeHero({ state }: { state: JourneyState }) {
                 key={item.id}
                 className={
                   'flex items-center gap-2 font-mono text-xs ' +
-                  (done ? 'text-muted line-through' : 'text-ink')
+                  (done ? 'text-muted-foreground line-through' : 'text-foreground')
                 }
               >
                 <span
                   className={
                     'inline-block w-2 h-2 rounded-full border ' +
-                    (done ? 'bg-green border-green' : 'border-muted')
+                    (done ? 'bg-emerald-600 border-emerald-600' : 'border-muted-foreground')
                   }
                 />
                 {item.label}
@@ -153,7 +153,7 @@ function BeforeHero({ state }: { state: JourneyState }) {
 
       {/* Preparation progress bar */}
       <div className="space-y-1">
-        <div className="flex justify-between font-mono text-xs text-muted">
+        <div className="flex justify-between font-mono text-xs text-muted-foreground">
           <span>Preparation</span>
           <span>{pct}%</span>
         </div>
@@ -179,23 +179,23 @@ function DuringHero({ state }: { state: JourneyState }) {
   return (
     <div className="space-y-4">
       {/* Stat strip at top (fold-fix: replaces 180px blank) */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted border border-border rounded px-3 py-2 bg-card">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted-foreground border border-border rounded px-3 py-2 bg-card">
         <span>
-          <span className="text-ink font-medium">DAY {state.tripDayIndex} OF 13</span>
+          <span className="text-foreground font-medium">DAY {state.tripDayIndex} OF 13</span>
         </span>
         {today && (
           <span className="flex items-center gap-1">
             <MapPin size={11} />
-            <span className="text-ink font-medium">{today.location}</span>
-            <span className="text-muted">
+            <span className="text-foreground font-medium">{today.location}</span>
+            <span className="text-muted-foreground">
               {today.altitude_peak.toLocaleString('en-US')}m /
               {mToFt(today.altitude_peak).toLocaleString('en-US')}ft
             </span>
           </span>
         )}
         <span>
-          <span className="text-ink font-medium">{daysRemaining}</span>
-          <span className="text-muted"> days remaining</span>
+          <span className="text-foreground font-medium">{daysRemaining}</span>
+          <span className="text-muted-foreground"> days remaining</span>
         </span>
       </div>
 
@@ -203,29 +203,29 @@ function DuringHero({ state }: { state: JourneyState }) {
       {today && (
         <div className="rounded border border-border bg-card px-4 py-3 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs text-muted uppercase tracking-widest">Today</span>
+            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Today</span>
             <ConnIcon status={today.conn_status} />
           </div>
-          <p className="font-sans text-sm font-medium text-ink">{today.location}</p>
-          <p className="font-mono text-xs text-muted">
+          <p className="font-sans text-sm font-medium text-foreground">{today.location}</p>
+          <p className="font-mono text-xs text-muted-foreground">
             {today.altitude_peak.toLocaleString('en-US')}m /{' '}
             {mToFt(today.altitude_peak).toLocaleString('en-US')}ft
             {' · '}
             {today.conn_label}
           </p>
-          <p className="font-sans text-xs text-muted mt-1">{today.headline}</p>
+          <p className="font-sans text-xs text-muted-foreground mt-1">{today.headline}</p>
         </div>
       )}
 
       {/* Tomorrow chip */}
       {tomorrow && (
-        <div className="rounded border border-border bg-bg px-4 py-3 space-y-1">
+        <div className="rounded border border-border bg-background px-4 py-3 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs text-muted uppercase tracking-widest">Tomorrow</span>
-            <Clock size={12} className="text-muted" />
+            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Tomorrow</span>
+            <Clock size={12} className="text-muted-foreground" />
           </div>
-          <p className="font-sans text-sm font-medium text-ink">{tomorrow.location}</p>
-          <p className="font-mono text-xs text-muted">
+          <p className="font-sans text-sm font-medium text-foreground">{tomorrow.location}</p>
+          <p className="font-mono text-xs text-muted-foreground">
             {tomorrow.altitude_peak.toLocaleString('en-US')}m /{' '}
             {mToFt(tomorrow.altitude_peak).toLocaleString('en-US')}ft
           </p>
@@ -251,29 +251,29 @@ function AfterHero({ state: _state }: { state: JourneyState }) {
     <div className="space-y-4">
       {/* Shrunk headline: YATRA_SAMPOORNA x1 total */}
       <div>
-        <h2 className="font-sans text-3xl font-medium text-ink md:text-4xl">
+        <h2 className="font-sans text-3xl font-medium text-foreground md:text-4xl">
           {YATRA_SAMPOORNA}
         </h2>
-        <p className="font-mono text-xs text-muted uppercase tracking-widest mt-1">
+        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mt-1">
           13-day parikrama complete
         </p>
       </div>
 
       {/* Recap strip (fold-fix) */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted border border-border rounded px-3 py-2 bg-card">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted-foreground border border-border rounded px-3 py-2 bg-card">
         <span>
-          <span className="text-ink font-medium">
+          <span className="text-foreground font-medium">
             Returned {returnedDaysAgo} day{returnedDaysAgo !== 1 ? 's' : ''} ago
           </span>
         </span>
         <span>
-          <span className="text-ink font-medium">Peak: Dolma La 5,630m / {mToFt(5630).toLocaleString('en-US')}ft</span>
-          <span className="text-muted"> Day 8</span>
+          <span className="text-foreground font-medium">Peak: Dolma La 5,630m / {mToFt(5630).toLocaleString('en-US')}ft</span>
+          <span className="text-muted-foreground"> Day 8</span>
         </span>
         <span className="flex items-center gap-x-1">
           {['KTM', 'LHASA', 'KAILASH', 'KTM'].map((stop, i, arr) => (
             <span key={i} className="flex items-center gap-x-1">
-              <span className="text-ink font-medium">{stop}</span>
+              <span className="text-foreground font-medium">{stop}</span>
               {i < arr.length - 1 && <span className="text-border">{'>'}</span>}
             </span>
           ))}
@@ -288,8 +288,8 @@ function AfterHero({ state: _state }: { state: JourneyState }) {
           { label: 'Km trekked', value: '~52 km' },
         ].map((stat) => (
           <div key={stat.label} className="rounded border border-border bg-card px-3 py-2">
-            <p className="font-sans text-xl font-medium text-ink">{stat.value}</p>
-            <p className="font-mono text-xs text-muted">{stat.label}</p>
+            <p className="font-sans text-xl font-medium text-foreground">{stat.value}</p>
+            <p className="font-mono text-xs text-muted-foreground">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -309,7 +309,7 @@ export function Hero({ phase }: { phase: JourneyState }) {
       >
         <div className="mx-auto max-w-2xl">
           {/* Eyebrow */}
-          <div className="flex items-center gap-2 text-muted font-mono text-xs uppercase tracking-widest mb-5">
+          <div className="flex items-center gap-2 text-muted-foreground font-mono text-xs uppercase tracking-widest mb-5">
             <Mountain size={14} />
             <span>Kailash Mansarovar Yatra 2026</span>
           </div>

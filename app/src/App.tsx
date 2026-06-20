@@ -12,7 +12,7 @@ export default function App() {
   const [tab, setTab] = useTabPersist();
 
   return (
-    <div className="min-h-screen bg-bg text-ink font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans">
       <Hero phase={phase} />
       <Nav tab={tab} onTab={setTab} />
       <main>

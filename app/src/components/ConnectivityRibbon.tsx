@@ -19,9 +19,9 @@ import { useJourneyState } from '../hooks/useJourneyState';
 // Per-status style tokens (Tailwind v4 / Maurten CSS vars only)
 // ---------------------------------------------------------------------------
 const STATUS_DOT: Record<ConnStatus, { bg: string; border: string; label: string }> = {
-  good:         { bg: 'bg-green',   border: 'border-green',   label: 'Reachable'    },
+  good:         { bg: 'bg-emerald-600',   border: 'border-emerald-600',   label: 'Reachable'    },
   intermittent: { bg: 'bg-accent',  border: 'border-accent',  label: 'Limited'      },
-  offline:      { bg: 'bg-red',     border: 'border-red',     label: 'Offline'      },
+  offline:      { bg: 'bg-destructive',     border: 'border-destructive',     label: 'Offline'      },
 };
 
 // ---------------------------------------------------------------------------
@@ -85,13 +85,13 @@ export function ConnectivityRibbon() {
   return (
     <section
       data-section="connectivity-ribbon"
-      className="border-b border-border bg-bg px-6 py-8"
+      className="border-b border-border bg-background px-6 py-8"
     >
       <div className="mx-auto max-w-5xl">
         {/* Header row */}
         <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-          <h2 className="font-sans text-2xl font-medium text-ink">Connectivity</h2>
-          <p className="font-sans text-sm text-muted">{headline}</p>
+          <h2 className="font-sans text-2xl font-medium text-foreground">Connectivity</h2>
+          <p className="font-sans text-sm text-muted-foreground">{headline}</p>
         </div>
 
         {/* 13-day dot strip */}
@@ -127,7 +127,7 @@ export function ConnectivityRibbon() {
                   'border px-1 py-2',
                   'transition-all duration-200',
                   isToday
-                    ? 'border-ink bg-card shadow-sm ring-1 ring-ink'
+                    ? 'border-foreground bg-card shadow-sm ring-1 ring-foreground'
                     : isBeforePhaseRedHighlight
                     ? `${border} bg-card`
                     : `border-border bg-card`,
@@ -150,10 +150,10 @@ export function ConnectivityRibbon() {
                   size={12}
                   className={
                     d.conn_status === 'good'
-                      ? 'text-green'
+                      ? 'text-emerald-600'
                       : d.conn_status === 'offline'
-                      ? 'text-red'
-                      : 'text-accent'
+                      ? 'text-destructive'
+                      : 'text-accent-foreground'
                   }
                   aria-hidden
                 />
@@ -162,7 +162,7 @@ export function ConnectivityRibbon() {
                 <span
                   className={[
                     'font-mono text-[9px] leading-none',
-                    isToday ? 'font-medium text-ink' : 'text-muted',
+                    isToday ? 'font-medium text-foreground' : 'text-muted-foreground',
                   ].join(' ')}
                 >
                   D{d.day}
@@ -185,19 +185,19 @@ export function ConnectivityRibbon() {
             ).map(([status, label]) => (
               <span key={status} className="flex items-center gap-1">
                 <span className={`h-2 w-2 rounded-full ${STATUS_DOT[status].bg}`} />
-                <span className="font-sans text-xs text-muted">{label}</span>
+                <span className="font-sans text-xs text-muted-foreground">{label}</span>
               </span>
             ))}
           </div>
 
           {/* GFW callout: visible when any day has GFW note */}
-          <span className="font-sans text-xs text-muted">
+          <span className="font-sans text-xs text-muted-foreground">
             D3-D10: GFW in Tibet. VPN required for WhatsApp.
           </span>
 
           {/* Sherpa sat-phone note: shown in before + during offline phase */}
           {(phase === 'before' || (phase === 'during' && connectivity_today === 'offline')) && (
-            <span className="font-sans text-xs text-muted">
+            <span className="font-sans text-xs text-muted-foreground">
               Sherpa sat phone is the emergency fallback when offline.
             </span>
           )}
