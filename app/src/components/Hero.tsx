@@ -35,12 +35,7 @@ function HeroHeader() {
 
   return (
     <div className="mb-5 space-y-2">
-      {/* Subtitle */}
-      <p className="font-sans text-base font-medium text-foreground">
-        A pilgrimage to the abode of Lord Shiva
-      </p>
-
-      {/* Cohort line */}
+      {/* Cohort line (subtitle moved up to AliimamHero) */}
       <p className="font-sans text-sm text-muted-foreground">
         This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.
       </p>

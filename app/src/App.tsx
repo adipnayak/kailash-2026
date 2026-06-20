@@ -15,8 +15,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       <AliimamHero
-        title="Kailash Manasarovar 2026"
-        subtitle="A sacred journey across the roof of the world. 13 days. 5,630 m."
+        title="Kailash Mansarovar 2026"
+        subtitle="A pilgrimage to the abode of Lord Shiva. 7 to 19 July 2026 batch."
         primaryLabel="View Itinerary"
         primaryHref="#itinerary"
         secondaryLabel="Prepare"
