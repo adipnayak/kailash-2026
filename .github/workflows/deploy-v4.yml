@@ -1,0 +1,64 @@
+# v4 build and deploy workflow.
+#
+# IMPORTANT: deploy step is DISABLED below.
+# The current live site is the root index.html (v3.12 single-file build).
+# This workflow only verifies that the /app Vite build succeeds.
+#
+# TODO: enable deploy step once v4 is feature-parity with v3.12.
+# When enabling: also switch vite.config.ts base to '/' if v4 becomes the root,
+# and remove or rename the root index.html.
+
+name: Deploy v4 to GitHub Pages
+
+on:
+  push:
+    branches: [v4/react-vite-foundation, main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/deploy-v4.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/deploy-v4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-v4
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install
+        run: cd app && npm ci
+      - name: Build
+        run: cd app && npm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+
+  # TODO: enable deploy step once v4 is feature-parity with v3.12.
+  # For now PR builds verify but do not deploy, so the live v3.12 site is preserved.
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - id: deployment
+  #       uses: actions/deploy-pages@v4
