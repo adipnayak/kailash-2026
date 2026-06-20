@@ -23,9 +23,14 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
             <CalendarDays size={20} className="text-muted-foreground" />
             Day by Day
           </h2>
-          <div className="grid gap-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
             {DAYS.map((d) => (
-              <DayCard key={d.day} day={d} isToday={phase.tripDayIndex === d.day} />
+              <div
+                key={d.day}
+                className={d.day === 8 ? 'md:col-span-2' : ''}
+              >
+                <DayCard day={d} isToday={phase.tripDayIndex === d.day} />
+              </div>
             ))}
           </div>
         </div>

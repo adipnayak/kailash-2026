@@ -1,30 +1,38 @@
 /**
- * DayCard.
- * 6 day-type patterns with dominant chip, collapse/expand via framer-motion.
- * Full 9-section expanded body: weather, timeline, wear, food, bathroom,
- * timing, carry critical, spiritual focus, footer strip.
- * aliimam icons throughout. Day 8 double-height + critical warn banner.
+ * DayCard -- aliimam Card pricing-pattern layout.
+ * CardHeader: title + price-like dominant stat + description.
+ * CardContent: dashed hr + CARRY CRITICAL list with Check icons.
+ * CardFooter: "View full day" CTA (outline, rounded-none).
+ * Expanded: all 9 rich sections behind the CTA.
  *
- * Anti-AI rules: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
+ * 6 day-type dominant stat mapping (PRD v3.12 ss0.16.8):
+ *   travel  -> duration label (D1 D3 D11 D13)
+ *   combo   -> distance km (D5)
+ *   rest    -> "REST" (D2 D4 D12)
+ *   pilgrimage -> sacred label text (D6)
+ *   trek    -> distance km (D7 D9 D10)
+ *   climb   -> altitude m/ft in destructive red (D8)
+ *
+ * Day 8 critical: border-2 border-destructive, warn banner above, red title,
+ *   full-width grid span, phase-conditional auto-expand.
+ *
+ * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AliimamFeature } from './aliimam/AliimamFeature';
 import {
-  ChevronDown,
+  Check,
   Mountain,
   Clock,
-  Ruler,
   Wifi,
   WifiOff,
   Bed,
   CircleCheck,
   Thermometer,
   WindFilled,
-  DropFilled,
   Sun,
-  Backpack,
   Shirt,
   Utensils,
   ShowerHead,
@@ -37,16 +45,23 @@ import {
   CandleFilled,
   Snowflake,
   CloudRain,
-  Battery,
-  Phone,
-  Pill,
   HardHat,
   Eye,
+  Ruler,
 } from '@aliimam/icons';
 import gsap from 'gsap';
 import type { TripDay } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from './ui/card';
+import { Button } from './ui/button';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -57,7 +72,7 @@ function fmtDual(m: number): string {
 }
 
 // ---------------------------------------------------------------------------
-// Classify day into our 6 patterns from the spec
+// Classify day into 6 patterns from the spec
 // ---------------------------------------------------------------------------
 
 type CardPattern = 'travel' | 'combo' | 'rest' | 'pilgrimage' | 'trek' | 'climb';
@@ -67,59 +82,58 @@ function classifyDay(day: TripDay): CardPattern {
   if (day.day_type === 'rest') return 'rest';
   if (day.day_type === 'holy') return 'pilgrimage';
   if (day.day === 5) return 'combo';
-  // Trek days: 7, 9
-  if ([7, 9].includes(day.day)) return 'trek';
-  // Travel days: 1, 2, 3, 4, 10, 11, 12, 13
+  if ([7, 9, 10].includes(day.day)) return 'trek';
   return 'travel';
 }
 
-// Day distance in km (approximate, per itinerary)
+// Dominant stat text per day-type (the "price-like" big text in CardHeader)
+const DAY_DURATION_LABEL: Record<number, string | null> = {
+  1: '6 h transit',
+  3: '4 h flight',
+  5: '10 h drive',
+  6: null,
+  7: '8 h trek',
+  8: '16 h summit',
+  9: '7 h trek',
+  10: '11 h drive',
+  11: '4 h flight',
+  13: '2 h transit',
+};
+
 const DAY_DISTANCE_KM: Record<number, number | null> = {
-  1: null, 2: null, 3: null, 4: null, 5: 780, 6: 5, 7: 22, 8: 20, 9: 15, 10: 780, 11: null, 12: null, 13: null,
+  5: 780,
+  7: 22,
+  8: 20,
+  9: 15,
+  10: 780,
 };
 
-const DAY_DURATION_H: Record<number, string | null> = {
-  1: '6 h transit', 2: null, 3: '4 h flight', 4: null, 5: '10 h drive', 6: null,
-  7: '8 h trek', 8: '16 h summit', 9: '7 h trek', 10: '11 h drive', 11: '4 h flight', 12: null, 13: '2 h transit',
-};
-
-function getDistanceLabel(day: TripDay): string | null {
-  const km = DAY_DISTANCE_KM[day.day];
-  if (km === null || km === undefined) return null;
-  return km + ' km';
-}
-
-function getDurationLabel(day: TripDay): string | null {
-  return DAY_DURATION_H[day.day] || null;
+function getDominantStat(day: TripDay, pattern: CardPattern): string {
+  switch (pattern) {
+    case 'climb':
+      return fmtDual(day.altitude_peak);
+    case 'trek': {
+      const km = DAY_DISTANCE_KM[day.day];
+      return km !== null && km !== undefined ? km + ' km' : (DAY_DURATION_LABEL[day.day] ?? '--');
+    }
+    case 'combo': {
+      const km = DAY_DISTANCE_KM[day.day];
+      return km !== null && km !== undefined ? km.toLocaleString('en-US') + ' km' : '--';
+    }
+    case 'travel':
+      return DAY_DURATION_LABEL[day.day] ?? '--';
+    case 'rest':
+      return 'REST';
+    case 'pilgrimage':
+      return day.sacred_label ?? 'SACRED';
+    default:
+      return '--';
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Sub-components
+// ConnIcon
 // ---------------------------------------------------------------------------
-
-interface ChipProps {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  dominant?: boolean;
-  red?: boolean;
-}
-
-function Chip({ icon, label, value, dominant, red }: ChipProps) {
-  const base = 'flex items-center gap-1.5 rounded-none px-2 py-1 font-mono text-xs border';
-  const color = red
-    ? 'bg-destructive/10 border-destructive/30 text-destructive'
-    : dominant
-    ? 'bg-primary text-primary-foreground border-primary'
-    : 'bg-background border-border text-muted-foreground';
-  return (
-    <span className={base + ' ' + color}>
-      {icon}
-      <span className="hidden sm:inline text-[10px] uppercase tracking-wide mr-0.5">{label}</span>
-      <span className={dominant ? 'font-medium' : ''}>{value}</span>
-    </span>
-  );
-}
 
 function ConnIcon({ status }: { status: TripDay['conn_status'] }) {
   if (status === 'offline') return <WifiOff size={12} className="text-destructive" />;
@@ -187,7 +201,7 @@ function WeatherBlock({ day }: { day: TripDay }) {
 }
 
 // ---------------------------------------------------------------------------
-// 2. Timeline block (vertical)
+// 2. Timeline block
 // ---------------------------------------------------------------------------
 
 function TimelineBlock({ day }: { day: TripDay }) {
@@ -343,47 +357,8 @@ function TimingBlock({ day }: { day: TripDay }) {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Carry critical: icon-per-row heuristic
-// ---------------------------------------------------------------------------
-
-function carryIcon(item: string): React.ReactNode {
-  const s = item.toLowerCase();
-  if (s.includes('glass') || s.includes('sunglass') || s.includes('eye')) return <Eye size={11} className="text-sacred shrink-0 mt-0.5" />;
-  if (s.includes('passport') || s.includes('cash') || s.includes('card') || s.includes('wallet')) return <Backpack size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-  if (s.includes('phone') || s.includes('mobile') || s.includes('power bank') || s.includes('charger')) return <Phone size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-  if (s.includes('ibuprofen') || s.includes('ors') || s.includes('med') || s.includes('pill') || s.includes('diamox') || s.includes('glucose')) return <Pill size={11} className="text-destructive shrink-0 mt-0.5" />;
-  if (s.includes('water') || s.includes('hydrat') || s.includes('bladder') || s.includes('bottle')) return <DropFilled size={11} className="text-emerald shrink-0 mt-0.5" />;
-  if (s.includes('hand warmer') || s.includes('glove') || s.includes('liner')) return <Snowflake size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-  if (s.includes('headlamp') || s.includes('battery') || s.includes('batteries')) return <Battery size={11} className="text-sacred shrink-0 mt-0.5" />;
-  if (s.includes('hat') || s.includes('beanie') || s.includes('cap') || s.includes('mask') || s.includes('buff')) return <HardHat size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-  if (s.includes('snack') || s.includes('protein bar') || s.includes('food') || s.includes('lunch')) return <Utensils size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-  if (s.includes('towel') || s.includes('soap') || s.includes('wet wipe')) return <ShowerHead size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-  if (s.includes('ritual') || s.includes('holy') || s.includes('puja') || s.includes('notebook') || s.includes('sankalpa')) return <CandleFilled size={11} className="text-sacred shrink-0 mt-0.5" />;
-  if (s.includes('pack liner') || s.includes('zip-lock') || s.includes('bag')) return <Backpack size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-  return <CircleCheck size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
-}
-
-// ---------------------------------------------------------------------------
-// 7. Carry critical
-// ---------------------------------------------------------------------------
-
-function CarryBlock({ day }: { day: TripDay }) {
-  const items = day.carry_critical || [];
-  return (
-    <div>
-      <SectionHeader label="Carry Critical" />
-      <ul className="space-y-1.5">
-        {items.map((item, i) => (
-          <li key={i} className="flex items-start gap-2">
-            {carryIcon(item)}
-            <span className="text-xs text-foreground">{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+// carryIcon removed: CardContent now uses uniform Check icons per aliimam pricing pattern.
+// Specialised icon imports retained below for the 9 rich sections in ExpandedBody.
 
 // ---------------------------------------------------------------------------
 // 8. Spiritual focus
@@ -392,7 +367,6 @@ function CarryBlock({ day }: { day: TripDay }) {
 function SpiritualBlock({ day }: { day: TripDay }) {
   if (!day.spiritual_focus) return null;
   const sf = day.spiritual_focus;
-  // AliimamFeature in single-card mode: one card, no CTA, stripped-down headings.
   return (
     <div className="-mx-4">
       <AliimamFeature
@@ -435,22 +409,40 @@ function FooterStrip({ day }: { day: TripDay }) {
 }
 
 // ---------------------------------------------------------------------------
-// Full expanded body: all 9 sections
+// Expanded body: sections 1-2 + 3-8 + 9 footer (carry critical is above fold)
 // ---------------------------------------------------------------------------
 
 function ExpandedBody({ day }: { day: TripDay }) {
   return (
-    <div className="px-4 pb-5 border-t border-border pt-4 space-y-0">
+    <div className="px-6 pb-6 border-t border-border pt-4 space-y-0">
       <WeatherBlock day={day} />
       <TimelineBlock day={day} />
       <WearBlock day={day} />
       <FoodBlock day={day} />
       <BathroomBlock day={day} />
       <TimingBlock day={day} />
-      <CarryBlock day={day} />
       <SpiritualBlock day={day} />
       <FooterStrip day={day} />
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Connectivity chip (inline, subtle)
+// ---------------------------------------------------------------------------
+
+function ConnLabel({ day }: { day: TripDay }) {
+  const label =
+    day.conn_status === 'offline'
+      ? 'offline'
+      : day.conn_status === 'intermittent'
+      ? 'limited signal'
+      : 'good signal';
+  return (
+    <span className="inline-flex items-center gap-1 font-mono text-[10px] text-muted-foreground">
+      <ConnIcon status={day.conn_status} />
+      {label}
+    </span>
   );
 }
 
@@ -466,15 +458,14 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
   const isRest = pattern === 'rest';
   const isPilgrimage = pattern === 'pilgrimage';
 
-  // Compute journey state for phase-aware expansion logic
+  // Journey state for phase-aware expansion logic
   const stateRef = useRef(computeJourneyState());
   const js = stateRef.current;
   const daysToDeparture = js.daysToDeparture;
   const tripDayIndex = js.tripDayIndex;
   const phase = js.phase;
 
-  // Day 8 auto-expand logic:
-  // T-3 onward (daysToDeparture <= 3), during Day 8, or after Day 8
+  // Day 8 auto-expand: T-3 onward, during Day 8+, or after
   const day8AutoExpand =
     isClimb &&
     (daysToDeparture <= 3 || (phase === 'during' && tripDayIndex >= 8) || phase === 'after');
@@ -500,8 +491,8 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
     }
   }
 
-  // GSAP sacred-label gloss on first mount for pilgrimage / climb cards
-  const headerRef = useRef<HTMLElement>(null);
+  // GSAP gloss on first mount for pilgrimage / climb / today cards
+  const headerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!headerRef.current) return;
     if (!isPilgrimage && !isClimb && !isToday) return;
@@ -517,78 +508,26 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
     return () => ctx.revert();
   }, [isPilgrimage, isClimb, isToday]);
 
-  // Chips
-  const altChip = (
-    <Chip
-      icon={<Mountain size={11} />}
-      label="alt"
-      value={fmtDual(day.altitude_peak)}
-      dominant={isClimb}
-      red={isClimb}
-    />
-  );
-  const distKm = getDistanceLabel(day);
-  const distChip = distKm ? (
-    <Chip
-      icon={<Ruler size={11} />}
-      label="dist"
-      value={distKm}
-      dominant={pattern === 'combo' || pattern === 'trek'}
-    />
-  ) : null;
-  const durLabel = getDurationLabel(day);
-  const timeChip = durLabel ? (
-    <Chip
-      icon={<Clock size={11} />}
-      label="time"
-      value={durLabel}
-      dominant={pattern === 'travel'}
-    />
-  ) : null;
-  const connChip = (
-    <Chip
-      icon={<ConnIcon status={day.conn_status} />}
-      label="conn"
-      value={
-        day.conn_status === 'offline'
-          ? 'offline'
-          : day.conn_status === 'intermittent'
-          ? 'limited'
-          : 'good'
-      }
-    />
-  );
-  const sleepChip = (
-    <Chip
-      icon={<Bed size={11} />}
-      label="sleep"
-      value={fmtDual(day.altitude_sleep)}
-    />
-  );
+  const dominantStat = getDominantStat(day, pattern);
 
-  // Card border / background rules
-  const cardBg = isClimb ? 'bg-destructive/5' : 'bg-card';
-  const cardBorderWidth = isClimb ? 'border-2' : 'border';
-  const cardBorderColor = isClimb ? 'border-destructive' : isToday ? 'border-primary' : 'border-border';
-  const cardRing = isToday && !isClimb ? 'ring-1 ring-primary' : '';
-
-  // Completed badge for Day 8 after the phase
+  // Completed badge (Day 8 post-trip)
   const showCompleted = isClimb && phase === 'after';
 
-  // Day 8 collapsed header banner condition: T-30 to T-4 (not yet close), still collapsed
-  const showClimbBanner = isClimb && (daysToDeparture > 3 || phase === 'before') && !expanded;
+  // Pre-close banner for Day 8 (collapsed, T>3)
+  const showClimbBanner = isClimb && daysToDeparture > 3 && phase === 'before' && !expanded;
 
-  // Badge color mapping
-  function badgeColor(badge: string): string {
-    if (badge === 'CRITICAL DAY') return 'bg-destructive/10 border-destructive/30 text-destructive';
-    if (badge === 'SNAN AND PUJA') return 'bg-sacred/10 border-sacred/30 text-sacred';
-    if (badge === 'RECOVERY') return 'bg-emerald/10 border-emerald/30 text-emerald';
-    return 'bg-border/30 border-border text-muted-foreground';
-  }
+  // Card class overrides
+  const cardCls = [
+    'flex flex-col h-full overflow-hidden transition-shadow',
+    isClimb ? 'border-2 border-destructive bg-destructive/5 shadow-md' : '',
+    isToday && !isClimb ? 'border-primary ring-1 ring-primary' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <>
-      {/* Day 8 critical warn banner ABOVE the card */}
+      {/* Day 8 warn banner ABOVE card */}
       {isClimb && (
         <div className="mb-2 rounded-none border-2 border-destructive bg-destructive/10 px-4 py-2 flex items-start gap-2">
           <TriangleAlert size={14} className="text-destructive shrink-0 mt-0.5" />
@@ -598,81 +537,56 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
         </div>
       )}
 
-      <article
-        data-day={day.day}
-        data-pattern={pattern}
-        className={[
-          'rounded-none overflow-hidden transition-shadow',
-          cardBorderWidth,
-          cardBg,
-          cardBorderColor,
-          cardRing,
-          isClimb ? 'shadow-md shadow-red/10' : '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-      >
-        {/* Climb rule header (double-height collapsed state) */}
+      <Card className={cardCls} data-day={day.day} data-pattern={pattern}>
+        {/* Climb rule header strip */}
         {isClimb && (
           <div className="bg-destructive px-4 py-2 font-mono text-[11px] font-medium text-destructive-foreground tracking-widest uppercase text-center">
-            {'=== DOLMA LA PASS ==='}
+            DOLMA LA PASS
+          </div>
+        )}
+
+        {/* Completed badge for Day 8 post-trip */}
+        {showCompleted && (
+          <div className="px-6 pt-4 pb-0">
+            <span className="inline-flex items-center gap-1 rounded-none bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
+              <CircleCheck size={10} /> Completed · 5,630 m crossed
+            </span>
           </div>
         )}
 
         {/* Rest badge */}
         {isRest && (
-          <div className="px-4 pt-3 pb-0 flex items-center gap-2">
+          <div className="px-6 pt-4 pb-0">
             <span className="inline-flex items-center gap-1 rounded-none bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
               <Bed size={10} /> Rest day
             </span>
           </div>
         )}
 
-        {/* Completed badge */}
-        {showCompleted && (
-          <div className="px-4 pt-2 pb-0">
-            <span className="inline-flex items-center gap-1 rounded-none bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
-              <CircleCheck size={10} /> Completed
-            </span>
-          </div>
-        )}
+        {/* CardHeader */}
+        <CardHeader ref={headerRef}>
+          {/* Sacred label (pilgrimage + climb) */}
+          {isPilgrimage && day.sacred_label && (
+            <p className="font-mono text-[10px] uppercase tracking-widest text-sacred mb-0.5 flex items-center gap-1">
+              <Heart size={10} className="shrink-0" />
+              SACRED
+            </p>
+          )}
 
-        {/* Card header */}
-        <header ref={headerRef} className="px-4 pt-3 pb-0">
           <div className="flex items-start justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              {/* Sacred label dominant for pilgrimage */}
-              {isPilgrimage && day.sacred_label && (
-                <p className="font-mono text-[10px] uppercase tracking-widest text-sacred mb-0.5 flex items-center gap-1">
-                  <Heart size={10} className="shrink-0" />
-                  SACRED · {day.sacred_label}
-                </p>
-              )}
-              {/* Climb sacred label */}
-              {isClimb && day.sacred_label && (
-                <p className="font-mono text-[10px] uppercase tracking-widest text-destructive mb-0.5">
-                  {day.sacred_label}
-                </p>
-              )}
-              <h3
-                className={[
-                  'font-sans font-medium leading-snug',
-                  isClimb ? 'text-destructive text-lg' : 'text-foreground text-base',
-                ].join(' ')}
-              >
-                <span className="text-muted-foreground font-mono text-xs mr-2">D{day.day}</span>
-                {day.location}
-              </h3>
-              <p className="mt-0.5 text-xs text-muted-foreground font-mono">
-                {day.weekday} {day.date}
-              </p>
-            </div>
+            <CardTitle className={isClimb ? 'text-destructive' : ''}>
+              Day {day.day} · {day.location}
+            </CardTitle>
             {/* Badge (CRITICAL DAY, SNAN AND PUJA, RECOVERY) */}
             {day.badge && (
               <span
                 className={[
-                  'font-mono text-[10px] uppercase tracking-wide rounded-none border px-2 py-0.5 shrink-0 mt-0.5',
-                  badgeColor(day.badge),
+                  'font-mono text-[10px] uppercase tracking-wide rounded-none border px-2 py-0.5 shrink-0 mt-1',
+                  day.badge === 'CRITICAL DAY'
+                    ? 'bg-destructive/10 border-destructive/30 text-destructive'
+                    : day.badge === 'SNAN AND PUJA'
+                    ? 'bg-sacred/10 border-sacred/30 text-sacred'
+                    : 'bg-emerald/10 border-emerald/30 text-emerald',
                 ].join(' ')}
               >
                 {day.badge}
@@ -680,55 +594,70 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
             )}
           </div>
 
-          {/* Subtitle (description line) */}
-          <p className="mt-2 text-sm text-foreground leading-snug">
-            {day.subtitle}
+          {/* "Price-like" dominant stat */}
+          <span
+            className={[
+              'my-3 block text-2xl font-semibold font-sans',
+              isClimb ? 'text-destructive' : 'text-foreground',
+            ].join(' ')}
+          >
+            {dominantStat}
             {pattern === 'combo' && (
-              <span className="ml-2 font-mono text-[10px] bg-sacred/10 text-sacred border border-sacred/20 rounded-none px-1.5 py-0.5 uppercase tracking-wide">
+              <span className="ml-3 font-mono text-[10px] bg-sacred/10 text-sacred border border-sacred/20 px-1.5 py-0.5 uppercase tracking-wide align-middle">
                 LONG DAY
               </span>
             )}
+          </span>
+
+          <CardDescription>
+            <span className="font-mono">{day.weekday} {day.date}</span>
+            {' · '}
+            <ConnLabel day={day} />
+            {' · '}
+            <span className="font-mono">sleep {fmtDual(day.altitude_sleep)}</span>
+          </CardDescription>
+
+          {/* Subtitle */}
+          <p className="mt-2 text-sm text-foreground leading-snug">
+            {day.subtitle}
           </p>
-        </header>
+        </CardHeader>
 
-        {/* TL;DR chips row (not shown for rest days) */}
-        {!isRest && (
-          <div className="px-4 pt-2 pb-0 flex flex-wrap gap-1.5">
-            {altChip}
-            {distChip}
-            {timeChip}
-            {connChip}
-            {sleepChip}
-          </div>
-        )}
+        {/* CardContent: dashed hr + CARRY CRITICAL list with Check icons */}
+        <CardContent className="space-y-4">
+          <hr className="border-dashed border-border" />
 
-        {/* Collapse banner for D8 pre-phase (note about auto-expand) */}
-        {showClimbBanner && (
-          <p className="px-4 pb-1 mt-2 font-mono text-[10px] text-destructive">
-            Auto-expands T-3 before Dolma La.
-          </p>
-        )}
+          <ul className="list-outside space-y-3 text-sm">
+            {(day.carry_critical || []).map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-foreground">
+                <Check className="size-3 mt-1 shrink-0 text-muted-foreground" />
+                {item}
+              </li>
+            ))}
+          </ul>
 
-        {/* Expand / collapse toggle */}
-        <div className="px-4 pt-2 pb-3">
-          <button
-            type="button"
+          {/* Pre-close banner for Day 8 (not yet close) */}
+          {showClimbBanner && (
+            <p className="font-mono text-[10px] text-destructive">
+              Auto-expands T-3 before Dolma La.
+            </p>
+          )}
+        </CardContent>
+
+        {/* CardFooter: CTA */}
+        <CardFooter className="mt-auto">
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full"
             onClick={toggle}
             aria-expanded={expanded}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-sans"
           >
-            <motion.span
-              animate={{ rotate: expanded ? 180 : 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center"
-            >
-              <ChevronDown size={14} />
-            </motion.span>
-            {expanded ? 'Collapse' : 'View Details'}
-          </button>
-        </div>
+            {expanded ? 'Hide details' : 'View full day'}
+          </Button>
+        </CardFooter>
 
-        {/* Expanded content: all 9 sections */}
+        {/* Rich sections behind expand (Weather / Timeline / WTW / Food / Bathroom / Timing / Spiritual / Stay) */}
         <AnimatePresence initial={false}>
           {expanded && (
             <motion.div
@@ -743,7 +672,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
             </motion.div>
           )}
         </AnimatePresence>
-      </article>
+      </Card>
     </>
   );
 }
