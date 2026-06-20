@@ -559,6 +559,102 @@
   .day-card.day-rest { border-left-color: var(--green); }
   .phase-during .day-card.is-today { outline: 2px solid var(--ink); outline-offset: 2px; }
 
+  /* v3.9 §0.13.7 · day card header dashboard (mini-tile cluster) */
+  .day-dash {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 0.75rem 0 1rem;
+    padding: 0;
+    font-family: var(--font-mono);
+  }
+  .day-dash.cols-6 { grid-template-columns: repeat(6, 1fr); }
+  @media (max-width: 640px) {
+    .day-dash, .day-dash.cols-6 { grid-template-columns: repeat(2, 1fr); }
+  }
+  .day-dash-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.625rem 0.75rem 0.625rem 0;
+    border-right: 1px solid var(--border);
+  }
+  .day-dash-cell:last-child { border-right: none; }
+  @media (max-width: 640px) {
+    .day-dash-cell { border-right: none; border-bottom: 1px solid var(--border); }
+    .day-dash-cell:nth-last-child(1),
+    .day-dash-cell:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+  }
+  .day-dash-lab {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .day-dash-val {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .day-dash-icon { width: 14px; height: 14px; color: var(--muted); }
+
+  /* v3.9 §0.13.6 · difficulty indicator (5-dot scale) */
+  .day-diff {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0.5rem 0;
+  }
+  .day-diff-dots { display: inline-flex; gap: 4px; }
+  .day-diff-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border);
+    display: inline-block;
+  }
+  .day-diff-dot.on.easy { background: var(--green); }
+  .day-diff-dot.on.moderate { background: var(--yellow); }
+  .day-diff-dot.on.hard { background: var(--red); }
+  .day-diff-lab { font-weight: 600; color: var(--ink); }
+  .day-diff-lab.easy { color: var(--green); }
+  .day-diff-lab.moderate { color: var(--yellow); }
+  .day-diff-lab.hard { color: var(--red); }
+
+  /* v3.9 §0.13.8 · weather chips (replaces weather table) */
+  .day-wx-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.625rem 0 0.25rem;
+    font-family: var(--font-mono);
+  }
+  .day-wx-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .day-wx-chip.sev-warn { border-color: var(--red); color: var(--red); }
+  .day-wx-chip .icon { width: 14px; height: 14px; }
+
   .day-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
   .day-num {
     font-family: var(--font-body);
@@ -4050,6 +4146,81 @@
   function escapeHtml(s) {
     return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
+  /* v3.9 §0.13.6 · per-day difficulty mapping */
+  var DAY_DIFFICULTY = {
+    1: {level:2, sev:"easy",     label:"EASY"},
+    2: {level:2, sev:"easy",     label:"EASY"},
+    3: {level:2, sev:"easy",     label:"EASY"},
+    4: {level:2, sev:"easy",     label:"EASY"},
+    5: {level:3, sev:"moderate", label:"MODERATE"},
+    6: {level:2, sev:"easy",     label:"EASY"},
+    7: {level:3, sev:"moderate", label:"MODERATE"},
+    8: {level:5, sev:"hard",     label:"HARD"},
+    9: {level:3, sev:"moderate", label:"MODERATE"},
+    10:{level:2, sev:"easy",     label:"EASY"},
+    11:{level:2, sev:"easy",     label:"EASY"},
+    12:{level:2, sev:"easy",     label:"EASY"},
+    13:{level:2, sev:"easy",     label:"EASY"}
+  };
+  function diffHtml(dayNum) {
+    var d = DAY_DIFFICULTY[dayNum] || {level:2, sev:"easy", label:"EASY"};
+    var dots = "";
+    for (var i = 1; i <= 5; i++) {
+      dots += '<span class="day-diff-dot ' + (i <= d.level ? "on " + d.sev : "") + '"></span>';
+    }
+    return '<div class="day-diff" aria-label="Difficulty ' + d.label.toLowerCase() + '">' +
+           '<span>Difficulty</span>' +
+           '<span class="day-diff-dots" aria-hidden="true">' + dots + '</span>' +
+           '<span class="day-diff-lab ' + d.sev + '">' + d.label + '</span>' +
+           '</div>';
+  }
+  /* v3.9 §0.13.7 · day card header dashboard */
+  function dashHtml(d) {
+    var connIconId = connIcon(d.conn_status);
+    var connText = d.conn_status === "good" ? "good" : (d.conn_status === "offline" ? "offline" : "intermittent");
+    var trekH = (d.timing && d.timing.trek) ? d.timing.trek : 0;
+    var walkH = (d.timing && d.timing.walk) ? d.timing.walk : 0;
+    var activeH = (trekH || walkH) ? (trekH || walkH) + " h" : "0 h";
+    var distKm = d.distance_km ? d.distance_km + " km" : "--";
+    /* Distance fallback by day */
+    var DIST = {1:"--",2:"--",3:"--",4:"--",5:"--",6:"88 km",7:"14 km",8:"22 km",9:"14 km",10:"--",11:"--",12:"--",13:"--"};
+    if (distKm === "--") distKm = DIST[d.day] || "--";
+    var cells = [
+      {lab:"MAX ALTITUDE", val:d.altitude_peak.toLocaleString() + " m", icon:"icon-mountain"},
+      {lab:"DISTANCE",     val:distKm,                                  icon:"icon-walking-line"},
+      {lab:"ACTIVE HOURS", val:activeH,                                 icon:"icon-clock"},
+      {lab:"CONNECTIVITY", val:connText,                                icon:connIconId},
+      {lab:"SLEEP",        val:d.altitude_sleep.toLocaleString() + " m",icon:"icon-bed-line"}
+    ];
+    var inner = cells.map(function(c){
+      return '<div class="day-dash-cell">' +
+        '<span class="day-dash-lab">' + c.lab + '</span>' +
+        '<span class="day-dash-val">' + escapeHtml(c.val) + '</span>' +
+        '<svg class="icon day-dash-icon"><use href="#' + c.icon + '"/></svg>' +
+        '</div>';
+    }).join("");
+    return '<div class="day-dash" aria-label="Day stat dashboard">' + inner + '</div>';
+  }
+  /* v3.9 §0.13.8 · weather chips */
+  function weatherChipsHtml(d) {
+    var w = d.weather || {};
+    var tempSev = (w.high <= -5 || w.low <= -5) ? "sev-warn" : "";
+    var windSev = (w.wind >= 50) ? "sev-warn" : "";
+    var uvSev   = (w.uv >= 11) ? "sev-warn" : "";
+    var chips = [
+      {icon:"icon-thermometer", text: w.high + " / " + w.low + " &deg;C", sev: tempSev},
+      {icon:"icon-wind",        text: w.wind + " km/h",                   sev: windSev},
+      {icon:"icon-droplet",     text: w.rain + "%",                       sev: ""},
+      {icon:"icon-sun",         text: "UV " + w.uv,                       sev: uvSev}
+    ];
+    var inner = chips.map(function(c){
+      return '<span class="day-wx-chip ' + c.sev + '">' +
+        '<svg class="icon"><use href="#' + c.icon + '"/></svg>' + c.text +
+        '</span>';
+    }).join("");
+    return '<div class="day-wx-chips" aria-label="Weather chips">' + inner + '</div>';
+  }
+
   function renderDayCard(d, todayIdx) {
     var chip = chipFor(d.day_type);
     var isToday = todayIdx === d.day;
@@ -4061,6 +4232,10 @@
     html += '<div class="day-head"><div><div class="day-num">Day ' + d.day + '</div><div class="day-date">' + d.weekday + " &middot; " + d.date + '</div></div>';
     if (chip) html += '<span class="chip ' + chip.cls + '">' + chip.label + '</span>';
     html += '</div>';
+    /* v3.9 §0.13.6 · difficulty indicator */
+    html += diffHtml(d.day);
+    /* v3.9 §0.13.7 · header dashboard */
+    html += dashHtml(d);
     html += '<div class="day-loc">' + escapeHtml(d.location) + '</div>';
     html += '<div class="day-headline">' + escapeHtml(d.headline) + '</div>';
 
@@ -4094,14 +4269,14 @@
     });
     html += '</div></div>';
 
-    // Climate + Recommended (replaces wear buckets).
+    // Weather chips (v3.9 §0.13.8 · replaces weather sub-table).
     var cl = d.climate || {};
-    var w2 = d.weather;
+    html += '<div class="day-block"><h4>Weather</h4>';
+    html += weatherChipsHtml(d);
+    html += '</div>';
+
+    // Climate / layering + Recommended (kept as fallback detail).
     html += '<div class="day-block"><h4>Climate</h4><div class="wear-grid">';
-    html += '<div class="wlab">Temperature</div><div class="wval">' + w2.high + ' to ' + w2.low + ' &deg;C</div>';
-    html += '<div class="wlab">Wind</div><div class="wval">' + escapeHtml(w2.wind_sev.charAt(0).toUpperCase() + w2.wind_sev.slice(1)) + ' &middot; ' + w2.wind + ' km/h</div>';
-    html += '<div class="wlab">Sun (UV)</div><div class="wval">UV ' + w2.uv + '</div>';
-    html += '<div class="wlab">Rain</div><div class="wval">' + w2.rain + '% chance</div>';
     html += '<div class="wlab">Layering level</div><div class="wval">' + escapeHtml(cl.layering || "standard") + '</div>';
     html += '</div>';
     if (cl.recommended && cl.recommended.length) {
