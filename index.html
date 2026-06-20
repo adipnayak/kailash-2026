@@ -2399,7 +2399,7 @@
     html += '<div class="fc-row"><span class="lab">Rain</span><span class="val" data-w-rain data-day="'+d.day+'">' + w.rain + '%</span></div>';
     html += '<div class="fc-row"><span class="lab">Wind</span><span class="val" data-w-wind data-day="'+d.day+'">' + w.wind + ' km/h &middot; ' + w.wind_sev + '</span></div>';
     html += '<div class="fc-row" style="opacity:0.65"><span class="lab">UV</span><span class="val">' + w.uv + '</span></div>';
-    html += '<div class="fc-row"><span class="lab">Weather source</span><span class="val" data-w-src data-day="'+d.day+'" style="font-size:11px;color:var(--muted)">climatology</span></div>';
+    html += '<div class="fc-row"><span class="lab">Weather source</span><span class="val" data-w-src data-day="'+d.day+'" style="font-size:11px;color:var(--muted)">Long-range climate estimate</span></div>';
     html += '</div>';
 
     // Timeline.
@@ -2787,6 +2787,11 @@
         if (Date.now() - p.t < 1000*60*60) cache = p.data;
       }
     } catch (e) {}
+    var cacheTime = null;
+    try {
+      var rawT = localStorage.getItem(cacheKey);
+      if (rawT) { var pT = JSON.parse(rawT); cacheTime = pT.t || null; }
+    } catch (e) {}
     var promises = Object.keys(locsUsed).map(function(name){
       if (cache[name]) return Promise.resolve({name:name, data:cache[name]});
       var loc = LOCATIONS[name];
@@ -2795,14 +2800,22 @@
         return {name:name, data:j};
       }).catch(function(){ return {name:name, data:null}; });
     });
+    var fetchTime = cacheTime || Date.now();
     Promise.all(promises).then(function(results){
       var byLoc = {};
-      results.forEach(function(r){ if (r.data) byLoc[r.name] = r.data; });
-      try { localStorage.setItem(cacheKey, JSON.stringify({t:Date.now(), data:byLoc})); } catch (e) {}
-      applyWeatherToDays(byLoc);
+      var anyNew = false;
+      results.forEach(function(r){ if (r.data) { byLoc[r.name] = r.data; if (!cache[r.name]) anyNew = true; } });
+      if (anyNew) {
+        fetchTime = Date.now();
+        try { localStorage.setItem(cacheKey, JSON.stringify({t:fetchTime, data:byLoc})); } catch (e) {}
+      }
+      applyWeatherToDays(byLoc, fetchTime);
     });
   }
-  function applyWeatherToDays(byLoc) {
+  function applyWeatherToDays(byLoc, fetchedAt) {
+    // Compute "Updated N hours ago" label.
+    var hoursAgo = fetchedAt ? Math.round((Date.now() - fetchedAt) / (1000*60*60)) : 0;
+    var srcLabel = hoursAgo < 1 ? "Updated just now" : "Updated " + hoursAgo + " hour" + (hoursAgo === 1 ? "" : "s") + " ago";
     DAYS.forEach(function(d){
       var locName = locForDay(d);
       var data = byLoc[locName];
@@ -2820,7 +2833,7 @@
       document.querySelectorAll('[data-w-feels][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = fl + " degC"; });
       document.querySelectorAll('[data-w-rain][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = rn + "%"; });
       document.querySelectorAll('[data-w-wind][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = wd + " km/h, " + wsev; });
-      document.querySelectorAll('[data-w-src][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = "Open Meteo live"; });
+      document.querySelectorAll('[data-w-src][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = srcLabel; });
     });
   }
 
