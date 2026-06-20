@@ -2365,6 +2365,94 @@
   }
 
 </style>
+
+<!-- v3.12 #12 Sacred Journey Map · full-bleed layout + delight animation tokens -->
+<style id="kailash-v312-sjm">
+  /* Map --accent alias (ochre/yellow). Used by sacred markers in the SVG. */
+  :root, :root[data-theme="light"] { --accent: #8e6628; }
+  :root[data-theme="dark"]         { --accent: #d4a35a; }
+
+  /* Full-bleed section: break out of any max-width container */
+  .sacred-journey-map-section {
+    margin: 0 calc(50% - 50vw);
+    width: 100vw;
+    overflow: hidden;
+    background: var(--bg);
+    /* Space below, flush against hero above */
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  /* The SVG fills 100% of the section width */
+  .sacred-journey-map-section #sacred-journey-map {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* viewBox 0 0 1200 500, so ~41.7vw height */
+  }
+
+  /* Delight: parikrama loop draw-on (CSS animation triggered once) */
+  @keyframes sjm-loop-draw {
+    from { stroke-dashoffset: 1200; }
+    to   { stroke-dashoffset: 0; }
+  }
+  .sacred-journey-map-section .delight-parikrama-loop.sjm-animate {
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: sjm-loop-draw 1.8s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+
+  /* Delight: route segments fade in */
+  @keyframes sjm-route-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .sacred-journey-map-section .delight-route-draw.sjm-animate {
+    animation: sjm-route-fade 1.2s ease forwards;
+    animation-delay: 0.3s;
+    opacity: 0;
+  }
+
+  /* Delight: sacred markers stagger scale-in */
+  @keyframes sjm-marker-in {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .sacred-journey-map-section .delight-sacred-marker.sjm-animate {
+    transform-origin: center;
+    animation: sjm-marker-in 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  /* Delight: Dolma La breathing pulse */
+  @keyframes sjm-breathe {
+    0%,100% { r: 14; }
+    50%      { r: 17; }
+  }
+  .sacred-journey-map-section .delight-breathing {
+    animation: sjm-breathe 3s ease-in-out infinite;
+  }
+
+  /* Delight: you-are-here pulsing ring */
+  @keyframes sjm-ring-pulse {
+    0%   { r: 12; opacity: 0.8; }
+    100% { r: 28; opacity: 0; }
+  }
+  .sacred-journey-map-section .delight-ring-pulse {
+    animation: sjm-ring-pulse 1.8s ease-out infinite;
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    pointer-events: none;
+  }
+
+  /* Keyboard focus ring for accessible stops */
+  .sacred-journey-map-section .stop:focus-visible circle.stop-node {
+    outline: none;
+    stroke: var(--accent);
+    stroke-width: 3;
+  }
+</style>
 </head>
 <body>
 <!-- =================== TAB RADIO INPUTS (#37 + v3.8) =================== -->
@@ -2786,6 +2874,272 @@
   <div class="countdown-stack" id="countdown-stack">
     <!-- Populated by JS -->
   </div>
+</section>
+
+<!-- =================== SACRED JOURNEY MAP (v3.12 #12) · full-width primary nav =================== -->
+<section class="sacred-journey-map-section" aria-label="Sacred Journey Map - primary navigation">
+<svg id="sacred-journey-map" data-phase="before" viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sacred Journey Map - the route from Mumbai through Kathmandu and Lhasa, west to Mansarovar, and the parikrama loop around Mount Kailash with Dolma La at the peak">
+  <title>Sacred Journey Map - primary navigation</title>
+
+  <!-- ===== STYLES (scoped to this SVG via id selector) ===== -->
+  <defs>
+    <style>
+      #sacred-journey-map .phase-before,
+      #sacred-journey-map .phase-during,
+      #sacred-journey-map .phase-after { display: none; }
+      #sacred-journey-map[data-phase="before"] .phase-before { display: block; }
+      #sacred-journey-map[data-phase="during"] .phase-during { display: block; }
+      #sacred-journey-map[data-phase="after"]  .phase-after  { display: block; }
+
+      #sacred-journey-map .stop { cursor: pointer; }
+      #sacred-journey-map .stop:hover circle.stop-node { stroke-width: 3; }
+      #sacred-journey-map .stop:focus { outline: none; }
+      #sacred-journey-map .stop:focus circle.stop-node { stroke: var(--accent); stroke-width: 3; }
+
+      /* during phase: dim all nodes except .you-are-here */
+      #sacred-journey-map[data-phase="during"] .stop:not(.you-are-here) { opacity: 0.3; transition: opacity 400ms; }
+      #sacred-journey-map[data-phase="during"] .stop.you-are-here { opacity: 1; }
+
+      /* after phase: every node gets a checkmark; sacred markers turn accent ochre */
+      #sacred-journey-map[data-phase="after"] .sacred-marker use { color: var(--accent); }
+
+      /* origin highlight */
+      #sacred-journey-map .origin-ray { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3,3; transition: stroke 400ms, stroke-width 400ms, stroke-dasharray 400ms; }
+      #sacred-journey-map .origin-active .origin-ray { stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: none; }
+      #sacred-journey-map .origin-active .origin-node { stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <!-- ===== BACKGROUND: country outlines (schematic) ===== -->
+  <g class="map-geography" stroke="var(--border)" stroke-width="1" fill="none">
+    <!-- Tibet plateau: large horizontal band at top -->
+    <path d="M 180,80 Q 400,55 700,65 Q 950,55 1120,75 Q 1120,200 1120,300 Q 950,310 700,295 Q 400,310 180,295 Z"
+          fill="var(--card)" fill-opacity="0.4"/>
+    <!-- Nepal: small strip in the middle south -->
+    <path d="M 350,355 Q 450,340 550,350 Q 620,345 650,360 L 640,400 Q 500,395 380,400 Z"
+          fill="var(--card)" fill-opacity="0.3"/>
+    <!-- India: bottom curve -->
+    <path d="M 120,470 Q 250,440 380,460 Q 500,425 620,445 Q 760,460 900,445 Q 1020,460 1120,470 L 1120,495 L 120,495 Z"
+          fill="var(--card)" fill-opacity="0.35"/>
+
+    <!-- Country labels -->
+    <text x="900" y="455" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--muted)" letter-spacing="0.2em">INDIA</text>
+    <text x="520" y="385" font-family="Inter Tight, sans-serif" font-size="10" fill="var(--muted)" letter-spacing="0.18em">NEPAL</text>
+    <text x="780" y="190" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--muted)" letter-spacing="0.2em">TIBET</text>
+  </g>
+
+  <!-- ===== ORIGIN CONVERGENCE RAYS ===== -->
+  <g class="origin-rays">
+    <g class="origin-group origin-us" data-origin="us"><line class="origin-ray" x1="60" y1="140" x2="480" y2="380"/></g>
+    <g class="origin-group origin-uae" data-origin="uae"><line class="origin-ray" x1="60" y1="240" x2="480" y2="380"/></g>
+    <g class="origin-group origin-mumbai" data-origin="mumbai"><line class="origin-ray" x1="135" y1="440" x2="480" y2="380"/></g>
+    <g class="origin-group origin-mauritius" data-origin="mauritius"><line class="origin-ray" x1="60" y1="470" x2="480" y2="380"/></g>
+  </g>
+
+  <!-- ===== ORIGINS PANEL (left edge) ===== -->
+  <g class="origins" font-family="JetBrains Mono, monospace">
+    <g class="origin origin-us" data-origin="us">
+      <circle class="origin-node" cx="60" cy="140" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="75" y="144" font-size="11" fill="var(--ink)" letter-spacing="0.05em">NEW YORK</text>
+      <text x="75" y="156" font-size="8" fill="var(--muted)" letter-spacing="0.1em">America/New_York</text>
+    </g>
+    <g class="origin origin-uae" data-origin="uae">
+      <circle class="origin-node" cx="60" cy="240" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="75" y="244" font-size="11" fill="var(--ink)" letter-spacing="0.05em">DUBAI</text>
+      <text x="75" y="256" font-size="8" fill="var(--muted)" letter-spacing="0.1em">Asia/Dubai</text>
+    </g>
+    <g class="origin origin-mumbai" data-origin="mumbai">
+      <circle class="origin-node" cx="135" cy="440" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="150" y="444" font-size="11" fill="var(--ink)" letter-spacing="0.05em">MUMBAI</text>
+      <text x="150" y="456" font-size="8" fill="var(--muted)" letter-spacing="0.1em">Asia/Kolkata</text>
+    </g>
+    <g class="origin origin-mauritius" data-origin="mauritius">
+      <circle class="origin-node" cx="60" cy="470" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="75" y="474" font-size="11" fill="var(--ink)" letter-spacing="0.05em">PORT LOUIS</text>
+      <text x="75" y="486" font-size="8" fill="var(--muted)" letter-spacing="0.1em">Indian/Mauritius</text>
+    </g>
+  </g>
+
+  <!-- ===== LINEAR ROUTE SEGMENTS (thinner; dashed for flight; delight-route-draw) ===== -->
+  <g class="route-segments" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round">
+    <!-- KTM to Lhasa (flight, dashed) -->
+    <path class="delight-route-draw" d="M 480,380 Q 700,330 940,280" stroke-dasharray="6,4"/>
+    <!-- Lhasa to Mansarovar (flight + drive, mixed) -->
+    <path class="delight-route-draw" d="M 940,280 Q 700,250 480,220" stroke-dasharray="6,4"/>
+    <!-- Mansarovar to Darchen (drive, solid thin) -->
+    <path class="delight-route-draw" d="M 480,220 L 420,235"/>
+    <!-- Darchen to Mansarovar return (solid thin) -->
+    <path class="delight-route-draw" d="M 420,235 L 480,220" opacity="0.4"/>
+    <!-- Mansarovar to Lhasa return (dashed) -->
+    <path class="delight-route-draw" d="M 480,220 Q 700,255 940,280" stroke-dasharray="6,4" opacity="0.4"/>
+    <!-- Lhasa to KTM return (dashed) -->
+    <path class="delight-route-draw" d="M 940,280 Q 700,335 480,380" stroke-dasharray="6,4" opacity="0.4"/>
+  </g>
+
+  <!-- ===== PARIKRAMA LOOP (the visual hero; thicker stroke 2.5) ===== -->
+  <g class="parikrama-loop" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Closed loop through Darchen - Dirapuk - Dolma La - Zuthulphuk - Darchen -->
+    <path class="delight-parikrama-loop"
+          d="M 420,235 Q 360,200 290,180 Q 240,150 260,110 Q 280,85 320,100 Q 380,140 380,180 Q 360,210 420,235 Z"/>
+  </g>
+
+  <!-- ===== TRIP STOPS (clickable) ===== -->
+  <g class="trip-stops" font-family="JetBrains Mono, monospace">
+
+    <g class="stop stop-kathmandu" data-day-id="day-1" role="button" tabindex="0" aria-label="Kathmandu - 1380 meters - Days 1, 2, 11, 12, 13">
+      <circle class="stop-node" cx="480" cy="380" r="9" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="495" y="385" font-size="13" fill="var(--ink)" font-weight="600">Kathmandu</text>
+      <text x="495" y="399" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D1 - D2 - D11 - D12 - D13 - 1,380M</text>
+      <title>Kathmandu - 1,380m / 4,528ft</title>
+    </g>
+
+    <g class="stop stop-lhasa" data-day-id="day-3" role="button" tabindex="0" aria-label="Lhasa - 3656 meters - Days 3, 4, 10">
+      <circle class="stop-node" cx="940" cy="280" r="9" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="955" y="285" font-size="13" fill="var(--ink)" font-weight="600">Lhasa</text>
+      <text x="955" y="299" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D3 - D4 - D10 - 3,656M</text>
+      <title>Lhasa - 3,656m / 11,995ft</title>
+    </g>
+
+    <g class="stop stop-mansarovar" data-day-id="day-5" role="button" tabindex="0" aria-label="Mansarovar - 4570 meters - Days 5, 6 - holy lake">
+      <circle class="stop-node" cx="480" cy="220" r="9" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="495" y="225" font-size="13" fill="var(--ink)" font-weight="600">Mansarovar</text>
+      <text x="495" y="239" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D5 - D6 - 4,570M</text>
+      <title>Mansarovar - 4,570m / 14,993ft - holy lake</title>
+    </g>
+
+    <g class="stop stop-darchen" data-day-id="day-7" role="button" tabindex="0" aria-label="Darchen - 4575 meters - Day 7 trailhead - Day 9 finish">
+      <circle class="stop-node" cx="420" cy="235" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="405" y="261" font-size="11" fill="var(--ink)" font-weight="600" text-anchor="end">Darchen</text>
+      <text x="405" y="273" font-size="8" fill="var(--muted)" letter-spacing="0.1em" text-anchor="end">D7 START - D9 FINISH - 4,575M</text>
+      <title>Darchen - 4,575m / 15,010ft - parikrama trailhead</title>
+    </g>
+
+    <g class="stop stop-dirapuk" data-day-id="day-7" role="button" tabindex="0" aria-label="Dirapuk - 4900 meters - Day 7 night camp">
+      <circle class="stop-node" cx="290" cy="180" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="275" y="173" font-size="11" fill="var(--ink)" font-weight="600" text-anchor="end">Dirapuk</text>
+      <text x="275" y="161" font-size="8" fill="var(--muted)" letter-spacing="0.1em" text-anchor="end">D7 NIGHT - 4,900M</text>
+      <title>Dirapuk - 4,900m / 16,076ft - Day 7 night camp</title>
+    </g>
+
+    <!-- PEAK - Dolma La - double-size red - breathing pulse - the visual hero -->
+    <g class="stop stop-dolma-la critical" data-day-id="day-8" role="button" tabindex="0" aria-label="Dolma La pass - 5630 meters - Day 8 - the highest point">
+      <circle class="stop-node delight-breathing" cx="260" cy="110" r="14" fill="var(--red)" stroke="var(--red)" stroke-width="2"/>
+      <text x="245" y="98" font-size="14" fill="var(--red)" font-weight="700" text-anchor="end">Dolma La</text>
+      <text x="245" y="86" font-size="10" fill="var(--red)" letter-spacing="0.1em" font-weight="600" text-anchor="end">D8 - 5,630M / 18,471FT</text>
+      <title>Dolma La pass - 5,630m / 18,471ft - Day 8 - the highest point of the journey</title>
+    </g>
+
+    <g class="stop stop-zuthulphuk" data-day-id="day-8" role="button" tabindex="0" aria-label="Zuthulphuk - 4790 meters - Day 8 night camp">
+      <circle class="stop-node" cx="330" cy="190" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+      <text x="345" y="195" font-size="11" fill="var(--ink)" font-weight="600">Zuthulphuk</text>
+      <text x="345" y="207" font-size="8" fill="var(--muted)" letter-spacing="0.1em">D8 NIGHT - 4,790M</text>
+      <title>Zuthulphuk - 4,790m / 15,715ft - Day 8 night camp</title>
+    </g>
+  </g>
+
+  <!-- ===== SACRED MARKERS (always visible per specification) ===== -->
+  <g class="sacred-markers" font-family="Inter Tight, sans-serif">
+
+    <!-- Pashupatinath (KTM Day 2) -->
+    <g class="sacred-marker delight-sacred-marker" data-day-id="day-2">
+      <use href="#icon-temple-line" x="430" y="395" width="16" height="16" color="var(--accent)"/>
+      <text x="425" y="425" font-size="9" fill="var(--accent)" font-style="italic" text-anchor="end" letter-spacing="0.05em">Pashupatinath</text>
+      <title>Pashupatinath - Kathmandu Day 2 - sacred Shiva temple</title>
+    </g>
+
+    <!-- Jokhang (Lhasa Day 4) -->
+    <g class="sacred-marker delight-sacred-marker" data-day-id="day-4">
+      <use href="#icon-monastery-line" x="970" y="245" width="16" height="16" color="var(--accent)"/>
+      <text x="1015" y="258" font-size="9" fill="var(--accent)" font-style="italic" letter-spacing="0.05em">Jokhang</text>
+      <title>Jokhang Temple - Lhasa Day 4 - most sacred temple in Tibetan Buddhism</title>
+    </g>
+
+    <!-- Mansarovar Snan (Day 6 holy bath) -->
+    <g class="sacred-marker delight-sacred-marker" data-day-id="day-6">
+      <use href="#icon-lake-ripple-line" x="425" y="190" width="16" height="16" color="var(--accent)"/>
+      <text x="425" y="183" font-size="9" fill="var(--accent)" font-style="italic" text-anchor="end" letter-spacing="0.05em">Mansarovar Snan</text>
+      <title>Mansarovar Snan (holy bath) - Day 6 - the lake of the mind</title>
+    </g>
+
+    <!-- Chiu Gompa (Day 6) -->
+    <g class="sacred-marker delight-sacred-marker" data-day-id="day-6">
+      <use href="#icon-monastery-line" x="510" y="195" width="14" height="14" color="var(--accent)"/>
+      <text x="528" y="207" font-size="9" fill="var(--accent)" font-style="italic" letter-spacing="0.05em">Chiu Gompa</text>
+      <title>Chiu Gompa Puja (worship) - Day 6 - monastery overlooking Mansarovar</title>
+    </g>
+
+    <!-- First Kailash Darshan (Day 7) -->
+    <g class="sacred-marker delight-sacred-marker" data-day-id="day-7">
+      <use href="#icon-mountain" x="305" y="155" width="14" height="14" color="var(--accent)"/>
+      <text x="295" y="145" font-size="9" fill="var(--accent)" font-style="italic" text-anchor="end" letter-spacing="0.05em">Kailash Darshan</text>
+      <title>First Kailash Darshan (sacred sight) - Day 7 - the sacred mountain viewpoint</title>
+    </g>
+
+    <!-- Dolma La Crossing halo (Day 8 - sacred ring around the red peak) -->
+    <g class="sacred-marker delight-sacred-marker" data-day-id="day-8">
+      <circle cx="260" cy="110" r="22" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2,3" opacity="0.7"/>
+      <title>Dolma La Crossing (spiritual crossing) - Day 8 - death and rebirth in pilgrim tradition</title>
+    </g>
+
+    <!-- Gauri Kund (Day 8 descent - between Dolma La and Zuthulphuk) -->
+    <g class="sacred-marker delight-sacred-marker" data-day-id="day-8">
+      <use href="#icon-lake-ripple-line" x="285" y="148" width="13" height="13" color="var(--accent)"/>
+      <text x="298" y="170" font-size="9" fill="var(--accent)" font-style="italic" letter-spacing="0.05em">Gauri Kund</text>
+      <title>Gauri Kund (sacred glacial lake) - Day 8 descent</title>
+    </g>
+  </g>
+
+  <!-- ===== BEFORE PHASE - parikrama loop dominates ===== -->
+  <g class="phase-before">
+    <!-- Subtle highlight ring around the parikrama loop - accent ochre -->
+    <path d="M 420,235 Q 360,200 290,180 Q 240,150 260,110 Q 280,85 320,100 Q 380,140 380,180 Q 360,210 420,235 Z"
+          fill="none" stroke="var(--accent)" stroke-width="6" opacity="0.15" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Anchor text -->
+    <text x="600" y="475" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)" text-anchor="middle" letter-spacing="0.15em" font-weight="600">
+      THE PARIKRAMA - 3-DAY CIRCUMAMBULATION OF KAILASH - ANCHOR OF THE YATRA
+    </text>
+  </g>
+
+  <!-- ===== DURING PHASE - you-are-here marker (JS injects .you-are-here class on current stop) ===== -->
+  <g class="phase-during">
+    <!-- The pulsing ring is rendered at runtime via JS -->
+    <text x="600" y="475" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ink)" text-anchor="middle" letter-spacing="0.15em" font-weight="600">
+      LIVE TRACK - YOU ARE HERE
+    </text>
+  </g>
+
+  <!-- ===== AFTER PHASE - checkmarks on every node ===== -->
+  <g class="phase-after">
+    <!-- Visited checkmarks adjacent to each stop -->
+    <use href="#icon-check-line" x="490" y="365" width="12" height="12" color="var(--green)"/>
+    <use href="#icon-check-line" x="950" y="265" width="12" height="12" color="var(--green)"/>
+    <use href="#icon-check-line" x="490" y="205" width="12" height="12" color="var(--green)"/>
+    <use href="#icon-check-line" x="430" y="220" width="12" height="12" color="var(--green)"/>
+    <use href="#icon-check-line" x="300" y="165" width="12" height="12" color="var(--green)"/>
+    <use href="#icon-check-line" x="270" y="95"  width="14" height="14" color="var(--accent)"/>
+    <use href="#icon-check-line" x="340" y="175" width="12" height="12" color="var(--green)"/>
+    <text x="600" y="475" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--accent)" text-anchor="middle" letter-spacing="0.15em" font-weight="700">
+      YATRA SAMPOORNA - 7 SACRED SITES - 1 PARIKRAMA - 5,630M CROSSED
+    </text>
+  </g>
+
+  <!-- ===== LEGEND (top-right) ===== -->
+  <g class="map-legend" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" letter-spacing="0.05em">
+    <text x="1000" y="25" font-weight="700" font-size="10" letter-spacing="0.12em" fill="var(--ink)">LEGEND</text>
+    <line x1="1000" y1="38" x2="1025" y2="38" stroke="var(--ink)" stroke-width="2.5"/>
+    <text x="1032" y="41">PARIKRAMA LOOP</text>
+    <line x1="1000" y1="51" x2="1025" y2="51" stroke="var(--ink)" stroke-width="1.5"/>
+    <text x="1032" y="54">DRIVE / FOOT</text>
+    <line x1="1000" y1="64" x2="1025" y2="64" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="6,4"/>
+    <text x="1032" y="67">FLIGHT</text>
+    <circle cx="1012" cy="78" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+    <text x="1032" y="81">STOP</text>
+    <circle cx="1012" cy="93" r="7" fill="var(--red)"/>
+    <text x="1032" y="96">PEAK - DOLMA LA</text>
+    <use href="#icon-temple-line" x="1004" y="103" width="14" height="14" color="var(--accent)"/>
+    <text x="1032" y="113">SACRED SITE</text>
+  </g>
+</svg>
 </section>
 
 <!-- =================== MASTER JOURNEY MAP (v3.10 §0.14.2) =================== -->
@@ -5975,6 +6329,166 @@
     });
   }
 
+  /* =================== SACRED JOURNEY MAP (v3.12 #12) ===================
+   * 1. Phase wiring: sets data-phase on SVG root from getJourneyState().
+   * 2. You-are-here (during phase): adds .you-are-here to current day stop
+   *    and clones a delight-ring-pulse circle next to the stop-node.
+   * 3. Click handlers: each .stop data-day-id -> switch tab + scroll to card.
+   * 4. Keyboard: Enter/Space on focused .stop triggers same as click.
+   * 5. Origin auto-detect (v3.10 §0.14.3 logic reused):
+   *    kailash_origin localStorage key overrides auto-detect.
+   *    Adds class origin-active to matching .origin-group.
+   * 6. Delight animations fired once via IntersectionObserver.
+   */
+  function initSacredJourneyMap() {
+    var svg = document.getElementById("sacred-journey-map");
+    if (!svg) return;
+
+    /* --- 1. Phase wiring --- */
+    var phase = "before";
+    try {
+      var state = getJourneyState();
+      if (state && state.phase) phase = state.phase;
+    } catch(e) {
+      try {
+        phase = computePhase(getReferenceDate());
+      } catch(e2) {}
+    }
+    svg.setAttribute("data-phase", phase);
+
+    /* --- 2. You-are-here (during phase only) --- */
+    if (phase === "during") {
+      try {
+        var state2 = getJourneyState();
+        var dayIdx = (state2 && state2.tripDayIndex) ? state2.tripDayIndex : 1;
+        var dayId = "day-" + dayIdx;
+        /* Find the first stop whose data-day-id matches (exact or covers) today. */
+        var allStops = svg.querySelectorAll(".stop[data-day-id]");
+        var targetStop = null;
+        allStops.forEach(function(s) {
+          if (!targetStop && s.getAttribute("data-day-id") === dayId) {
+            targetStop = s;
+          }
+        });
+        /* Fallback: day-1 (Kathmandu) if nothing matches. */
+        if (!targetStop) {
+          targetStop = svg.querySelector(".stop-kathmandu");
+        }
+        if (targetStop) {
+          targetStop.classList.add("you-are-here");
+          /* Clone a pulsing ring sibling next to the stop-node circle. */
+          var stopNode = targetStop.querySelector("circle.stop-node");
+          if (stopNode) {
+            var cx = stopNode.getAttribute("cx");
+            var cy = stopNode.getAttribute("cy");
+            var pulse = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            pulse.setAttribute("class", "delight-ring-pulse");
+            pulse.setAttribute("cx", cx);
+            pulse.setAttribute("cy", cy);
+            pulse.setAttribute("r", "12");
+            targetStop.appendChild(pulse);
+          }
+        }
+      } catch(e) {}
+    }
+
+    /* --- 3 + 4. Click + keyboard handlers --- */
+    var stops = svg.querySelectorAll(".stop[data-day-id]");
+    stops.forEach(function(stop) {
+      var dayId = stop.getAttribute("data-day-id");
+      if (!dayId) return;
+      function goToDay() {
+        try {
+          activateTab("tab-itinerary");
+          setTimeout(function() {
+            var el = document.getElementById(dayId);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 60);
+        } catch(e) {}
+      }
+      stop.addEventListener("click", goToDay);
+      stop.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          goToDay();
+        }
+      });
+    });
+
+    /* --- 5. Origin auto-detect --- */
+    function sjmDetectOrigin(tz) {
+      if (!tz) return "all";
+      if (tz === "Asia/Kolkata" || tz === "Asia/Calcutta") return "mumbai";
+      if (tz === "Asia/Dubai"   || tz === "Asia/Abu_Dhabi") return "uae";
+      if (tz === "Indian/Mauritius") return "mauritius";
+      if (tz.indexOf("America/") === 0) return "us";
+      return "all";
+    }
+    function sjmResolveOrigin() {
+      try {
+        var saved = localStorage.getItem("kailash_origin");
+        if (saved && saved !== "auto") return saved;
+      } catch(e) {}
+      try {
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return sjmDetectOrigin(tz);
+      } catch(e) {}
+      return "all";
+    }
+    function sjmApplyOrigin(origin) {
+      /* Reset all origin-group active states. */
+      svg.querySelectorAll(".origin-group").forEach(function(g) {
+        g.classList.remove("origin-active");
+      });
+      svg.querySelectorAll(".origin").forEach(function(o) {
+        o.classList.remove("origin-active");
+      });
+      if (!origin || origin === "all") return;
+      var grp = svg.querySelector(".origin-group.origin-" + origin);
+      if (grp) grp.classList.add("origin-active");
+      var ori = svg.querySelector(".origin.origin-" + origin);
+      if (ori) ori.classList.add("origin-active");
+    }
+    sjmApplyOrigin(sjmResolveOrigin());
+
+    /* Re-apply if the user changes origin via the v3.10 MJM selector (shared localStorage key). */
+    try {
+      var mjmSel = document.getElementById("mjm-origin-select");
+      if (mjmSel) {
+        mjmSel.addEventListener("change", function() {
+          sjmApplyOrigin(sjmResolveOrigin());
+        });
+      }
+    } catch(e) {}
+
+    /* --- 6. Delight: animate on first intersection --- */
+    try {
+      var animated = false;
+      var observer = new IntersectionObserver(function(entries) {
+        if (animated) return;
+        if (!entries[0].isIntersecting) return;
+        animated = true;
+        observer.disconnect();
+        /* Stagger sacred markers. */
+        var markers = svg.querySelectorAll(".delight-sacred-marker");
+        markers.forEach(function(m, i) {
+          m.classList.add("sjm-animate");
+          m.style.animationDelay = (0.6 + i * 0.08) + "s";
+        });
+        /* Route segments fade in. */
+        svg.querySelectorAll(".delight-route-draw").forEach(function(r) {
+          r.classList.add("sjm-animate");
+        });
+        /* Parikrama loop draw-on (last, most prominent). */
+        setTimeout(function() {
+          var loop = svg.querySelector(".delight-parikrama-loop");
+          if (loop) loop.classList.add("sjm-animate");
+        }, 100);
+      }, { threshold: 0.15 });
+      observer.observe(svg);
+    } catch(e) {}
+  }
+
   /* =================== MASTER JOURNEY MAP (v3.10 §0.14.2) ===================
    * Click any stop → switch to Itinerary tab + smooth-scroll to day card.
    * Keyboard: Enter/Space on focused stop triggers the same action.
@@ -6108,6 +6622,8 @@
     try { initMasterJourneyMap(); } catch(e) {}
     try { initOriginSelector(); }   catch(e) {}
     try { initSacredToggle(); }     catch(e) {}
+    /* v3.12 #12 Sacred Journey Map (full-width, 3 phases, click-to-day, origin auto-detect). */
+    try { initSacredJourneyMap(); } catch(e) {}
   });
 </script>
 
