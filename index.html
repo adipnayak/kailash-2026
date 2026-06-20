@@ -1221,7 +1221,7 @@
     <div class="today-row"><span class="label">Sleep altitude tonight</span><span class="value" id="ts-sleep">--</span></div>
     <div class="today-row"><span class="label">Altitude gain vs last night</span><span class="value" id="ts-gain">--</span></div>
     <div class="today-row"><span class="label">Connectivity right now</span><span class="value" id="ts-conn">--</span></div>
-    <div class="today-row"><span class="label">Next signal expected</span><span class="value" id="ts-next">--</span></div>
+    <div class="today-row"><span class="label">Reachability today</span><span class="value" id="ts-next">--</span></div>
     <div class="today-row"><span class="label">Today's weather</span><span class="value" id="ts-weather">--</span></div>
   </div>
 </section>
@@ -2392,7 +2392,15 @@
     html += '<div class="fc-row"><span class="lab">Sleep altitude</span><span class="val">' + d.altitude_sleep.toLocaleString() + ' m <span class="' + riskClass(d.risk) + '">&middot; ' + d.risk + '</span></span></div>';
     html += '<div class="fc-row"><span class="lab">Peak altitude</span><span class="val">' + d.altitude_peak.toLocaleString() + ' m</span></div>';
     html += '<div class="fc-row"><span class="lab">Connectivity</span><span class="val ' + connClass(d.conn_status) + '"><svg class="icon icon-16"><use href="#' + connIcon(d.conn_status) + '"/></svg>' + d.conn_status + '</span></div>';
-    html += '<div class="fc-row"><span class="lab">Next signal</span><span class="val">' + escapeHtml(d.next_signal || "live now") + '</span></div>';
+    var reachLabel = "";
+    if (d.conn_status === "good") {
+      reachLabel = "Likely reachable today";
+    } else if (d.conn_status === "offline") {
+      reachLabel = d.next_signal ? "Likely offline. Back online " + d.next_signal : "Likely offline today";
+    } else {
+      reachLabel = d.next_signal ? "Intermittent. Try " + d.next_signal : "Intermittent connectivity";
+    }
+    html += '<div class="fc-row"><span class="lab">Reachability</span><span class="val">' + escapeHtml(reachLabel) + '</span></div>';
     var w = d.weather;
     html += '<div class="fc-row"><span class="lab">Temp</span><span class="val" data-w-temp data-day="'+d.day+'">' + w.high + " / " + w.low + ' &deg;C</span></div>';
     html += '<div class="fc-row"><span class="lab">Feels like</span><span class="val" data-w-feels data-day="'+d.day+'">' + w.feels + ' &deg;C</span></div>';
@@ -2525,7 +2533,15 @@
       document.getElementById("ts-gain").textContent = "baseline";
     }
     document.getElementById("ts-conn").textContent = d.conn_status;
-    document.getElementById("ts-next").textContent = d.next_signal || "live now";
+    var tsReach = "";
+    if (d.conn_status === "good") {
+      tsReach = "Likely reachable today";
+    } else if (d.conn_status === "offline") {
+      tsReach = d.next_signal ? "Likely offline. Back online " + d.next_signal : "Likely offline today";
+    } else {
+      tsReach = d.next_signal ? "Intermittent. Try " + d.next_signal : "Intermittent connectivity";
+    }
+    document.getElementById("ts-next").textContent = tsReach;
     var w = d.weather;
     document.getElementById("ts-weather").textContent = "High " + w.high + " / Low " + w.low + " degC, Wind " + w.wind + " km/h";
   }
