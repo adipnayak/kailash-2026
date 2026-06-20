@@ -12,6 +12,7 @@ import { MapArc, MapMarker, MarkerLabel } from './mapcn/MapArc';
 import type { MapArcDatum } from './mapcn/MapArc';
 import type { JourneyState } from '../lib/journey-state';
 import { resolveOrigin, type OriginId } from '../lib/origin';
+import { MapPin, Mountain as MountainIcon } from '@aliimam/icons';
 
 // ---------------------------------------------------------------------------
 // Route data
@@ -42,13 +43,13 @@ const ARC_PAINT: any = {
   'line-color': [
     'match',
     ['get', 'mode'],
-    'origin-active', '#8e6628',
-    'origin',        '#c9a96e',
-    'flight',        '#1a1a18',
-    'drive',         '#1a1a18',
-    'parikrama',     '#b73e2a',
-    'return',        '#6a6a68',
-    '#1a1a18',
+    'origin-active', '#b08040',
+    'origin',        '#d4b070',
+    'flight',        '#212121',
+    'drive',         '#212121',
+    'parikrama',     '#c0432d',
+    'return',        '#8a8a8a',
+    '#212121',
   ],
   'line-width': [
     'match',
@@ -77,7 +78,7 @@ const ARC_LAYOUT = {
 };
 
 const HOVER_PAINT = {
-  'line-color': '#b73e2a',
+  'line-color': '#c0432d',
   'line-width': 4,
 } as const;
 
@@ -197,29 +198,38 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
                   lngLat={stop.lngLat}
                   onClick={() => handleStopClick(stop.day)}
                 >
-                  {/* Dot */}
+                  {/* Marker icon */}
                   <div
-                    className="relative cursor-pointer"
-                    style={{ width: isDolmaLa ? 16 : 12, height: isDolmaLa ? 16 : 12 }}
+                    className="relative cursor-pointer flex items-center justify-center"
+                    style={{ width: isDolmaLa ? 20 : 14, height: isDolmaLa ? 20 : 14 }}
                     title={stop.sacredLabel ?? stop.name}
                   >
-                    <div
-                      className="absolute inset-0 rounded-full"
-                      style={{
-                        background: isDolmaLa ? '#b73e2a' : '#ffffff',
-                        border: isDolmaLa ? 'none' : '2px solid #1a1a18',
-                        boxShadow: isCurrentStop ? '0 0 0 3px rgba(183,62,42,0.35)' : undefined,
-                      }}
-                    />
+                    {isDolmaLa ? (
+                      <MountainIcon
+                        size={16}
+                        style={{
+                          color: '#c0432d',
+                          filter: isCurrentStop ? 'drop-shadow(0 0 3px rgba(192,67,45,0.5))' : undefined,
+                        }}
+                      />
+                    ) : (
+                      <MapPin
+                        size={12}
+                        style={{
+                          color: '#212121',
+                          filter: isCurrentStop ? 'drop-shadow(0 0 2px rgba(33,33,33,0.4))' : undefined,
+                        }}
+                      />
+                    )}
                   </div>
 
                   {/* Label */}
                   <MarkerLabel position="top">
                     <span
                       style={{
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Geist Mono', ui-monospace, monospace",
                         fontSize: '9px',
-                        color: isDolmaLa ? '#b73e2a' : '#1a1a18',
+                        color: isDolmaLa ? '#c0432d' : '#212121',
                         fontWeight: isDolmaLa ? 700 : 500,
                         letterSpacing: '0.07em',
                         textTransform: 'uppercase',
@@ -248,18 +258,18 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
                       width: 8,
                       height: 8,
                       borderRadius: '50%',
-                      background: '#8e6628',
+                      background: '#b08040',
                       opacity: isActive ? 0.85 : 0.3,
-                      border: '1.5px solid #c9a96e',
+                      border: '1.5px solid #d4b070',
                     }}
                     title={orig.name}
                   />
                   <MarkerLabel position="bottom">
                     <span
                       style={{
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Geist Mono', ui-monospace, monospace",
                         fontSize: '8px',
-                        color: '#8e6628',
+                        color: '#b08040',
                         opacity: isActive ? 1 : 0.4,
                         letterSpacing: '0.05em',
                         textTransform: 'uppercase',
@@ -281,7 +291,7 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
       {/* Attribution caption */}
       <div
         className="absolute bottom-1 left-2 text-[9px] pointer-events-none"
-        style={{ color: '#6a6a68', fontFamily: 'monospace' }}
+        style={{ color: '#8a8a8a', fontFamily: 'monospace' }}
       >
         Kailash Parikrama 2026
       </div>

@@ -34,7 +34,7 @@ export function AliimamStats({
   return (
     <div className="relative container flex flex-col items-center justify-center overflow-hidden py-20">
       <div className="z-10 flex w-full flex-col items-center justify-center text-center">
-        <p className="text-muted mb-10 max-w-sm text-center text-sm md:max-w-md">
+        <p className="text-muted-foreground mb-10 max-w-sm text-center text-sm md:max-w-md">
           {headline}
         </p>
         <div className="grid flex-wrap justify-center gap-6 space-y-4 text-center md:flex">
@@ -48,10 +48,10 @@ export function AliimamStats({
                 .filter(Boolean)
                 .join(' ')}
             >
-              <div className="text-4xl font-extrabold tracking-tighter text-ink">
+              <div className="text-4xl font-extrabold tracking-tighter text-foreground">
                 {stat.value}
               </div>
-              <p className="text-muted text-sm">{stat.label}</p>
+              <p className="text-muted-foreground text-sm">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -60,7 +60,7 @@ export function AliimamStats({
         className="absolute inset-0 z-0"
         style={{
           background:
-            'linear-gradient(to bottom, var(--bg) 0%, var(--bg) 50%, rgba(255,255,255,0) 100%), radial-gradient(ellipse at 50% 120%, var(--border) 0%, var(--bg) 80%)',
+            'linear-gradient(to bottom, var(--background) 0%, var(--background) 50%, rgba(255,255,255,0) 100%), radial-gradient(ellipse at 50% 120%, var(--border) 0%, var(--background) 80%)',
           opacity: 0.7,
         }}
       >

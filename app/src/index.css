@@ -1,51 +1,109 @@
 @import 'tailwindcss';
 @plugin 'tailwindcss-animate';
-@import '@fontsource/inter-tight/400.css';
-@import '@fontsource/inter-tight/500.css';
-@import '@fontsource/inter-tight/600.css';
-@import '@fontsource/inter-tight/700.css';
-@import '@fontsource/jetbrains-mono/400.css';
-@import '@fontsource/jetbrains-mono/500.css';
 
 /* =============================================================
- * Maurten theme via CSS variables.
- * Tailwind v4 reads @theme tokens to generate utilities.
- * Keep the var() indirection so a future dark mode can swap them.
+ * Geist font faces (variable fonts, self-hosted via geist npm package).
+ * Vite serves node_modules via /node_modules/ in dev.
+ * For production, copy fonts to public/ or use a CDN fallback.
  * Anti-AI rule: no smart quotes, no em-dashes, no emojis in this file.
  * ============================================================= */
 
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =============================================================
+ * aliimam native shadcn neutral palette.
+ * Replaces the Maurten alias layer entirely.
+ * Do NOT reintroduce --bg, --ink, --red, --accent, --green vars.
+ * Ochre devotional markers use --sacred (separate token).
+ * ============================================================= */
+
 :root {
-  --bg: #f3f3f2;
-  --ink: #000000;
-  --card: #ffffff;
-  --border: #dcdcd8;
-  --muted: #6a6a68;
-  --red: #b73e2a;
-  --accent: #8e6628;
-  --green: #4a7a4d;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+
+  /* --sacred: warm gold used ONLY for ochre devotional markers
+     (Dolma La emphasis, JAI_BHOLE_NATH, progress bar fill, CandleFilled tints,
+     intermittent connectivity, SNAN AND PUJA badge, spiritual focus border).
+     Kept separate from --accent which is shadcn neutral gray.
+     Was Maurten #8e6628. Now oklch(0.65 0.13 75) warm gold. */
+  --sacred: oklch(0.65 0.13 75);
+  --sacred-foreground: oklch(0.985 0 0);
+
+  /* --emerald: success / good-connectivity / completion states.
+     Was Maurten #4a7a4d. Now oklch(0.53 0.14 155) forest green.
+     Used for: good wifi, checkmarks, recovery day badges, 100% prep bar. */
+  --emerald: oklch(0.53 0.14 155);
+  --emerald-foreground: oklch(0.985 0 0);
 }
 
 @theme {
-  --color-bg: var(--bg);
-  --color-ink: var(--ink);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --color-card: var(--card);
-  --color-border: var(--border);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
-  --color-red: var(--red);
+  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
-  --color-green: var(--green);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sacred: var(--sacred);
+  --color-sacred-foreground: var(--sacred-foreground);
+  --color-emerald: var(--emerald);
+  --color-emerald-foreground: var(--emerald-foreground);
 
-  --font-sans: 'Inter Tight', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'Geist Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
 
-  --radius: 4px;
+  --radius: 0.625rem;
 }
 
 html,
 body,
 #root {
-  background: var(--bg);
-  color: var(--ink);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -54,34 +112,4 @@ body,
 
 body {
   margin: 0;
-}
-
-/* =============================================================
- * Maurten token override-and-pin (aliimam-in/aliimam guard).
- * aliimam blocks reference shadcn tokens like --primary, --background,
- * --foreground, --muted-foreground, --secondary. We map them to Maurten
- * values so aliimam components render correctly without any token conflict.
- * These declarations come AFTER all imports so they always win.
- * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes.
- * ============================================================= */
-
-:root {
-  /* shadcn-to-Maurten bridge (aliimam uses these internally) */
-  --background: var(--bg);
-  --foreground: var(--ink);
-  --primary: var(--ink);
-  --primary-foreground: var(--bg);
-  --secondary: var(--card);
-  --secondary-foreground: var(--ink);
-  --muted-foreground: var(--muted);
-  --card-foreground: var(--ink);
-  --popover: var(--card);
-  --popover-foreground: var(--ink);
-  --destructive: var(--red);
-  --destructive-foreground: var(--bg);
-  --ring: var(--border);
-  --input: var(--border);
-
-  /* aliimam blocks also use --radius */
-  --radius: 4px;
 }

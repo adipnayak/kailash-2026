@@ -147,10 +147,10 @@ interface ChipProps {
 
 function Chip({ icon, label, value }: ChipProps) {
   return (
-    <div className="flex items-center gap-1.5 rounded border border-border bg-bg px-3 py-2 text-sm">
-      <span className="text-muted">{icon}</span>
-      <span className="text-muted font-mono text-xs">{label}</span>
-      <span className="font-medium text-ink">{value}</span>
+    <div className="flex items-center gap-1.5 rounded border border-border bg-background px-3 py-2 text-sm">
+      <span className="text-muted-foreground">{icon}</span>
+      <span className="text-muted-foreground font-mono text-xs">{label}</span>
+      <span className="font-medium text-foreground">{value}</span>
     </div>
   );
 }
@@ -168,12 +168,12 @@ function WeatherCard({ point, badge }: WeatherCardProps) {
   return (
     <div className="rounded border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <span className="font-medium text-ink text-sm">{point.location}</span>
+        <span className="font-medium text-foreground text-sm">{point.location}</span>
         {badge && (
-          <span className="font-mono text-xs text-muted uppercase tracking-wider">{badge}</span>
+          <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">{badge}</span>
         )}
       </div>
-      <p className="mt-1 text-xs text-muted">{weatherLabel(point.weathercode)}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{weatherLabel(point.weathercode)}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Chip
           icon={<Thermometer size={12} />}
@@ -204,7 +204,7 @@ function StaticRanges() {
     <div className="mt-4 space-y-3">
       {LOCATIONS.map((loc) => (
         <div key={loc.label} className="rounded border border-border bg-card p-4">
-          <span className="font-medium text-ink text-sm">{loc.label}</span>
+          <span className="font-medium text-foreground text-sm">{loc.label}</span>
           <div className="mt-2 flex flex-wrap gap-2">
             <Chip
               icon={<Thermometer size={12} />}
@@ -225,10 +225,10 @@ function StaticRanges() {
 function AfterSummary() {
   return (
     <div className="mt-6 space-y-4">
-      <p className="text-sm text-muted uppercase tracking-widest font-mono">
+      <p className="text-sm text-muted-foreground uppercase tracking-widest font-mono">
         Trip weather summary
       </p>
-      <p className="text-ink">Range during trip: -5 C to 18 C</p>
+      <p className="text-foreground">Range during trip: -5 C to 18 C</p>
       <div className="flex flex-wrap gap-3">
         <Chip icon={<Thermometer size={14} />} label="Range"      value="-5 C to 18 C" />
         <Chip icon={<WindFilled size={14} />}        label="Wind days"  value="2" />
@@ -264,17 +264,17 @@ function ConfidenceBar({ pct, d2d }: ConfidenceBarProps) {
   }, [pct]);
 
   const barColor =
-    pct >= 70 ? 'bg-green' :
-    pct >= 40 ? 'bg-accent' :
-                'bg-red';
+    pct >= 70 ? 'bg-emerald' :
+    pct >= 40 ? 'bg-sacred' :
+                'bg-destructive';
 
   return (
     <div className="mt-5">
       <div className="flex items-center justify-between mb-1.5">
-        <span className="font-mono text-xs text-muted uppercase tracking-widest">
+        <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
           Forecast confidence
         </span>
-        <span className="font-mono text-xs font-medium text-ink">
+        <span className="font-mono text-xs font-medium text-foreground">
           {pct}% ({d2d}d out)
         </span>
       </div>
@@ -332,7 +332,7 @@ export function WeatherConfidence() {
       className="border-b border-border bg-card px-6 py-8"
     >
       <div className="mx-auto max-w-5xl">
-        <h2 className="font-sans text-2xl font-medium text-ink">Weather</h2>
+        <h2 className="font-sans text-2xl font-medium text-foreground">Weather</h2>
 
         {/* ---------------------------------------------------------------- */}
         {/* AFTER phase                                                       */}
@@ -344,17 +344,17 @@ export function WeatherConfidence() {
         {/* ---------------------------------------------------------------- */}
         {phase === 'during' && (
           <div className="mt-5 space-y-3">
-            <p className="font-mono text-xs text-muted uppercase tracking-widest">
+            <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
               Live forecast
             </p>
             {loading && (
-              <p className="text-sm text-muted">Loading...</p>
+              <p className="text-sm text-muted-foreground">Loading...</p>
             )}
             {!loading && weather && weather.map((pt) => (
               <WeatherCard key={pt.location} point={pt} badge="today" />
             ))}
             {!loading && !weather && (
-              <p className="text-sm text-muted">
+              <p className="text-sm text-muted-foreground">
                 Forecast unavailable. Check conditions with your guide.
               </p>
             )}
@@ -369,19 +369,19 @@ export function WeatherConfidence() {
             <ConfidenceBar pct={confidence} d2d={daysToDeparture} />
 
             {loading && (
-              <p className="mt-5 text-sm text-muted">Loading...</p>
+              <p className="mt-5 text-sm text-muted-foreground">Loading...</p>
             )}
 
             {!loading && confidence > 0 && weather ? (
               <div className="mt-5 space-y-3">
-                <p className="font-mono text-xs text-muted uppercase tracking-widest">
+                <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
                   {confidence}% confidence forecast
                 </p>
                 {weather.map((pt) => (
                   <WeatherCard key={pt.location} point={pt} />
                 ))}
                 {ktm && (
-                  <p className="mt-2 text-xs text-muted">
+                  <p className="mt-2 text-xs text-muted-foreground">
                     {confidence}% confidence · Kathmandu {ktm.tempMin} to {ktm.tempMax} C
                   </p>
                 )}
@@ -389,7 +389,7 @@ export function WeatherConfidence() {
             ) : (
               !loading && (
                 <div className="mt-5">
-                  <p className="font-mono text-xs text-muted uppercase tracking-widest mb-3">
+                  <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-3">
                     Expected ranges (climatology)
                   </p>
                   <StaticRanges />
