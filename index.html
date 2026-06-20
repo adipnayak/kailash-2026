@@ -7783,11 +7783,16 @@ var SACRED_GLOSSED = {
 };
 
 /* ---- Confidence formula (#9) ---- */
+/* D2D >= 17 -> 0%, D2D = 10 -> 50%, D2D <= 3 -> 100%, linear interpolation */
 function weatherConfidence(d2d) {
   if (d2d >= 17) return 0;
   if (d2d <= 3)  return 100;
+  /* interpolate: at d2d=10, conf=50 => slope = -50/7 per day from d2d=3 */
   return Math.round(100 - ((d2d - 3) / 14) * 100);
 }
+/* Open-Meteo wiring check: existing fetchWeather() in main script handles this.
+   KTM lat:27.7172 lon:85.324, Lhasa lat:29.65 lon:91.1167, Mansarovar lat:30.65 lon:81.45
+   16-day free forecast, no API key, cached 1h in kailash_wx_cache_v1 */
 
 /* =========================================================
    #6 - Journey Timeline
