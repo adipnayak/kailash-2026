@@ -202,6 +202,7 @@
     margin: 0 0 var(--s-6);
     line-height: 1.5;
   }
+  .tz-wrap { margin: 0 0 2rem; }
   .tz-bar {
     display: inline-flex;
     align-items: center;
@@ -213,9 +214,9 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 0.375rem 0.625rem;
-    margin: 0 0 2rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
   }
   .tz-bar select {
     -webkit-appearance: none;
@@ -233,6 +234,49 @@
   }
   .tz-bar select::-ms-expand { display: none; }
   .tz-bar .icon { color: var(--muted); margin-left: -1.1rem; pointer-events: none; }
+
+  /* Local / Trip time pill toggle. */
+  .tz-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+    margin-left: 0.75rem;
+  }
+  .tz-mode button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+    transition: color 150ms, border-color 150ms, background 150ms;
+  }
+  .tz-mode button:first-child { border-radius: 4px 0 0 4px; border-right: none; }
+  .tz-mode button:last-child  { border-radius: 0 4px 4px 0; }
+  .tz-mode button.active {
+    color: var(--ink);
+    border-color: var(--border-s);
+    background: transparent;
+    font-weight: 600;
+  }
+  .tz-mode button:hover:not(.active) { color: var(--ink); border-color: var(--border-s); }
+  .tz-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
 
   /* Hero panel (flat, no background). */
   .hero-panel {
@@ -622,25 +666,46 @@
 
   .day-block { margin-top: 1.5rem; }
   .day-block h4 { margin: 0 0 0.5rem; }
-  .timeline { font-family: var(--font-body); font-size: 0.8125rem; }
+
+  /* Vertical calendar-style timeline (Google Calendar day-view inspired). */
+  .timeline {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    border-left: 1px solid var(--border);
+    margin-left: 0;
+    padding-left: 0;
+  }
   .timeline .ev {
     display: flex;
-    gap: 1rem;
-    padding: 0.375rem 0;
-    border-bottom: 1px solid var(--border);
+    gap: 0;
+    padding: 0.75rem 0 0.75rem 0;
+    align-items: flex-start;
   }
-  .timeline .ev:last-child { border-bottom: none; }
   .timeline .tm {
     font-family: var(--font-body);
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--muted);
     flex: none;
-    min-width: 90px;
+    width: 80px;
+    min-width: 80px;
     font-size: 0.75rem;
     letter-spacing: -0.02em;
+    padding-left: 0;
+    text-align: right;
+    padding-right: 1rem;
+    line-height: 1.5;
+    margin-left: -1px;
   }
-  .timeline .tx { color: var(--ink); flex: 1; }
+  .timeline .tx {
+    color: var(--ink);
+    flex: 1;
+    line-height: 1.5;
+    padding-right: 0.25rem;
+  }
+  @media (max-width: 480px) {
+    .timeline .tm { width: 70px; min-width: 70px; }
+  }
 
   .wear-grid, .food-grid {
     display: grid;
@@ -1089,18 +1154,26 @@
   <p class="devotional">Jai Bhole Nath</p>
   <p class="country-mix">This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.</p>
 
-  <div class="tz-bar">
-    <span>Showing in</span>
-    <select id="tz-select" aria-label="Timezone selector">
-      <option value="local">Visitor local</option>
-      <option value="Asia/Kolkata">Asia/Kolkata · IST</option>
-      <option value="Asia/Kathmandu">Asia/Kathmandu · NPT</option>
-      <option value="Asia/Shanghai">Asia/Shanghai · CST</option>
-      <option value="Asia/Dubai">Asia/Dubai · GST</option>
-      <option value="America/New_York">America/New_York · ET</option>
-      <option value="Indian/Mauritius">Indian/Mauritius · MUT</option>
-    </select>
-    <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg>
+  <div class="tz-wrap">
+    <span class="tz-label" id="tz-indicator">Times shown in your local time</span>
+    <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+      <div class="tz-bar">
+        <select id="tz-select" aria-label="Timezone selector">
+          <option value="local">Your local time</option>
+          <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+          <option value="Asia/Kathmandu">Asia/Kathmandu (NPT)</option>
+          <option value="Asia/Shanghai">Asia/Shanghai (CST)</option>
+          <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+          <option value="America/New_York">America/New_York (ET)</option>
+          <option value="Indian/Mauritius">Indian/Mauritius (MUT)</option>
+        </select>
+        <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg>
+      </div>
+      <div class="tz-mode" role="group" aria-label="Time display mode">
+        <button type="button" id="tz-mode-local" class="active" aria-pressed="true">Local time</button>
+        <button type="button" id="tz-mode-trip" aria-pressed="false">Trip time</button>
+      </div>
+    </div>
   </div>
 
   <!-- Before-phase hero. -->
@@ -1114,13 +1187,13 @@
       <span class="label">Return</span>
       <span class="value">19 Jul 2026 · Sun</span>
     </div>
-    <div class="hero-row warn">
-      <span class="label">Next action</span>
-      <span class="value">Book doctor consult</span>
+    <div class="hero-row">
+      <span class="label">Preparation milestone</span>
+      <span class="value" id="prep-milestone">Permits in transit</span>
     </div>
     <div class="hero-row">
-      <span class="label">Live forecast for Day 1</span>
-      <span class="value" id="live-forecast-countdown">opens soon</span>
+      <span class="label">Weather forecast</span>
+      <span class="value" id="live-forecast-countdown">Becomes more accurate closer to departure</span>
     </div>
   </div>
 
@@ -1200,7 +1273,7 @@
     <div class="today-row"><span class="label">Sleep altitude tonight</span><span class="value" id="ts-sleep">--</span></div>
     <div class="today-row"><span class="label">Altitude gain vs last night</span><span class="value" id="ts-gain">--</span></div>
     <div class="today-row"><span class="label">Connectivity right now</span><span class="value" id="ts-conn">--</span></div>
-    <div class="today-row"><span class="label">Next signal expected</span><span class="value" id="ts-next">--</span></div>
+    <div class="today-row"><span class="label">Reachability today</span><span class="value" id="ts-next">--</span></div>
     <div class="today-row"><span class="label">Today's weather</span><span class="value" id="ts-weather">--</span></div>
   </div>
 </section>
@@ -1209,83 +1282,86 @@
 <section id="altitude">
   <h2>Altitude profile</h2>
   <div class="altitude-wrap">
-    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" id="alt-svg" aria-label="13 day sleep altitude chart" style="color: var(--ink)">
-      <!-- Y grid lines. -->
-      <g class="alt-grid" stroke-width="1" fill="none">
-        <line x1="40" y1="40" x2="690" y2="40"/>
-        <line x1="40" y1="90" x2="690" y2="90"/>
-        <line x1="40" y1="140" x2="690" y2="140"/>
-        <line x1="40" y1="190" x2="690" y2="190"/>
-        <line x1="40" y1="240" x2="690" y2="240"/>
+    <!--
+      Geometry: viewBox 0 0 720 240. 13 days, x = 30 + (dayIndex * 55).
+      Y formula: y = 240 - (altitude_m * 0.03833).
+      Sleep altitudes (m): 1380, 1380, 3656, 3656, 4670, 4670, 4900, 4670, 4760, 3656, 1380, 1380, 0
+      Sleep y values:       187,  187,  100,  100,   61,   61,   52,   61,   57,  100,  187,  187, 240
+      Day 8 peak dot: 5630m -> y = 240 - (5630 * 0.03833) = 24. cx=415, cy=24.
+      Day 8 sleep vertex at (415, 61). Gap of 37px = climb-high-sleep-low principle.
+    -->
+    <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" id="alt-svg" aria-label="13 day sleep altitude chart" style="color: var(--ink)">
+      <!-- Y grid lines at key altitudes. -->
+      <g class="alt-grid" stroke-width="0.5" fill="none">
+        <line x1="20" y1="10" x2="710" y2="10"/>
+        <line x1="20" y1="52" x2="710" y2="52"/>
+        <line x1="20" y1="100" x2="710" y2="100"/>
+        <line x1="20" y1="187" x2="710" y2="187"/>
+        <line x1="20" y1="230" x2="710" y2="230"/>
       </g>
-      <!-- Y axis labels (m). 6000 at top, 0 at bottom. -->
-      <g class="alt-axis-num" font-size="10">
-        <text x="35" y="44" text-anchor="end">6000</text>
-        <text x="35" y="94" text-anchor="end">4500</text>
-        <text x="35" y="144" text-anchor="end">3000</text>
-        <text x="35" y="194" text-anchor="end">1500</text>
-        <text x="35" y="244" text-anchor="end">0</text>
+      <!-- Y axis labels. -->
+      <g class="alt-axis-num" font-size="9">
+        <text x="18" y="14" text-anchor="end">6000</text>
+        <text x="18" y="56" text-anchor="end">4900</text>
+        <text x="18" y="104" text-anchor="end">3650</text>
+        <text x="18" y="191" text-anchor="end">1380</text>
+        <text x="18" y="234" text-anchor="end">0</text>
       </g>
       <!-- X axis day labels. -->
-      <g class="alt-axis-num" font-size="10">
-        <text x="60" y="260" text-anchor="middle">D1</text>
-        <text x="112" y="260" text-anchor="middle">D2</text>
-        <text x="164" y="260" text-anchor="middle">D3</text>
-        <text x="216" y="260" text-anchor="middle">D4</text>
-        <text x="268" y="260" text-anchor="middle">D5</text>
-        <text x="320" y="260" text-anchor="middle">D6</text>
-        <text x="372" y="260" text-anchor="middle">D7</text>
-        <text x="424" y="260" text-anchor="middle">D8</text>
-        <text x="476" y="260" text-anchor="middle">D9</text>
-        <text x="528" y="260" text-anchor="middle">D10</text>
-        <text x="580" y="260" text-anchor="middle">D11</text>
-        <text x="632" y="260" text-anchor="middle">D12</text>
-        <text x="684" y="260" text-anchor="middle">D13</text>
+      <g class="alt-axis-num" font-size="9">
+        <text x="30"  y="238" text-anchor="middle">D1</text>
+        <text x="85"  y="238" text-anchor="middle">D2</text>
+        <text x="140" y="238" text-anchor="middle">D3</text>
+        <text x="195" y="238" text-anchor="middle">D4</text>
+        <text x="250" y="238" text-anchor="middle">D5</text>
+        <text x="305" y="238" text-anchor="middle">D6</text>
+        <text x="360" y="238" text-anchor="middle">D7</text>
+        <text x="415" y="238" text-anchor="middle">D8</text>
+        <text x="470" y="238" text-anchor="middle">D9</text>
+        <text x="525" y="238" text-anchor="middle">D10</text>
+        <text x="580" y="238" text-anchor="middle">D11</text>
+        <text x="635" y="238" text-anchor="middle">D12</text>
+        <text x="690" y="238" text-anchor="middle">D13</text>
       </g>
-      <!-- Sleep line. Y = 240 - (sleep_m / 6000) * 200; sleep values: 1380,1380,3656,3656,4670,4670,4900,4670,4760,3656,1380,1380,0 -->
-      <polyline
+      <!-- Sleep line. Pre-computed coordinates per Opus. -->
+      <path
         class="alt-sleep-line"
         fill="none"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        points="60,194 112,194 164,118 216,118 268,84 320,84 372,77 424,84 476,81 528,118 580,194 632,194 684,240"
+        d="M 30,187 L 85,187 L 140,100 L 195,100 L 250,61 L 305,61 L 360,52 L 415,61 L 470,57 L 525,100 L 580,187 L 635,187 L 690,230"
       />
-      <!-- Sleep dots. -->
+      <!-- Sleep dots at each vertex. -->
       <g class="alt-sleep-dot" stroke="none">
-        <circle cx="60" cy="194" r="3"/>
-        <circle cx="112" cy="194" r="3"/>
-        <circle cx="164" cy="118" r="3"/>
-        <circle cx="216" cy="118" r="3"/>
-        <circle cx="268" cy="84" r="3"/>
-        <circle cx="320" cy="84" r="3"/>
-        <circle cx="372" cy="77" r="3"/>
-        <circle cx="424" cy="84" r="3"/>
-        <circle cx="476" cy="81" r="3"/>
-        <circle cx="528" cy="118" r="3"/>
-        <circle cx="580" cy="194" r="3"/>
-        <circle cx="632" cy="194" r="3"/>
-        <circle cx="684" cy="240" r="3"/>
+        <circle cx="30"  cy="187" r="3"/>
+        <circle cx="85"  cy="187" r="3"/>
+        <circle cx="140" cy="100" r="3"/>
+        <circle cx="195" cy="100" r="3"/>
+        <circle cx="250" cy="61"  r="3"/>
+        <circle cx="305" cy="61"  r="3"/>
+        <circle cx="360" cy="52"  r="3"/>
+        <circle cx="415" cy="61"  r="3"/>
+        <circle cx="470" cy="57"  r="3"/>
+        <circle cx="525" cy="100" r="3"/>
+        <circle cx="580" cy="187" r="3"/>
+        <circle cx="635" cy="187" r="3"/>
+        <circle cx="690" cy="230" r="3"/>
       </g>
-      <!-- Peak dots above the line. Day 7 4900 (y=77) ; Day 8 5630 (y=53.7) ; Day 9 4900 (y=77). -->
-      <g>
-        <circle class="alt-peak-other" cx="372" cy="77" r="4" stroke-width="1" fill="none"/>
-        <circle class="alt-peak-day8" cx="424" cy="53" r="8" stroke="none"/>
-        <circle class="alt-peak-other" cx="476" cy="77" r="4" stroke-width="1" fill="none"/>
+      <!-- Day 8 peak dot. Visual hero: 5630m. cy=24 sits 37px above sleep vertex at cy=61. -->
+      <circle class="alt-peak-day8" cx="415" cy="24" r="6" stroke="none"/>
+      <!-- Anchor labels. Three only per spec. -->
+      <g class="alt-anchor" font-size="11">
+        <text class="alt-anchor-day8" x="415" y="16" text-anchor="middle" font-weight="700">Dolma La 5,630 m</text>
+        <text x="305" y="50" text-anchor="middle">Mansarovar 4,670 m</text>
+        <text x="30" y="178" text-anchor="start">Kathmandu 1,380 m</text>
       </g>
-      <!-- Anchor labels. -->
-      <g class="alt-anchor" font-size="12">
-        <text class="alt-anchor-day8" x="424" y="40" text-anchor="middle" font-weight="700">Dolma La 5,630 m</text>
-        <text x="294" y="73" text-anchor="middle">Mansarovar 4,670 m</text>
-        <text x="60" y="184" text-anchor="middle">Kathmandu 1,380 m</text>
-      </g>
-      <!-- During-phase today cursor. -->
-      <line id="today-cursor" class="alt-cursor" x1="0" y1="40" x2="0" y2="240" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>
+      <!-- During-phase today cursor: dashed vertical at current day x. -->
+      <line id="today-cursor" class="alt-cursor" x1="0" y1="10" x2="0" y2="230" stroke-width="1" stroke-dasharray="2 4" style="display:none"/>
     </svg>
     <div class="alt-legend">
       <span><span class="legend-dot" style="background:var(--border-s)"></span>Sleep altitude</span>
       <span><span class="legend-dot" style="background:var(--red)"></span>Day 8 peak (5,630 m)</span>
-      <span><span class="legend-dot" style="background:transparent;border:1px solid var(--muted)"></span>Peak above sleep (Days 7, 9)</span>
     </div>
   </div>
 </section>
@@ -1317,7 +1393,7 @@
       <tr><td>Days 5, 6 (Mansarovar)</td><td><svg class="icon icon-sev action"><use href="#icon-action-yellow"/></svg> Possible</td><td>Up to 24 h silence is normal. Operator can relay via Sherpa team.</td></tr>
       <tr><td>Days 7, 8, 9 (Parikrama)</td><td><svg class="icon icon-sev win"><use href="#icon-win-green"/></svg> Expected by design</td><td>Yatri is offline by design. Zero check-ins is normal. Do not call airlines or hospitals.</td></tr>
       <tr><td>Day 10 (Lhasa return)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>Back online at St Regis. 12 h threshold.</td></tr>
-      <tr><td>Days 11, 12, 13 (Kathmandu)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>Normal signal restored. Same threshold as Days 1, 2.</td></tr>
+      <tr><td>Days 11, 12, 13 (Kathmandu)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>Reachable again. Same threshold as Days 1, 2.</td></tr>
     </tbody>
   </table>
   </div>
@@ -1954,16 +2030,73 @@
     return phase;
   }
 
-  /* =================== TIMEZONE PREF =================== */
+  /* =================== TIMEZONE PREF + MODE TOGGLE =================== */
+  // Trip timezone per day group.
+  var TRIP_TZ_ZONES = {
+    // Days 1-2 and 11-13: Kathmandu.
+    before: "Asia/Kathmandu",
+    after: "Asia/Kathmandu",
+    day: function(idx) {
+      if (!idx) return "Asia/Kolkata";
+      if (idx <= 2 || idx >= 11) return "Asia/Kathmandu";
+      return "Asia/Shanghai"; // Days 3-10 Tibet.
+    }
+  };
+
+  function getTripTz(todayIdx, phase) {
+    if (phase === "before") return "Asia/Kolkata";
+    if (phase === "after") return "Asia/Kathmandu";
+    return TRIP_TZ_ZONES.day(todayIdx);
+  }
+
+  function updateTzIndicator(mode, tripTzName) {
+    var el = document.getElementById("tz-indicator");
+    if (!el) return;
+    if (mode === "trip") {
+      el.textContent = "Times shown in trip time (" + (tripTzName || "trip") + ")";
+    } else {
+      el.textContent = "Times shown in your local time";
+    }
+  }
+
   function setupTimezone() {
     var sel = document.getElementById("tz-select");
-    var stored = localStorage.getItem("kailash_tz_pref") || "local";
-    sel.value = stored;
+    var btnLocal = document.getElementById("tz-mode-local");
+    var btnTrip  = document.getElementById("tz-mode-trip");
+
+    var storedPref = localStorage.getItem("kailash_tz_pref") || "local";
+    var storedMode = localStorage.getItem("kailash_tz_mode") || "local";
+
+    sel.value = storedPref;
+
+    function setMode(mode) {
+      storedMode = mode;
+      localStorage.setItem("kailash_tz_mode", mode);
+      if (btnLocal) { btnLocal.classList.toggle("active", mode === "local"); btnLocal.setAttribute("aria-pressed", String(mode === "local")); }
+      if (btnTrip)  { btnTrip.classList.toggle("active", mode === "trip");   btnTrip.setAttribute("aria-pressed", String(mode === "trip")); }
+      // Show/hide the dropdown based on mode.
+      if (sel && sel.parentElement) sel.parentElement.style.display = (mode === "trip") ? "none" : "";
+      renderAll();
+    }
+
+    // Restore mode from storage.
+    setMode(storedMode);
+
+    if (btnLocal) btnLocal.addEventListener("click", function(){ setMode("local"); });
+    if (btnTrip)  btnTrip.addEventListener("click",  function(){ setMode("trip"); });
+
     sel.addEventListener("change", function(){
       localStorage.setItem("kailash_tz_pref", sel.value);
-      // Re-render phase + day index using selected zone.
       renderAll();
     });
+  }
+
+  function getActiveTz(todayIdx, phase) {
+    var mode = localStorage.getItem("kailash_tz_mode") || "local";
+    if (mode === "trip") {
+      return getTripTz(todayIdx, phase);
+    }
+    return localStorage.getItem("kailash_tz_pref") || "local";
   }
 
   /* =================== PER-DAY DATA =================== */
@@ -1973,6 +2106,7 @@
       altitude_peak: 1380, altitude_sleep: 1380, risk: "easy",
       conn_status: "good", conn_label: "WhatsApp + calls usable", next_signal: null,
       day_type: "normal", headline: "Arrive in Kathmandu. The yatra begins here.",
+      climate: {layering:"light", recommended:["Light breathable layers","Rain protection on hand for monsoon arrivals","Sun protection for transfers"]},
       timeline: [
         {time:"08:05", event:"Group arrival window opens at KTM airport"},
         {time:"11:00-15:00", event:"Operator pickup window"},
@@ -1984,7 +2118,7 @@
       food: {breakfast:"Hotel buffet. Light. Avoid heavy dairy.", lunch:"Local Nepali or Indian thali. Vegetarian default.", dinner:"Group dinner at hotel.", snacks:"1 protein bar, dry fruits, 2 glucose tabs reserve.", hydration:"3 L"},
       bathroom: {type:"Western flush + bidet", water:"24 h hot", shower:"Hot water shower", notes:"Last hot shower for 4 days starts from Day 5 onward."},
       timing: {wake:"07:30", walk:0.5, trek:0, rest:6, sleep:8, notes:"Recovery from flight. Light prep for Day 2."},
-      carry: ["Passport, phone, power bank", "INR cash + 1 card", "Sunglasses, cap", "Ibuprofen + ORS pouch"],
+      carry: ["Travel documents and payment cards", "Sun protection", "Personal first aid essentials", "Device and power"],
       spiritual: null,
       weather: {high:29, low:20, feels:27, rain:75, wind:8, wind_sev:"calm", uv:7},
     },
@@ -1993,6 +2127,7 @@
       altitude_peak: 1380, altitude_sleep: 1380, risk: "easy",
       conn_status: "good", conn_label: "WhatsApp + calls usable", next_signal: null,
       day_type: "normal", headline: "Kathmandu. Embassy NOC and Pashupatinath.",
+      climate: {layering:"light", recommended:["Smart casual wear for embassy visit","Light rain protection for afternoon showers","Sun protection for outdoor sightseeing"]},
       timeline: [
         {time:"09:00", event:"Indian Embassy NOC visit (group)"},
         {time:"12:00", event:"Pashupatinath darshan"},
@@ -2006,7 +2141,7 @@
       food: {breakfast:"Hotel buffet.", lunch:"Local thali.", dinner:"Hotel group dinner.", snacks:"1 protein bar in daypack.", hydration:"3 L"},
       bathroom: {type:"Western flush + bidet", water:"24 h hot", shower:"Hot water shower", notes:"Last KTM shower before the Lhasa leg."},
       timing: {wake:"07:00", walk:2, trek:0, rest:5, sleep:8, notes:"NOC + sightseeing on foot. Pace it."},
-      carry: ["Documents + scarf for darshan", "Embassy fee in INR", "Phone, power bank", "Sunglasses, water"],
+      carry: ["Travel documents and local currency", "Modest attire for embassy and temple", "Sun protection and hydration", "Device and power"],
       spiritual: null,
       weather: {high:29, low:20, feels:27, rain:70, wind:8, wind_sev:"calm", uv:7},
     },
@@ -2015,6 +2150,7 @@
       altitude_peak: 3656, altitude_sleep: 3656, risk: "moderate",
       conn_status: "intermittent", conn_label: "GFW. VPN required. WhatsApp via Astrill.", next_signal: "after VPN reconnects",
       day_type: "normal", headline: "Crossing into Tibet. First altitude jump to 3,656 m.",
+      climate: {layering:"standard", recommended:["Breathable base layers","Mid-layer for cabin chill and Lhasa evenings","Sun protection (UV rises sharply at altitude)","All warm layers accessible in cabin baggage"]},
       timeline: [
         {time:"06:00", event:"KTM hotel checkout"},
         {time:"08:30", event:"KTM to Lhasa flight"},
@@ -2028,7 +2164,7 @@
       food: {breakfast:"Hotel buffet. Light protein. No alcohol.", lunch:"Packed at airport or in-flight light.", dinner:"Hotel restaurant. Early (20:00).", snacks:"1 protein bar, glucose tabs.", hydration:"4 L (altitude)"},
       bathroom: {type:"Western flush", water:"24 h hot", shower:"Hot water shower", notes:"Pre-altitude shower bank. Use it."},
       timing: {wake:"05:30", walk:1, trek:0, rest:5, sleep:9, notes:"Acclimatization day. Diamox active. Rest after arrival."},
-      carry: ["All meds (Diamox started)", "Passport + permits", "All warm layers (cabin baggage)", "ORS, snacks, phone, power bank"],
+      carry: ["All permits and travel documents", "Personal medication (altitude protocol starts)", "Warm layers in cabin baggage", "Altitude and hydration support items", "Snacks and device power"],
       spiritual: null,
       weather: {high:22, low:11, feels:20, rain:30, wind:10, wind_sev:"breezy", uv:9},
     },
@@ -2037,6 +2173,7 @@
       altitude_peak: 3656, altitude_sleep: 3656, risk: "easy",
       conn_status: "intermittent", conn_label: "GFW. Best to message rather than call.", next_signal: null,
       day_type: "normal", headline: "Lhasa. Acclimatization day at Jokhang and Potala.",
+      climate: {layering:"standard", recommended:["Layered base and mid-layers","Face and sun protection (extreme UV at 3,650 m)","Lightweight gloves for cool mornings","Comfortable walking layers for sightseeing"]},
       timeline: [
         {time:"08:30", event:"Jokhang Temple visit"},
         {time:"11:00", event:"Barkhor Street walk"},
@@ -2049,7 +2186,7 @@
       food: {breakfast:"Hotel buffet. Light.", lunch:"Chinese vegetarian. Plain rice if uncertain stomach.", dinner:"Hotel restaurant. Early (20:00).", snacks:"1 protein bar.", hydration:"4 L"},
       bathroom: {type:"Western flush", water:"24 h hot", shower:"Hot water shower", notes:"Pre-altitude shower bank continues."},
       timing: {wake:"07:00", walk:3, trek:0, rest:4, sleep:9, notes:"Pace yourself. Potala steps are deceptively heavy on the lungs."},
-      carry: ["Sunscreen reapply 2 h", "Sun hat, sunglasses", "1 L water", "Power bank"],
+      carry: ["Full sun protection (reapply every 2 h)", "Hydration", "Device and power"],
       spiritual: null,
       weather: {high:22, low:11, feels:20, rain:25, wind:12, wind_sev:"breezy", uv:10},
     },
@@ -2058,6 +2195,7 @@
       altitude_peak: 4670, altitude_sleep: 4670, risk: "moderate",
       conn_status: "intermittent", conn_label: "Limited signal. Operator China phone for emergencies.", next_signal: "evening at hotel",
       day_type: "normal", headline: "Toward the lake. Long drive to Mansarovar.",
+      climate: {layering:"cold", recommended:["Insulated base layers","Windproof outer shell","Gloves for the Ali and high-plateau leg","Sun and face protection (UV extreme)"]},
       timeline: [
         {time:"05:30", event:"St Regis breakfast. Suitcase handoff to hotel storage."},
         {time:"07:00", event:"Lhasa to Ali domestic flight"},
@@ -2070,7 +2208,7 @@
       food: {breakfast:"Hotel buffet KTM-style or packed.", lunch:"Packed lunch on the drive (sandwiches, eggs, fruit).", dinner:"Operator-coordinated at the camp. Simple.", snacks:"2 protein bars, dry fruits, glucose tabs.", hydration:"4 L"},
       bathroom: {type:"Western flush, sometimes bucket-supplemented", water:"Limited hot. Ration.", shower:"Hot bucket bath only.", notes:"Last shower until Day 10 evening."},
       timing: {wake:"04:30", walk:1, trek:0, rest:4, sleep:9, notes:"Transit-heavy. Conserve energy at altitude."},
-      carry: ["All meds, all altitude meds", "ORS, gloves (Ali cold)", "1 L water, snacks", "Power bank"],
+      carry: ["Full personal medication kit", "Altitude and hydration support items", "Insulated gloves accessible for high plateau", "Snacks and hydration", "Device and power"],
       spiritual: {label:"Mansarovar approach", body:"The road toward the lake winds across high plateau. Many pilgrims feel the gravity of the place even from the bus. Save your energy for tomorrow morning at the shore.", phrase:null},
       weather: {high:13, low:3, feels:9, rain:25, wind:18, wind_sev:"strong", uv:11},
     },
@@ -2079,6 +2217,7 @@
       altitude_peak: 4670, altitude_sleep: 4670, risk: "easy",
       conn_status: "intermittent", conn_label: "Limited signal at hotel. Operator China phone for emergencies.", next_signal: "evening",
       day_type: "holy", headline: "Mansarovar Snan and Puja.",
+      climate: {layering:"cold", recommended:["Insulated layers with change available for the ritual bath","Windproof outer shell","Full sun and face protection","Gloves for pre-dawn shore walk"]},
       timeline: [
         {time:"05:00", event:"Early start for the lake shore"},
         {time:"06:00", event:"Mansarovar holy bath (Snan)"},
@@ -2093,7 +2232,7 @@
       food: {breakfast:"Light. Fasted state preferred before puja.", lunch:"Post-puja lunch at hotel.", dinner:"Hotel dinner, group.", snacks:"Dry fruits, protein bar.", hydration:"4 L"},
       bathroom: {type:"Western flush + bucket", water:"Limited hot. Ration.", shower:"Hot bucket bath at the hotel.", notes:"Last wash until Day 10."},
       timing: {wake:"04:30", walk:2, trek:0, rest:4, sleep:9, notes:"Easy day. Symbolically the heart of the yatra."},
-      carry: ["Empty bottle for holy water", "Towel, spare merino base for post-bath", "Ritual items, sankalpa notebook", "1 L water"],
+      carry: ["Personal ritual items and intention notebook", "Spare base layer for after the ritual bath", "Hydration"],
       spiritual: {label:"Snan and Puja", body:"Mansarovar is traditionally considered one of the holiest lakes in the world. Many pilgrims take a ritual bath at dawn and offer prayers at Chiu Gompa before beginning the Parikrama tomorrow. If you carry a name or a photograph of an ancestor, this is the moment to bring it forward.", phrase:"Har Har Mahadev."},
       weather: {high:13, low:3, feels:9, rain:25, wind:18, wind_sev:"strong", uv:11},
     },
@@ -2102,6 +2241,7 @@
       altitude_peak: 4900, altitude_sleep: 4900, risk: "moderate",
       conn_status: "offline", conn_label: "No civilian connectivity. Operator Sherpa team handles comms.", next_signal: "Day 10 evening at Lhasa",
       day_type: "normal", headline: "Yamadwar to Dirapuk. The Parikrama begins.",
+      climate: {layering:"cold", recommended:["Full layering system (base, mid, outer shell)","Windproof outer shell","Full sun and UV protection","Gloves and neck coverage for wind exposure"]},
       timeline: [
         {time:"06:00", event:"Mansarovar to Darchen drive"},
         {time:"08:00", event:"Yamadwar gate. Parikrama begins."},
@@ -2116,7 +2256,7 @@
       food: {breakfast:"Hotel breakfast 08:00 + packed lunch.", lunch:"Packed lunch on the trail. Eat by 13:00.", dinner:"Guest house. Dal chawal style.", snacks:"3 protein bars + 4 glucose tabs + dry fruits sachet.", hydration:"4 L (carry 1.5 L in daypack)"},
       bathroom: {type:"Tent pit or open field", water:"None", shower:"None", notes:"Wet wipes only. Keep extremities dry."},
       timing: {wake:"05:00", walk:1.5, trek:6, rest:2, sleep:9, notes:"First Parikrama day. Pace easy. Conserve for tomorrow."},
-      carry: ["1.5 L water in daypack", "All sun protection", "Headlamp, slim fleece, gloves + liners", "TP roll + wet wipes", "Power bank, phone in zip-lock, Compeed in pocket"],
+      carry: ["Full sun and face protection", "Hydration (1.5 L minimum in daypack)", "Headlamp for pre-dawn start", "Layering items for weather changes", "Hygiene kit for tent leg", "Blister care", "Phone protected from precipitation", "Device and power"],
       spiritual: {label:"Yamadwar gateway", body:"Yamadwar is the symbolic gate of death and rebirth at the start of the Parikrama. Many yatris pass through with a moment of silence. Walk steadily. The mountain reveals itself slowly.", phrase:null},
       weather: {high:10, low:0, feels:5, rain:35, wind:25, wind_sev:"strong", uv:11},
     },
@@ -2125,6 +2265,7 @@
       altitude_peak: 5630, altitude_sleep: 4670, risk: "high",
       conn_status: "offline", conn_label: "No civilian connectivity. Sherpa sat phone for emergency only.", next_signal: "Day 10 evening at Lhasa",
       day_type: "critical", headline: "Dolma La Pass. The high point of the yatra.",
+      climate: {layering:"full winter", recommended:["Full cold-weather layering system","Windproof outer shell","Insulated gloves","Face and UV protection","Headlamp for pre-dawn start","Cold-weather support items for pre-dawn and summit"]},
       critical_box: "22 km on foot. 5,630 m pass. 04:00 wake. No bailout after the pass. Likely the toughest day of the trip.",
       timeline: [
         {time:"04:00", event:"Wake. High-calorie breakfast (porridge + protein)."},
@@ -2142,16 +2283,17 @@
       bathroom: {type:"Open field at the pass. Tent pit at camp.", water:"None.", shower:"None.", notes:"Pee Buddies useful in minus 5 deg C wind."},
       timing: {wake:"04:00", walk:0, trek:8.5, rest:2, sleep:7, notes:"Year round snow possible at the pass. Whiteout possible. Pass-day weather can flip in 30 minutes."},
       carry: [
-        "Both Cat 4 sunglasses (primary + backup)",
-        "Sun mask + hat",
-        "2 L water in bladder",
-        "4 hand warmers (2 pre-dawn, 2 at the pass)",
-        "Ibuprofen x6, ORS x3",
-        "Snacks + glucose tabs x4",
-        "Pack liner inside the daypack",
-        "Phone in zip-lock",
-        "Headlamp + spare batteries",
-        "Liner gloves spare"
+        "Backup sun protection (primary and secondary)",
+        "Full face and UV protection",
+        "2 L hydration (hands-free preferred)",
+        "Cold-weather support items (pre-dawn and summit)",
+        "Personal first aid essentials",
+        "Altitude and hydration support items",
+        "Energy snacks for every hour",
+        "Waterproof pack liner",
+        "Phone protected from precipitation",
+        "Headlamp with fresh batteries",
+        "Spare insulated gloves"
       ],
       spiritual: {label:"Dolma La crossing", body:"Many pilgrims regard crossing the pass as a symbolic death of the old self and the beginning of a new one. The mantra most often spoken at the pass is Om Mani Padme Hum. Walk steadily. Kailash rewards patience more than speed.", phrase:"Jai Bhole Nath. One step at a time."},
       weather: {high:5, low:-8, feels:-15, rain:45, wind:50, wind_sev:"extreme", uv:11},
@@ -2161,6 +2303,7 @@
       altitude_peak: 4900, altitude_sleep: 4760, risk: "easy",
       conn_status: "intermittent", conn_label: "Limited signal returns at Darchen. Operator China phone available.", next_signal: "Darchen evening (limited)",
       day_type: "normal", headline: "Zuthulphuk to Darchen. Completing the Parikrama.",
+      climate: {layering:"cool morning", recommended:["Base and mid-layers for cold mornings","Outer shell accessible for wind","Sun and face protection","Gloves for the morning start only"]},
       timeline: [
         {time:"07:00", event:"Light breakfast. Pack."},
         {time:"08:00", event:"Trek from Zuthulphuk past the Mani Wall"},
@@ -2175,7 +2318,7 @@
       food: {breakfast:"Light.", lunch:"Late lunch at Darchen hotel. Recovery food.", dinner:"Hotel dinner.", snacks:"Light. Appetite returning.", hydration:"3 L"},
       bathroom: {type:"Basic Western flush", water:"Limited hot. Early evening only.", shower:"Cold to lukewarm.", notes:"First wash in 3 days. Take it."},
       timing: {wake:"06:00", walk:2, trek:3, rest:4, sleep:9, notes:"Easy descent. Recovery focus."},
-      carry: ["Light kit", "Ibuprofen if needed", "Liner gloves for cold morning", "Water, snacks"],
+      carry: ["Light daypack only", "Personal first aid essentials as needed", "Insulated gloves for cold morning start", "Hydration and snacks"],
       spiritual: {label:"Mani Wall", body:"The Mani Wall is a long collection of stones carved with Buddhist mantras, left by generations of pilgrims. Walking past it clockwise is considered part of the Parikrama practice. Day 9 is a slow-release day. The hardest is behind you.", phrase:null},
       weather: {high:12, low:1, feels:7, rain:25, wind:20, wind_sev:"strong", uv:11},
     },
@@ -2184,6 +2327,7 @@
       altitude_peak: 4575, altitude_sleep: 3656, risk: "easy",
       conn_status: "intermittent", conn_label: "Back online at St Regis. GFW + VPN required.", next_signal: "evening at hotel",
       day_type: "normal", headline: "Darchen to Lhasa. First shower in four days.",
+      climate: {layering:"standard", recommended:["Base and mid-layers for the cold morning start","Comfortable layers for Lhasa arrival","Sun protection for transit"]},
       timeline: [
         {time:"05:00", event:"Packed breakfast. Cold morning."},
         {time:"06:00", event:"Darchen to Ali drive"},
@@ -2198,7 +2342,7 @@
       food: {breakfast:"05:00 packed breakfast. Cold morning.", lunch:"Lhasa lunch. First proper Chinese spread in 5 days.", dinner:"Concluding group dinner.", snacks:"1 protein bar.", hydration:"3 L"},
       bathroom: {type:"Western flush", water:"24 h hot", shower:"Long hot shower.", notes:"The reward shower."},
       timing: {wake:"04:30", walk:2, trek:0, rest:4, sleep:9, notes:"Transit. Stop Diamox this evening per protocol."},
-      carry: ["Documents, phone, meds", "Power bank, light kit", "Suitcase claim ticket: do NOT lose"],
+      carry: ["All travel documents and personal medication", "Device and power", "Suitcase claim ticket (keep on person)"],
       spiritual: null,
       weather: {high:22, low:11, feels:20, rain:30, wind:10, wind_sev:"breezy", uv:9},
     },
@@ -2207,6 +2351,7 @@
       altitude_peak: 3656, altitude_sleep: 1380, risk: "easy",
       conn_status: "good", conn_label: "WhatsApp + calls restored at KTM", next_signal: null,
       day_type: "normal", headline: "Back to Kathmandu. The yatra closes.",
+      climate: {layering:"light", recommended:["Comfortable travel layers","Light rain protection for KTM monsoon","Sun protection"]},
       timeline: [
         {time:"07:00", event:"St Regis checkout"},
         {time:"10:00", event:"Lhasa to KTM flight"},
@@ -2220,7 +2365,7 @@
       food: {breakfast:"Hotel buffet. Normal appetite returns.", lunch:"Local Newari or Indian.", dinner:"Casual dinner.", snacks:"None needed.", hydration:"3 L"},
       bathroom: {type:"Western flush + bidet", water:"24 h hot", shower:"Hot water shower", notes:"Normal hotel state."},
       timing: {wake:"06:00", walk:2, trek:0, rest:4, sleep:9, notes:"Transit + decompression."},
-      carry: ["Documents, phone", "Cash for KTM", "Light layer"],
+      carry: ["Travel documents", "Local currency for KTM", "Light layer for transit"],
       spiritual: null,
       weather: {high:29, low:20, feels:27, rain:75, wind:8, wind_sev:"calm", uv:7},
     },
@@ -2229,6 +2374,7 @@
       altitude_peak: 1380, altitude_sleep: 1380, risk: "easy",
       conn_status: "good", conn_label: "Normal signal", next_signal: null,
       day_type: "rest", headline: "Day of recovery and gratitude.",
+      climate: {layering:"light", recommended:["Comfortable casual wear","Light rain protection","Sun protection for outdoor walks"]},
       timeline: [
         {time:"09:00", event:"Late breakfast"},
         {time:"11:00", event:"Optional Thamel walk or quiet hotel day"},
@@ -2241,7 +2387,7 @@
       food: {breakfast:"Hotel buffet.", lunch:"Local Newari.", dinner:"Casual dinner. Final group meal.", snacks:"None.", hydration:"3 L"},
       bathroom: {type:"Western flush + bidet", water:"24 h hot", shower:"Hot water shower", notes:"Hotel state."},
       timing: {wake:"08:00", walk:3, trek:0, rest:6, sleep:9, notes:"No formal program. Rest. Reflect."},
-      carry: ["Light kit", "Cash for Thamel", "Phone, sunscreen, power bank"],
+      carry: ["Light daypack", "Local currency for optional shopping", "Sun protection and device power"],
       spiritual: {label:"Gratitude and reflection", body:"The Parikrama is behind you. The mountain stays. Many yatris use this day to write in the sankalpa notebook, share photos with the group, and let the experience settle. Rest is not a luxury today. It is the closing ritual.", phrase:null},
       weather: {high:29, low:20, feels:27, rain:75, wind:8, wind_sev:"calm", uv:7},
     },
@@ -2250,6 +2396,7 @@
       altitude_peak: 1380, altitude_sleep: 0, risk: "easy",
       conn_status: "good", conn_label: "Normal signal", next_signal: null,
       day_type: "normal", headline: "Home.",
+      climate: {layering:"light", recommended:["Comfortable travel layers","Light rain jacket for KTM early morning"]},
       timeline: [
         {time:"04:30", event:"Marriott checkout for early flight"},
         {time:"06:30", event:"KTM airport"},
@@ -2261,7 +2408,7 @@
       food: {breakfast:"Hotel early box.", lunch:"In-flight.", dinner:"Home.", snacks:"1 protein bar reserve.", hydration:"3 L"},
       bathroom: {type:"Western flush", water:"24 h hot", shower:"Home shower.", notes:"Home."},
       timing: {wake:"03:30", walk:1.5, trek:0, rest:3, sleep:6, notes:"Early flight."},
-      carry: ["Documents, phone, boarding pass", "Light rain jacket"],
+      carry: ["All travel documents and boarding pass", "Light rain protection"],
       spiritual: null,
       weather: {high:32, low:24, feels:30, rain:65, wind:10, wind_sev:"calm", uv:8},
     }
@@ -2355,14 +2502,22 @@
     html += '<div class="fc-row"><span class="lab">Sleep altitude</span><span class="val">' + d.altitude_sleep.toLocaleString() + ' m <span class="' + riskClass(d.risk) + '">&middot; ' + d.risk + '</span></span></div>';
     html += '<div class="fc-row"><span class="lab">Peak altitude</span><span class="val">' + d.altitude_peak.toLocaleString() + ' m</span></div>';
     html += '<div class="fc-row"><span class="lab">Connectivity</span><span class="val ' + connClass(d.conn_status) + '"><svg class="icon icon-16"><use href="#' + connIcon(d.conn_status) + '"/></svg>' + d.conn_status + '</span></div>';
-    html += '<div class="fc-row"><span class="lab">Next signal</span><span class="val">' + escapeHtml(d.next_signal || "live now") + '</span></div>';
+    var reachLabel = "";
+    if (d.conn_status === "good") {
+      reachLabel = "Likely reachable today";
+    } else if (d.conn_status === "offline") {
+      reachLabel = d.next_signal ? "Likely offline. Back online " + d.next_signal : "Likely offline today";
+    } else {
+      reachLabel = d.next_signal ? "Intermittent. Try " + d.next_signal : "Intermittent connectivity";
+    }
+    html += '<div class="fc-row"><span class="lab">Reachability</span><span class="val">' + escapeHtml(reachLabel) + '</span></div>';
     var w = d.weather;
     html += '<div class="fc-row"><span class="lab">Temp</span><span class="val" data-w-temp data-day="'+d.day+'">' + w.high + " / " + w.low + ' &deg;C</span></div>';
     html += '<div class="fc-row"><span class="lab">Feels like</span><span class="val" data-w-feels data-day="'+d.day+'">' + w.feels + ' &deg;C</span></div>';
     html += '<div class="fc-row"><span class="lab">Rain</span><span class="val" data-w-rain data-day="'+d.day+'">' + w.rain + '%</span></div>';
     html += '<div class="fc-row"><span class="lab">Wind</span><span class="val" data-w-wind data-day="'+d.day+'">' + w.wind + ' km/h &middot; ' + w.wind_sev + '</span></div>';
     html += '<div class="fc-row" style="opacity:0.65"><span class="lab">UV</span><span class="val">' + w.uv + '</span></div>';
-    html += '<div class="fc-row"><span class="lab">Weather source</span><span class="val" data-w-src data-day="'+d.day+'" style="font-size:11px;color:var(--muted)">climatology</span></div>';
+    html += '<div class="fc-row"><span class="lab">Weather source</span><span class="val" data-w-src data-day="'+d.day+'" style="font-size:11px;color:var(--muted)">Long-range climate estimate</span></div>';
     html += '</div>';
 
     // Timeline.
@@ -2372,14 +2527,22 @@
     });
     html += '</div></div>';
 
-    // Wear.
-    html += '<div class="day-block"><h4>What to wear</h4><div class="wear-grid">';
-    html += '<div class="wlab">Bottom</div><div class="wval">' + escapeHtml(d.wear.bottom) + '</div>';
-    html += '<div class="wlab">Top</div><div class="wval">' + escapeHtml(d.wear.top) + '</div>';
-    html += '<div class="wlab">Feet</div><div class="wval">' + escapeHtml(d.wear.feet) + '</div>';
-    html += '<div class="wlab">Hands</div><div class="wval">' + escapeHtml(d.wear.hands) + '</div>';
-    html += '<div class="wlab">Head, face</div><div class="wval">' + escapeHtml(d.wear.head) + '</div>';
-    html += '</div></div>';
+    // Climate + Recommended (replaces wear buckets).
+    var cl = d.climate || {};
+    var w2 = d.weather;
+    html += '<div class="day-block"><h4>Climate</h4><div class="wear-grid">';
+    html += '<div class="wlab">Temperature</div><div class="wval">' + w2.high + ' to ' + w2.low + ' &deg;C</div>';
+    html += '<div class="wlab">Wind</div><div class="wval">' + escapeHtml(w2.wind_sev.charAt(0).toUpperCase() + w2.wind_sev.slice(1)) + ' &middot; ' + w2.wind + ' km/h</div>';
+    html += '<div class="wlab">Sun (UV)</div><div class="wval">UV ' + w2.uv + '</div>';
+    html += '<div class="wlab">Rain</div><div class="wval">' + w2.rain + '% chance</div>';
+    html += '<div class="wlab">Layering level</div><div class="wval">' + escapeHtml(cl.layering || "standard") + '</div>';
+    html += '</div>';
+    if (cl.recommended && cl.recommended.length) {
+      html += '<h4>Recommended</h4><ul class="bullets" style="margin:0 0 0 0">';
+      cl.recommended.forEach(function(r){ html += '<li>' + escapeHtml(r) + '</li>'; });
+      html += '</ul>';
+    }
+    html += '</div>';
 
     // Food.
     html += '<div class="day-block"><h4>Food</h4><div class="food-grid">';
@@ -2437,11 +2600,21 @@
     var diff = Math.ceil((depart - nowMid) / (1000*60*60*24));
     if (diff < 0) diff = 0;
     document.getElementById("days-to-go").textContent = diff;
+    // Preparation milestone: phase-aware trip-level status.
+    var milestoneEl = document.getElementById("prep-milestone");
+    if (milestoneEl) {
+      var milestone = "Departure imminent";
+      if (diff >= 15) milestone = "Permits in transit";
+      else if (diff >= 7) milestone = "Medical and insurance checks";
+      else if (diff >= 3) milestone = "Final packing window";
+      milestoneEl.textContent = milestone;
+    }
+    // Forecast freshness label.
     var lf = document.getElementById("live-forecast-countdown");
-    if (diff <= 16) lf.textContent = "live now";
-    else {
-      var openIn = diff - 16;
-      lf.textContent = "opens in " + openIn + " day" + (openIn === 1 ? "" : "s");
+    if (diff <= 16) {
+      lf.textContent = "Live forecast available for the first days";
+    } else {
+      lf.textContent = "Becomes more accurate closer to departure";
     }
   }
   function renderHeroDuring(todayIdx) {
@@ -2470,7 +2643,15 @@
       document.getElementById("ts-gain").textContent = "baseline";
     }
     document.getElementById("ts-conn").textContent = d.conn_status;
-    document.getElementById("ts-next").textContent = d.next_signal || "live now";
+    var tsReach = "";
+    if (d.conn_status === "good") {
+      tsReach = "Likely reachable today";
+    } else if (d.conn_status === "offline") {
+      tsReach = d.next_signal ? "Likely offline. Back online " + d.next_signal : "Likely offline today";
+    } else {
+      tsReach = d.next_signal ? "Intermittent. Try " + d.next_signal : "Intermittent connectivity";
+    }
+    document.getElementById("ts-next").textContent = tsReach;
     var w = d.weather;
     document.getElementById("ts-weather").textContent = "High " + w.high + " / Low " + w.low + " degC, Wind " + w.wind + " km/h";
   }
@@ -2479,7 +2660,8 @@
   function renderAltCursor(todayIdx) {
     var cursor = document.getElementById("today-cursor");
     if (!todayIdx) { cursor.style.display = "none"; return; }
-    var xs = [60,112,164,216,268,320,372,424,476,528,580,632,684];
+    // Pre-computed x-coordinates: x = 30 + (dayIndex * 55), dayIndex 0-based.
+    var xs = [30,85,140,195,250,305,360,415,470,525,580,635,690];
     var x = xs[todayIdx-1];
     cursor.setAttribute("x1", x);
     cursor.setAttribute("x2", x);
@@ -2731,6 +2913,11 @@
         if (Date.now() - p.t < 1000*60*60) cache = p.data;
       }
     } catch (e) {}
+    var cacheTime = null;
+    try {
+      var rawT = localStorage.getItem(cacheKey);
+      if (rawT) { var pT = JSON.parse(rawT); cacheTime = pT.t || null; }
+    } catch (e) {}
     var promises = Object.keys(locsUsed).map(function(name){
       if (cache[name]) return Promise.resolve({name:name, data:cache[name]});
       var loc = LOCATIONS[name];
@@ -2739,14 +2926,22 @@
         return {name:name, data:j};
       }).catch(function(){ return {name:name, data:null}; });
     });
+    var fetchTime = cacheTime || Date.now();
     Promise.all(promises).then(function(results){
       var byLoc = {};
-      results.forEach(function(r){ if (r.data) byLoc[r.name] = r.data; });
-      try { localStorage.setItem(cacheKey, JSON.stringify({t:Date.now(), data:byLoc})); } catch (e) {}
-      applyWeatherToDays(byLoc);
+      var anyNew = false;
+      results.forEach(function(r){ if (r.data) { byLoc[r.name] = r.data; if (!cache[r.name]) anyNew = true; } });
+      if (anyNew) {
+        fetchTime = Date.now();
+        try { localStorage.setItem(cacheKey, JSON.stringify({t:fetchTime, data:byLoc})); } catch (e) {}
+      }
+      applyWeatherToDays(byLoc, fetchTime);
     });
   }
-  function applyWeatherToDays(byLoc) {
+  function applyWeatherToDays(byLoc, fetchedAt) {
+    // Compute "Updated N hours ago" label.
+    var hoursAgo = fetchedAt ? Math.round((Date.now() - fetchedAt) / (1000*60*60)) : 0;
+    var srcLabel = hoursAgo < 1 ? "Updated just now" : "Updated " + hoursAgo + " hour" + (hoursAgo === 1 ? "" : "s") + " ago";
     DAYS.forEach(function(d){
       var locName = locForDay(d);
       var data = byLoc[locName];
@@ -2764,7 +2959,7 @@
       document.querySelectorAll('[data-w-feels][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = fl + " degC"; });
       document.querySelectorAll('[data-w-rain][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = rn + "%"; });
       document.querySelectorAll('[data-w-wind][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = wd + " km/h, " + wsev; });
-      document.querySelectorAll('[data-w-src][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = "Open Meteo live"; });
+      document.querySelectorAll('[data-w-src][data-day="'+d.day+'"]').forEach(function(el){ el.textContent = srcLabel; });
     });
   }
 
@@ -2780,6 +2975,9 @@
     var now = getReferenceDate();
     var phase = applyPhase();
     var todayIdx = phase === "during" ? dayIndexDuring(now) : null;
+    var mode = localStorage.getItem("kailash_tz_mode") || "local";
+    var tripTzName = getTripTz(todayIdx, phase);
+    updateTzIndicator(mode, tripTzName);
     renderHeroBefore(now);
     renderHeroDuring(todayIdx);
     renderTodayPanel(todayIdx);
