@@ -2513,6 +2513,264 @@
     margin-bottom: var(--s-3);
   }
 
+<style id="kailash-v312-delight">
+/*
+  v3.12 delight animation primitives
+  15 native delight moments · CSS + IntersectionObserver only · zero external JS libs
+  Total page weight cost: < 5 KB gzipped
+*/
+
+/* ==========================================================================
+   GLOBAL: respect prefers-reduced-motion · accessibility first
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   #1 · Hero countdown ticks on load (requestAnimationFrame · see JS below)
+   ========================================================================== */
+.delight-countdown {
+  font-variant-numeric: tabular-nums;
+  transition: opacity 200ms ease-out;
+}
+.delight-countdown.ticking {
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   #2 · Days-remaining number swap at midnight (scale-blur fade)
+   ========================================================================== */
+@keyframes delight-number-swap {
+  0%   { transform: scale(1); filter: blur(0); opacity: 1; }
+  40%  { transform: scale(1.3); filter: blur(2px); opacity: 0; }
+  41%  { transform: scale(0.7); filter: blur(2px); opacity: 0; }
+  100% { transform: scale(1); filter: blur(0); opacity: 1; }
+}
+.delight-number-swap {
+  animation: delight-number-swap 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   #3 · SVG route draws in on first view (stroke-dashoffset)
+   ========================================================================== */
+.delight-route-draw {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  transition: stroke-dashoffset 2200ms cubic-bezier(0.45, 0, 0.15, 1);
+}
+.delight-route-draw.in-view {
+  stroke-dashoffset: 0;
+}
+
+/* ==========================================================================
+   #4 · Pulsing you-are-here marker (during phase)
+   ========================================================================== */
+@keyframes delight-marker-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.delight-pulse {
+  animation: delight-marker-pulse 1800ms ease-in-out infinite;
+}
+/* outer ring pulse for the you-are-here marker */
+@keyframes delight-ring-pulse {
+  0%   { r: 8; opacity: 0.7; }
+  100% { r: 22; opacity: 0; }
+}
+.delight-ring-pulse {
+  transform-origin: center;
+  animation: delight-ring-pulse 1800ms ease-out infinite;
+}
+
+/* ==========================================================================
+   #5 · Day cards stagger-fade on scroll into view
+   ========================================================================== */
+.delight-stagger {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 480ms ease-out, transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--stagger-i, 0) * 70ms);
+}
+.delight-stagger.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   #6 · Day card expand/collapse (smooth max-height transition)
+   ========================================================================== */
+.delight-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.delight-collapse > * {
+  overflow: hidden;
+}
+.delight-collapse.open {
+  grid-template-rows: 1fr;
+}
+
+/* ==========================================================================
+   #7 · Day 8 Dolma La marker breathing pulse
+   ========================================================================== */
+@keyframes delight-breathing {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+.delight-breathing {
+  transform-origin: center;
+  animation: delight-breathing 2400ms ease-in-out infinite;
+}
+
+/* ==========================================================================
+   #8 · Altitude line draws left-to-right on view (reaviz-inspired)
+   ========================================================================== */
+.delight-altitude-draw {
+  stroke-dasharray: 800;
+  stroke-dashoffset: 800;
+  transition: stroke-dashoffset 1800ms cubic-bezier(0.45, 0, 0.15, 1);
+}
+.delight-altitude-draw.in-view {
+  stroke-dashoffset: 0;
+}
+/* area fill fades in after line draws */
+.delight-altitude-fill {
+  opacity: 0;
+  transition: opacity 600ms ease-out 1400ms;
+}
+.delight-altitude-fill.in-view {
+  opacity: 0.08;
+}
+
+/* ==========================================================================
+   #9 · Connectivity ribbon dots fill sequentially
+   ========================================================================== */
+.delight-ribbon-dot {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 280ms ease-out, transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.delight-ribbon-dot.in-view {
+  opacity: 1;
+  transform: scale(1);
+}
+.delight-ribbon-dot:nth-child(1)  { transition-delay: 40ms; }
+.delight-ribbon-dot:nth-child(2)  { transition-delay: 80ms; }
+.delight-ribbon-dot:nth-child(3)  { transition-delay: 120ms; }
+.delight-ribbon-dot:nth-child(4)  { transition-delay: 160ms; }
+.delight-ribbon-dot:nth-child(5)  { transition-delay: 200ms; }
+.delight-ribbon-dot:nth-child(6)  { transition-delay: 240ms; }
+.delight-ribbon-dot:nth-child(7)  { transition-delay: 280ms; }
+.delight-ribbon-dot:nth-child(8)  { transition-delay: 320ms; }
+.delight-ribbon-dot:nth-child(9)  { transition-delay: 360ms; }
+.delight-ribbon-dot:nth-child(10) { transition-delay: 400ms; }
+.delight-ribbon-dot:nth-child(11) { transition-delay: 440ms; }
+.delight-ribbon-dot:nth-child(12) { transition-delay: 480ms; }
+.delight-ribbon-dot:nth-child(13) { transition-delay: 520ms; }
+
+/* ==========================================================================
+   #10 · TODAY label subtle gradient sweep
+   ========================================================================== */
+@keyframes delight-gradient-sweep {
+  0%   { background-position: 200% 50%; }
+  100% { background-position: -100% 50%; }
+}
+.delight-gradient-sweep {
+  background: linear-gradient(90deg,
+    var(--ink) 0%,
+    var(--ink) 30%,
+    var(--accent) 50%,
+    var(--ink) 70%,
+    var(--ink) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: delight-gradient-sweep 4000ms ease-in-out infinite;
+}
+
+/* ==========================================================================
+   #11 · Phase transition FLIP morph (vanilla JS · see below · CSS prepares)
+   ========================================================================== */
+.delight-flip-target {
+  will-change: transform;
+  transition: transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   #12 · Prep dashboard checkmark animation on complete
+   ========================================================================== */
+@keyframes delight-check-pop {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.delight-check-pop {
+  transform-origin: center;
+  animation: delight-check-pop 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.delight-check-pop path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: delight-check-draw 360ms 100ms forwards ease-out;
+}
+@keyframes delight-check-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ==========================================================================
+   #13 · Tab switch slide-in
+   ========================================================================== */
+.delight-tab-content {
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 240ms ease-out, transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ==========================================================================
+   #14 · Sacred markers gentle scale-in on map load
+   ========================================================================== */
+.delight-sacred-marker {
+  opacity: 0;
+  transform: scale(0.7);
+  transform-origin: center;
+  transform-box: fill-box;
+  transition: opacity 480ms ease-out, transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.delight-sacred-marker.in-view {
+  opacity: 1;
+  transform: scale(1);
+}
+.delight-sacred-marker:nth-of-type(1) { transition-delay: 1600ms; }
+.delight-sacred-marker:nth-of-type(2) { transition-delay: 1700ms; }
+.delight-sacred-marker:nth-of-type(3) { transition-delay: 1800ms; }
+.delight-sacred-marker:nth-of-type(4) { transition-delay: 1900ms; }
+.delight-sacred-marker:nth-of-type(5) { transition-delay: 2000ms; }
+.delight-sacred-marker:nth-of-type(6) { transition-delay: 2100ms; }
+.delight-sacred-marker:nth-of-type(7) { transition-delay: 2200ms; }
+
+/* ==========================================================================
+   #15 · Parikrama loop circular path trace
+   ========================================================================== */
+.delight-parikrama-loop {
+  stroke-dasharray: 460;
+  stroke-dashoffset: 460;
+  transition: stroke-dashoffset 2400ms cubic-bezier(0.45, 0, 0.15, 1) 600ms;
+}
+.delight-parikrama-loop.in-view {
+  stroke-dashoffset: 0;
+}
 </style>
 </head>
 <body>
@@ -3474,6 +3732,120 @@
     <div class="altitude-toggle" role="tablist" aria-label="Altitude mode" style="margin-bottom: 12px; display: inline-flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em;">
       <button class="altitude-toggle-btn active" data-mode="walking" role="tab" aria-selected="true" style="padding: 6px 14px; border: none; background: var(--ink); color: var(--bg); cursor: pointer; text-transform: uppercase;">Walking</button>
       <button class="altitude-toggle-btn" data-mode="sleeping" role="tab" aria-selected="false" style="padding: 6px 14px; border: none; background: var(--card); color: var(--ink); cursor: pointer; text-transform: uppercase;">Sleeping</button>
+  <div class="altitude-wrap">
+    <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" id="alt-svg" aria-label="13 day sleep altitude chart" style="color: var(--ink)">
+      <!-- v3.10 §0.14.5 · acclimatization rest zones (3 yellow bands per #65 spec) -->
+      <g class="alt-acclim-bands" aria-hidden="true">
+        <!-- Day 4 Lhasa acclim (x 195) -->
+        <rect x="168" y="10" width="55" height="220" fill="var(--accent)" fill-opacity="0.12"/>
+        <!-- Day 6 Mansarovar rest (x 305) -->
+        <rect x="278" y="10" width="55" height="220" fill="var(--accent)" fill-opacity="0.12"/>
+        <!-- Day 12 Kathmandu buffer (x 635) -->
+        <rect x="608" y="10" width="55" height="220" fill="var(--accent)" fill-opacity="0.12"/>
+      </g>
+      <!-- Y grid lines at key altitudes. -->
+      <g class="alt-grid" stroke-width="0.5" fill="none">
+        <line x1="20" y1="10" x2="710" y2="10"/>
+        <line x1="20" y1="52" x2="710" y2="52"/>
+        <line x1="20" y1="100" x2="710" y2="100"/>
+        <line x1="20" y1="187" x2="710" y2="187"/>
+        <line x1="20" y1="230" x2="710" y2="230"/>
+      </g>
+      <!-- Y axis labels. -->
+      <g class="alt-axis-num" font-size="9">
+        <text x="18" y="14" text-anchor="end">6000</text>
+        <text x="18" y="56" text-anchor="end">4900</text>
+        <text x="18" y="104" text-anchor="end">3650</text>
+        <text x="18" y="191" text-anchor="end">1380</text>
+        <text x="18" y="234" text-anchor="end">0</text>
+      </g>
+      <!-- X axis day labels. -->
+      <g class="alt-axis-num" font-size="9">
+        <text x="30"  y="238" text-anchor="middle">D1</text>
+        <text x="85"  y="238" text-anchor="middle">D2</text>
+        <text x="140" y="238" text-anchor="middle">D3</text>
+        <text x="195" y="238" text-anchor="middle">D4</text>
+        <text x="250" y="238" text-anchor="middle">D5</text>
+        <text x="305" y="238" text-anchor="middle">D6</text>
+        <text x="360" y="238" text-anchor="middle">D7</text>
+        <text x="415" y="238" text-anchor="middle">D8</text>
+        <text x="470" y="238" text-anchor="middle">D9</text>
+        <text x="525" y="238" text-anchor="middle">D10</text>
+        <text x="580" y="238" text-anchor="middle">D11</text>
+        <text x="635" y="238" text-anchor="middle">D12</text>
+        <text x="690" y="238" text-anchor="middle">D13</text>
+      </g>
+      <!-- Sleep line. -->
+      <path
+        class="alt-sleep-line delight-altitude-draw"
+        fill="none"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M 30,187 L 85,187 L 140,100 L 195,100 L 250,61 L 305,61 L 360,52 L 415,61 L 470,57 L 525,100 L 580,187 L 635,187 L 690,230"
+      />
+      <!-- Sleep dots at each vertex (smaller, --ink color per #57). -->
+      <g class="alt-sleep-dot" stroke="none">
+        <circle cx="30"  cy="187" r="3"/>
+        <circle cx="85"  cy="187" r="3"/>
+        <circle cx="140" cy="100" r="3"/>
+        <circle cx="195" cy="100" r="3"/>
+        <circle cx="250" cy="61"  r="3"/>
+        <circle cx="305" cy="61"  r="3"/>
+        <circle cx="360" cy="52"  r="3"/>
+        <circle cx="415" cy="61"  r="3"/>
+        <circle cx="470" cy="57"  r="3"/>
+        <circle cx="525" cy="100" r="3"/>
+        <circle cx="580" cy="187" r="3"/>
+        <circle cx="635" cy="187" r="3"/>
+        <circle cx="690" cy="230" r="3"/>
+      </g>
+      <!-- v3.10 §0.14.5 · location labels under each data point (#65) -->
+      <g class="alt-loc-labels" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" letter-spacing="0.05em">
+        <text x="30"  y="200" text-anchor="middle">KTM</text>
+        <text x="85"  y="200" text-anchor="middle">KTM</text>
+        <text x="140" y="113" text-anchor="middle">LHASA</text>
+        <text x="195" y="113" text-anchor="middle">LHASA</text>
+        <text x="250" y="74"  text-anchor="middle">MANSA</text>
+        <text x="305" y="74"  text-anchor="middle">MANSA</text>
+        <text x="360" y="45"  text-anchor="middle">DIRAPUK</text>
+        <text x="470" y="70"  text-anchor="middle">ZUTHUL</text>
+        <text x="525" y="113" text-anchor="middle">DARCHEN</text>
+        <text x="580" y="200" text-anchor="middle">KTM</text>
+        <text x="635" y="200" text-anchor="middle">KTM</text>
+        <text x="690" y="243" text-anchor="middle">HOME</text>
+      </g>
+      <!-- Day 8 peak dot. Visual hero (warn-red filled, 8px per #57). -->
+      <circle class="alt-peak-day8" cx="415" cy="24" r="8" stroke="none"/>
+      <!-- Anchor labels. -->
+      <g class="alt-anchor" font-size="11">
+        <text class="alt-anchor-day8" x="415" y="16" text-anchor="middle" font-weight="700">DOLMA LA &middot; 5,630 m</text>
+        <text x="305" y="50" text-anchor="middle">Mansarovar 4,670 m</text>
+        <text x="30" y="178" text-anchor="start">Kathmandu 1,380 m</text>
+      </g>
+      <!-- During-phase today cursor: dashed vertical at current day x. -->
+      <line id="today-cursor" class="alt-cursor" x1="0" y1="10" x2="0" y2="230" stroke-width="1" stroke-dasharray="2 4" style="display:none"/>
+      <!-- v3.10 §0.14.5 · invisible hover targets per day (tooltip via title) -->
+      <g class="alt-hover-targets">
+        <rect class="alt-hover" x="2"   y="0" width="56" height="240" fill="transparent"><title>Day 1 &middot; Kathmandu &middot; 1,380 m</title></rect>
+        <rect class="alt-hover" x="58"  y="0" width="55" height="240" fill="transparent"><title>Day 2 &middot; Kathmandu &middot; 1,380 m</title></rect>
+        <rect class="alt-hover" x="113" y="0" width="55" height="240" fill="transparent"><title>Day 3 &middot; Lhasa &middot; 3,656 m</title></rect>
+        <rect class="alt-hover" x="168" y="0" width="55" height="240" fill="transparent"><title>Day 4 &middot; Lhasa &middot; 3,656 m (acclim rest)</title></rect>
+        <rect class="alt-hover" x="223" y="0" width="55" height="240" fill="transparent"><title>Day 5 &middot; Mansarovar &middot; 4,670 m</title></rect>
+        <rect class="alt-hover" x="278" y="0" width="55" height="240" fill="transparent"><title>Day 6 &middot; Mansarovar &middot; 4,670 m (rest)</title></rect>
+        <rect class="alt-hover" x="333" y="0" width="55" height="240" fill="transparent"><title>Day 7 &middot; Dirapuk &middot; 4,900 m</title></rect>
+        <rect class="alt-hover" x="388" y="0" width="55" height="240" fill="transparent"><title>Day 8 &middot; Dolma La &middot; 5,630 m peak / Zuthulphuk 4,790 m sleep</title></rect>
+        <rect class="alt-hover" x="443" y="0" width="55" height="240" fill="transparent"><title>Day 9 &middot; Darchen &middot; 4,575 m</title></rect>
+        <rect class="alt-hover" x="498" y="0" width="55" height="240" fill="transparent"><title>Day 10 &middot; Lhasa &middot; 3,656 m</title></rect>
+        <rect class="alt-hover" x="553" y="0" width="55" height="240" fill="transparent"><title>Day 11 &middot; Kathmandu &middot; 1,380 m</title></rect>
+        <rect class="alt-hover" x="608" y="0" width="55" height="240" fill="transparent"><title>Day 12 &middot; Kathmandu &middot; 1,380 m (buffer)</title></rect>
+        <rect class="alt-hover" x="663" y="0" width="55" height="240" fill="transparent"><title>Day 13 &middot; Mumbai &middot; home</title></rect>
+      </g>
+    </svg>
+    <div class="alt-legend">
+      <span><span class="legend-dot" style="background:var(--ink)"></span>Sleep altitude</span>
+      <span><span class="legend-dot" style="background:var(--red)"></span>Day 8 peak (5,630 m)</span>
+      <span><span class="legend-dot" style="background:var(--accent);opacity:0.5"></span>Acclim rest zones</span>
     </div>
 
     <svg id="altitude-chart" viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Altitude profile across 13 days · peaks at Dolma La 5,630 meters" style="width:100%;height:auto;display:block;">
@@ -5481,7 +5853,7 @@
     if (d.day === 8) {
       html += '<div class="critical-banner" aria-label="Critical day warning"><svg class="icon icon-24"><use href="#icon-warning-triangle"/></svg><div><span class="cb-label">Critical day</span><div class="cb-body">' + d.critical_box + '</div></div></div>';
     }
-    html += '<article class="day-card ' + dayClass(d.day_type) + (isToday ? " is-today" : "") + '" id="day-' + d.day + '">';
+    html += '<article class="day-card delight-stagger ' + dayClass(d.day_type) + (isToday ? " is-today" : "") + '" id="day-' + d.day + '">';
     html += '<div class="day-head"><div><div class="day-num">Day ' + d.day + '</div><div class="day-date">' + d.weekday + " &middot; " + d.date + '</div></div>';
     if (chip) html += '<span class="chip ' + chip.cls + '">' + chip.label + '</span>';
     html += '</div>';
@@ -5871,7 +6243,7 @@
       var note = CONN_NOTES[c] || c;
       html += '<div class="conn-ribbon-cell" title="Day ' + (i+1) + ': ' + note + '" tabindex="0">';
       html += '<span class="cr-day">D' + (i+1) + '</span>';
-      html += '<span class="cr-dot ' + c + '"></span>';
+      html += '<span class="cr-dot delight-ribbon-dot ' + c + '"></span>';
       html += '</div>';
       if (i < 12) html += '<div class="conn-ribbon-line"></div>';
     });
@@ -6853,6 +7225,34 @@
       triggerDraw();
     }
   }
+</script>
+
+<script id="kailash-v312-delight-js">
+(function(){
+  if (!('IntersectionObserver' in window)) {
+    // fallback: just activate everything
+    document.querySelectorAll('[class*="delight-"]').forEach(function(el){ el.classList.add('in-view'); });
+    return;
+  }
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target); // one-shot
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll(
+    '.delight-stagger, .delight-route-draw, .delight-altitude-draw, ' +
+    '.delight-altitude-fill, .delight-ribbon-dot, .delight-sacred-marker, ' +
+    '.delight-parikrama-loop'
+  ).forEach(function(el){ observer.observe(el); });
+
+  // assign --stagger-i per day card automatically
+  document.querySelectorAll('.day-card.delight-stagger').forEach(function(el, i) {
+    el.style.setProperty('--stagger-i', i);
+  });
+})();
 </script>
 
 </body>
