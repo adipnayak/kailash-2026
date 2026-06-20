@@ -7720,6 +7720,21 @@ function altHtml(m) {
   return m.toLocaleString() + 'm<span class="altitude-value-feet">' + ft.toLocaleString() + 'ft</span>';
 }
 
+/* =========================================================
+   #8 - Connectivity Ribbon data (phase signals)
+   D1-D4 green, D5-D6 yellow/intermittent, D7-D9 red/offline,
+   D10 intermittent, D11-D13 green
+   ========================================================= */
+var CONN_STATUS_312 = [
+  "good","good","intermittent","intermittent",
+  "intermittent","intermittent",
+  "offline","offline","offline",
+  "intermittent",
+  "good","good","good"
+];
+/* Expose globally so renderConnRibbon can use per-phase dot styling */
+window._conn312 = CONN_STATUS_312;
+
 /* ---- Per-day data snapshots ---- */
 var DAY_DATES = [
   "07 Jul","08 Jul","09 Jul","10 Jul","11 Jul","12 Jul","13 Jul",
