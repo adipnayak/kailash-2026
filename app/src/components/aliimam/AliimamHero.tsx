@@ -19,6 +19,8 @@ interface AliimamHeroProps {
   primaryHref?: string;
   secondaryLabel?: string;
   secondaryHref?: string;
+  /** When provided, replaces the default title/subtitle/CTA slot with custom content. */
+  children?: React.ReactNode;
 }
 
 export function AliimamHero({
@@ -28,11 +30,13 @@ export function AliimamHero({
   primaryHref = '#itinerary',
   secondaryLabel = 'Prepare',
   secondaryHref = '#prepare',
+  children,
 }: AliimamHeroProps) {
   return (
-    <div className="relative flex h-screen items-center justify-center">
-      <div className="absolute h-full w-full overflow-hidden">
-        <div className="relative min-h-screen w-full">
+    <div className="relative w-full">
+      {/* aliimam grid + radial background decoration */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="relative h-full w-full">
           <div
             className="absolute inset-0 z-0 opacity-15"
             style={{
@@ -90,27 +94,35 @@ export function AliimamHero({
           />
         </div>
       </div>
-      <div className="container flex flex-col text-center z-10 px-6">
-        <h2 className="z-10 pt-10 text-5xl font-extrabold tracking-tighter md:text-7xl lg:text-9xl text-ink">
-          {title}
-        </h2>
-        <div className="z-10 flex flex-col items-center justify-center space-y-6 px-6 pt-10 text-center">
-          <p className="w-full max-w-lg text-sm font-light md:text-xl text-muted">
-            {subtitle}
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <a href={primaryHref}>
-              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 bg-ink text-bg font-medium text-sm rounded hover:opacity-80 transition-opacity">
-                {primaryLabel}
-              </button>
-            </a>
-            <a href={secondaryHref}>
-              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 border border-border text-ink font-medium text-sm rounded hover:bg-card transition-colors">
-                {secondaryLabel}
-              </button>
-            </a>
+
+      {/* Content slot */}
+      <div className="relative z-10">
+        {children ? (
+          children
+        ) : (
+          <div className="container flex flex-col items-center justify-center text-center px-6 py-20">
+            <h2 className="text-5xl font-extrabold tracking-tighter md:text-7xl lg:text-9xl text-ink">
+              {title}
+            </h2>
+            <div className="flex flex-col items-center justify-center space-y-6 px-6 pt-10 text-center">
+              <p className="w-full max-w-lg text-sm font-light md:text-xl text-muted">
+                {subtitle}
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <a href={primaryHref}>
+                  <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 bg-ink text-bg font-medium text-sm rounded hover:opacity-80 transition-opacity">
+                    {primaryLabel}
+                  </button>
+                </a>
+                <a href={secondaryHref}>
+                  <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 border border-border text-ink font-medium text-sm rounded hover:bg-card transition-colors">
+                    {secondaryLabel}
+                  </button>
+                </a>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

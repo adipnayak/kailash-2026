@@ -70,25 +70,35 @@ export function AliimamFeature({
   return (
     <section className="pt-10">
       <div className="mx-6">
-        <div className="flex w-full flex-col items-center px-4 text-center">
-          <span className="flex items-center gap-2 text-base font-medium text-muted">
-            <Mountain className="size-5" />
-            {eyebrow}
-          </span>
-          <h2 className="mt-3 text-3xl font-medium text-pretty sm:text-4xl md:text-5xl text-ink">
-            {title}
-          </h2>
-          <p className="mt-3 text-base text-pretty sm:text-lg text-muted">
-            {body}
-          </p>
-          <div className="mt-6 flex items-center gap-2 sm:gap-4">
-            <a href={ctaHref}>
-              <button className="h-10 cursor-pointer px-6 bg-ink text-bg font-medium text-sm rounded hover:opacity-80 transition-opacity">
-                {ctaLabel}
-              </button>
-            </a>
+        {(eyebrow || title || body || ctaLabel) && (
+          <div className="flex w-full flex-col items-center px-4 text-center">
+            {eyebrow && (
+              <span className="flex items-center gap-2 text-base font-medium text-muted">
+                <Mountain className="size-5" />
+                {eyebrow}
+              </span>
+            )}
+            {title && (
+              <h2 className="mt-3 text-3xl font-medium text-pretty sm:text-4xl md:text-5xl text-ink">
+                {title}
+              </h2>
+            )}
+            {body && (
+              <p className="mt-3 text-base text-pretty sm:text-lg text-muted">
+                {body}
+              </p>
+            )}
+            {ctaLabel && (
+              <div className="mt-6 flex items-center gap-2 sm:gap-4">
+                <a href={ctaHref}>
+                  <button className="h-10 cursor-pointer px-6 bg-ink text-bg font-medium text-sm rounded hover:opacity-80 transition-opacity">
+                    {ctaLabel}
+                  </button>
+                </a>
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         <div className="mt-12 mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">

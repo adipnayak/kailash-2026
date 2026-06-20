@@ -30,11 +30,14 @@ const NAV_LINKS: FooterLink[] = [
 interface AliimamFooterProps {
   year?: number;
   attribution?: string;
+  /** Devotional phrase displayed in the footer (Devanagari, x1 budget). */
+  devotional?: string;
 }
 
 export function AliimamFooter({
   year = new Date().getFullYear(),
   attribution = 'Kailash Manasarovar Yatra 2026',
+  devotional,
 }: AliimamFooterProps) {
   return (
     <footer className="py-16 border-t border-border">
@@ -79,6 +82,12 @@ export function AliimamFooter({
             </span>
           </div>
         </div>
+
+        {devotional && (
+          <div className="mt-6 text-center">
+            <span className="font-sans text-xl text-accent">{devotional}</span>
+          </div>
+        )}
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-border">
           <span className="text-xs text-muted">

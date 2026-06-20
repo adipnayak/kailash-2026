@@ -14,6 +14,8 @@
 interface Stat {
   value: string;
   label: string;
+  /** Optional aliimam icon rendered above the value. */
+  icon?: React.ReactNode;
 }
 
 interface AliimamStatsProps {
@@ -48,6 +50,7 @@ export function AliimamStats({
                 .filter(Boolean)
                 .join(' ')}
             >
+              {stat.icon && <div className="flex justify-center">{stat.icon}</div>}
               <div className="text-4xl font-extrabold tracking-tighter text-ink">
                 {stat.value}
               </div>

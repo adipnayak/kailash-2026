@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Mountain, Bed, Ruler, Sun } from '@aliimam/icons';
 import {
   AreaChart,
   AreaSeries,
@@ -97,13 +98,14 @@ function SegmentedControl({
           type="button"
           onClick={() => onChange(m)}
           className={[
-            'px-4 py-1.5 transition-colors duration-150 cursor-pointer',
+            'flex items-center gap-1.5 px-4 py-1.5 transition-colors duration-150 cursor-pointer',
             mode === m
               ? 'bg-ink text-card'
               : 'bg-card text-muted hover:bg-border hover:text-ink',
           ].join(' ')}
           aria-pressed={mode === m}
         >
+          {m === 'walking' ? <Ruler size={12} /> : <Bed size={12} />}
           {m === 'walking' ? 'Walking' : 'Sleeping'}
         </button>
       ))}
@@ -149,10 +151,14 @@ function DolmaMarker({ chartWidth, chartHeight, dolmaRef, mode }: DolmaMarkerPro
       <circle ref={dolmaRef as React.RefObject<SVGCircleElement>} cx={cx} cy={cy} r={14} fill="var(--red)" opacity={0.2} />
       {/* Solid inner dot */}
       <circle cx={cx} cy={cy} r={6} fill="var(--red)" stroke="var(--card)" strokeWidth={2} />
+      {/* Mountain icon via foreignObject */}
+      <foreignObject x={cx + 10} y={cy - 22} width={14} height={14}>
+        <Mountain size={13} style={{ color: 'var(--red)' }} />
+      </foreignObject>
       {/* Label */}
       <text
-        x={cx + 10}
-        y={cy - 8}
+        x={cx + 26}
+        y={cy - 12}
         fontSize={10}
         fontFamily="'JetBrains Mono', ui-monospace, monospace"
         fill="var(--red)"
@@ -161,8 +167,8 @@ function DolmaMarker({ chartWidth, chartHeight, dolmaRef, mode }: DolmaMarkerPro
         Dolma La
       </text>
       <text
-        x={cx + 10}
-        y={cy + 3}
+        x={cx + 26}
+        y={cy - 1}
         fontSize={9}
         fontFamily="'JetBrains Mono', ui-monospace, monospace"
         fill="var(--red)"
@@ -411,6 +417,7 @@ export function AltitudeChart() {
         {/* Legend row */}
         <div className="mt-4 flex flex-wrap items-center gap-6 font-mono text-xs text-muted">
           <span className="flex items-center gap-1.5">
+            <Mountain size={12} className="text-red" />
             <span
               className="inline-block w-3 h-3 rounded-full"
               style={{ background: 'var(--red)' }}
@@ -418,6 +425,7 @@ export function AltitudeChart() {
             Dolma La Pass (5,630m / 18,471ft)
           </span>
           <span className="flex items-center gap-1.5">
+            <Sun size={12} className="text-accent" />
             <span
               className="inline-block w-3 h-1.5 rounded"
               style={{ background: 'rgba(200,160,0,0.4)' }}

@@ -8,6 +8,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
+import { Mountain, MapPin } from '@aliimam/icons';
 import type { JourneyState } from '../lib/journey-state';
 import { resolveOrigin, type OriginId } from '../lib/origin';
 
@@ -420,6 +421,30 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             <text x="345" y="207" fontSize="8" fill="var(--muted)" letterSpacing="0.1em">D8 NIGHT - 4,790M</text>
             <title>Zuthulphuk - 4,790m / 15,715ft - Day 8 night camp</title>
           </g>
+        </g>
+
+        {/* aliimam icon overlays: MapPin per stop, Mountain at Dolma La */}
+        <g className="icon-overlays" aria-hidden="true">
+          {/* MapPin at Kathmandu */}
+          <foreignObject x="462" y="362" width="16" height="16">
+            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+          </foreignObject>
+          {/* MapPin at Lhasa */}
+          <foreignObject x="922" y="262" width="16" height="16">
+            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+          </foreignObject>
+          {/* MapPin at Mansarovar */}
+          <foreignObject x="462" y="202" width="16" height="16">
+            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+          </foreignObject>
+          {/* MapPin at Darchen */}
+          <foreignObject x="402" y="217" width="16" height="16">
+            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+          </foreignObject>
+          {/* Mountain at Dolma La (red) */}
+          <foreignObject x="243" y="92" width="18" height="18">
+            <Mountain size={16} style={{ color: 'var(--red)' }} />
+          </foreignObject>
         </g>
 
         {/* Sacred markers (always visible per v3.12 lock) */}

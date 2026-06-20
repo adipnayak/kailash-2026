@@ -42,6 +42,7 @@ import {
   HardHat,
   Eye,
 } from '@aliimam/icons';
+import { AliimamFeature } from './aliimam';
 import gsap from 'gsap';
 import type { TripDay } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
@@ -385,7 +386,7 @@ function CarryBlock({ day }: { day: TripDay }) {
 }
 
 // ---------------------------------------------------------------------------
-// 8. Spiritual focus
+// 8. Spiritual focus -- AliimamFeature single-card shell
 // ---------------------------------------------------------------------------
 
 function SpiritualBlock({ day }: { day: TripDay }) {
@@ -394,13 +395,20 @@ function SpiritualBlock({ day }: { day: TripDay }) {
   return (
     <div>
       <SectionHeader label="Spiritual Focus" />
-      <div className="border-l-2 border-accent/60 pl-3 py-1 rounded-r bg-accent/5">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-accent mb-1 flex items-center gap-1">
-          <CandleFilled size={10} className="shrink-0" />
-          {sf.title}
-        </p>
-        <p className="text-xs text-ink leading-relaxed whitespace-pre-line">{sf.body}</p>
-      </div>
+      <AliimamFeature
+        eyebrow=""
+        title=""
+        body=""
+        cards={[
+          {
+            icon: <Heart size={16} className="text-accent" />,
+            title: sf.title,
+            body: sf.body,
+          },
+        ]}
+        ctaLabel=""
+        ctaHref=""
+      />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { Mountain, MapPin, Radio, TriangleAlert, Clock } from '@aliimam/icons';
 import type { JourneyState } from '../lib/journey-state';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
+import { AliimamHero } from './aliimam';
 
 gsap.registerPlugin(useGSAP);
 
@@ -301,56 +302,58 @@ function AfterHero({ state: _state }: { state: JourneyState }) {
 // ---------------------------------------------------------------------------
 export function Hero({ phase }: { phase: JourneyState }) {
   return (
-    <section
-      data-section="hero"
-      className="border-b border-border bg-card px-4 py-6 md:px-6 md:py-10"
-    >
-      <div className="mx-auto max-w-2xl">
-        {/* Eyebrow */}
-        <div className="flex items-center gap-2 text-muted font-mono text-xs uppercase tracking-widest mb-5">
-          <Mountain size={14} />
-          <span>Kailash Mansarovar Yatra 2026</span>
+    <AliimamHero>
+      <section
+        data-section="hero"
+        className="border-b border-border bg-card px-4 py-6 md:px-6 md:py-10"
+      >
+        <div className="mx-auto max-w-2xl">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2 text-muted font-mono text-xs uppercase tracking-widest mb-5">
+            <Mountain size={14} />
+            <span>Kailash Mansarovar Yatra 2026</span>
+          </div>
+
+          {/* Phase variants with AnimatePresence */}
+          <AnimatePresence mode="wait">
+            {phase.phase === 'before' && (
+              <motion.div
+                key="before"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <BeforeHero state={phase} />
+              </motion.div>
+            )}
+
+            {phase.phase === 'during' && (
+              <motion.div
+                key="during"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <DuringHero state={phase} />
+              </motion.div>
+            )}
+
+            {phase.phase === 'after' && (
+              <motion.div
+                key="after"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <AfterHero state={phase} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        {/* Phase variants with AnimatePresence */}
-        <AnimatePresence mode="wait">
-          {phase.phase === 'before' && (
-            <motion.div
-              key="before"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <BeforeHero state={phase} />
-            </motion.div>
-          )}
-
-          {phase.phase === 'during' && (
-            <motion.div
-              key="during"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <DuringHero state={phase} />
-            </motion.div>
-          )}
-
-          {phase.phase === 'after' && (
-            <motion.div
-              key="after"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <AfterHero state={phase} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
+      </section>
+    </AliimamHero>
   );
 }
