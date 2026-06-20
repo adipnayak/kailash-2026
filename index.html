@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kailash Mansarovar Yatra · Adip + Amit Nayak · 7 to 19 July 2026 · day by day itinerary with live weather forecasts.">
+<meta property="og:title" content="Kailash Mansarovar Yatra 2026 · Adip + Amit">
+<meta property="og:description" content="13 day yatra. 7 to 19 July 2026. BOM to KTM to Lhasa to Mansarovar to Dolma La 5,630 m and back. Live weather updates per location.">
+<meta property="og:type" content="website">
+<title>Kailash Mansarovar Yatra 2026 · Adip and Amit</title>
+<style>
+  :root {
+    --navy: #1F2F4A;
+    --grey-900: #1A1A1A;
+    --grey-700: #4A4A4A;
+    --grey-500: #888;
+    --grey-300: #D0D0D0;
+    --grey-100: #F4F4F0;
+    --grey-50: #FAF9F5;
+    --accent: #B86E2E;
+    --warn: #C04B3E;
+    --good: #4F7A4F;
+    --serif: ui-serif, Georgia, "Source Serif 4", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --navy: #C9D6E8;
+      --grey-900: #F0EDE6;
+      --grey-700: #BFBAB0;
+      --grey-500: #888;
+      --grey-300: #404040;
+      --grey-100: #1E1E1E;
+      --grey-50: #141414;
+      --accent: #D9924F;
+      --warn: #E4796D;
+      --good: #8AB48A;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--grey-50);
+    color: var(--grey-900);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 56px 24px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--grey-300);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font-size: 17px;
+    color: var(--grey-700);
+    max-width: 620px;
+    margin: 0 auto 24px;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--grey-500);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+  .meta b { color: var(--grey-700); font-weight: 500; }
+  main { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+  section { margin-bottom: 56px; }
+  h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    color: var(--navy);
+    margin: 0 0 20px;
+    border-bottom: 1px solid var(--grey-300);
+    padding-bottom: 12px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .summary-cell {
+    background: var(--grey-100);
+    padding: 16px;
+    border-radius: 6px;
+  }
+  .summary-cell .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--grey-500);
+    margin-bottom: 4px;
+  }
+  .summary-cell .value {
+    font-family: var(--serif);
+    font-size: 19px;
+    color: var(--grey-900);
+  }
+  .day-card {
+    background: var(--grey-100);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border-left: 3px solid var(--grey-300);
+  }
+  .day-card.hardest { border-left-color: var(--warn); }
+  .day-card.holy { border-left-color: var(--accent); }
+  .day-card.rest { border-left-color: var(--good); }
+  .day-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .day-num {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--navy);
+    font-weight: 600;
+    line-height: 1;
+  }
+  .day-date {
+    font-size: 15px;
+    color: var(--grey-500);
+    font-weight: 500;
+  }
+  .day-tag {
+    background: var(--grey-300);
+    color: var(--grey-900);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .day-tag.warn { background: var(--warn); color: white; }
+  .day-tag.accent { background: var(--accent); color: white; }
+  .day-tag.good { background: var(--good); color: white; }
+  .day-location {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--grey-900);
+    margin: 0 0 4px;
+    line-height: 1.3;
+  }
+  .day-altitude {
+    color: var(--grey-500);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 12px;
+  }
+  .day-activity {
+    color: var(--grey-700);
+    margin-bottom: 16px;
+  }
+  .day-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  @media (max-width: 480px) {
+    .day-grid { grid-template-columns: 1fr; }
+    main { padding: 20px 16px 60px; }
+    header { padding: 32px 16px 24px; }
+  }
+  .info-cell {
+    background: var(--grey-50);
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .info-cell .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--grey-500);
+    margin-bottom: 4px;
+  }
+  .info-cell .value { color: var(--grey-900); font-weight: 500; }
+  .weather {
+    background: var(--grey-50);
+    border-radius: 6px;
+    padding: 14px;
+    margin-top: 12px;
+    font-variant-numeric: tabular-nums;
+    border: 1px solid var(--grey-300);
+  }
+  .weather-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .weather-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--grey-500);
+    font-weight: 600;
+  }
+  .weather-source {
+    font-size: 11px;
+    color: var(--grey-500);
+    font-style: italic;
+  }
+  .weather-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+  }
+  .weather-stat {
+    text-align: center;
+    padding: 8px 4px;
+  }
+  .weather-stat .num {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--navy);
+    font-weight: 600;
+    display: block;
+  }
+  .weather-stat .unit {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--grey-500);
+  }
+  .weather-stat.warn .num { color: var(--warn); }
+  .weather.loading .weather-body { opacity: 0.4; }
+  .weather.error { border-color: var(--warn); }
+  .weather.error .weather-source { color: var(--warn); }
+  .toc {
+    background: var(--grey-100);
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 4px;
+  }
+  .toc-list a {
+    color: var(--grey-700);
+    text-decoration: none;
+    padding: 4px 0;
+    display: block;
+    font-variant-numeric: tabular-nums;
+  }
+  .toc-list a:hover { color: var(--navy); }
+  .toc-list .hardest { color: var(--warn); font-weight: 600; }
+  .last-updated {
+    text-align: center;
+    color: var(--grey-500);
+    font-size: 12px;
+    margin: 24px 0;
+    font-style: italic;
+  }
+  .refresh-btn {
+    background: transparent;
+    border: 1px solid var(--grey-300);
+    color: var(--grey-700);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 8px;
+    font-family: inherit;
+  }
+  .refresh-btn:hover { background: var(--grey-100); color: var(--navy); }
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--grey-500);
+    font-size: 13px;
+    border-top: 1px solid var(--grey-300);
+  }
+  footer a { color: var(--grey-700); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--grey-500);
+    margin-top: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+  .dot-warn { background: var(--warn); }
+  .dot-accent { background: var(--accent); }
+  .dot-good { background: var(--good); }
+  .dot-default { background: var(--grey-300); }
+  .note {
+    background: var(--grey-100);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--grey-700);
+  }
+  @media print {
+    body { background: white; color: black; font-size: 11pt; }
+    header { padding: 16px 0; border-bottom: 1px solid #999; }
+    h1 { font-size: 24pt; }
+    .day-card { background: white; border: 1px solid #ccc; page-break-inside: avoid; margin-bottom: 12px; padding: 12px; }
+    .weather { background: white; border: 1px solid #ccc; }
+    .toc, .refresh-btn, footer a { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Kailash Mansarovar Yatra 2026</h1>
+  <p class="lede">Adip and Amit Nayak. 13 days. Mumbai to Kathmandu to Lhasa to Mansarovar to Dolma La 5,630 m and back.</p>
+  <div class="meta">
+    <span><b>Depart:</b> Tue 7 July 2026</span>
+    <span><b>Return:</b> Sun 19 July 2026</span>
+    <span><b>Operator:</b> YPO</span>
+    <span><b>Peak:</b> Dolma La 5,630 m</span>
+  </div>
+</header>
+
+<main>
+
+<section>
+  <div class="toc">
+    <strong>Jump to day</strong>
+    <ul class="toc-list">
+      <li><a href="#d1">1 · Jul 7</a></li>
+      <li><a href="#d2">2 · Jul 8</a></li>
+      <li><a href="#d3">3 · Jul 9</a></li>
+      <li><a href="#d4">4 · Jul 10</a></li>
+      <li><a href="#d5">5 · Jul 11</a></li>
+      <li><a href="#d6" class="">6 · Jul 12</a></li>
+      <li><a href="#d7">7 · Jul 13</a></li>
+      <li><a href="#d8" class="hardest">8 · Jul 14 (Dolma La)</a></li>
+      <li><a href="#d9">9 · Jul 15</a></li>
+      <li><a href="#d10">10 · Jul 16</a></li>
+      <li><a href="#d11">11 · Jul 17</a></li>
+      <li><a href="#d12">12 · Jul 18</a></li>
+      <li><a href="#d13">13 · Jul 19</a></li>
+    </ul>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot dot-warn"></span>Hardest day</span>
+      <span class="legend-item"><span class="legend-dot dot-accent"></span>Holy ritual</span>
+      <span class="legend-item"><span class="legend-dot dot-good"></span>Rest day</span>
+      <span class="legend-item"><span class="legend-dot dot-default"></span>Travel or activity</span>
+    </div>
+  </div>
+
+  <p class="last-updated">Weather forecasts refresh on every page load from <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color: inherit;">Open Meteo</a>. Live data covers the next 16 days; older days fall back to July climatology. <button class="refresh-btn" onclick="loadAllWeather()" title="Refresh now">Refresh</button> <span id="updatedAt"></span></p>
+</section>
+
+<section>
+  <h2>Day by day</h2>
+
+  <article class="day-card" id="d1" data-loc="kathmandu" data-date="2026-07-07">
+    <div class="day-head">
+      <span class="day-num">1</span>
+      <span class="day-date">Tue 7 July</span>
+      <span class="day-tag">Arrive Kathmandu</span>
+    </div>
+    <p class="day-location">Kathmandu, Nepal</p>
+    <p class="day-altitude">1,380 m · monsoon · hot and humid</p>
+    <p class="day-activity">Amit lands 08:05 (FZ 1133 ex DXB). Adip pre noon BOM to KTM. Operator pickup window 11 AM to 3 PM. Networking dinner 6:30 PM at Marriott.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Marriott KTM</div></div>
+      <div class="info-cell"><div class="label">Bathing</div><div class="value">Hot water</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d2" data-loc="kathmandu" data-date="2026-07-08">
+    <div class="day-head">
+      <span class="day-num">2</span>
+      <span class="day-date">Wed 8 July</span>
+      <span class="day-tag">Kathmandu</span>
+    </div>
+    <p class="day-location">Kathmandu · Indian Embassy NOC + Pashupatinath</p>
+    <p class="day-altitude">1,380 m · monsoon · afternoon thunderstorms likely</p>
+    <p class="day-activity">9:30 AM lobby. 10 AM Indian Embassy NOC. 12 to 1 PM Pashupatinath darshan. 4 PM YPO yatra briefing and kit distribution. 7:30 PM dinner.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Marriott KTM</div></div>
+      <div class="info-cell"><div class="label">Bathing</div><div class="value">Hot water</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d3" data-loc="lhasa" data-date="2026-07-09">
+    <div class="day-head">
+      <span class="day-num">3</span>
+      <span class="day-date">Thu 9 July</span>
+      <span class="day-tag">KTM to Lhasa</span>
+    </div>
+    <p class="day-location">Lhasa, Tibet</p>
+    <p class="day-altitude">3,656 m · first big altitude jump · UV extreme</p>
+    <p class="day-activity">5:30 AM checkout. 8 AM flight to Lhasa Gonggar (1.5h, packed breakfast). 12:30 PM arrival, 1.5h bus to hotel. Lunch + early dinner. Acclimatisation rest.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">St Regis Lhasa</div></div>
+      <div class="info-cell"><div class="label">UV</div><div class="value">8 to 10 (very high)</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d4" data-loc="lhasa" data-date="2026-07-10">
+    <div class="day-head">
+      <span class="day-num">4</span>
+      <span class="day-date">Fri 10 July</span>
+      <span class="day-tag">Lhasa sightseeing</span>
+    </div>
+    <p class="day-location">Lhasa · Jokhang + Potala</p>
+    <p class="day-altitude">3,656 m · acclimatisation day</p>
+    <p class="day-activity">7 AM breakfast. 9 AM Lhasa sightseeing (Jokhang Temple, Potala Palace, 4 to 5h, optional). 2 PM lunch. 8 PM dinner.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">St Regis Lhasa</div></div>
+      <div class="info-cell"><div class="label">UV</div><div class="value">8 to 10</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d5" data-loc="mansarovar" data-date="2026-07-11">
+    <div class="day-head">
+      <span class="day-num">5</span>
+      <span class="day-date">Sat 11 July</span>
+      <span class="day-tag">Lhasa to Mansarovar</span>
+    </div>
+    <p class="day-location">Lake Mansarovar (Chiu Gompa)</p>
+    <p class="day-altitude">4,670 m · open plateau · strong wind</p>
+    <p class="day-activity">6 AM checkout (suitcase stays at St Regis). Flight Lhasa to Ali Nagri Gunsa (2h). 4 to 5h drive to Mansarovar. Lunch + dinner at hotel.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Spring Hotel Mansarovar</div></div>
+      <div class="info-cell"><div class="label">UV</div><div class="value">9 to 11+ (extreme)</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card holy" id="d6" data-loc="mansarovar" data-date="2026-07-12">
+    <div class="day-head">
+      <span class="day-num">6</span>
+      <span class="day-date">Sun 12 July</span>
+      <span class="day-tag accent">Holy bath + puja</span>
+    </div>
+    <p class="day-location">Mansarovar Kora · Chiu Gompa</p>
+    <p class="day-altitude">4,670 m · lake bath water ~5 C glacial fed</p>
+    <p class="day-activity">9 AM breakfast. 10 AM Lake Mansarovar Kora by coach. Holy bathing at lake shore. Puja at Chiu Gompa with pujari leading. 3 PM lunch. 8 PM dinner.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Mansarovar Hotel</div></div>
+      <div class="info-cell"><div class="label">Bring</div><div class="value">Holy water bottle + ritual coins</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d7" data-loc="dirapuk" data-date="2026-07-13">
+    <div class="day-head">
+      <span class="day-num">7</span>
+      <span class="day-date">Mon 13 July</span>
+      <span class="day-tag">Parikrama day 1</span>
+    </div>
+    <p class="day-location">Yamadwar to Dirapuk · 12 km trek</p>
+    <p class="day-altitude">4,900 m · 5 to 6h walk · pre dawn cold</p>
+    <p class="day-activity">8 to 9 AM breakfast + packed lunch. 10 AM drive 43 km to Yamadwar trailhead. Trek to Dirapuk (12 km, 5 to 6h). Horses available on this section. Slow pace for acclimatisation.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Shishapangma Guest House (Dirapuk)</div></div>
+      <div class="info-cell"><div class="label">No bath provision</div><div class="value">Pit toilet</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card hardest" id="d8" data-loc="dolmala" data-date="2026-07-14">
+    <div class="day-head">
+      <span class="day-num">8</span>
+      <span class="day-date">Tue 14 July</span>
+      <span class="day-tag warn">HARDEST DAY · Dolma La 5,630 m</span>
+    </div>
+    <p class="day-location">Dirapuk to Dolma La Pass to Zuthulphuk · 22 km</p>
+    <p class="day-altitude">5,630 m peak · 8 to 9h · NO horses on the pass section</p>
+    <p class="day-activity">04:00 wake + full winter stack. 05:00 trek Dirapuk to Dolma La (5 km up, +730 m). 09:00 at the pass (30 min, coldest point). Descent 17 km to Zuthulphuk through Gauri Kund viewpoint. Year round snow at the pass. Wind chill at the pass can hit -15 to -25 C. Whiteout possible. Start at 4 AM to be off the pass before afternoon cloud build up.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Guest House (Zuthulphuk)</div></div>
+      <div class="info-cell"><div class="label">UV</div><div class="value">11+ + snow reflection 2x</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d9" data-loc="darchen" data-date="2026-07-15">
+    <div class="day-head">
+      <span class="day-num">9</span>
+      <span class="day-date">Wed 15 July</span>
+      <span class="day-tag">Parikrama day 3 · easy</span>
+    </div>
+    <p class="day-location">Zuthulphuk to Mani Wall to Darchen · 8 km</p>
+    <p class="day-altitude">4,760 m · 3h walk · recovery day</p>
+    <p class="day-activity">6 AM breakfast. Short trek to Mani Wall (8 km, 3h, mostly descent). Coach to Darchen. Lunch and rest. Optional Asthapad jeep visit CNY 500 per person if energy allows.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Himalaya Hotel Darchen</div></div>
+      <div class="info-cell"><div class="label">Bathing</div><div class="value">Hot water</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d10" data-loc="lhasa" data-date="2026-07-16">
+    <div class="day-head">
+      <span class="day-num">10</span>
+      <span class="day-date">Thu 16 July</span>
+      <span class="day-tag">Return to Lhasa</span>
+    </div>
+    <p class="day-location">Darchen to Ali to Lhasa</p>
+    <p class="day-altitude">3,656 m · first shower in 4 days</p>
+    <p class="day-activity">5 AM packed breakfast. 5:30 AM drive Darchen to Ali. 9:30 AM flight Ali to Lhasa (2h 10m). 12 PM arrival, 2 PM lunch and shower. Reunite with the suitcase at St Regis. 7 PM concluding session dinner.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">St Regis Lhasa</div></div>
+      <div class="info-cell"><div class="label">Note</div><div class="value">Reunite with the suitcase</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d11" data-loc="kathmandu" data-date="2026-07-17">
+    <div class="day-head">
+      <span class="day-num">11</span>
+      <span class="day-date">Fri 17 July</span>
+      <span class="day-tag">Lhasa to KTM</span>
+    </div>
+    <p class="day-location">Kathmandu · trip closes</p>
+    <p class="day-altitude">1,380 m · back to monsoon</p>
+    <p class="day-activity">8 AM breakfast. 9 AM lobby. Flight Lhasa to KTM (2h 15m, IST -3h). Arrive ~1 PM. 2 PM Marriott KTM. 8 PM dinner. Members can depart same day after 6 PM.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Marriott KTM</div></div>
+      <div class="info-cell"><div class="label">Bathing</div><div class="value">Hot water</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card rest" id="d12" data-loc="kathmandu" data-date="2026-07-18">
+    <div class="day-head">
+      <span class="day-num">12</span>
+      <span class="day-date">Sat 18 July</span>
+      <span class="day-tag good">Rest day</span>
+    </div>
+    <p class="day-location">Kathmandu · rest + Thamel</p>
+    <p class="day-altitude">1,380 m · recovery</p>
+    <p class="day-activity">Rest day at Marriott KTM. Optional Thamel shopping (souvenirs, Tibetan thangka shops, prayer flags). Casual dinner. No formal YPO program.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Stay</div><div class="value">Marriott KTM</div></div>
+      <div class="info-cell"><div class="label">Mode</div><div class="value">Casual</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+  <article class="day-card" id="d13" data-loc="kathmandu" data-date="2026-07-19">
+    <div class="day-head">
+      <span class="day-num">13</span>
+      <span class="day-date">Sun 19 July</span>
+      <span class="day-tag">Fly home</span>
+    </div>
+    <p class="day-location">Kathmandu to Mumbai / Dubai</p>
+    <p class="day-altitude">1,380 m → sea level</p>
+    <p class="day-activity">7 AM breakfast. 9 AM checkout. Transfer to airport. Amit FZ 1134 09:05 KTM to DXB. Adip RA-201 KTM to BOM.</p>
+    <div class="day-grid">
+      <div class="info-cell"><div class="label">Adip</div><div class="value">RA-201 KTM to BOM</div></div>
+      <div class="info-cell"><div class="label">Amit</div><div class="value">FZ 1134 KTM to DXB 09:05</div></div>
+    </div>
+    <div class="weather loading" data-weather></div>
+  </article>
+
+</section>
+
+<section>
+  <h2>Critical notes</h2>
+  <div class="note">
+    <strong>Day 8 (Dolma La) is the singular hardest day.</strong> 22 km on foot with no horses on the ascent. Whiteout possible at the pass. Start at 4 AM. UV at 5,630 m is off scale and snow doubles the dose. Both Cat 4 sunglasses on body. Hand warmers x4.
+  </div>
+  <div class="note">
+    <strong>Tibet is behind the Great Firewall.</strong> WhatsApp, Google, Instagram all blocked without a VPN. Holafly China eSIM + Astrill VPN tested from India by 4 July.
+  </div>
+  <div class="note">
+    <strong>Suitcase stays in Lhasa for 5 nights (Days 5 to 10).</strong> Anything needed on the trek lives in the YPO duffle or the personal daypack. Keep a clean reserve outfit + spare power bank + meds in the suitcase as lost bag insurance.
+  </div>
+  <div class="note">
+    <strong>Diamox starts ~4 July (3 days before KTM arrival).</strong> Get the prescription from Dr. Hingorani by 30 June.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Yatra coordinated through YPO. Travel partner contact via Isra. Emergency tracking via this page.</p>
+  <p>Source data lives in the family operating repo. This page is updated daily from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open Meteo</a> forecasts.</p>
+</footer>
+
+<script>
+const LOCATIONS = {
+  kathmandu: { name: "Kathmandu",  lat: 27.7172, lon: 85.3240, elevation: 1380, tz: "Asia/Kathmandu",
+               climate: { high: 29, low: 20, rain: 75, wind: 8,  uv: 7,  note: "Monsoon. Afternoon thunderstorms." } },
+  lhasa:     { name: "Lhasa",      lat: 29.6500, lon: 91.1167, elevation: 3656, tz: "Asia/Shanghai",
+               climate: { high: 23, low: 11, rain: 35, wind: 15, uv: 9,  note: "Drier than KTM. UV extreme." } },
+  mansarovar:{ name: "Mansarovar", lat: 30.6500, lon: 81.4500, elevation: 4570, tz: "Asia/Shanghai",
+               climate: { high: 18, low: 5,  rain: 40, wind: 25, uv: 10, note: "Open plateau. Strong wind. Glacial bath." } },
+  dirapuk:   { name: "Dirapuk",    lat: 31.1500, lon: 81.2500, elevation: 4900, tz: "Asia/Shanghai",
+               climate: { high: 14, low: -2, rain: 50, wind: 25, uv: 10, note: "Pre Parikrama cold. Possible sleet." } },
+  dolmala:   { name: "Dolma La",   lat: 31.1167, lon: 81.2667, elevation: 5630, tz: "Asia/Shanghai",
+               climate: { high: 5,  low: -10,rain: 60, wind: 50, uv: 11, note: "Year round snow at the pass. Whiteout possible." } },
+  darchen:   { name: "Darchen",    lat: 31.0833, lon: 81.3000, elevation: 4575, tz: "Asia/Shanghai",
+               climate: { high: 16, low: 9,  rain: 35, wind: 20, uv: 10, note: "Drier than Mansarovar. Recovery." } },
+};
+
+function fmtTemp(n) { return Math.round(n) + "°"; }
+
+function daysUntil(dateStr) {
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const target = new Date(dateStr + "T00:00:00");
+  return Math.round((target - now) / 86400000);
+}
+
+function renderClimate(card, loc, dateStr) {
+  const c = loc.climate;
+  const dUntil = dateStr ? daysUntil(dateStr) : null;
+  let sourceText = "July typicals shown";
+  if (dUntil !== null && dUntil > 16) {
+    const openIn = dUntil - 16;
+    sourceText = `live forecast opens in ${openIn} day${openIn === 1 ? "" : "s"}`;
+  } else if (dUntil !== null && dUntil < 0) {
+    sourceText = "trip date passed";
+  }
+  card.classList.remove("loading");
+  card.classList.add("error");
+  card.innerHTML = `
+    <div class="weather-head">
+      <span class="weather-title">${loc.name} · July climatology</span>
+      <span class="weather-source">${sourceText}</span>
+    </div>
+    <div class="weather-body">
+      <div class="weather-stat"><span class="num">${fmtTemp(c.high)}</span><span class="unit">High</span></div>
+      <div class="weather-stat"><span class="num">${fmtTemp(c.low)}</span><span class="unit">Low</span></div>
+      <div class="weather-stat"><span class="num">${c.rain}%</span><span class="unit">Rain</span></div>
+      <div class="weather-stat"><span class="num">${c.wind}</span><span class="unit">km/h</span></div>
+      <div class="weather-stat ${c.uv >= 10 ? 'warn' : ''}"><span class="num">${c.uv}</span><span class="unit">UV</span></div>
+    </div>
+    <p style="font-size: 12px; color: var(--grey-500); margin: 8px 0 0;">${c.note}</p>
+  `;
+}
+
+async function fetchWeatherFor(loc, date) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&elevation=${loc.elevation}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max&timezone=${encodeURIComponent(loc.tz)}&start_date=${date}&end_date=${date}`;
+  const res = await fetch(url, { cache: "no-cache" });
+  if (!res.ok) throw new Error("API " + res.status);
+  return await res.json();
+}
+
+function renderForecast(card, loc, data, dateStr) {
+  const d = data.daily;
+  if (!d || !d.time || d.time.length === 0) {
+    renderClimate(card, loc, dateStr);
+    return;
+  }
+  const high = d.temperature_2m_max[0];
+  const low = d.temperature_2m_min[0];
+  const rain = d.precipitation_probability_max[0] ?? loc.climate.rain;
+  const wind = d.wind_speed_10m_max[0] ?? loc.climate.wind;
+  const uv = d.uv_index_max[0] ?? loc.climate.uv;
+  card.classList.remove("loading", "error");
+  card.innerHTML = `
+    <div class="weather-head">
+      <span class="weather-title">${loc.name} forecast</span>
+      <span class="weather-source">Open Meteo · live</span>
+    </div>
+    <div class="weather-body">
+      <div class="weather-stat"><span class="num">${fmtTemp(high)}</span><span class="unit">High</span></div>
+      <div class="weather-stat"><span class="num">${fmtTemp(low)}</span><span class="unit">Low</span></div>
+      <div class="weather-stat"><span class="num">${Math.round(rain)}%</span><span class="unit">Rain</span></div>
+      <div class="weather-stat"><span class="num">${Math.round(wind)}</span><span class="unit">km/h</span></div>
+      <div class="weather-stat ${uv >= 10 ? 'warn' : ''}"><span class="num">${Math.round(uv)}</span><span class="unit">UV</span></div>
+    </div>
+  `;
+}
+
+async function loadCardWeather(card) {
+  const locKey = card.parentElement.dataset.loc;
+  const date = card.parentElement.dataset.date;
+  const loc = LOCATIONS[locKey];
+  if (!loc) return;
+  if (daysUntil(date) > 16) {
+    renderClimate(card, loc, date);
+    return;
+  }
+  try {
+    const data = await fetchWeatherFor(loc, date);
+    renderForecast(card, loc, data, date);
+  } catch (e) {
+    renderClimate(card, loc, date);
+  }
+}
+
+async function loadAllWeather() {
+  const cards = document.querySelectorAll("[data-weather]");
+  cards.forEach(c => { c.classList.add("loading"); c.innerHTML = `<div class="weather-head"><span class="weather-title">Loading forecast...</span></div><div class="weather-body"></div>`; });
+  for (const card of cards) {
+    await loadCardWeather(card);
+  }
+  const now = new Date();
+  const opts = { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" };
+  document.getElementById("updatedAt").textContent = "Last refresh " + now.toLocaleString("en-IN", opts) + " IST";
+}
+
+window.addEventListener("DOMContentLoaded", loadAllWeather);
+</script>
+</body>
+</html>
