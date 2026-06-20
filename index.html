@@ -559,6 +559,348 @@
   .day-card.day-rest { border-left-color: var(--green); }
   .phase-during .day-card.is-today { outline: 2px solid var(--ink); outline-offset: 2px; }
 
+  /* v3.9 §0.13.7 · day card header dashboard (mini-tile cluster) */
+  .day-dash {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 0.75rem 0 1rem;
+    padding: 0;
+    font-family: var(--font-mono);
+  }
+  .day-dash.cols-6 { grid-template-columns: repeat(6, 1fr); }
+  @media (max-width: 640px) {
+    .day-dash, .day-dash.cols-6 { grid-template-columns: repeat(2, 1fr); }
+  }
+  .day-dash-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.625rem 0.75rem 0.625rem 0;
+    border-right: 1px solid var(--border);
+  }
+  .day-dash-cell:last-child { border-right: none; }
+  @media (max-width: 640px) {
+    .day-dash-cell { border-right: none; border-bottom: 1px solid var(--border); }
+    .day-dash-cell:nth-last-child(1),
+    .day-dash-cell:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+  }
+  .day-dash-lab {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .day-dash-val {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .day-dash-icon { width: 14px; height: 14px; color: var(--muted); }
+
+  /* v3.9 §0.13.6 · difficulty indicator (5-dot scale) */
+  .day-diff {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0.5rem 0;
+  }
+  .day-diff-dots { display: inline-flex; gap: 4px; }
+  .day-diff-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border);
+    display: inline-block;
+  }
+  .day-diff-dot.on.easy { background: var(--green); }
+  .day-diff-dot.on.moderate { background: var(--yellow); }
+  .day-diff-dot.on.hard { background: var(--red); }
+  .day-diff-lab { font-weight: 600; color: var(--ink); }
+  .day-diff-lab.easy { color: var(--green); }
+  .day-diff-lab.moderate { color: var(--yellow); }
+  .day-diff-lab.hard { color: var(--red); }
+
+  /* v3.9 §0.13.8 · weather chips (replaces weather table) */
+  .day-wx-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.625rem 0 0.25rem;
+    font-family: var(--font-mono);
+  }
+  .day-wx-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .day-wx-chip.sev-warn { border-color: var(--red); color: var(--red); }
+  .day-wx-chip .icon { width: 14px; height: 14px; }
+
+  /* v3.9 §0.13.9 · layering chip + exposure mini-grid */
+  .day-layering {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    margin: 0.75rem 0 0.5rem;
+  }
+  .day-layering-lab { color: var(--muted); }
+  .day-layering-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--muted); display: inline-block;
+  }
+  .day-layering-dot.light { background: var(--green); }
+  .day-layering-dot.standard { background: var(--muted); }
+  .day-layering-dot.cold { background: var(--yellow); }
+  .day-layering-dot.winter { background: var(--red); }
+  .day-layering-val.light { color: var(--green); }
+  .day-layering-val.cold { color: var(--yellow); }
+  .day-layering-val.winter { color: var(--red); }
+
+  .day-exposure-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 0.75rem;
+    margin: 0.5rem 0 0.75rem;
+    font-family: var(--font-mono);
+  }
+  .day-exposure-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .day-exposure-cell .icon { width: 14px; height: 14px; }
+  .day-exposure-cell .axis { color: var(--ink); font-weight: 500; }
+  .day-exposure-cell .sev { font-weight: 600; }
+  .day-exposure-cell .sev.low      { color: var(--muted); }
+  .day-exposure-cell .sev.moderate { color: var(--ink); }
+  .day-exposure-cell .sev.high     { color: var(--yellow); }
+  .day-exposure-cell .sev.severe,
+  .day-exposure-cell .sev.extreme  { color: var(--red); }
+
+  /* Full connectivity ribbon (Reference tab) */
+  .conn-ribbon-full {
+    margin: 0.5rem 0 1.25rem;
+  }
+
+  /* v3.9 §0.13.10 · emergency readiness grid */
+  .emergency-grid {
+    border-top: 1px solid var(--border);
+    margin: 0.75rem 0 1.5rem;
+  }
+  .emergency-row {
+    display: grid;
+    grid-template-columns: 12px 1.2fr 2fr 22px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (max-width: 480px) {
+    .emergency-row { grid-template-columns: 12px 1fr 22px; }
+    .emergency-row .emergency-note { grid-column: 2 / 4; font-size: 0.75rem; }
+  }
+  .emergency-status {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--green); display: inline-block;
+  }
+  .emergency-status.warn { background: var(--yellow); }
+  .emergency-status.bad  { background: var(--red); }
+  .emergency-cap {
+    font-family: var(--font-headline);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .emergency-note {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .emergency-icon { width: 20px; height: 20px; color: var(--muted); }
+
+  /* v3.9 §0.13.11 · operator vs yatri icon table */
+  .op-bring-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 2rem;
+    margin: 0.75rem 0 1.25rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.875rem;
+  }
+  @media (max-width: 520px) { .op-bring-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
+  .op-bring-col h4 {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+  }
+  .op-bring-list { list-style: none; margin: 0; padding: 0; }
+  .op-bring-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.4rem 0;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--ink);
+    border-bottom: 1px solid var(--border);
+  }
+  .op-bring-list li:last-child { border-bottom: none; }
+  .op-bring-list li .icon { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
+
+  /* v3.10 §0.14.2 · Master Journey Map */
+  #master-journey-section {
+    margin: 0.75rem 0 1.5rem;
+  }
+  .mjm-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+  .mjm-ctrl-lab {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .mjm-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .mjm-select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.4rem 1.85rem 0.4rem 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .mjm-select-wrap .icon {
+    position: absolute;
+    right: 0.4rem;
+    pointer-events: none;
+    color: var(--muted);
+  }
+  .mjm-mode {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mjm-mode button {
+    background: transparent;
+    border: none;
+    padding: 0.45rem 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    line-height: 1.1;
+  }
+  .mjm-mode button:last-child { border-right: none; }
+  .mjm-mode button.active {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .mjm-wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+  #master-journey-map {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+  }
+  #master-journey-map .stop {
+    cursor: pointer;
+  }
+  #master-journey-map .stop:focus { outline: none; }
+  #master-journey-map .stop:focus circle { stroke: var(--accent); stroke-width: 2.5; }
+  #master-journey-map .stop:hover circle { stroke-width: 2.5; }
+  /* Origin highlight states. */
+  #master-journey-map .origin-ray.origin-active {
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-dasharray: 0;
+  }
+  #master-journey-map .origin.origin-active circle {
+    stroke-width: 2.5;
+    fill: var(--ink);
+  }
+  #master-journey-map.sacred-mode .sacred-markers {
+    display: block !important;
+  }
+
+  /* v3.10 §0.14.4 · day-level mini-maps */
+  .day-mini-wrapper {
+    width: 100%;
+    margin: 0.75rem 0 0.5rem;
+    overflow: hidden;
+  }
+  .day-mini {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+  }
+  .day-mini-hero {
+    /* Day 8 dominates visually -- slight scale-up + accent border-top */
+    border-top: 1px solid var(--red);
+    padding-top: 4px;
+  }
+  @media (max-width: 480px) {
+    .day-mini-wrapper { margin: 0.5rem 0 0.25rem; }
+  }
+
   .day-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
   .day-num {
     font-family: var(--font-body);
@@ -667,20 +1009,46 @@
   .day-block { margin-top: 1.5rem; }
   .day-block h4 { margin: 0 0 0.5rem; }
 
-  /* Vertical calendar-style timeline (Google Calendar day-view inspired). */
+  /* v3.9 §0.13.13 · timeline marker pattern (hollow circle + connecting rule). */
   .timeline {
     font-family: var(--font-body);
     font-size: 0.8125rem;
-    border-left: 1px solid var(--border);
     margin-left: 0;
     padding-left: 0;
+    position: relative;
   }
   .timeline .ev {
-    display: flex;
-    gap: 0;
-    padding: 0.75rem 0 0.75rem 0;
+    display: grid;
+    grid-template-columns: 80px 14px 1fr;
+    column-gap: 0.75rem;
+    padding: 0.5rem 0;
     align-items: flex-start;
+    position: relative;
   }
+  .timeline .ev-marker {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    margin-top: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .timeline .ev-marker.critical {
+    background: var(--red);
+    border-color: var(--red);
+  }
+  /* Connecting rule between markers. */
+  .timeline .ev::before {
+    content: "";
+    position: absolute;
+    left: calc(80px + 0.75rem + 5px);
+    top: 14px; bottom: -14px;
+    width: 1px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .timeline .ev:last-child::before { display: none; }
   .timeline .tm {
     font-family: var(--font-body);
     font-variant-numeric: tabular-nums;
@@ -1278,6 +1646,26 @@
     border-bottom: 1px solid var(--border);
     padding: 0;
   }
+  /* v3.9 §0.13.4 · phase-aware micro-visualization */
+  .jp-microvis {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 4px 0.75rem 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .jp-microvis:empty { display: none; }
+  .jp-microvis .jp-mv-step { color: var(--muted); }
+  .jp-microvis .jp-mv-step.active { color: var(--green); font-weight: 600; }
+  .jp-microvis .jp-mv-step.done { color: var(--ink); }
+  .jp-microvis .jp-mv-sep { color: var(--border); }
   .journey-progress-bar {
     height: 4px;
     background: var(--border);
@@ -2206,11 +2594,29 @@
       <path d="M5 22V3"/>
       <path d="M5 4h13l-2 4 2 4H5"/>
     </symbol>
+    <!-- v3.10 sacred journey layer additions -->
+    <symbol id="icon-temple-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 21h18"/>
+      <path d="M5 21v-3l2-2h10l2 2v3"/>
+      <path d="M7 16v-3h10v3"/>
+      <path d="M9 13V9h6v4"/>
+      <path d="M10 6h4"/>
+      <path d="M11 6v-3l1-2 1 2v3"/>
+      <path d="M9 9V6"/>
+      <path d="M15 9V6"/>
+    </symbol>
+    <symbol id="icon-lake-ripple-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 17c2-1.5 4-1.5 6 0s4 1.5 6 0s4-1.5 6 0"/>
+      <path d="M3 13c2-1.5 4-1.5 6 0s4 1.5 6 0s4-1.5 6 0"/>
+      <path d="M7 9c1-0.7 2-0.7 3 0s2 0.7 3 0s2-0.7 3 0"/>
+    </symbol>
   </defs>
 </svg>
 
 <!-- Journey progress bar (top of page, 4px, phase-aware) -->
 <div class="journey-progress-wrap" id="progress-wrap" aria-hidden="true">
+  <!-- v3.9 §0.13.4 · phase-aware micro-visualization above the bar -->
+  <div class="jp-microvis" id="jp-microvis"></div>
   <div class="journey-progress-bar">
     <div class="jp-fill" id="jp-fill" style="width:0%"></div>
   </div>
@@ -2382,6 +2788,195 @@
   </div>
 </section>
 
+<!-- =================== MASTER JOURNEY MAP (v3.10 §0.14.2) =================== -->
+<section id="master-journey-section" aria-label="Master journey map">
+  <div class="mjm-controls">
+    <div class="mjm-origin">
+      <label for="mjm-origin-select" class="mjm-ctrl-lab">Travelling from</label>
+      <div class="mjm-select-wrap">
+        <select id="mjm-origin-select" aria-label="Origin selector">
+          <option value="auto">Auto-detect</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="uae">UAE</option>
+          <option value="mauritius">Mauritius</option>
+          <option value="us">US East</option>
+          <option value="all">Show all origins</option>
+        </select>
+        <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg>
+      </div>
+    </div>
+    <div class="mjm-mode" role="group" aria-label="Map mode">
+      <button type="button" id="mjm-mode-logistics" class="active" aria-pressed="true">Logistics</button>
+      <button type="button" id="mjm-mode-pilgrimage" aria-pressed="false">Pilgrimage</button>
+    </div>
+  </div>
+  <div class="mjm-wrap">
+<svg id="master-journey-map" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Master Journey Map showing the Kailash route from origin to Tibet">
+  <title>Kailash Mansarovar Yatra &middot; route map</title>
+
+  <!-- ===== BACKGROUND COUNTRY OUTLINES (schematic, not topographic) ===== -->
+  <g class="map-geography" stroke="var(--border)" stroke-width="1" fill="none">
+    <path d="M 220,470 Q 280,440 340,455 Q 400,420 460,440 Q 520,460 580,440 Q 640,450 700,460 Q 760,470 800,475"
+          fill="var(--card)" fill-opacity="0.3" />
+    <path d="M 380,380 Q 420,360 460,370 Q 500,355 540,365"
+          stroke="var(--border)" stroke-dasharray="4,3" />
+    <path d="M 100,300 Q 200,280 300,295 Q 450,285 600,300 Q 700,310 780,305 L 780,355 Q 700,360 600,350 Q 450,340 300,355 Q 200,360 100,350 Z"
+          fill="var(--card)" fill-opacity="0.35" />
+    <text x="640" y="450" font-family="Inter Tight, sans-serif" font-size="9" fill="var(--muted)" letter-spacing="0.15em">INDIA</text>
+    <text x="460" y="395" font-family="Inter Tight, sans-serif" font-size="9" fill="var(--muted)" letter-spacing="0.15em">NEPAL</text>
+    <text x="380" y="290" font-family="Inter Tight, sans-serif" font-size="9" fill="var(--muted)" letter-spacing="0.15em">TIBET</text>
+  </g>
+
+  <!-- ===== ORIGIN CONVERGENCE RAYS ===== -->
+  <g class="origin-rays">
+    <line class="origin-ray origin-ray-mumbai" x1="125" y1="440" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+    <line class="origin-ray origin-ray-uae" x1="55" y1="380" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+    <line class="origin-ray origin-ray-mauritius" x1="55" y1="455" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+    <line class="origin-ray origin-ray-us" x1="55" y1="310" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+  </g>
+
+  <!-- ===== ORIGINS PANEL ===== -->
+  <g class="origins" font-family="JetBrains Mono, monospace">
+    <g class="origin origin-mumbai" data-origin="mumbai">
+      <circle cx="125" cy="440" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="138" y="444" font-size="11" fill="var(--ink)">MUMBAI</text>
+      <title>Mumbai &middot; IST (Asia/Kolkata)</title>
+    </g>
+    <g class="origin origin-uae" data-origin="uae">
+      <circle cx="55" cy="380" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="68" y="384" font-size="11" fill="var(--ink)">DUBAI</text>
+      <title>UAE &middot; Asia/Dubai</title>
+    </g>
+    <g class="origin origin-mauritius" data-origin="mauritius">
+      <circle cx="55" cy="455" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="68" y="459" font-size="11" fill="var(--ink)">PORT LOUIS</text>
+      <title>Mauritius &middot; Indian/Mauritius</title>
+    </g>
+    <g class="origin origin-us" data-origin="us">
+      <circle cx="55" cy="310" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="68" y="314" font-size="11" fill="var(--ink)">NEW YORK</text>
+      <title>US East &middot; America/New_York</title>
+    </g>
+  </g>
+
+  <!-- ===== PRIMARY ROUTE LINE ===== -->
+  <g class="route-line" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 480,380 Q 540,340 620,330" stroke-dasharray="6,4" />
+    <path d="M 620,330 Q 420,310 250,300" stroke-dasharray="6,4" />
+    <path d="M 250,300 L 200,320" />
+    <path d="M 200,320 Q 170,295 165,260" />
+    <path d="M 165,260 Q 150,242 145,225" />
+    <path d="M 145,225 Q 145,260 175,278" />
+    <path d="M 175,278 Q 195,295 215,305" />
+    <path d="M 215,305 Q 400,318 620,330" stroke-dasharray="6,4" />
+    <path d="M 620,330 Q 540,355 480,380" stroke-dasharray="6,4" />
+  </g>
+
+  <!-- ===== TRIP STOPS ===== -->
+  <g class="trip-stops" font-family="JetBrains Mono, monospace">
+
+    <g class="stop stop-kathmandu" data-day-id="day-1" role="button" tabindex="0">
+      <circle cx="480" cy="380" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="495" y="384" font-size="12" fill="var(--ink)" font-weight="600">Kathmandu</text>
+      <text x="495" y="397" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D1 &middot; D2 &middot; D11 &middot; D12 &middot; D13 &middot; 1,380 M</text>
+      <title>Kathmandu &middot; 1,380 m &middot; Days 1, 2, 11, 12, 13 &middot; Arrival and return</title>
+    </g>
+
+    <g class="stop stop-lhasa" data-day-id="day-3" role="button" tabindex="0">
+      <circle cx="620" cy="330" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="635" y="334" font-size="12" fill="var(--ink)" font-weight="600">Lhasa</text>
+      <text x="635" y="347" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D3 &middot; D4 &middot; D10 &middot; 3,656 M</text>
+      <title>Lhasa &middot; 3,656 m &middot; Days 3, 4, 10 &middot; Tibet entry and exit</title>
+    </g>
+
+    <g class="stop stop-mansarovar" data-day-id="day-5" role="button" tabindex="0">
+      <circle cx="200" cy="320" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="100" y="324" font-size="12" fill="var(--ink)" font-weight="600" text-anchor="end">Mansarovar</text>
+      <text x="100" y="337" font-size="9" fill="var(--muted)" letter-spacing="0.1em" text-anchor="end">D5 &middot; D6 &middot; 4,570 M</text>
+      <title>Mansarovar &middot; 4,570 m &middot; Days 5, 6 &middot; Holy lake</title>
+    </g>
+
+    <g class="stop stop-dirapuk" data-day-id="day-7" role="button" tabindex="0">
+      <circle cx="165" cy="260" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="80" y="264" font-size="12" fill="var(--ink)" font-weight="600" text-anchor="end">Dirapuk</text>
+      <text x="80" y="277" font-size="9" fill="var(--muted)" letter-spacing="0.1em" text-anchor="end">D7 &middot; 4,900 M</text>
+      <title>Dirapuk &middot; 4,900 m &middot; Day 7 &middot; Pre-Parikrama camp</title>
+    </g>
+
+    <g class="stop stop-dolma-la critical" data-day-id="day-8" role="button" tabindex="0">
+      <circle cx="145" cy="225" r="10" fill="var(--red)" stroke="var(--red)" stroke-width="2" />
+      <text x="60" y="223" font-size="13" fill="var(--red)" font-weight="700" text-anchor="end">Dolma La</text>
+      <text x="60" y="236" font-size="10" fill="var(--red)" letter-spacing="0.1em" font-weight="600" text-anchor="end">D8 &middot; 5,630 M</text>
+      <title>Dolma La Pass &middot; 5,630 m &middot; Day 8 &middot; The highest point &middot; critical day</title>
+    </g>
+
+    <g class="stop stop-zuthulphuk" data-day-id="day-9" role="button" tabindex="0">
+      <circle cx="175" cy="278" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="180" y="295" font-size="12" fill="var(--ink)" font-weight="600">Zuthulphuk</text>
+      <text x="180" y="308" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D8 night &middot; 4,790 M</text>
+      <title>Zuthulphuk &middot; 4,790 m &middot; Day 8 night &middot; Day 9 morning &middot; Parikrama camp</title>
+    </g>
+
+    <g class="stop stop-darchen" data-day-id="day-9" role="button" tabindex="0">
+      <circle cx="215" cy="305" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="225" y="320" font-size="12" fill="var(--ink)" font-weight="600">Darchen</text>
+      <text x="225" y="333" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D9 &middot; 4,575 M</text>
+      <title>Darchen &middot; 4,575 m &middot; Day 9 &middot; Parikrama trailhead</title>
+    </g>
+  </g>
+
+  <!-- ===== SACRED MARKERS (hidden by default) ===== -->
+  <g class="sacred-markers" font-family="JetBrains Mono, monospace" style="display:none;">
+    <g class="sacred-marker">
+      <use href="#icon-temple-line" x="475" y="395" width="14" height="14" color="var(--accent)" />
+      <title>Pashupatinath &middot; sacred Shiva temple &middot; Day 2 darshan</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-temple-line" x="615" y="345" width="14" height="14" color="var(--accent)" />
+      <title>Jokhang Temple &middot; Day 4 &middot; most sacred temple in Tibetan Buddhism</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-lake-ripple-line" x="190" y="332" width="16" height="14" color="var(--accent)" />
+      <title>Mansarovar holy bath &middot; Day 6 &middot; the lake of the mind</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-temple-line" x="220" y="335" width="14" height="14" color="var(--accent)" />
+      <title>Chiu Gompa &middot; Day 6 &middot; monastery overlooking Mansarovar</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-mountain" x="155" y="248" width="14" height="14" color="var(--accent)" />
+      <title>Mount Kailash &middot; viewpoint Day 7 &middot; the sacred mountain</title>
+    </g>
+    <g class="sacred-marker">
+      <circle cx="145" cy="225" r="16" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2,3" />
+      <title>Dolma La &middot; spiritual crossing &middot; death and rebirth in pilgrim tradition</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-lake-ripple-line" x="155" y="245" width="13" height="11" color="var(--accent)" />
+      <title>Gauri Kund &middot; Day 8 descent &middot; sacred glacial lake</title>
+    </g>
+  </g>
+
+  <!-- ===== LEGEND ===== -->
+  <g class="map-legend" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" letter-spacing="0.05em">
+    <text x="640" y="20" font-weight="600" font-size="10" letter-spacing="0.1em" fill="var(--ink)">LEGEND</text>
+    <line x1="640" y1="32" x2="660" y2="32" stroke="var(--ink)" stroke-width="2" />
+    <text x="666" y="35">DRIVE OR FOOT</text>
+    <line x1="640" y1="45" x2="660" y2="45" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6,4" />
+    <text x="666" y="48">FLIGHT</text>
+    <circle cx="650" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+    <text x="666" y="63">STOP</text>
+    <circle cx="650" cy="75" r="6" fill="var(--red)" />
+    <text x="666" y="78">PEAK &middot; DOLMA LA</text>
+  </g>
+</svg>
+  </div>
+</section>
+
 <!-- =================== TRIP STATS DASHBOARD (v3.9 §0.13.3) =================== -->
 <section id="health">
   <div class="trip-stats" aria-label="Trip statistics">
@@ -2418,10 +3013,131 @@
   </div>
 </section>
 
+<!-- =================== ALTITUDE PROFILE (v3.9 §0.13.12 · elevated to top of Overview) =================== -->
+<section id="altitude">
+  <h2>Altitude profile</h2>
+  <div class="altitude-wrap">
+    <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" id="alt-svg" aria-label="13 day sleep altitude chart" style="color: var(--ink)">
+      <!-- v3.10 §0.14.5 · acclimatization rest zones (3 yellow bands per #65 spec) -->
+      <g class="alt-acclim-bands" aria-hidden="true">
+        <!-- Day 4 Lhasa acclim (x 195) -->
+        <rect x="168" y="10" width="55" height="220" fill="var(--accent)" fill-opacity="0.12"/>
+        <!-- Day 6 Mansarovar rest (x 305) -->
+        <rect x="278" y="10" width="55" height="220" fill="var(--accent)" fill-opacity="0.12"/>
+        <!-- Day 12 Kathmandu buffer (x 635) -->
+        <rect x="608" y="10" width="55" height="220" fill="var(--accent)" fill-opacity="0.12"/>
+      </g>
+      <!-- Y grid lines at key altitudes. -->
+      <g class="alt-grid" stroke-width="0.5" fill="none">
+        <line x1="20" y1="10" x2="710" y2="10"/>
+        <line x1="20" y1="52" x2="710" y2="52"/>
+        <line x1="20" y1="100" x2="710" y2="100"/>
+        <line x1="20" y1="187" x2="710" y2="187"/>
+        <line x1="20" y1="230" x2="710" y2="230"/>
+      </g>
+      <!-- Y axis labels. -->
+      <g class="alt-axis-num" font-size="9">
+        <text x="18" y="14" text-anchor="end">6000</text>
+        <text x="18" y="56" text-anchor="end">4900</text>
+        <text x="18" y="104" text-anchor="end">3650</text>
+        <text x="18" y="191" text-anchor="end">1380</text>
+        <text x="18" y="234" text-anchor="end">0</text>
+      </g>
+      <!-- X axis day labels. -->
+      <g class="alt-axis-num" font-size="9">
+        <text x="30"  y="238" text-anchor="middle">D1</text>
+        <text x="85"  y="238" text-anchor="middle">D2</text>
+        <text x="140" y="238" text-anchor="middle">D3</text>
+        <text x="195" y="238" text-anchor="middle">D4</text>
+        <text x="250" y="238" text-anchor="middle">D5</text>
+        <text x="305" y="238" text-anchor="middle">D6</text>
+        <text x="360" y="238" text-anchor="middle">D7</text>
+        <text x="415" y="238" text-anchor="middle">D8</text>
+        <text x="470" y="238" text-anchor="middle">D9</text>
+        <text x="525" y="238" text-anchor="middle">D10</text>
+        <text x="580" y="238" text-anchor="middle">D11</text>
+        <text x="635" y="238" text-anchor="middle">D12</text>
+        <text x="690" y="238" text-anchor="middle">D13</text>
+      </g>
+      <!-- Sleep line. -->
+      <path
+        class="alt-sleep-line"
+        fill="none"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M 30,187 L 85,187 L 140,100 L 195,100 L 250,61 L 305,61 L 360,52 L 415,61 L 470,57 L 525,100 L 580,187 L 635,187 L 690,230"
+      />
+      <!-- Sleep dots at each vertex (smaller, --ink color per #57). -->
+      <g class="alt-sleep-dot" stroke="none">
+        <circle cx="30"  cy="187" r="3"/>
+        <circle cx="85"  cy="187" r="3"/>
+        <circle cx="140" cy="100" r="3"/>
+        <circle cx="195" cy="100" r="3"/>
+        <circle cx="250" cy="61"  r="3"/>
+        <circle cx="305" cy="61"  r="3"/>
+        <circle cx="360" cy="52"  r="3"/>
+        <circle cx="415" cy="61"  r="3"/>
+        <circle cx="470" cy="57"  r="3"/>
+        <circle cx="525" cy="100" r="3"/>
+        <circle cx="580" cy="187" r="3"/>
+        <circle cx="635" cy="187" r="3"/>
+        <circle cx="690" cy="230" r="3"/>
+      </g>
+      <!-- v3.10 §0.14.5 · location labels under each data point (#65) -->
+      <g class="alt-loc-labels" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" letter-spacing="0.05em">
+        <text x="30"  y="200" text-anchor="middle">KTM</text>
+        <text x="85"  y="200" text-anchor="middle">KTM</text>
+        <text x="140" y="113" text-anchor="middle">LHASA</text>
+        <text x="195" y="113" text-anchor="middle">LHASA</text>
+        <text x="250" y="74"  text-anchor="middle">MANSA</text>
+        <text x="305" y="74"  text-anchor="middle">MANSA</text>
+        <text x="360" y="45"  text-anchor="middle">DIRAPUK</text>
+        <text x="470" y="70"  text-anchor="middle">ZUTHUL</text>
+        <text x="525" y="113" text-anchor="middle">DARCHEN</text>
+        <text x="580" y="200" text-anchor="middle">KTM</text>
+        <text x="635" y="200" text-anchor="middle">KTM</text>
+        <text x="690" y="243" text-anchor="middle">HOME</text>
+      </g>
+      <!-- Day 8 peak dot. Visual hero (warn-red filled, 8px per #57). -->
+      <circle class="alt-peak-day8" cx="415" cy="24" r="8" stroke="none"/>
+      <!-- Anchor labels. -->
+      <g class="alt-anchor" font-size="11">
+        <text class="alt-anchor-day8" x="415" y="16" text-anchor="middle" font-weight="700">DOLMA LA &middot; 5,630 m</text>
+        <text x="305" y="50" text-anchor="middle">Mansarovar 4,670 m</text>
+        <text x="30" y="178" text-anchor="start">Kathmandu 1,380 m</text>
+      </g>
+      <!-- During-phase today cursor: dashed vertical at current day x. -->
+      <line id="today-cursor" class="alt-cursor" x1="0" y1="10" x2="0" y2="230" stroke-width="1" stroke-dasharray="2 4" style="display:none"/>
+      <!-- v3.10 §0.14.5 · invisible hover targets per day (tooltip via title) -->
+      <g class="alt-hover-targets">
+        <rect class="alt-hover" x="2"   y="0" width="56" height="240" fill="transparent"><title>Day 1 &middot; Kathmandu &middot; 1,380 m</title></rect>
+        <rect class="alt-hover" x="58"  y="0" width="55" height="240" fill="transparent"><title>Day 2 &middot; Kathmandu &middot; 1,380 m</title></rect>
+        <rect class="alt-hover" x="113" y="0" width="55" height="240" fill="transparent"><title>Day 3 &middot; Lhasa &middot; 3,656 m</title></rect>
+        <rect class="alt-hover" x="168" y="0" width="55" height="240" fill="transparent"><title>Day 4 &middot; Lhasa &middot; 3,656 m (acclim rest)</title></rect>
+        <rect class="alt-hover" x="223" y="0" width="55" height="240" fill="transparent"><title>Day 5 &middot; Mansarovar &middot; 4,670 m</title></rect>
+        <rect class="alt-hover" x="278" y="0" width="55" height="240" fill="transparent"><title>Day 6 &middot; Mansarovar &middot; 4,670 m (rest)</title></rect>
+        <rect class="alt-hover" x="333" y="0" width="55" height="240" fill="transparent"><title>Day 7 &middot; Dirapuk &middot; 4,900 m</title></rect>
+        <rect class="alt-hover" x="388" y="0" width="55" height="240" fill="transparent"><title>Day 8 &middot; Dolma La &middot; 5,630 m peak / Zuthulphuk 4,790 m sleep</title></rect>
+        <rect class="alt-hover" x="443" y="0" width="55" height="240" fill="transparent"><title>Day 9 &middot; Darchen &middot; 4,575 m</title></rect>
+        <rect class="alt-hover" x="498" y="0" width="55" height="240" fill="transparent"><title>Day 10 &middot; Lhasa &middot; 3,656 m</title></rect>
+        <rect class="alt-hover" x="553" y="0" width="55" height="240" fill="transparent"><title>Day 11 &middot; Kathmandu &middot; 1,380 m</title></rect>
+        <rect class="alt-hover" x="608" y="0" width="55" height="240" fill="transparent"><title>Day 12 &middot; Kathmandu &middot; 1,380 m (buffer)</title></rect>
+        <rect class="alt-hover" x="663" y="0" width="55" height="240" fill="transparent"><title>Day 13 &middot; Mumbai &middot; home</title></rect>
+      </g>
+    </svg>
+    <div class="alt-legend">
+      <span><span class="legend-dot" style="background:var(--ink)"></span>Sleep altitude</span>
+      <span><span class="legend-dot" style="background:var(--red)"></span>Day 8 peak (5,630 m)</span>
+      <span><span class="legend-dot" style="background:var(--accent);opacity:0.5"></span>Acclim rest zones</span>
+    </div>
+  </div>
+</section>
+
 <!-- =================== CONNECTIVITY RIBBON (v3.9 §0.13.5) =================== -->
 <section id="conn-ribbon-section">
   <div class="conn-ribbon">
-    <div class="conn-ribbon-title">Connectivity overview · 13 day view</div>
+    <div class="conn-ribbon-title">Connectivity overview &middot; 13 day view</div>
     <div class="conn-ribbon-track" id="conn-ribbon-track">
       <!-- Populated by JS -->
     </div>
@@ -2501,94 +3217,6 @@
       <svg class="icon ts-icon"><use href="#icon-signal-off"/></svg>
       <span class="ts-num">3</span>
       <span class="ts-lab">Offline days</span>
-    </div>
-  </div>
-</section>
-
-<!-- =================== ALTITUDE PROFILE =================== -->
-<section id="altitude">
-  <h2>Altitude profile</h2>
-  <div class="altitude-wrap">
-    <!--
-      Geometry: viewBox 0 0 720 240. 13 days, x = 30 + (dayIndex * 55).
-      Y formula: y = 240 - (altitude_m * 0.03833).
-      Sleep altitudes (m): 1380, 1380, 3656, 3656, 4670, 4670, 4900, 4670, 4760, 3656, 1380, 1380, 0
-      Sleep y values:       187,  187,  100,  100,   61,   61,   52,   61,   57,  100,  187,  187, 240
-      Day 8 peak dot: 5630m -> y = 240 - (5630 * 0.03833) = 24. cx=415, cy=24.
-      Day 8 sleep vertex at (415, 61). Gap of 37px = climb-high-sleep-low principle.
-    -->
-    <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" id="alt-svg" aria-label="13 day sleep altitude chart" style="color: var(--ink)">
-      <!-- Y grid lines at key altitudes. -->
-      <g class="alt-grid" stroke-width="0.5" fill="none">
-        <line x1="20" y1="10" x2="710" y2="10"/>
-        <line x1="20" y1="52" x2="710" y2="52"/>
-        <line x1="20" y1="100" x2="710" y2="100"/>
-        <line x1="20" y1="187" x2="710" y2="187"/>
-        <line x1="20" y1="230" x2="710" y2="230"/>
-      </g>
-      <!-- Y axis labels. -->
-      <g class="alt-axis-num" font-size="9">
-        <text x="18" y="14" text-anchor="end">6000</text>
-        <text x="18" y="56" text-anchor="end">4900</text>
-        <text x="18" y="104" text-anchor="end">3650</text>
-        <text x="18" y="191" text-anchor="end">1380</text>
-        <text x="18" y="234" text-anchor="end">0</text>
-      </g>
-      <!-- X axis day labels. -->
-      <g class="alt-axis-num" font-size="9">
-        <text x="30"  y="238" text-anchor="middle">D1</text>
-        <text x="85"  y="238" text-anchor="middle">D2</text>
-        <text x="140" y="238" text-anchor="middle">D3</text>
-        <text x="195" y="238" text-anchor="middle">D4</text>
-        <text x="250" y="238" text-anchor="middle">D5</text>
-        <text x="305" y="238" text-anchor="middle">D6</text>
-        <text x="360" y="238" text-anchor="middle">D7</text>
-        <text x="415" y="238" text-anchor="middle">D8</text>
-        <text x="470" y="238" text-anchor="middle">D9</text>
-        <text x="525" y="238" text-anchor="middle">D10</text>
-        <text x="580" y="238" text-anchor="middle">D11</text>
-        <text x="635" y="238" text-anchor="middle">D12</text>
-        <text x="690" y="238" text-anchor="middle">D13</text>
-      </g>
-      <!-- Sleep line. Pre-computed coordinates per Opus. -->
-      <path
-        class="alt-sleep-line"
-        fill="none"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M 30,187 L 85,187 L 140,100 L 195,100 L 250,61 L 305,61 L 360,52 L 415,61 L 470,57 L 525,100 L 580,187 L 635,187 L 690,230"
-      />
-      <!-- Sleep dots at each vertex. -->
-      <g class="alt-sleep-dot" stroke="none">
-        <circle cx="30"  cy="187" r="3"/>
-        <circle cx="85"  cy="187" r="3"/>
-        <circle cx="140" cy="100" r="3"/>
-        <circle cx="195" cy="100" r="3"/>
-        <circle cx="250" cy="61"  r="3"/>
-        <circle cx="305" cy="61"  r="3"/>
-        <circle cx="360" cy="52"  r="3"/>
-        <circle cx="415" cy="61"  r="3"/>
-        <circle cx="470" cy="57"  r="3"/>
-        <circle cx="525" cy="100" r="3"/>
-        <circle cx="580" cy="187" r="3"/>
-        <circle cx="635" cy="187" r="3"/>
-        <circle cx="690" cy="230" r="3"/>
-      </g>
-      <!-- Day 8 peak dot. Visual hero: 5630m. cy=24 sits 37px above sleep vertex at cy=61. -->
-      <circle class="alt-peak-day8" cx="415" cy="24" r="6" stroke="none"/>
-      <!-- Anchor labels. Three only per spec. -->
-      <g class="alt-anchor" font-size="11">
-        <text class="alt-anchor-day8" x="415" y="16" text-anchor="middle" font-weight="700">Dolma La 5,630 m</text>
-        <text x="305" y="50" text-anchor="middle">Mansarovar 4,670 m</text>
-        <text x="30" y="178" text-anchor="start">Kathmandu 1,380 m</text>
-      </g>
-      <!-- During-phase today cursor: dashed vertical at current day x. -->
-      <line id="today-cursor" class="alt-cursor" x1="0" y1="10" x2="0" y2="230" stroke-width="1" stroke-dasharray="2 4" style="display:none"/>
-    </svg>
-    <div class="alt-legend">
-      <span><span class="legend-dot" style="background:var(--border-s)"></span>Sleep altitude</span>
-      <span><span class="legend-dot" style="background:var(--red)"></span>Day 8 peak (5,630 m)</span>
     </div>
   </div>
 </section>
@@ -2676,7 +3304,7 @@
 
 <!-- Why this place matters (moved from before-phase inline) -->
 <section class="before-only" id="prep-why">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-why">
     <summary>Why this place matters</summary>
     <div class="disc-body">
       <p class="lede">Mount Kailash, at the western edge of the Tibetan plateau, is one of the few mountains in the world considered sacred across four religions. In Hinduism it is the abode of Lord Shiva. In Buddhism it is the dwelling of Demchok, embodiment of supreme bliss. In Jainism it is where Rishabhadeva attained liberation. In Bon it is the seat of the spiritual hierarchy of the cosmos.</p>
@@ -2704,32 +3332,31 @@
 <!-- Operator vs you-bring -->
 <section class="before-only" id="prep-operator">
   <h2>What the operator covers, what you bring</h2>
-  <div class="op-buy">
-    <div class="op-col">
-      <h4>Operator covers</h4>
-      <ul>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Hotels</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Meals</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Permits</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Domestic flights</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Porters</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Oxygen support</li>
+  <!-- v3.9 §0.13.11 · Operator vs Yatri icon table -->
+  <div class="op-bring-grid" aria-label="What is included versus what you bring">
+    <div class="op-bring-col">
+      <h4>Included</h4>
+      <ul class="op-bring-list">
+        <li><svg class="icon"><use href="#icon-bed-line"/></svg>Hotels</li>
+        <li><svg class="icon"><use href="#icon-bowl-line"/></svg>Meals</li>
+        <li><svg class="icon"><use href="#icon-bus-line"/></svg>Transport</li>
+        <li><svg class="icon"><use href="#icon-backpack-line"/></svg>Porters</li>
+        <li><svg class="icon"><use href="#icon-oxygen-line"/></svg>Oxygen</li>
       </ul>
     </div>
-    <div class="op-col">
-      <h4>You bring</h4>
-      <ul>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Clothing</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Boots</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Insurance</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Connectivity (eSIM + VPN)</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Medication</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Sun protection</li>
+    <div class="op-bring-col">
+      <h4>Bring yourself</h4>
+      <ul class="op-bring-list">
+        <li><svg class="icon"><use href="#icon-boot-line"/></svg>Boots</li>
+        <li><svg class="icon"><use href="#icon-sunglasses-line"/></svg>Sunglasses</li>
+        <li><svg class="icon"><use href="#icon-pill-line"/></svg>Medication</li>
+        <li><svg class="icon"><use href="#icon-signal-3-bars"/></svg>Connectivity</li>
+        <li><svg class="icon"><use href="#icon-shield-line"/></svg>Insurance</li>
       </ul>
     </div>
   </div>
 
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-operator">
     <summary>See full procurement detail <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg></summary>
     <div class="disc-body">
       <h3>Gear distributed on Day 2 (YPO orange kit, one set per yatri)</h3>
@@ -2842,7 +3469,7 @@
 
 <!-- Medicines (collapsed by default per #42) -->
 <section id="prep-medicine">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-medicine">
     <summary>Medicines and Diamox protocol</summary>
     <div class="disc-body">
       <h3>Master medicines list</h3>
@@ -2945,7 +3572,7 @@
 
 <!-- Visa workflow (collapsed by default per #42) -->
 <section class="before-only" id="prep-visa">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-visa">
     <summary>Visa and permits workflow</summary>
     <div class="disc-body">
       <p class="lede">The Chinese Group Visa is the single biggest pre-trip dependency the yatri does not control directly.</p>
@@ -3001,7 +3628,7 @@
 
 <!-- Pre-trip spiritual practices (collapsed by default per #42) -->
 <section class="before-only" id="prep-spiritual">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-spiritual">
     <summary>Pre-trip spiritual practices (optional)</summary>
     <div class="disc-body">
       <p class="lede">These are presented as optional practices, not requirements. The yatra is open to yatris across the spiritual spectrum.</p>
@@ -3049,7 +3676,15 @@
 
 <!-- Connectivity playbook (collapsed by default per #42) -->
 <section class="not-after" id="ref-connectivity">
-  <details class="disclosure">
+  <h2>Connectivity</h2>
+  <!-- v3.9 §0.13.5 · full connectivity ribbon (Reference tab) -->
+  <div class="conn-ribbon conn-ribbon-full">
+    <div class="conn-ribbon-title">Connectivity &middot; 13 day view</div>
+    <div class="conn-ribbon-track" id="conn-ribbon-track-full">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+  <details class="disclosure" data-section-key="ref-connectivity">
     <summary>Connectivity playbook</summary>
     <div class="disc-body">
       <p class="lede">Tibet is behind the Great Firewall. Without a working VPN, WhatsApp, Google, Instagram, Facebook, YouTube, Gmail are all blocked.</p>
@@ -3118,7 +3753,7 @@
 
 <!-- Bag transitions (collapsed by default per #42) -->
 <section class="not-after" id="ref-bags">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="ref-bags">
     <summary>Bag transitions: the 4-bag system</summary>
     <div class="disc-body">
       <p class="lede">Knowing which bag is where on each day is the single biggest operational unlock.</p>
@@ -3168,7 +3803,7 @@
 
 <!-- Customs (collapsed by default per #42) -->
 <section class="not-after" id="ref-customs">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="ref-customs">
     <summary>Customs and immigration tips</summary>
     <div class="disc-body">
       <p class="lede">Tibet customs at Lhasa airport on Day 3 is the strictest immigration checkpoint of the trip.</p>
@@ -3235,7 +3870,7 @@
 
 <!-- Acclimatization (collapsed by default per #42) -->
 <section class="not-after" id="ref-acclimatization">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="ref-acclimatization">
     <summary>Acclimatization rules</summary>
     <div class="disc-body">
       <p class="lede">The biggest risk on this trip is not the pass. It is acute mountain sickness (AMS) from sleep-altitude accumulation.</p>
@@ -3280,7 +3915,41 @@
 
 <!-- Emergency protocol (open by default in during phase, collapsed otherwise per #42) -->
 <section id="ref-emergency">
-  <details class="disclosure" id="emergency-details">
+  <h2>Emergency</h2>
+  <!-- v3.9 §0.13.10 · Emergency readiness graphic (status grid) -->
+  <div class="emergency-grid" aria-label="Emergency readiness status">
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Oxygen Support</span>
+      <span class="emergency-note">Sherpa team carries cylinders</span>
+      <svg class="icon emergency-icon"><use href="#icon-oxygen-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Medical Team</span>
+      <span class="emergency-note">Operator-coordinated</span>
+      <svg class="icon emergency-icon"><use href="#icon-medical-cross-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Porters</span>
+      <span class="emergency-note">Days 7 to 10 Parikrama</span>
+      <svg class="icon emergency-icon"><use href="#icon-backpack-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Satellite Coordination</span>
+      <span class="emergency-note">Emergency sat phone</span>
+      <svg class="icon emergency-icon"><use href="#icon-satellite-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status warn" aria-hidden="true"></span>
+      <span class="emergency-cap">Connectivity</span>
+      <span class="emergency-note">Limited during Parikrama</span>
+      <svg class="icon emergency-icon"><use href="#icon-signal-1-bar"/></svg>
+    </div>
+  </div>
+  <details class="disclosure" id="emergency-details" data-section-key="ref-emergency">
     <summary>Emergency protocol for family</summary>
     <div class="disc-body">
       <p class="lede"><strong>If you do not hear from the yatri on Days 7, 8, or 9 (Parikrama), this is expected.</strong> Operator Sherpa team handles emergencies. Resume contact attempts from Day 10 (Lhasa return).</p>
@@ -4034,6 +4703,311 @@
   function escapeHtml(s) {
     return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
+  /* v3.10 §0.14.4 · 13 day-level mini-maps (pre-baked, paste verbatim per day) */
+  var DAY_MINI_MAPS = {
+    1: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 1 route: Mumbai to Kathmandu by flight">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 1</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Mumbai &middot; Kathmandu</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">1,380 M</text>' +
+       '<line x1="40" y1="68" x2="240" y2="60" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="68" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">BOM</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="140" y="50" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">FLIGHT &middot; 6E-1157 &middot; 2h 50m</text>' +
+       '</svg>',
+    2: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 2: Kathmandu acclimatization with Pashupatinath darshan">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 2</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; darshan</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">STATIC &middot; 1,380 M</text>' +
+       '<circle cx="140" cy="55" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-temple-line" x="100" y="48" width="14" height="14" color="var(--accent)"/>' +
+       '<text x="118" y="59" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" letter-spacing="0.05em">PASHUPATINATH</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">REST + DARSHAN &middot; ALL DAY</text>' +
+       '</svg>',
+    3: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 3 route: Kathmandu to Lhasa by flight, altitude jump to 3656 meters">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 3</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; Lhasa</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">3,656 M</text>' +
+       '<line x1="40" y1="60" x2="240" y2="46" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="140" y="35" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">FLIGHT &middot; 1h 30m</text>' +
+       '<text x="140" y="75" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--accent)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">+2,276 M ALTITUDE GAIN</text>' +
+       '</svg>',
+    4: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 4: Lhasa acclimatization with Jokhang and Potala darshan">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 4</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Lhasa &middot; acclim</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">STATIC &middot; 3,656 M</text>' +
+       '<circle cx="140" cy="50" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-temple-line" x="98" y="44" width="14" height="14" color="var(--accent)"/>' +
+       '<text x="116" y="55" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" letter-spacing="0.05em">JOKHANG</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">REST + DARSHAN &middot; HYDRATE</text>' +
+       '</svg>',
+    5: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 5 route: Lhasa to Mansarovar combo flight to Ali and drive, long day">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 5</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Lhasa &middot; Mansarovar</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">4,570 M</text>' +
+       '<line x1="40" y1="46" x2="140" y2="42" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<line x1="140" y1="42" x2="240" y2="38" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="40" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="140" cy="42" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="38" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="140" y="56" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ALI</text>' +
+       '<text x="240" y="56" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">MANASA</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--accent)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">FLIGHT + 7H DRIVE &middot; LONG DAY</text>' +
+       '</svg>',
+    6: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 6: Mansarovar lake parikrama by car with holy bath">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 6</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Mansarovar parikrama</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">88 KM LOOP &middot; 4,570 M</text>' +
+       '<ellipse cx="140" cy="55" rx="50" ry="14" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="3,2"/>' +
+       '<circle cx="140" cy="55" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-lake-ripple-line" x="95" y="48" width="14" height="14" color="var(--accent)"/>' +
+       '<use href="#icon-temple-line" x="180" y="48" width="14" height="14" color="var(--accent)"/>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">HOLY BATH &middot; CHIU GOMPA</text>' +
+       '</svg>',
+    7: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 7 route: Mansarovar to Dirapuk via Yam Dwar, drive plus trek, parikrama begins">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 7</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Mansarovar &middot; Dirapuk</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">4,900 M</text>' +
+       '<path d="M 40,38 Q 100,38 130,36 L 240,33" fill="none" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="40" cy="38" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="130" cy="36" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="33" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="56" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">MANASA</text>' +
+       '<text x="130" y="50" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">YAM DWAR</text>' +
+       '<text x="240" y="50" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DIRAPUK</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">DRIVE 2H &middot; TREK 14 KM &middot; 6H</text>' +
+       '</svg>',
+    8: '<svg class="day-mini day-mini-hero" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 8 critical day: Dirapuk to Dolma La pass at 5630 meters to Zuthulphuk, 22 kilometer trek, highest point of the journey">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--red)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 8</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--red)" font-weight="700">Dolma La &middot; the climb</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--red)" text-anchor="end" letter-spacing="0.1em" font-weight="700">5,630 M PEAK</text>' +
+       '<path d="M 40,55 L 140,28 L 240,52" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+       '<circle cx="40" cy="55" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="140" cy="28" r="10" fill="var(--red)" stroke="var(--red)" stroke-width="2"/>' +
+       '<text x="140" y="44" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="var(--red)" text-anchor="middle" letter-spacing="0.1em">DOLMA LA</text>' +
+       '<circle cx="240" cy="52" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="72" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DIRAPUK</text>' +
+       '<text x="240" y="72" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ZUTHULPHUK</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--red)" text-anchor="middle" letter-spacing="0.1em" font-weight="700">22 KM &middot; 14 H &middot; HIGHEST POINT</text>' +
+       '</svg>',
+    9: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 9 route: Zuthulphuk to Darchen completing Parikrama">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 9</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Parikrama complete</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">4,575 M</text>' +
+       '<path d="M 40,40 Q 140,42 240,45" fill="none" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="40" cy="40" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="45" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ZUTHULPHUK</text>' +
+       '<text x="240" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DARCHEN</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">TREK 14 KM &middot; 5H &middot; CIRCUIT CLOSE</text>' +
+       '</svg>',
+    10:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 10 route: Darchen to Lhasa, drive plus flight, descending altitude">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 10</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Darchen &middot; Lhasa</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">3,656 M</text>' +
+       '<line x1="40" y1="38" x2="140" y2="42" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<line x1="140" y1="42" x2="240" y2="46" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="38" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="140" cy="42" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DARCHEN</text>' +
+       '<text x="140" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ALI</text>' +
+       '<text x="240" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">DRIVE + FLIGHT &middot; DESCENT</text>' +
+       '</svg>',
+    11:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 11 route: Lhasa to Kathmandu by flight">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 11</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Lhasa &middot; Kathmandu</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">1,380 M</text>' +
+       '<line x1="40" y1="46" x2="240" y2="60" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="140" y="35" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">FLIGHT &middot; 1h 30m</text>' +
+       '<text x="140" y="75" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--green)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">&minus;2,276 M &middot; BREATHING EASIER</text>' +
+       '</svg>',
+    12:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 12: Kathmandu buffer rest day">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 12</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; buffer</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">STATIC &middot; 1,380 M</text>' +
+       '<circle cx="140" cy="55" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-bed-line" x="118" y="48" width="14" height="14" color="var(--muted)"/>' +
+       '<use href="#icon-bowl-line" x="148" y="48" width="14" height="14" color="var(--muted)"/>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">REST &middot; DEBRIEF &middot; LAST MARKET</text>' +
+       '</svg>',
+    13:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 13 route: Kathmandu to Mumbai by flight, return home">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 13</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; Mumbai</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">HOME</text>' +
+       '<line x1="40" y1="60" x2="240" y2="68" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="68" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">BOM</text>' +
+       '<text x="140" y="50" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--green)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">FLIGHT RA-201 &middot; 2h 50m</text>' +
+       '</svg>'
+  };
+  function dayMiniMapHtml(dayNum) {
+    var svg = DAY_MINI_MAPS[dayNum];
+    if (!svg) return "";
+    return '<div class="day-mini-wrapper" aria-label="Day ' + dayNum + ' route map">' + svg + '</div>';
+  }
+
+  /* v3.9 §0.13.6 · per-day difficulty mapping */
+  var DAY_DIFFICULTY = {
+    1: {level:2, sev:"easy",     label:"EASY"},
+    2: {level:2, sev:"easy",     label:"EASY"},
+    3: {level:2, sev:"easy",     label:"EASY"},
+    4: {level:2, sev:"easy",     label:"EASY"},
+    5: {level:3, sev:"moderate", label:"MODERATE"},
+    6: {level:2, sev:"easy",     label:"EASY"},
+    7: {level:3, sev:"moderate", label:"MODERATE"},
+    8: {level:5, sev:"hard",     label:"HARD"},
+    9: {level:3, sev:"moderate", label:"MODERATE"},
+    10:{level:2, sev:"easy",     label:"EASY"},
+    11:{level:2, sev:"easy",     label:"EASY"},
+    12:{level:2, sev:"easy",     label:"EASY"},
+    13:{level:2, sev:"easy",     label:"EASY"}
+  };
+  function diffHtml(dayNum) {
+    var d = DAY_DIFFICULTY[dayNum] || {level:2, sev:"easy", label:"EASY"};
+    var dots = "";
+    for (var i = 1; i <= 5; i++) {
+      dots += '<span class="day-diff-dot ' + (i <= d.level ? "on " + d.sev : "") + '"></span>';
+    }
+    return '<div class="day-diff" aria-label="Difficulty ' + d.label.toLowerCase() + '">' +
+           '<span>Difficulty</span>' +
+           '<span class="day-diff-dots" aria-hidden="true">' + dots + '</span>' +
+           '<span class="day-diff-lab ' + d.sev + '">' + d.label + '</span>' +
+           '</div>';
+  }
+  /* v3.9 §0.13.7 · day card header dashboard */
+  function dashHtml(d) {
+    var connIconId = connIcon(d.conn_status);
+    var connText = d.conn_status === "good" ? "good" : (d.conn_status === "offline" ? "offline" : "intermittent");
+    var trekH = (d.timing && d.timing.trek) ? d.timing.trek : 0;
+    var walkH = (d.timing && d.timing.walk) ? d.timing.walk : 0;
+    var activeH = (trekH || walkH) ? (trekH || walkH) + " h" : "0 h";
+    var distKm = d.distance_km ? d.distance_km + " km" : "--";
+    /* Distance fallback by day */
+    var DIST = {1:"--",2:"--",3:"--",4:"--",5:"--",6:"88 km",7:"14 km",8:"22 km",9:"14 km",10:"--",11:"--",12:"--",13:"--"};
+    if (distKm === "--") distKm = DIST[d.day] || "--";
+    var cells = [
+      {lab:"MAX ALTITUDE", val:d.altitude_peak.toLocaleString() + " m", icon:"icon-mountain"},
+      {lab:"DISTANCE",     val:distKm,                                  icon:"icon-walking-line"},
+      {lab:"ACTIVE HOURS", val:activeH,                                 icon:"icon-clock"},
+      {lab:"CONNECTIVITY", val:connText,                                icon:connIconId},
+      {lab:"SLEEP",        val:d.altitude_sleep.toLocaleString() + " m",icon:"icon-bed-line"}
+    ];
+    var inner = cells.map(function(c){
+      return '<div class="day-dash-cell">' +
+        '<span class="day-dash-lab">' + c.lab + '</span>' +
+        '<span class="day-dash-val">' + escapeHtml(c.val) + '</span>' +
+        '<svg class="icon day-dash-icon"><use href="#' + c.icon + '"/></svg>' +
+        '</div>';
+    }).join("");
+    return '<div class="day-dash" aria-label="Day stat dashboard">' + inner + '</div>';
+  }
+  /* v3.9 §0.13.8 · weather chips */
+  function weatherChipsHtml(d) {
+    var w = d.weather || {};
+    var tempSev = (w.high <= -5 || w.low <= -5) ? "sev-warn" : "";
+    var windSev = (w.wind >= 50) ? "sev-warn" : "";
+    var uvSev   = (w.uv >= 11) ? "sev-warn" : "";
+    var chips = [
+      {icon:"icon-thermometer", text: w.high + " / " + w.low + " &deg;C", sev: tempSev},
+      {icon:"icon-wind",        text: w.wind + " km/h",                   sev: windSev},
+      {icon:"icon-droplet",     text: w.rain + "%",                       sev: ""},
+      {icon:"icon-sun",         text: "UV " + w.uv,                       sev: uvSev}
+    ];
+    var inner = chips.map(function(c){
+      return '<span class="day-wx-chip ' + c.sev + '">' +
+        '<svg class="icon"><use href="#' + c.icon + '"/></svg>' + c.text +
+        '</span>';
+    }).join("");
+    return '<div class="day-wx-chips" aria-label="Weather chips">' + inner + '</div>';
+  }
+
+  /* v3.9 §0.13.9 · layering chip per-day */
+  var DAY_LAYERING = {
+    1:{key:"light",    label:"LIGHT LAYERS"},
+    2:{key:"light",    label:"LIGHT LAYERS"},
+    3:{key:"standard", label:"STANDARD LAYERS"},
+    4:{key:"standard", label:"STANDARD LAYERS"},
+    5:{key:"cold",     label:"COLD LAYERS"},
+    6:{key:"cold",     label:"COLD LAYERS"},
+    7:{key:"cold",     label:"COLD LAYERS"},
+    8:{key:"winter",   label:"FULL WINTER SYSTEM"},
+    9:{key:"standard", label:"STANDARD LAYERS"},
+    10:{key:"standard",label:"STANDARD LAYERS"},
+    11:{key:"light",   label:"LIGHT LAYERS"},
+    12:{key:"light",   label:"LIGHT LAYERS"},
+    13:{key:"light",   label:"LIGHT LAYERS"}
+  };
+  function layeringHtml(dayNum) {
+    var l = DAY_LAYERING[dayNum] || {key:"standard", label:"STANDARD LAYERS"};
+    return '<div class="day-block"><h4>Layering level</h4>' +
+      '<div class="day-layering">' +
+      '<span class="day-layering-dot ' + l.key + '" aria-hidden="true"></span>' +
+      '<span class="day-layering-val ' + l.key + '">' + l.label + '</span>' +
+      '</div></div>';
+  }
+  /* v3.9 §0.13.9 · exposure mini-grid per-day */
+  var DAY_EXPOSURE = {
+    1: {sun:"high",     wind:"low",     rain:"high",    cold:"low"},
+    2: {sun:"high",     wind:"low",     rain:"high",    cold:"low"},
+    3: {sun:"extreme",  wind:"moderate",rain:"low",     cold:"moderate"},
+    4: {sun:"extreme",  wind:"moderate",rain:"low",     cold:"moderate"},
+    5: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    6: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    7: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    8: {sun:"extreme",  wind:"high",    rain:"low",     cold:"severe"},
+    9: {sun:"extreme",  wind:"high",    rain:"low",     cold:"high"},
+    10:{sun:"high",     wind:"moderate",rain:"low",     cold:"moderate"},
+    11:{sun:"moderate", wind:"low",     rain:"moderate",cold:"low"},
+    12:{sun:"high",     wind:"low",     rain:"high",    cold:"low"},
+    13:{sun:"moderate", wind:"low",     rain:"moderate",cold:"low"}
+  };
+  function exposureHtml(dayNum) {
+    var e = DAY_EXPOSURE[dayNum] || {sun:"moderate", wind:"moderate", rain:"moderate", cold:"moderate"};
+    var rows = [
+      {axis:"SUN",  sev:e.sun,  icon:"icon-sun"},
+      {axis:"WIND", sev:e.wind, icon:"icon-wind"},
+      {axis:"RAIN", sev:e.rain, icon:"icon-droplet"},
+      {axis:"COLD", sev:e.cold, icon:"icon-thermometer"}
+    ];
+    var cells = rows.map(function(r){
+      return '<div class="day-exposure-cell">' +
+        '<svg class="icon"><use href="#' + r.icon + '"/></svg>' +
+        '<span class="axis">' + r.axis + ':</span>' +
+        '<span class="sev ' + r.sev + '">' + r.sev.toUpperCase() + '</span>' +
+        '</div>';
+    }).join("");
+    return '<div class="day-block"><h4>Exposure</h4>' +
+      '<div class="day-exposure-grid">' + cells + '</div>' +
+      '</div>';
+  }
+
   function renderDayCard(d, todayIdx) {
     var chip = chipFor(d.day_type);
     var isToday = todayIdx === d.day;
@@ -4045,8 +5019,14 @@
     html += '<div class="day-head"><div><div class="day-num">Day ' + d.day + '</div><div class="day-date">' + d.weekday + " &middot; " + d.date + '</div></div>';
     if (chip) html += '<span class="chip ' + chip.cls + '">' + chip.label + '</span>';
     html += '</div>';
+    /* v3.9 §0.13.6 · difficulty indicator */
+    html += diffHtml(d.day);
+    /* v3.9 §0.13.7 · header dashboard */
+    html += dashHtml(d);
     html += '<div class="day-loc">' + escapeHtml(d.location) + '</div>';
     html += '<div class="day-headline">' + escapeHtml(d.headline) + '</div>';
+    /* v3.10 §0.14.4 · day-level mini-map */
+    html += dayMiniMapHtml(d.day);
 
     // First-class fields cluster.
     html += '<div class="first-class">';
@@ -4071,29 +5051,36 @@
     html += '<div class="fc-row"><span class="lab">Weather source</span><span class="val" data-w-src data-day="'+d.day+'" style="font-size:11px;color:var(--muted)">Long-range climate estimate</span></div>';
     html += '</div>';
 
-    // Timeline.
+    // Timeline (v3.9 §0.13.13 · marker + connecting rule pattern).
     html += '<div class="day-block"><h4>Timeline</h4><div class="timeline">';
     d.timeline.forEach(function(ev){
-      html += '<div class="ev"><span class="tm">' + escapeHtml(ev.time) + '</span><span class="tx">' + escapeHtml(ev.event) + '</span></div>';
+      /* Day 8 pass row gets the warn-red filled marker. */
+      var isCritical = (d.day === 8 && /Dolma\s*La/i.test(ev.event));
+      var markerCls  = isCritical ? "ev-marker critical" : "ev-marker";
+      html += '<div class="ev">' +
+        '<span class="tm">' + escapeHtml(ev.time) + '</span>' +
+        '<span class="' + markerCls + '" aria-hidden="true"></span>' +
+        '<span class="tx">' + escapeHtml(ev.event) + '</span>' +
+        '</div>';
     });
     html += '</div></div>';
 
-    // Climate + Recommended (replaces wear buckets).
+    // Weather chips (v3.9 §0.13.8 · replaces weather sub-table).
     var cl = d.climate || {};
-    var w2 = d.weather;
-    html += '<div class="day-block"><h4>Climate</h4><div class="wear-grid">';
-    html += '<div class="wlab">Temperature</div><div class="wval">' + w2.high + ' to ' + w2.low + ' &deg;C</div>';
-    html += '<div class="wlab">Wind</div><div class="wval">' + escapeHtml(w2.wind_sev.charAt(0).toUpperCase() + w2.wind_sev.slice(1)) + ' &middot; ' + w2.wind + ' km/h</div>';
-    html += '<div class="wlab">Sun (UV)</div><div class="wval">UV ' + w2.uv + '</div>';
-    html += '<div class="wlab">Rain</div><div class="wval">' + w2.rain + '% chance</div>';
-    html += '<div class="wlab">Layering level</div><div class="wval">' + escapeHtml(cl.layering || "standard") + '</div>';
+    html += '<div class="day-block"><h4>Weather</h4>';
+    html += weatherChipsHtml(d);
     html += '</div>';
+
+    // v3.9 §0.13.9 · Layering chip + Exposure mini-grid (replaces v3.6 Climate top line).
+    html += layeringHtml(d.day);
+    html += exposureHtml(d.day);
+
+    // Recommended gear (fallback detail).
     if (cl.recommended && cl.recommended.length) {
-      html += '<h4>Recommended</h4><ul class="bullets" style="margin:0 0 0 0">';
+      html += '<div class="day-block"><h4>Recommended</h4><ul class="bullets" style="margin:0">';
       cl.recommended.forEach(function(r){ html += '<li>' + escapeHtml(r) + '</li>'; });
-      html += '</ul>';
+      html += '</ul></div>';
     }
-    html += '</div>';
 
     // Food.
     html += '<div class="day-block"><h4>Food</h4><div class="food-grid">';
@@ -4146,10 +5133,11 @@
 
   /* =================== v3.8 HERO + TODAY CARD + DYNAMIC SURFACES =================== */
 
-  /* Render the journey progress bar at top of page. */
+  /* Render the journey progress bar at top of page (v3.9 §0.13.4 micro-vis added). */
   function renderProgressBar(state) {
     var fill = document.getElementById("jp-fill");
     var label = document.getElementById("jp-label");
+    var mv = document.getElementById("jp-microvis");
     if (!fill || !label) return;
     var pct = state.progressPct;
     fill.style.width = pct + "%";
@@ -4162,6 +5150,33 @@
     } else {
       fill.className = "jp-fill";
       label.textContent = "Preparation " + pct + "%";
+    }
+    /* v3.9 §0.13.4 · micro-vis above the bar. */
+    if (mv) {
+      if (state.phase === "before") {
+        mv.innerHTML = '<span class="jp-mv-step active">TODAY</span>' +
+                       '<span class="jp-mv-sep">&minus;&minus;&minus;&minus;</span>' +
+                       '<span class="jp-mv-step">DEPARTURE</span>';
+      } else if (state.phase === "during") {
+        /* 5 stages: KTM, LHASA, MANSA, KAILASH, KTM (return) */
+        var stages = ["KTM","LHASA","MANSAROVAR","KAILASH","KATHMANDU"];
+        var idx = state.tripDayIndex || 1;
+        var currentStage = 0;
+        if (idx <= 2)         currentStage = 0;
+        else if (idx <= 4)    currentStage = 1;
+        else if (idx <= 6)    currentStage = 2;
+        else if (idx <= 9)    currentStage = 3;
+        else                  currentStage = 4;
+        var parts = [];
+        stages.forEach(function(s, i) {
+          var cls = i < currentStage ? "done" : (i === currentStage ? "active" : "");
+          parts.push('<span class="jp-mv-step ' + cls + '">' + s + '</span>');
+          if (i < stages.length - 1) parts.push('<span class="jp-mv-sep">&rsaquo;</span>');
+        });
+        mv.innerHTML = parts.join("");
+      } else {
+        mv.innerHTML = "";
+      }
     }
   }
 
@@ -4245,15 +5260,25 @@
     /* After phase: static. No dynamic updates needed. */
   }
 
-  /* Render the dynamic nav prepare badge. */
+  /* Render the dynamic nav prepare badge + phase-adaptive labels (#53). */
   function renderNavBadge(state) {
     var prepLabel = document.getElementById("nav-prepare-label");
-    if (!prepLabel) return;
-    if (state.phase === "before" && state.prepOpenCount > 0) {
-      prepLabel.innerHTML = 'Prepare <span class="nav-badge">' + state.prepOpenCount + '</span>';
-    } else {
-      prepLabel.textContent = "Prepare";
+    if (prepLabel) {
+      if (state.phase === "before" && state.prepOpenCount > 0) {
+        prepLabel.innerHTML = 'Prepare <span class="nav-badge">' + state.prepOpenCount + '</span>';
+      } else {
+        prepLabel.textContent = "Prepare";
+      }
     }
+    /* Ensure the during/after labels still respect the .before-only / .during-only /
+     * .after-only CSS classes (handled globally). Surface the during phase labels for
+     * Today / Tomorrow and after-phase Summary explicitly so they read correctly. */
+    var todayLabel = document.getElementById("nav-today-label");
+    var tmrwLabel  = document.getElementById("nav-tomorrow-label");
+    var summLabel  = document.getElementById("nav-summary-label");
+    if (todayLabel) todayLabel.textContent = "Today";
+    if (tmrwLabel)  tmrwLabel.textContent  = "Tomorrow";
+    if (summLabel)  summLabel.textContent  = "Summary";
   }
 
   /* Render the TODAY card (during phase only). */
@@ -4332,9 +5357,17 @@
     var isAfter = state.phase === "after";
     var isDuring = state.phase === "during";
     var title = isAfter ? "What mattered most" : "What matters today";
-    var savedKey = "kailash_wmt_state";
+    var savedKey = "kailash_completed_prep";
     var savedState = {};
     try { savedState = JSON.parse(localStorage.getItem(savedKey) || "{}"); } catch(e) {}
+    /* Migrate from legacy key if present. */
+    try {
+      var legacy = localStorage.getItem("kailash_wmt_state");
+      if (legacy && !localStorage.getItem(savedKey)) {
+        localStorage.setItem(savedKey, legacy);
+        savedState = JSON.parse(legacy || "{}");
+      }
+    } catch(e) {}
     var html = '<div class="wmt-header"><span>' + title + '</span></div>';
     items.forEach(function(item, idx) {
       var id = "wmt-" + idx;
@@ -4359,20 +5392,31 @@
     });
   }
 
-  /* Render connectivity ribbon. */
-  function renderConnRibbon() {
-    var el = document.getElementById("conn-ribbon-track");
-    if (!el) return;
-    var conn = ["good","good","good","good","intermittent","intermittent","offline","offline","intermittent","intermittent","good","good","good"];
+  /* v3.9 §0.13.5 · Render connectivity ribbon (compact + full versions). */
+  var CONN_DAYS = ["good","good","good","good","intermittent","intermittent","offline","offline","intermittent","intermittent","good","good","good"];
+  var CONN_NOTES = {
+    "good":         "Likely reachable",
+    "intermittent": "Intermittent. VPN required in Tibet",
+    "offline":      "Offline by design. Operator sat phone only"
+  };
+  function buildConnRibbon() {
     var html = "";
-    conn.forEach(function(c, i) {
-      html += '<div class="conn-ribbon-cell" title="Day ' + (i+1) + ': ' + c + '">';
+    CONN_DAYS.forEach(function(c, i) {
+      var note = CONN_NOTES[c] || c;
+      html += '<div class="conn-ribbon-cell" title="Day ' + (i+1) + ': ' + note + '" tabindex="0">';
       html += '<span class="cr-day">D' + (i+1) + '</span>';
       html += '<span class="cr-dot ' + c + '"></span>';
       html += '</div>';
       if (i < 12) html += '<div class="conn-ribbon-line"></div>';
     });
-    el.innerHTML = html;
+    return html;
+  }
+  function renderConnRibbon() {
+    var html = buildConnRibbon();
+    var el  = document.getElementById("conn-ribbon-track");
+    var el2 = document.getElementById("conn-ribbon-track-full");
+    if (el)  el.innerHTML  = html;
+    if (el2) el2.innerHTML = html;
   }
 
   /* Legacy hero/today helpers kept for reference but replaced by v3.8 functions above. */
@@ -4890,6 +5934,156 @@
     });
   }
 
+  /* =================== PHASE-DRIVEN SECTION DEFAULTS (#51, §0.12.3) ===================
+   * Per-section open/collapsed defaults, with localStorage override per-section.
+   * Section keys: prep-why, prep-operator, prep-medicine, prep-visa, prep-spiritual,
+   *               ref-connectivity, ref-bags, ref-customs, ref-acclimatization, ref-emergency
+   */
+  var SECTION_DEFAULTS = {
+    /* key:        [before, during, after] -- true=open, false=closed */
+    "prep-why":             [true,  false, false],
+    "prep-operator":        [true,  false, false],
+    "prep-medicine":        [true,  false, false],
+    "prep-visa":            [true,  false, false],
+    "prep-spiritual":       [true,  false, false],
+    "ref-connectivity":     [false, true,  false],
+    "ref-bags":             [false, false, false],
+    "ref-customs":          [false, false, false],
+    "ref-acclimatization":  [false, false, false],
+    "ref-emergency":        [false, true,  false]
+  };
+  function initSectionDefaults(phase) {
+    var phaseIdx = phase === "before" ? 0 : (phase === "during" ? 1 : 2);
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem("kailash_section_state") || "{}"); } catch(e) {}
+    document.querySelectorAll("details.disclosure[data-section-key]").forEach(function(det) {
+      var key = det.getAttribute("data-section-key");
+      if (key === "ref-emergency") return; /* handled separately by initEmergencyDisclosure */
+      if (saved[key] !== undefined) {
+        det.open = !!saved[key];
+      } else {
+        var def = SECTION_DEFAULTS[key];
+        if (def) det.open = !!def[phaseIdx];
+      }
+      det.addEventListener("toggle", function() {
+        try {
+          var s = JSON.parse(localStorage.getItem("kailash_section_state") || "{}");
+          s[key] = det.open;
+          localStorage.setItem("kailash_section_state", JSON.stringify(s));
+        } catch(e) {}
+      });
+    });
+  }
+
+  /* =================== MASTER JOURNEY MAP (v3.10 §0.14.2) ===================
+   * Click any stop → switch to Itinerary tab + smooth-scroll to day card.
+   * Keyboard: Enter/Space on focused stop triggers the same action.
+   */
+  function initMasterJourneyMap() {
+    var svg = document.getElementById("master-journey-map");
+    if (!svg) return;
+    var stops = svg.querySelectorAll(".stop");
+    stops.forEach(function(stop) {
+      var dayId = stop.getAttribute("data-day-id");
+      if (!dayId) return;
+      function go() {
+        try {
+          activateTab("tab-itinerary");
+          setTimeout(function() {
+            var el = document.getElementById(dayId);
+            if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+          }, 60);
+        } catch(e) {}
+      }
+      stop.addEventListener("click", go);
+      stop.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          go();
+        }
+      });
+    });
+  }
+
+  /* =================== ORIGIN AUTO-DETECT + MANUAL OVERRIDE (v3.10 §0.14.3) ===================
+   * Timezone mapping → origin id. localStorage override wins over auto-detect.
+   */
+  function detectOriginFromTz(tz) {
+    if (!tz) return "all";
+    /* PRD v3.10 §0.14.3 mapping table. */
+    if (tz === "Asia/Kolkata" || tz === "Asia/Calcutta") return "mumbai";
+    if (tz === "Asia/Dubai"   || tz === "Asia/Abu_Dhabi") return "uae";
+    if (tz === "Indian/Mauritius") return "mauritius";
+    if (tz.indexOf("America/") === 0) return "us";
+    return "all";
+  }
+  /* Re-resolve origin when persisted choice is 'auto'. */
+  function resolveOrigin(saved) {
+    if (saved && saved !== "auto") return saved;
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      return detectOriginFromTz(tz);
+    } catch(e) { return "all"; }
+  }
+  function applyOriginToMap(origin) {
+    var svg = document.getElementById("master-journey-map");
+    if (!svg) return;
+    /* Reset all */
+    svg.querySelectorAll(".origin-ray").forEach(function(r){ r.classList.remove("origin-active"); });
+    svg.querySelectorAll(".origin").forEach(function(o){ o.classList.remove("origin-active"); });
+    if (origin && origin !== "all") {
+      var ray = svg.querySelector(".origin-ray-" + origin);
+      var ori = svg.querySelector(".origin-" + origin);
+      if (ray) ray.classList.add("origin-active");
+      if (ori) ori.classList.add("origin-active");
+    }
+  }
+  function initOriginSelector() {
+    var sel = document.getElementById("mjm-origin-select");
+    if (!sel) return;
+    var saved = null;
+    try { saved = localStorage.getItem("kailash_origin"); } catch(e) {}
+    if (saved && saved !== "auto") {
+      sel.value = saved;
+    } else {
+      sel.value = "auto";
+    }
+    applyOriginToMap(resolveOrigin(saved));
+    sel.addEventListener("change", function() {
+      var v = sel.value;
+      try { localStorage.setItem("kailash_origin", v); } catch(e) {}
+      applyOriginToMap(resolveOrigin(v));
+    });
+  }
+
+  /* =================== SACRED JOURNEY TOGGLE (v3.10 §0.14.6) ===================
+   * Default is Logistics (PRD P4b · page is a yatra page, not a religious portal).
+   * Pilgrimage mode adds .sacred-mode on the SVG root, surfacing the 7 pre-baked
+   * sacred markers via CSS. Mode persists across reloads via localStorage
+   * kailash_map_mode. Mode is layer-only -- does NOT alter route geometry.
+   */
+  function initSacredToggle() {
+    var btnLog = document.getElementById("mjm-mode-logistics");
+    var btnPil = document.getElementById("mjm-mode-pilgrimage");
+    var svg    = document.getElementById("master-journey-map");
+    if (!btnLog || !btnPil || !svg) return;
+    var saved = null;
+    try { saved = localStorage.getItem("kailash_map_mode"); } catch(e) {}
+    function setMode(mode) {
+      var pilgrim = (mode === "pilgrimage");
+      svg.classList.toggle("sacred-mode", pilgrim);
+      btnLog.classList.toggle("active", !pilgrim);
+      btnPil.classList.toggle("active",  pilgrim);
+      btnLog.setAttribute("aria-pressed", !pilgrim);
+      btnPil.setAttribute("aria-pressed",  pilgrim);
+      try { localStorage.setItem("kailash_map_mode", mode); } catch(e) {}
+    }
+    /* Default: Logistics (per PRD P4b). Override only if user picked Pilgrimage previously. */
+    setMode(saved === "pilgrimage" ? "pilgrimage" : "logistics");
+    btnLog.addEventListener("click", function(){ setMode("logistics"); });
+    btnPil.addEventListener("click", function(){ setMode("pilgrimage"); });
+  }
+
   document.addEventListener("DOMContentLoaded", function(){
     /* Tab init FIRST so any downstream error does not leave the page blank. */
     try { initTabs(); } catch(e) { /* fallback handled by inline checked attribute on tab-overview */ }
@@ -4908,7 +6102,12 @@
     try {
       var phase = computePhase(getReferenceDate());
       initEmergencyDisclosure(phase);
+      initSectionDefaults(phase);
     } catch(e) {}
+    /* v3.10 master journey map + origin auto-detect + sacred mode toggle. */
+    try { initMasterJourneyMap(); } catch(e) {}
+    try { initOriginSelector(); }   catch(e) {}
+    try { initSacredToggle(); }     catch(e) {}
   });
 </script>
 
