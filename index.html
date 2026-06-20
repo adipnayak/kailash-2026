@@ -5760,7 +5760,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
       bathroom: {type:"Western flush + bucket", water:"Limited hot. Ration.", shower:"Hot bucket bath at the hotel.", notes:"Last wash until Day 10."},
       timing: {wake:"04:30", walk:2, trek:0, rest:4, sleep:9, notes:"Easy day. Symbolically the heart of the yatra."},
       carry: ["Personal ritual items and intention notebook", "Spare base layer for after the ritual bath", "Hydration"],
-      spiritual: {label:"Snan and Puja", body:"Mansarovar is traditionally considered one of the holiest lakes in the world. Many pilgrims take a ritual bath at dawn and offer prayers at Chiu Gompa before beginning the Parikrama tomorrow. If you carry a name or a photograph of an ancestor, this is the moment to bring it forward.", phrase:"Har Har Mahadev."},
+      spiritual: {label:"Snan and Puja", body:"Mansarovar is traditionally considered one of the holiest lakes in the world. Many pilgrims take a ritual bath at dawn and offer prayers at Chiu Gompa before beginning the Parikrama tomorrow. If you carry a name or a photograph of an ancestor, this is the moment to bring it forward.", phrase:null},
       weather: {high:13, low:3, feels:9, rain:25, wind:18, wind_sev:"strong", uv:11},
     },
     {
@@ -5822,7 +5822,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
         "Headlamp with fresh batteries",
         "Spare insulated gloves"
       ],
-      spiritual: {label:"Dolma La crossing", body:"Many pilgrims regard crossing the pass as a symbolic death of the old self and the beginning of a new one. The mantra most often spoken at the pass is Om Mani Padme Hum. Walk steadily. Kailash rewards patience more than speed.", phrase:"Jai Bhole Nath. One step at a time."},
+      spiritual: {label:"Dolma La crossing", body:"Many pilgrims regard crossing the pass as a symbolic death of the old self and the beginning of a new one. The mantra most often spoken at the pass is Om Mani Padme Hum. Walk steadily. Kailash rewards patience more than speed.", phrase:"One step at a time."},
       weather: {high:5, low:-8, feels:-15, rain:45, wind:50, wind_sev:"extreme", uv:11},
     },
     {
@@ -8347,37 +8347,6 @@ function patchAltitudeDisplays() {
 }
 
 /* =========================================================
-   #3 - Devotional budget revision
-   ========================================================= */
-function applyDevotionalBudget() {
-  /* Ensure only one Jai Bhole Nath on the page */
-  var jbn = document.querySelectorAll(".devotional");
-  var found = false;
-  jbn.forEach(function(el) {
-    if (el.textContent.indexOf("Jai Bhole Nath") !== -1) {
-      if (found) { el.textContent = ""; el.style.display = "none"; }
-      else found = true;
-    }
-  });
-  /* Drop Har Har Mahadev from spiritual phrase fields - done in data; patch rendered cards */
-  document.querySelectorAll(".spiritual-phrase").forEach(function(el) {
-    if (el.textContent.indexOf("Har Har Mahadev") !== -1) {
-      el.textContent = "";
-    }
-  });
-  /* After-phase completion banner */
-  var afterHero = document.getElementById("hero-after");
-  if (afterHero) {
-    var bigNum = afterHero.querySelector(".hero-big-num");
-    if (bigNum) bigNum.textContent = "Yatra Sampoorna (yatra complete)";
-  }
-  /* Journey complete section */
-  var jsum = document.querySelector(".journey-summary-title");
-  if (jsum) jsum.textContent = "Yatra Sampoorna (yatra complete)";
-  /* Footer: ॐ नमः शिवाय is now static HTML (id=om-namah); no-op here */
-}
-
-/* =========================================================
    #5 - Day 8 phase-conditional expansion logic
    - T-30 to T-4 (early before): COLLAPSED (visually distinct but closed)
    - T-3 to T-1 (final before week): AUTO-EXPANDED
@@ -8536,7 +8505,6 @@ function initXcut() {
     renderHeroV312(st2);
   } catch(e) {}
   try { patchAltitudeDisplays(); } catch(e) {}
-  try { applyDevotionalBudget(); } catch(e) {}
   try {
     /* Update conn ribbon after it has been rendered by renderConnRibbon() */
     updateConnRibbonPhase();
