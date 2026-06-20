@@ -1,0 +1,57 @@
+@import 'tailwindcss';
+@plugin 'tailwindcss-animate';
+@import '@fontsource/inter-tight/400.css';
+@import '@fontsource/inter-tight/500.css';
+@import '@fontsource/inter-tight/600.css';
+@import '@fontsource/inter-tight/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+/* =============================================================
+ * Maurten theme via CSS variables.
+ * Tailwind v4 reads @theme tokens to generate utilities.
+ * Keep the var() indirection so a future dark mode can swap them.
+ * Anti-AI rule: no smart quotes, no em-dashes, no emojis in this file.
+ * ============================================================= */
+
+:root {
+  --bg: #f3f3f2;
+  --ink: #000000;
+  --card: #ffffff;
+  --border: #dcdcd8;
+  --muted: #6a6a68;
+  --red: #b73e2a;
+  --accent: #8e6628;
+  --green: #4a7a4d;
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-red: var(--red);
+  --color-accent: var(--accent);
+  --color-green: var(--green);
+
+  --font-sans: 'Inter Tight', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius: 4px;
+}
+
+html,
+body,
+#root {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+}
