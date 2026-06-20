@@ -12,6 +12,7 @@ import type { JourneyState } from '../../lib/journey-state';
 import { SacredJourneyMap } from '../SacredJourneyMap';
 import { AltitudeChart } from '../AltitudeChart';
 import { ShineBorder } from '../aliimam/ShineBorder';
+import { OriginsSection } from '../OriginsSection';
 import { mToFt } from '../../lib/conversions';
 import { Clock, Mountain, Footprints, WifiOff } from '@aliimam/icons';
 
@@ -49,6 +50,7 @@ export function OverviewTab({ phase }: { phase: JourneyState }) {
     <div data-tab="overview">
       <SacredJourneyMap phase={phase} />
       <AltitudeChart />
+      <OriginsSection />
 
       {/* Trip Highlights · ShineBorder wrapping 4 headline stats */}
       <section data-section="trip-highlights" className="px-4 py-12 md:px-6 md:py-16">
