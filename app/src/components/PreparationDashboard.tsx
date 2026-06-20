@@ -275,15 +275,15 @@ function saveStatus(map: StatusMap): void {
 
 function StatusIcon({ status }: { status: ItemStatus }) {
   if (status === 'complete') {
-    return <CircleCheck size={16} className="text-green shrink-0" />;
+    return <CircleCheck size={16} className="text-emerald shrink-0" />;
   }
   if (status === 'pending') {
-    return <Clock size={16} className="text-accent shrink-0" />;
+    return <Clock size={16} className="text-sacred shrink-0" />;
   }
   if (status === 'action-needed') {
-    return <CircleAlert size={16} className="text-red shrink-0" />;
+    return <CircleAlert size={16} className="text-destructive shrink-0" />;
   }
-  return <CircleMinus size={16} className="text-muted shrink-0" />;
+  return <CircleMinus size={16} className="text-muted-foreground shrink-0" />;
 }
 
 function statusLabel(status: ItemStatus): string {
@@ -316,7 +316,7 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
       <button
         type="button"
         onClick={onCycle}
-        className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-bg focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
         aria-label={`${item.label}: ${statusLabel(status)}. Click to change.`}
       >
         <span className="mt-0.5">
@@ -326,25 +326,25 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
           <span
             className={[
               'block text-sm font-medium',
-              isComplete ? 'line-through text-muted' : isBlocking ? 'text-red' : 'text-ink',
+              isComplete ? 'line-through text-muted-foreground' : isBlocking ? 'text-destructive' : 'text-foreground',
             ].join(' ')}
           >
             {item.label}
           </span>
           {isOptionalCategory && !isComplete && (
-            <span className="mt-0.5 block text-xs text-muted">Optional</span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">Optional</span>
           )}
         </span>
         <span
           className={[
             'shrink-0 rounded px-1.5 py-0.5 font-mono text-xs',
             isBlocking
-              ? 'bg-red/10 text-red'
+              ? 'bg-destructive/10 text-destructive'
               : isComplete
-                ? 'bg-green/10 text-green'
+                ? 'bg-emerald/10 text-emerald'
                 : isOptionalCategory
-                  ? 'bg-border text-muted'
-                  : 'bg-accent/10 text-accent',
+                  ? 'bg-border text-muted-foreground'
+                  : 'bg-sacred/10 text-sacred',
           ].join(' ')}
         >
           {isOptionalCategory && !isComplete ? 'optional' : statusLabel(status).toLowerCase()}
@@ -362,8 +362,8 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
             className="overflow-hidden"
           >
             <div className="flex gap-2 px-4 pb-3 pl-11">
-              <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-red" />
-              <p className="text-xs leading-relaxed text-red">{item.blocking}</p>
+              <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-destructive" />
+              <p className="text-xs leading-relaxed text-destructive">{item.blocking}</p>
             </div>
           </motion.div>
         )}
@@ -416,29 +416,29 @@ function CategoryCard({ category, statusMap, onCycle }: CategoryCardProps) {
     <div
       className={[
         'rounded border bg-card overflow-hidden',
-        hasBlocking ? 'border-red/40' : allDone ? 'border-green/40' : 'border-border',
+        hasBlocking ? 'border-destructive/40' : allDone ? 'border-emerald/40' : 'border-border',
       ].join(' ')}
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          <h3 className="font-sans text-sm font-semibold text-ink">{category.label}</h3>
+          <h3 className="font-sans text-sm font-semibold text-foreground">{category.label}</h3>
           {category.optional && (
-            <span className="rounded border border-muted/30 px-1.5 py-0.5 font-mono text-xs text-muted">
+            <span className="rounded border border-muted/30 px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
               optional
             </span>
           )}
           {hasBlocking && (
-            <span className="rounded bg-red/10 px-1.5 py-0.5 font-mono text-xs text-red">
+            <span className="rounded bg-destructive/10 px-1.5 py-0.5 font-mono text-xs text-destructive">
               action needed
             </span>
           )}
           {allDone && !hasBlocking && (
-            <span className="rounded bg-green/10 px-1.5 py-0.5 font-mono text-xs text-green">
+            <span className="rounded bg-emerald/10 px-1.5 py-0.5 font-mono text-xs text-emerald">
               complete
             </span>
           )}
         </div>
-        <span className="font-mono text-xs text-muted">{pct}%</span>
+        <span className="font-mono text-xs text-muted-foreground">{pct}%</span>
       </div>
 
       {/* Progress bar */}
@@ -446,7 +446,7 @@ function CategoryCard({ category, statusMap, onCycle }: CategoryCardProps) {
         <div
           className={[
             'h-full transition-all duration-300',
-            allDone ? 'bg-green' : hasBlocking ? 'bg-red' : 'bg-accent',
+            allDone ? 'bg-emerald' : hasBlocking ? 'bg-destructive' : 'bg-sacred',
           ].join(' ')}
           style={{ width: `${pct}%` }}
         />
@@ -546,15 +546,15 @@ export function PreparationDashboard() {
   return (
     <section
       data-section="preparation-dashboard"
-      className="border-b border-border bg-bg px-6 py-8"
+      className="border-b border-border bg-background px-6 py-8"
     >
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <div ref={headerRef}>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h2 className="font-sans text-2xl font-medium text-ink">Preparation</h2>
-              <p className="mt-1 text-sm text-muted">
+              <h2 className="font-sans text-2xl font-medium text-foreground">Preparation</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {daysToDeparture > 0
                   ? `${daysToDeparture} day${daysToDeparture === 1 ? '' : 's'} to departure`
                   : 'Departure day'}
@@ -562,18 +562,18 @@ export function PreparationDashboard() {
             </div>
             <div className="flex items-center gap-3">
               {blocking > 0 && (
-                <span className="rounded bg-red/10 px-2 py-1 font-mono text-xs text-red">
+                <span className="rounded bg-destructive/10 px-2 py-1 font-mono text-xs text-destructive">
                   {blocking} action{blocking === 1 ? '' : 's'} needed
                 </span>
               )}
-              <span className="font-mono text-xs text-muted">{pct}% ready</span>
+              <span className="font-mono text-xs text-muted-foreground">{pct}% ready</span>
             </div>
           </div>
 
           {/* Overall progress bar */}
           <div className="mt-4 h-1 rounded-full bg-border overflow-hidden">
             <motion.div
-              className={['h-full rounded-full', blocking > 0 ? 'bg-red' : pct === 100 ? 'bg-green' : 'bg-accent'].join(' ')}
+              className={['h-full rounded-full', blocking > 0 ? 'bg-destructive' : pct === 100 ? 'bg-emerald' : 'bg-sacred'].join(' ')}
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -581,7 +581,7 @@ export function PreparationDashboard() {
           </div>
 
           {blocking > 0 && (
-            <p className="mt-3 text-xs text-red">
+            <p className="mt-3 text-xs text-destructive">
               Items marked "action needed" are blocking your preparation. Tap each item to update its status.
             </p>
           )}
@@ -606,7 +606,7 @@ export function PreparationDashboard() {
         </div>
 
         {/* Footer note */}
-        <p className="mt-6 text-xs text-muted">
+        <p className="mt-6 text-xs text-muted-foreground">
           Click any item to cycle its status. Progress is saved locally on this device.
         </p>
       </div>

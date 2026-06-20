@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Ruler, Bed, Sun } from '@aliimam/icons';
 import {
   AreaChart,
   AreaSeries,
@@ -99,12 +100,15 @@ function SegmentedControl({
           className={[
             'px-4 py-1.5 transition-colors duration-150 cursor-pointer',
             mode === m
-              ? 'bg-ink text-card'
-              : 'bg-card text-muted hover:bg-border hover:text-ink',
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-card text-muted-foreground hover:bg-border hover:text-foreground',
           ].join(' ')}
           aria-pressed={mode === m}
         >
-          {m === 'walking' ? 'Walking' : 'Sleeping'}
+          <span className="flex items-center gap-1">
+            {m === 'walking' ? <Ruler size={11} /> : <Bed size={11} />}
+            {m === 'walking' ? 'Walking' : 'Sleeping'}
+          </span>
         </button>
       ))}
     </div>
@@ -146,16 +150,16 @@ function DolmaMarker({ chartWidth, chartHeight, dolmaRef, mode }: DolmaMarkerPro
       aria-hidden="true"
     >
       {/* Outer breathing ring */}
-      <circle ref={dolmaRef as React.RefObject<SVGCircleElement>} cx={cx} cy={cy} r={14} fill="var(--red)" opacity={0.2} />
+      <circle ref={dolmaRef as React.RefObject<SVGCircleElement>} cx={cx} cy={cy} r={14} fill="var(--destructive)" opacity={0.2} />
       {/* Solid inner dot */}
-      <circle cx={cx} cy={cy} r={6} fill="var(--red)" stroke="var(--card)" strokeWidth={2} />
+      <circle cx={cx} cy={cy} r={6} fill="var(--destructive)" stroke="var(--card)" strokeWidth={2} />
       {/* Label */}
       <text
         x={cx + 10}
         y={cy - 8}
         fontSize={10}
         fontFamily="'JetBrains Mono', ui-monospace, monospace"
-        fill="var(--red)"
+        fill="var(--destructive)"
         fontWeight={600}
       >
         Dolma La
@@ -165,7 +169,7 @@ function DolmaMarker({ chartWidth, chartHeight, dolmaRef, mode }: DolmaMarkerPro
         y={cy + 3}
         fontSize={9}
         fontFamily="'JetBrains Mono', ui-monospace, monospace"
-        fill="var(--red)"
+        fill="var(--destructive)"
         opacity={0.75}
       >
         5,630m / 18,471ft
@@ -231,14 +235,14 @@ export function AltitudeChart() {
   return (
     <section
       data-section="altitude-chart"
-      className="border-b border-border bg-bg px-6 py-12"
+      className="border-b border-border bg-background px-6 py-12"
     >
       <div className="mx-auto max-w-5xl">
         {/* Header row */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div>
-            <h2 className="font-sans text-2xl font-medium text-ink">Altitude Profile</h2>
-            <p className="mt-1 text-sm text-muted font-mono">
+            <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>
+            <p className="mt-1 text-sm text-muted-foreground font-mono">
               13-day elevation across the Kailash Mansarovar yatra
             </p>
           </div>
@@ -283,7 +287,7 @@ export function AltitudeChart() {
                       tickSize={28}
                       label={
                         <LinearXAxisTickLabel
-                          fill="var(--muted)"
+                          fill="var(--muted-foreground)"
                           fontSize={11}
                           fontFamily="'JetBrains Mono', ui-monospace, monospace"
                           format={(v: string) => v}
@@ -302,7 +306,7 @@ export function AltitudeChart() {
                       tickValues={Y_TICKS}
                       label={
                         <LinearYAxisTickLabel
-                          fill="var(--muted)"
+                          fill="var(--muted-foreground)"
                           fontSize={10}
                           fontFamily="'JetBrains Mono', ui-monospace, monospace"
                           format={(v: number) => altLabel(v)}
@@ -327,7 +331,7 @@ export function AltitudeChart() {
                 <AreaSeries
                   animated
                   interpolation="smooth"
-                  colorScheme={['var(--accent)']}
+                  colorScheme={['var(--sacred)']}
                   area={
                     <Area
                       gradient={
@@ -362,11 +366,11 @@ export function AltitudeChart() {
                                 : '0 m';
                             return (
                               <div className="bg-card border border-border rounded px-3 py-2 text-xs shadow-sm min-w-[160px]">
-                                <div className="font-sans font-medium text-ink text-sm mb-1">
+                                <div className="font-sans font-medium text-foreground text-sm mb-1">
                                   D{d.day} - {shortLocation(d.location)}
                                 </div>
-                                <div className="font-mono text-muted">{altLabel(alt)}</div>
-                                <div className="font-mono text-muted mt-0.5">
+                                <div className="font-mono text-muted-foreground">{altLabel(alt)}</div>
+                                <div className="font-mono text-muted-foreground mt-0.5">
                                   Gain: {gainedStr}
                                 </div>
                               </div>
@@ -394,7 +398,7 @@ export function AltitudeChart() {
 
         {/* Day location labels below chart */}
         <div
-          className="mt-2 grid font-mono text-[10px] text-muted"
+          className="mt-2 grid font-mono text-[10px] text-muted-foreground"
           style={{ gridTemplateColumns: 'repeat(13, 1fr)' }}
         >
           {DAYS.map((d) => (
@@ -409,19 +413,16 @@ export function AltitudeChart() {
         </div>
 
         {/* Legend row */}
-        <div className="mt-4 flex flex-wrap items-center gap-6 font-mono text-xs text-muted">
+        <div className="mt-4 flex flex-wrap items-center gap-6 font-mono text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <span
               className="inline-block w-3 h-3 rounded-full"
-              style={{ background: 'var(--red)' }}
+              style={{ background: 'var(--destructive)' }}
             />
             Dolma La Pass (5,630m / 18,471ft)
           </span>
           <span className="flex items-center gap-1.5">
-            <span
-              className="inline-block w-3 h-1.5 rounded"
-              style={{ background: 'rgba(200,160,0,0.4)' }}
-            />
+            <Sun size={11} className="text-sacred" />
             Acclimatization days (D4, D6, D12)
           </span>
         </div>

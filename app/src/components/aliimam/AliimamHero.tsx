@@ -37,8 +37,8 @@ export function AliimamHero({
             className="absolute inset-0 z-0 opacity-15"
             style={{
               backgroundImage: `
-              linear-gradient(to right, var(--ink) 1px, transparent 1px),
-              linear-gradient(to bottom, var(--ink) 1px, transparent 1px)
+              linear-gradient(to right, var(--foreground) 1px, transparent 1px),
+              linear-gradient(to bottom, var(--foreground) 1px, transparent 1px)
               `,
               backgroundSize: '20px 20px',
               backgroundPosition: '0 0, 0 0',
@@ -84,28 +84,28 @@ export function AliimamHero({
             className="absolute inset-0 z-0"
             style={{
               background:
-                'radial-gradient(125% 125% at 50% 10%, transparent 40%, var(--ink) 100%)',
+                'radial-gradient(125% 125% at 50% 10%, transparent 40%, var(--foreground) 100%)',
               opacity: 0.04,
             }}
           />
         </div>
       </div>
       <div className="container flex flex-col text-center z-10 px-6">
-        <h2 className="z-10 pt-10 text-5xl font-extrabold tracking-tighter md:text-7xl lg:text-9xl text-ink">
+        <h2 className="z-10 pt-10 text-5xl font-extrabold tracking-tighter md:text-7xl lg:text-9xl text-foreground">
           {title}
         </h2>
         <div className="z-10 flex flex-col items-center justify-center space-y-6 px-6 pt-10 text-center">
-          <p className="w-full max-w-lg text-sm font-light md:text-xl text-muted">
+          <p className="w-full max-w-lg text-sm font-light md:text-xl text-muted-foreground">
             {subtitle}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a href={primaryHref}>
-              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 bg-ink text-bg font-medium text-sm rounded hover:opacity-80 transition-opacity">
+              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 bg-primary text-primary-foreground font-medium text-sm rounded hover:opacity-80 transition-opacity">
                 {primaryLabel}
               </button>
             </a>
             <a href={secondaryHref}>
-              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 border border-border text-ink font-medium text-sm rounded hover:bg-card transition-colors">
+              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 border border-border text-foreground font-medium text-sm rounded hover:bg-card transition-colors">
                 {secondaryLabel}
               </button>
             </a>
