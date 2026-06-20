@@ -35,7 +35,7 @@ export function AliimamCta({
         className="absolute inset-0 z-0"
         style={{
           background:
-            'radial-gradient(ellipse at 50% 100%, var(--border) 0%, var(--bg) 75%)',
+            'radial-gradient(ellipse at 50% 100%, var(--border) 0%, var(--background) 75%)',
           opacity: 0.7,
         }}
       >
@@ -60,22 +60,22 @@ export function AliimamCta({
       <div className="relative overflow-hidden">
         <div className="relative z-10 space-y-3 text-center">
           <div className="space-y-3 pb-10">
-            <h2 className="text-xl font-medium uppercase md:text-4xl text-ink">
+            <h2 className="text-xl font-medium uppercase md:text-4xl text-foreground">
               {title}
             </h2>
-            <p className="text-muted max-w-2xl text-sm md:text-xl">
+            <p className="text-muted-foreground max-w-2xl text-sm md:text-xl">
               {body}
             </p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-3 pt-4">
             <a href={primaryHref}>
-              <button className="h-12 w-44 cursor-pointer bg-ink text-bg font-medium text-sm rounded hover:opacity-80 transition-opacity">
+              <button className="h-12 w-44 cursor-pointer bg-foreground text-background font-medium text-sm rounded hover:opacity-80 transition-opacity">
                 {primaryLabel}
               </button>
             </a>
             <a href={secondaryHref}>
-              <button className="h-12 w-44 cursor-pointer border border-border text-ink font-medium text-sm rounded hover:bg-card transition-colors">
+              <button className="h-12 w-44 cursor-pointer border border-border text-foreground font-medium text-sm rounded hover:bg-card transition-colors">
                 {secondaryLabel}
               </button>
             </a>

@@ -15,32 +15,32 @@ const TRIP_STATS = [
   {
     value: '5,630 m / ' + mToFt(5630).toLocaleString('en-US') + ' ft',
     label: 'Max Altitude (Dolma La)',
-    icon: <Mountain size={16} className="text-red mx-auto mb-1" />,
+    icon: <Mountain size={16} className="text-destructive mx-auto mb-1" />,
   },
   {
     value: '52 km',
     label: 'Parikrama Trek Distance',
-    icon: <Ruler size={16} className="text-muted mx-auto mb-1" />,
+    icon: <Ruler size={16} className="text-muted-foreground mx-auto mb-1" />,
   },
   {
     value: '6 days',
     label: 'Offline / Limited Connectivity',
-    icon: <WifiOff size={16} className="text-muted mx-auto mb-1" />,
+    icon: <WifiOff size={16} className="text-muted-foreground mx-auto mb-1" />,
   },
   {
     value: '4,790 m / ' + mToFt(4790).toLocaleString('en-US') + ' ft',
     label: 'Highest Sleep Altitude',
-    icon: <Bed size={16} className="text-muted mx-auto mb-1" />,
+    icon: <Bed size={16} className="text-muted-foreground mx-auto mb-1" />,
   },
   {
     value: '3',
     label: 'Countries (India / Nepal / Tibet)',
-    icon: <MapPin size={16} className="text-muted mx-auto mb-1" />,
+    icon: <MapPin size={16} className="text-muted-foreground mx-auto mb-1" />,
   },
   {
     value: '13',
     label: 'Days on Yatra',
-    icon: <CalendarDays size={16} className="text-muted mx-auto mb-1" />,
+    icon: <CalendarDays size={16} className="text-muted-foreground mx-auto mb-1" />,
   },
 ];
 
@@ -63,10 +63,10 @@ export function OverviewTab({ phase }: { phase: JourneyState }) {
       />
       <section className="border-b border-border bg-card px-6 py-8">
         <div className="mx-auto max-w-5xl">
-          <h2 className="font-sans text-2xl font-medium text-ink">What matters today</h2>
+          <h2 className="font-sans text-2xl font-medium text-foreground">What matters today</h2>
           <ul className="mt-3 space-y-2">
             {phase.whatMattersToday.map((item, i) => (
-              <li key={i} className="text-ink">
+              <li key={i} className="text-foreground">
                 {item}
               </li>
             ))}

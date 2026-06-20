@@ -13,7 +13,7 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
     <div data-tab="itinerary">
       <JourneyTimeline phase={phase} />
       <ConnectivityRibbon />
-      <section className="bg-bg px-6 py-8">
+      <section className="bg-background px-6 py-8">
         <div className="mx-auto grid max-w-5xl gap-3">
           {DAYS.map((d) => (
             <DayCard key={d.day} day={d} isToday={phase.tripDayIndex === d.day} />
