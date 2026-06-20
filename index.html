@@ -976,22 +976,248 @@
   ul.bullets { padding-left: 1.25rem; margin: 0.5rem 0 1.5rem; font-family: var(--font-body); font-size: 0.8125rem; }
   ul.bullets li { padding: 0.25rem 0; line-height: 1.6; }
 
+  /* =================== STICKY 4-TAB NAV (#37) =================== */
+
+  /* Hidden radio inputs · must be direct children of body for the sibling combinator to reach .container */
+  body > input[name="kailash-tabs"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* Sticky nav strip */
+  .tab-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    transition: background 200ms ease;
+  }
+
+  /* Tab labels */
+  .tab-nav label {
+    display: block;
+    padding: 0.875rem 1.25rem;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 200ms, border-color 200ms;
+    user-select: none;
+  }
+  .tab-nav label:hover { color: var(--ink); }
+
+  /* All tab panes hidden by default */
+  .tab-pane { display: none; }
+
+  /* Active tab: ink color + 2px underline */
+  #tab-overview:checked  ~ .container .tab-nav label[for="tab-overview"],
+  #tab-itinerary:checked ~ .container .tab-nav label[for="tab-itinerary"],
+  #tab-prepare:checked   ~ .container .tab-nav label[for="tab-prepare"],
+  #tab-reference:checked ~ .container .tab-nav label[for="tab-reference"] {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  /* Show the matching tab pane */
+  #tab-overview:checked  ~ .container .tab-pane[data-tab="overview"],
+  #tab-itinerary:checked ~ .container .tab-pane[data-tab="itinerary"],
+  #tab-prepare:checked   ~ .container .tab-pane[data-tab="prepare"],
+  #tab-reference:checked ~ .container .tab-pane[data-tab="reference"] {
+    display: block;
+  }
+
+  /* =================== CONTEXT CHIPS (#39) =================== */
+  .chip-row {
+    display: flex;
+    gap: var(--s-2);
+    flex-wrap: wrap;
+    margin: 0 0 2.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .chip-row a {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3125rem 0.75rem;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid currentColor;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 200ms, border-color 200ms;
+  }
+  .chip-row a:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* scroll-margin-top so sticky nav does not overlap anchor targets */
+  [id^="prep-"], [id^="ref-"] { scroll-margin-top: 64px; }
+
+  /* =================== JOURNEY MAP (#40) =================== */
+  .journey-map {
+    margin: 0 0 2.5rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .journey-map-label {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    display: block;
+  }
+  .journey-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    margin: 0 auto;
+    min-width: 160px;
+  }
+  .journey-place {
+    font-family: var(--font-headline);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--ink);
+    padding: 0.625rem 1.25rem;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    text-align: center;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    transition: color 200ms;
+    width: 100%;
+  }
+  .journey-place:hover { color: var(--muted); }
+  .journey-place:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .journey-place.dolma-la { color: var(--red); }
+  .journey-place.dolma-la:hover { color: var(--red); opacity: 0.75; }
+  .journey-rule {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+    flex: none;
+  }
+
+  /* =================== ENHANCED DAY NAVIGATOR (#41) =================== */
+  .day-nav {
+    margin: 0 0 2.5rem;
+    padding: 1.25rem 0 0;
+  }
+  .day-nav-label {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.875rem;
+    display: block;
+  }
+  .day-nav-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .day-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.3125rem 0.625rem;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 200ms, border-color 200ms;
+    line-height: 1.2;
+  }
+  .day-pill:hover { border-color: var(--ink); }
+  .day-pill .sev-dot { display: flex; align-items: center; }
+  /* Severity dot sizing for day nav context */
+  .day-pill .icon-sev { width: 12px; height: 12px; stroke-width: 2; }
+
+  /* =================== MOBILE FLOATING QUICK-ACTIONS (#43) =================== */
+  .quick-actions {
+    position: fixed;
+    bottom: var(--s-4);
+    right: var(--s-4);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  .qa-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    color: var(--ink);
+    transition: border-color 200ms, color 200ms;
+    flex: none;
+  }
+  .qa-btn:hover { border-color: var(--ink); }
+  .qa-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  @media (min-width: 768px) { .quick-actions { display: none; } }
+
+  /* Print-only section dividers (hidden on screen) */
+  .print-only { display: none; }
+
   /* Print rules. */
   @media print {
     body { background: #fff; color: #000; font-size: 11pt; }
-    .theme-toggle, .tz-bar, .refresh-btn, .reset-btn, .toc-grid { display: none !important; }
-    .checklist li input[type=checkbox] { display: none; }
-    .checklist li { grid-template-columns: 18px 1fr; }
-    .day-card { page-break-inside: avoid; border: 1px solid #888; background: #fff; }
-    details.disclosure { background: #fff; }
+    /* Hide nav, controls, floating actions */
+    .theme-toggle, .tz-bar, .refresh-btn, .reset-btn, .tab-nav, .quick-actions { display: none !important; }
+    /* Show all tab panes in sequence */
+    .tab-pane { display: block !important; }
+    /* Show print dividers */
+    .print-only { display: block !important; font-size: 14pt; font-weight: 700; text-transform: uppercase; margin: 2rem 0 0.5rem; border-top: 2px solid #000; padding-top: 1rem; page-break-before: always; }
+    .print-only:first-child { page-break-before: auto; }
+    /* Expand all disclosures */
     details.disclosure summary { display: none; }
     details.disclosure .disc-body { display: block !important; padding: 0; }
-    details.disclosure[open] .disc-body, details.disclosure .disc-body { display: block !important; }
+    /* Prevent day cards from splitting */
+    .day-card { page-break-inside: avoid; border: 1px solid #888; background: #fff; }
+    .checklist li input[type=checkbox] { display: none; }
+    .checklist li { grid-template-columns: 18px 1fr; }
     .health-cell, .op-col, .today-status, .altitude-wrap, .callout { background: #fff !important; border: 1px solid #888; }
     .critical-banner { background: #fff; color: #000; border: 2px solid #000; }
     .critical-banner .icon { color: #000; }
     a { color: #000; text-decoration: none; }
     section { page-break-inside: avoid; }
+    .journey-map, .day-nav { page-break-inside: avoid; }
   }
 
   /* Phase visibility via documentElement attr fallback. */
@@ -1022,6 +1248,13 @@
 </style>
 </head>
 <body>
+<!-- =================== TAB RADIO INPUTS (#37) =================== -->
+<!-- Must be direct children of body so the :checked ~ .container combinator reaches the container -->
+<input type="radio" name="kailash-tabs" id="tab-overview"   value="overview" checked>
+<input type="radio" name="kailash-tabs" id="tab-itinerary"  value="itinerary">
+<input type="radio" name="kailash-tabs" id="tab-prepare"    value="prepare">
+<input type="radio" name="kailash-tabs" id="tab-reference"  value="reference">
+
 <button class="theme-toggle" type="button" aria-label="Toggle theme" onclick="(function(){var r=document.documentElement;var cur=r.getAttribute('data-theme');var next=cur==='dark'?'light':'dark';r.setAttribute('data-theme',next);try{localStorage.setItem('kailash_theme_pref',next);}catch(e){}})()">
   <span class="light-only">Dark</span>
   <span class="dark-only">Light</span>
@@ -1128,6 +1361,19 @@
       <line x1="4" y1="4" x2="20" y2="20"/>
     </symbol>
 
+    <!-- New icons for mobile quick-actions (#43). -->
+    <symbol id="icon-mountain" viewBox="0 0 24 24">
+      <polyline points="2 22 12 4 22 22"/>
+    </symbol>
+    <symbol id="icon-lifebuoy" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9"/>
+      <circle cx="12" cy="12" r="3.5"/>
+      <line x1="12" y1="2.5" x2="12" y2="8.5"/>
+      <line x1="12" y1="15.5" x2="12" y2="21.5"/>
+      <line x1="2.5" y1="12" x2="8.5" y2="12"/>
+      <line x1="15.5" y1="12" x2="21.5" y2="12"/>
+    </symbol>
+
     <!-- Navigation. -->
     <symbol id="icon-clock" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9"/>
@@ -1147,7 +1393,21 @@
   </defs>
 </svg>
 
-<!-- =================== HEADER + HERO =================== -->
+<!-- =================== CONTAINER (wraps sticky nav + all tab panes) =================== -->
+<div class="container">
+
+<!-- Sticky 4-tab nav (#37) -->
+<nav class="tab-nav" aria-label="Page sections">
+  <label for="tab-overview">Overview</label>
+  <label for="tab-itinerary">Itinerary</label>
+  <label for="tab-prepare">Prepare</label>
+  <label for="tab-reference">Reference</label>
+</nav>
+
+<!-- =================== TAB: OVERVIEW =================== -->
+<div class="tab-pane" data-tab="overview">
+
+<!-- HEADER + HERO -->
 <header class="site">
   <h1>Kailash Mansarovar Yatra 2026</h1>
   <p class="subtitle">A pilgrimage to the abode of Lord Shiva</p>
@@ -1242,14 +1502,7 @@
 
 <main>
 
-<!-- =================== WHY THIS PLACE MATTERS (before only) =================== -->
-<section class="before-only" id="why">
-  <h2>Why this place matters</h2>
-  <p class="lede">Mount Kailash, at the western edge of the Tibetan plateau, is one of the few mountains in the world considered sacred across four religions. In Hinduism it is the abode of Lord Shiva. In Buddhism it is the dwelling of Demchok, embodiment of supreme bliss. In Jainism it is where Rishabhadeva attained liberation. In Bon it is the seat of the spiritual hierarchy of the cosmos.</p>
-  <p class="lede">Lake Mansarovar, at its base, is believed to be the lake of the mind itself. The Parikrama, the 52 km circumambulation around Kailash, is undertaken once in a lifetime by many pilgrims and is said to wash away the sins of a lifetime.</p>
-  <p class="lede">This yatra follows that pilgrimage. The 13 days that follow are the practical shape of an experience much older than any of us.</p>
-</section>
-
+<!-- OVERVIEW TAB CONTENT -->
 <!-- =================== HEALTH DASHBOARD =================== -->
 <section id="health">
   <h2>The trip in 6 numbers</h2>
@@ -1366,79 +1619,116 @@
   </div>
 </section>
 
-<!-- =================== JUMP TO DAY (TOC) =================== -->
-<section id="toc">
-  <h2>Jump to a day</h2>
-  <nav class="toc-grid" id="toc-grid" aria-label="Day navigation"></nav>
+</main>
+</div><!-- end tab-pane overview -->
+
+<!-- =================== TAB: ITINERARY =================== -->
+<div class="tab-pane" data-tab="itinerary">
+<div class="print-only">Itinerary</div>
+<main>
+
+<!-- Journey Map (#40) -->
+<section id="journey-map">
+  <div class="journey-map">
+    <span class="journey-map-label">Journey</span>
+    <div class="journey-flow" role="list">
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-1')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-1')">Kathmandu</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-3')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-3')">Lhasa</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-5')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-5')">Mansarovar</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-7')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-7')">Dirapuk</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place dolma-la" role="listitem" tabindex="0" onclick="scrollToDay('day-8')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-8')">Dolma La</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-8')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-8')">Zuthulphuk</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-9')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-9')">Darchen</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-10')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-10')">Lhasa</button>
+      <div class="journey-rule" aria-hidden="true"></div>
+      <button class="journey-place" role="listitem" tabindex="0" onclick="scrollToDay('day-11')" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDay('day-11')">Kathmandu</button>
+    </div>
+  </div>
 </section>
 
-<!-- =================== DAY CARDS =================== -->
+<!-- Enhanced Day Navigator (#41) -->
+<section id="day-navigator">
+  <div class="day-nav">
+    <span class="day-nav-label">Day Navigator</span>
+    <div class="day-nav-pills" role="list">
+      <a class="day-pill" href="#day-1" aria-label="Day 1">D1</a>
+      <a class="day-pill" href="#day-2" aria-label="Day 2">D2</a>
+      <a class="day-pill" href="#day-3" aria-label="Day 3">D3</a>
+      <a class="day-pill" href="#day-4" aria-label="Day 4">D4</a>
+      <a class="day-pill" href="#day-5" aria-label="Day 5">D5</a>
+      <a class="day-pill" href="#day-6" aria-label="Day 6" title="Mansarovar Snan and Puja">D6 <span class="sev-dot"><svg class="icon icon-sev action" style="color:var(--yellow)"><use href="#icon-action-yellow"/></svg></span></a>
+      <a class="day-pill" href="#day-7" aria-label="Day 7">D7</a>
+      <a class="day-pill" href="#day-8" aria-label="Day 8" title="Dolma La Pass - critical day" style="color:var(--red);border-color:var(--red)">D8 <span class="sev-dot"><svg class="icon icon-sev critical" style="color:var(--red)"><use href="#icon-critical-red"/></svg></span></a>
+      <a class="day-pill" href="#day-9" aria-label="Day 9">D9</a>
+      <a class="day-pill" href="#day-10" aria-label="Day 10">D10</a>
+      <a class="day-pill" href="#day-11" aria-label="Day 11">D11</a>
+      <a class="day-pill" href="#day-12" aria-label="Day 12" title="Day of recovery and gratitude">D12 <span class="sev-dot"><svg class="icon icon-sev win" style="color:var(--green)"><use href="#icon-win-green"/></svg></span></a>
+      <a class="day-pill" href="#day-13" aria-label="Day 13">D13</a>
+    </div>
+  </div>
+</section>
+
+<!-- Day cards -->
 <section id="day-cards">
   <h2>The 13 days</h2>
   <div id="day-cards-container"></div>
 </section>
 
-<!-- =================== EMERGENCY PROTOCOL (during only) =================== -->
-<section class="during-only" id="emergency">
-  <h2>Emergency protocol for family</h2>
-  <p class="lede"><strong>If you do not hear from the yatri on Days 7, 8, or 9 (Parikrama), this is expected.</strong> Operator Sherpa team handles emergencies. Resume contact attempts from Day 10 (Lhasa return).</p>
+</main>
+</div><!-- end tab-pane itinerary -->
 
-  <h3>When silence is normal</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Day window</th><th>Silence is</th><th>Action</th></tr></thead>
-    <tbody>
-      <tr><td>Days 1, 2 (Kathmandu)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>WhatsApp first. Then YPO emergency line after 6 h.</td></tr>
-      <tr><td>Days 3, 4 (Lhasa)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual but possible (GFW, VPN may drop)</td><td>WhatsApp. Expect VPN delay. 12 h threshold.</td></tr>
-      <tr><td>Days 5, 6 (Mansarovar)</td><td><svg class="icon icon-sev action"><use href="#icon-action-yellow"/></svg> Possible</td><td>Up to 24 h silence is normal. Operator can relay via Sherpa team.</td></tr>
-      <tr><td>Days 7, 8, 9 (Parikrama)</td><td><svg class="icon icon-sev win"><use href="#icon-win-green"/></svg> Expected by design</td><td>Yatri is offline by design. Zero check-ins is normal. Do not call airlines or hospitals.</td></tr>
-      <tr><td>Day 10 (Lhasa return)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>Back online at St Regis. 12 h threshold.</td></tr>
-      <tr><td>Days 11, 12, 13 (Kathmandu)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>Reachable again. Same threshold as Days 1, 2.</td></tr>
-    </tbody>
-  </table>
-  </div>
+<!-- =================== TAB: PREPARE =================== -->
+<div class="tab-pane" data-tab="prepare">
+<div class="print-only">Prepare</div>
+<main>
 
-  <h3>Operator emergency channels</h3>
-  <p>The page does not publish operator contact numbers. The yatri carries the operator's full contact card. Family should obtain a copy of this card from the yatri before departure.</p>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Channel</th><th>Where it operates</th><th>Latency</th></tr></thead>
-    <tbody>
-      <tr><td>Sherpa team sat phone</td><td>Mansarovar, Kailash, Parikrama leg</td><td>Minutes (genuine emergency only)</td></tr>
-      <tr><td>Operator-issued China phone</td><td>Mansarovar onwards</td><td>Same-day (low-grade emergencies, scheduling)</td></tr>
-      <tr><td>WeChat to operator coordinator</td><td>Anywhere on the Tibet leg</td><td>Same-day</td></tr>
-      <tr><td>Operator office (Kathmandu HQ)</td><td>All days</td><td>Office hours, escalates to ground team</td></tr>
-      <tr><td>YPO emergency line</td><td>All days, 24 by 7</td><td>International calling for family from home</td></tr>
-    </tbody>
-  </table>
-  </div>
+<!-- Context chips (#39) -->
+<div class="chip-row" aria-label="Prepare sections">
+  <a href="#prep-why">Why</a>
+  <a href="#prep-checklist">Checklist</a>
+  <a href="#prep-packing">Packing</a>
+  <a href="#prep-operator">Operator</a>
+  <a href="#prep-medicine">Medicine</a>
+  <a href="#prep-visa">Visa</a>
+  <a href="#prep-spiritual">Spiritual</a>
+</div>
 
-  <h3>Evacuation thresholds (when the operator pulls the trigger)</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Threshold</th><th>Operator action</th></tr></thead>
-    <tbody>
-      <tr><td>Moderate AMS not improving after 12 h descent</td><td>Helicopter or vehicle descent to lower altitude. Usually Lhasa hospital.</td></tr>
-      <tr><td>Suspected HACE or HAPE</td><td>Immediate emergency descent. Oxygen plus dexamethasone or nifedipine. Airlift if available.</td></tr>
-      <tr><td>Severe fall or trauma injury</td><td>Stabilise. Descent to nearest medical facility. Operator coordinates ambulance from descent point.</td></tr>
-      <tr><td>Cardiac event</td><td>Stabilise. Oxygen. Emergency descent. Nearest hospital is Lhasa (8 to 12 h drive from Darchen).</td></tr>
-      <tr><td>Severe non-medical (lost, separated, stranded)</td><td>Operator sat phone reaches Sherpa team. Ground team coordinates retrieval.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>What insurance is supposed to cover</h3>
-  <ul class="bullets">
-    <li>Helicopter evacuation from the Parikrama leg</li>
-    <li>Lhasa hospital admission</li>
-    <li>Repatriation to home country if needed</li>
-    <li>Trip disruption coverage (if visa or trip cancellation triggered by a medical event)</li>
-  </ul>
-  <p>Confirm the policy number and 24 by 7 helpline number directly with the yatri before departure.</p>
+<!-- Why this place matters (moved from before-phase inline) -->
+<section class="before-only" id="prep-why">
+  <details class="disclosure">
+    <summary>Why this place matters</summary>
+    <div class="disc-body">
+      <p class="lede">Mount Kailash, at the western edge of the Tibetan plateau, is one of the few mountains in the world considered sacred across four religions. In Hinduism it is the abode of Lord Shiva. In Buddhism it is the dwelling of Demchok, embodiment of supreme bliss. In Jainism it is where Rishabhadeva attained liberation. In Bon it is the seat of the spiritual hierarchy of the cosmos.</p>
+      <p class="lede">Lake Mansarovar, at its base, is believed to be the lake of the mind itself. The Parikrama, the 52 km circumambulation around Kailash, is undertaken once in a lifetime by many pilgrims and is said to wash away the sins of a lifetime.</p>
+      <p class="lede">This yatra follows that pilgrimage. The 13 days that follow are the practical shape of an experience much older than any of us.</p>
+    </div>
+  </details>
 </section>
 
-<!-- =================== OPERATOR vs YATRI (before only) =================== -->
-<section class="before-only" id="op-buy">
+<!-- Pre-trip checklist -->
+<section class="before-only" id="prep-checklist">
+  <h2>Pre-trip checklist by T-window</h2>
+  <button class="reset-btn" type="button" data-reset="pretrip">Reset all pre-trip ticks</button>
+  <div id="pretrip-container"></div>
+</section>
+
+<!-- Master items checklist -->
+<section class="before-only" id="prep-packing">
+  <h2>Master items checklist</h2>
+  <p class="lede">Down to the protein bar. All 8 categories expanded so you can scan with phone search and print as a single sheet. Tick boxes save to this device only.</p>
+  <button class="reset-btn" type="button" data-reset="master">Reset all master ticks</button>
+  <div id="master-container"></div>
+</section>
+
+<!-- Operator vs you-bring -->
+<section class="before-only" id="prep-operator">
   <h2>What the operator covers, what you bring</h2>
   <div class="op-buy">
     <div class="op-col">
@@ -1576,408 +1866,188 @@
   </details>
 </section>
 
-<!-- =================== PRE-TRIP T-WINDOW CHECKLIST (before only) =================== -->
-<section class="before-only" id="pretrip">
-  <h2>Pre-trip checklist by T-window</h2>
-  <button class="reset-btn" type="button" data-reset="pretrip">Reset all pre-trip ticks</button>
-  <div id="pretrip-container"></div>
+<!-- Medicines (collapsed by default per #42) -->
+<section id="prep-medicine">
+  <details class="disclosure">
+    <summary>Medicines and Diamox protocol</summary>
+    <div class="disc-body">
+      <h3>Master medicines list</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>What</th><th>Why</th><th>When</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Diamox</td><td>Altitude prevention</td><td>T-3 onwards</td><td>Sulfa allergy check FIRST.</td></tr>
+          <tr><td>Ibuprofen</td><td>Pain, NSAID</td><td>As needed at altitude</td><td>Hydrate. Check renal load.</td></tr>
+          <tr><td>ORS</td><td>Dehydration</td><td>Daily Days 5 to 10</td><td>Even when not thirsty.</td></tr>
+          <tr><td>Imodium</td><td>Stomach upset</td><td>Tent-toilet leg backup</td><td>Days 7 to 8 risk window.</td></tr>
+          <tr><td>Antacid</td><td>Diamox comfort</td><td>As needed</td><td>Diamox metabolic acidosis.</td></tr>
+          <tr><td>Lip balm</td><td>UV skin</td><td>Hourly</td><td>SPF 30+.</td></tr>
+          <tr><td>Sunscreen</td><td>UV skin</td><td>Every 2 h</td><td>SPF 50+.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Diamox (acetazolamide) protocol</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Question</th><th>Standard answer</th><th>Yatri-specific check</th></tr></thead>
+        <tbody>
+          <tr><td>What is it</td><td>Carbonic anhydrase inhibitor. Increases respiratory drive at altitude. Speeds acclimatization.</td><td>Confirm at doctor consult.</td></tr>
+          <tr><td>When to start</td><td>T-3 to T-2 before arriving at the first high-altitude location.</td><td>Doctor-led decision.</td></tr>
+          <tr><td>Standard dose (prophylaxis)</td><td>125 mg twice daily for most adults. 250 mg twice daily if higher risk.</td><td>Doctor sets per yatri.</td></tr>
+          <tr><td>Duration</td><td>Continue through the high-altitude leg. Stop on Day 10 evening at Lhasa.</td><td>Doctor confirms.</td></tr>
+          <tr><td>Taper</td><td>Most protocols do not require a taper at this dose.</td><td>Doctor confirms.</td></tr>
+          <tr><td>Sulfa allergy check</td><td>Diamox IS a sulfonamide. Contraindicated if sulfa-allergic.</td><td>CRITICAL pre-Rx check.</td></tr>
+          <tr><td>Sulfa allergy alternative</td><td>Ginkgo Biloba (less effective but viable).</td><td>Doctor confirms alternative dose.</td></tr>
+          <tr><td>Pregnancy or breastfeeding</td><td>Discuss with doctor.</td><td>Doctor confirms.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Diamox common side effects</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Side effect</th><th>Frequency</th><th>What it feels like</th><th>When to escalate</th></tr></thead>
+        <tbody>
+          <tr><td>Paresthesias (tingling fingers, toes, face)</td><td>Very common</td><td>Mild pins-and-needles first 2 to 3 days</td><td>Usually fades. If severe or persistent, doctor.</td></tr>
+          <tr><td>Frequent urination</td><td>Very common (diuretic)</td><td>Wake 1 to 2 times at night</td><td>Hydrate aggressively. Do not reduce water.</td></tr>
+          <tr><td>Altered taste</td><td>Common</td><td>Carbonated drinks taste flat or metallic</td><td>Self-limited. Avoid carbonation.</td></tr>
+          <tr><td>Mild nausea</td><td>Common</td><td>First 1 to 2 days</td><td>Take with food.</td></tr>
+          <tr><td>Drowsiness</td><td>Common</td><td>Mild</td><td>Avoid driving or piloting. Let it pass.</td></tr>
+          <tr><td>Photosensitivity</td><td>Common</td><td>Skin burns faster in sun</td><td>Reapply sunscreen aggressively.</td></tr>
+          <tr><td>Increased breathing rate</td><td>Expected mechanism</td><td>Subjective shortness of breath at rest</td><td>This is the drug working.</td></tr>
+          <tr><td>Kidney stones</td><td>Rare</td><td>Flank pain</td><td>Stop drug. Doctor immediately.</td></tr>
+          <tr><td>Severe rash or Stevens-Johnson</td><td>Rare but serious</td><td>Spreading rash, fever</td><td>Stop drug. Emergency immediately.</td></tr>
+          <tr><td>Severe metabolic acidosis</td><td>Rare</td><td>Confusion, deep rapid breathing</td><td>Stop drug. Doctor immediately.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Class-level drug interactions to discuss with the doctor</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Drug class</th><th>Interaction with Diamox</th></tr></thead>
+        <tbody>
+          <tr><td>NSAIDs (ibuprofen, naproxen)</td><td>Reduce renal clearance. Can increase Diamox levels and risk of metabolic acidosis at altitude. Use lowest effective NSAID dose and hydrate.</td></tr>
+          <tr><td>Aspirin (high-dose)</td><td>Same renal interaction. Low-dose cardiac aspirin usually fine but confirm.</td></tr>
+          <tr><td>Other carbonic anhydrase inhibitors (topiramate, methazolamide)</td><td>Additive metabolic acidosis. Do not stack.</td></tr>
+          <tr><td>Loop diuretics or thiazides</td><td>Additive electrolyte loss (potassium). Monitor.</td></tr>
+          <tr><td>Lithium</td><td>Diamox can reduce lithium levels. Doctor adjusts dose.</td></tr>
+          <tr><td>Allopurinol</td><td>Shared renal clearance pathway. Monitor uric acid. Standard dose usually fine.</td></tr>
+          <tr><td>Methotrexate</td><td>Increased methotrexate toxicity risk.</td></tr>
+          <tr><td>Metformin</td><td>Increased metabolic acidosis risk. Doctor evaluates.</td></tr>
+          <tr><td>Aminoglycoside antibiotics</td><td>Increased ototoxicity risk.</td></tr>
+          <tr><td>Berberine and other glucose-lowering supplements</td><td>Diamox can shift metabolic state. Monitor blood sugar if diabetic or prediabetic.</td></tr>
+          <tr><td>Vitamin C, methylfolate, B12, D3, K2</td><td>No significant interaction expected.</td></tr>
+          <tr><td>Ursodeoxycholic acid</td><td>No significant interaction expected.</td></tr>
+          <tr><td>NAC (N-acetylcysteine)</td><td>No significant interaction expected. Mildly renoprotective.</td></tr>
+          <tr><td>Omega 3 fish oil</td><td>No significant interaction expected.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>The yatri must hand a written list of their entire medication and supplement stack to the prescribing doctor before the Diamox Rx is written.</p>
+
+      <h3>Questions to ask your doctor</h3>
+      <ol class="numbered">
+        <li>Am I sulfa-allergic? If unknown, request a skin test or alternative drug.</li>
+        <li>What dose of Diamox do you recommend for my body weight and medical history?</li>
+        <li>Should I take it prophylactically from T-3, or only if symptoms appear?</li>
+        <li>Are there any drugs or supplements in my current stack that interact with Diamox?</li>
+        <li>What are my safe NSAID limits at altitude with Diamox?</li>
+        <li>What is my personal pee-clear hydration baseline?</li>
+        <li>What is the escalation protocol if I develop severe paresthesias, rash, or breathing difficulty?</li>
+        <li>Do I need a glucose-monitoring plan given Diamox metabolic effects?</li>
+        <li>Should I update any of my chronic medications (dose or timing) for the trip duration?</li>
+        <li>If I have a sulfa allergy, what is the safe alternative (Ginkgo Biloba dose and duration)?</li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="ct-label">Disclaimer</span>
+        This is reference information for trip planning, not medical advice. Diamox is a prescription medication. The yatri must consult their own doctor for prescription, dose, and interactions with their personal medication stack. Do not take any drug listed here without the prescribing doctor's confirmation that it is safe for the yatri's specific health profile.
+      </div>
+    </div>
+  </details>
 </section>
 
-<!-- =================== MASTER ITEMS CHECKLIST (before only) =================== -->
-<section class="before-only" id="master-checklist">
-  <h2>Master items checklist</h2>
-  <p class="lede">Down to the protein bar. All 8 categories expanded so you can scan with phone search and print as a single sheet. Tick boxes save to this device only.</p>
-  <button class="reset-btn" type="button" data-reset="master">Reset all master ticks</button>
-  <div id="master-container"></div>
+<!-- Visa workflow (collapsed by default per #42) -->
+<section class="before-only" id="prep-visa">
+  <details class="disclosure">
+    <summary>Visa and permits workflow</summary>
+    <div class="disc-body">
+      <p class="lede">The Chinese Group Visa is the single biggest pre-trip dependency the yatri does not control directly.</p>
+      <h3>T-30 to T-1 timeline</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>When</th><th>Step</th><th>Owner</th><th>Risk if delayed</th></tr></thead>
+        <tbody>
+          <tr><td>T-30 to T-25</td><td>Operator emails passport-courier instructions</td><td>YPO</td><td>Low. Normal lead time.</td></tr>
+          <tr><td>T-25 to T-22</td><td>Yatri couriers passport to Delhi visa agent with signature-on-delivery</td><td>Yatri</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Critical. Late dispatch = late visa = missed trip.</td></tr>
+          <tr><td>T-22 to T-21</td><td>Passport arrives at the visa agent</td><td>Courier</td><td>Track AWB. Escalate if delivery missed.</td></tr>
+          <tr><td>T-21 to T-15</td><td>Chinese embassy in Delhi processes Group Visa</td><td>Embassy via agent</td><td>Operator handles. Yatri waits.</td></tr>
+          <tr><td>T-15 to T-7</td><td>Visa stamped. Passport ready for return courier.</td><td>Visa agent</td><td>If still stamping at T-7, escalate urgently.</td></tr>
+          <tr><td>T-7 to T-4</td><td>Return courier to yatri</td><td>Visa agent</td><td>Track AWB. Signature-on-delivery for return.</td></tr>
+          <tr><td>T-4 to T-1</td><td>Passport in hand. All documents verified.</td><td>Yatri</td><td>If not back by T-4, operator handles escalation. Trip may be re-scheduled.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>What to do if delayed</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Delay scenario</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Outbound courier delayed (T-22 missed)</td><td>Contact courier company immediately. Request priority handling. Notify operator and visa agent same day.</td></tr>
+          <tr><td>Visa agent slow to confirm receipt</td><td>Forward courier AWB to visa agent and operator. Request acknowledgment within 24 h.</td></tr>
+          <tr><td>Embassy processing slow (T-7, no return AWB)</td><td>Escalate to operator emergency contact. Operator has direct embassy liaison.</td></tr>
+          <tr><td>Return courier delayed (T-3, still in transit)</td><td>Track AWB live. Contact courier customer care. Request urgent diversion. Operator can sometimes courier replacement permit copies.</td></tr>
+          <tr><td>Passport not in hand by T-1</td><td>Operator handles trip re-scheduling. Insurance covers if rider includes trip disruption.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Operator vs yatri vs visa agent ownership</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Owner</th><th>Items</th></tr></thead>
+        <tbody>
+          <tr><td>Operator (YPO)</td><td>Group permit application, embassy liaison, group visa stamping, NOC visit on Day 2, permit copies for Tibet border crossing.</td></tr>
+          <tr><td>Yatri</td><td>Passport courier to visa agent, return courier tracking, escalation if delayed, backup photocopies plus insurance docs ready.</td></tr>
+          <tr><td>Visa agent (operator partner)</td><td>Embassy submission, stamping, return courier dispatch, same-day status updates to operator.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="callout ochre">
+        <span class="ct-label">Photograph everything before couriering</span>
+        Before the passport leaves the yatri's hands, photograph every page (bio page, all visa stamps, blank pages) and back up to private cloud storage. If the passport is lost in transit, the yatri can apply for an emergency replacement using the photographs as proof of identity.
+      </div>
+    </div>
+  </details>
 </section>
 
-<!-- =================== MEDICINES + DIAMOX =================== -->
-<section id="medicines">
-  <h2>Medicines and Diamox protocol</h2>
-
-  <h3>Master medicines list</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>What</th><th>Why</th><th>When</th><th>Notes</th></tr></thead>
-    <tbody>
-      <tr><td>Diamox</td><td>Altitude prevention</td><td>T-3 onwards</td><td>Sulfa allergy check FIRST.</td></tr>
-      <tr><td>Ibuprofen</td><td>Pain, NSAID</td><td>As needed at altitude</td><td>Hydrate. Check renal load.</td></tr>
-      <tr><td>ORS</td><td>Dehydration</td><td>Daily Days 5 to 10</td><td>Even when not thirsty.</td></tr>
-      <tr><td>Imodium</td><td>Stomach upset</td><td>Tent-toilet leg backup</td><td>Days 7 to 8 risk window.</td></tr>
-      <tr><td>Antacid</td><td>Diamox comfort</td><td>As needed</td><td>Diamox metabolic acidosis.</td></tr>
-      <tr><td>Lip balm</td><td>UV skin</td><td>Hourly</td><td>SPF 30+.</td></tr>
-      <tr><td>Sunscreen</td><td>UV skin</td><td>Every 2 h</td><td>SPF 50+.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>Diamox (acetazolamide) protocol</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Question</th><th>Standard answer</th><th>Yatri-specific check</th></tr></thead>
-    <tbody>
-      <tr><td>What is it</td><td>Carbonic anhydrase inhibitor. Increases respiratory drive at altitude. Speeds acclimatization.</td><td>Confirm at doctor consult.</td></tr>
-      <tr><td>When to start</td><td>T-3 to T-2 before arriving at the first high-altitude location.</td><td>Doctor-led decision.</td></tr>
-      <tr><td>Standard dose (prophylaxis)</td><td>125 mg twice daily for most adults. 250 mg twice daily if higher risk.</td><td>Doctor sets per yatri.</td></tr>
-      <tr><td>Duration</td><td>Continue through the high-altitude leg. Stop on Day 10 evening at Lhasa.</td><td>Doctor confirms.</td></tr>
-      <tr><td>Taper</td><td>Most protocols do not require a taper at this dose.</td><td>Doctor confirms.</td></tr>
-      <tr><td>Sulfa allergy check</td><td>Diamox IS a sulfonamide. Contraindicated if sulfa-allergic.</td><td>CRITICAL pre-Rx check.</td></tr>
-      <tr><td>Sulfa allergy alternative</td><td>Ginkgo Biloba (less effective but viable).</td><td>Doctor confirms alternative dose.</td></tr>
-      <tr><td>Pregnancy or breastfeeding</td><td>Discuss with doctor.</td><td>Doctor confirms.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>Diamox common side effects</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Side effect</th><th>Frequency</th><th>What it feels like</th><th>When to escalate</th></tr></thead>
-    <tbody>
-      <tr><td>Paresthesias (tingling fingers, toes, face)</td><td>Very common</td><td>Mild pins-and-needles first 2 to 3 days</td><td>Usually fades. If severe or persistent, doctor.</td></tr>
-      <tr><td>Frequent urination</td><td>Very common (diuretic)</td><td>Wake 1 to 2 times at night</td><td>Hydrate aggressively. Do not reduce water.</td></tr>
-      <tr><td>Altered taste</td><td>Common</td><td>Carbonated drinks taste flat or metallic</td><td>Self-limited. Avoid carbonation.</td></tr>
-      <tr><td>Mild nausea</td><td>Common</td><td>First 1 to 2 days</td><td>Take with food.</td></tr>
-      <tr><td>Drowsiness</td><td>Common</td><td>Mild</td><td>Avoid driving or piloting. Let it pass.</td></tr>
-      <tr><td>Photosensitivity</td><td>Common</td><td>Skin burns faster in sun</td><td>Reapply sunscreen aggressively.</td></tr>
-      <tr><td>Increased breathing rate</td><td>Expected mechanism</td><td>Subjective shortness of breath at rest</td><td>This is the drug working.</td></tr>
-      <tr><td>Kidney stones</td><td>Rare</td><td>Flank pain</td><td>Stop drug. Doctor immediately.</td></tr>
-      <tr><td>Severe rash or Stevens-Johnson</td><td>Rare but serious</td><td>Spreading rash, fever</td><td>Stop drug. Emergency immediately.</td></tr>
-      <tr><td>Severe metabolic acidosis</td><td>Rare</td><td>Confusion, deep rapid breathing</td><td>Stop drug. Doctor immediately.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>Class-level drug interactions to discuss with the doctor</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Drug class</th><th>Interaction with Diamox</th></tr></thead>
-    <tbody>
-      <tr><td>NSAIDs (ibuprofen, naproxen)</td><td>Reduce renal clearance. Can increase Diamox levels and risk of metabolic acidosis at altitude. Use lowest effective NSAID dose and hydrate.</td></tr>
-      <tr><td>Aspirin (high-dose)</td><td>Same renal interaction. Low-dose cardiac aspirin usually fine but confirm.</td></tr>
-      <tr><td>Other carbonic anhydrase inhibitors (topiramate, methazolamide)</td><td>Additive metabolic acidosis. Do not stack.</td></tr>
-      <tr><td>Loop diuretics or thiazides</td><td>Additive electrolyte loss (potassium). Monitor.</td></tr>
-      <tr><td>Lithium</td><td>Diamox can reduce lithium levels. Doctor adjusts dose.</td></tr>
-      <tr><td>Allopurinol</td><td>Shared renal clearance pathway. Monitor uric acid. Standard dose usually fine.</td></tr>
-      <tr><td>Methotrexate</td><td>Increased methotrexate toxicity risk.</td></tr>
-      <tr><td>Metformin</td><td>Increased metabolic acidosis risk. Doctor evaluates.</td></tr>
-      <tr><td>Aminoglycoside antibiotics</td><td>Increased ototoxicity risk.</td></tr>
-      <tr><td>Berberine and other glucose-lowering supplements</td><td>Diamox can shift metabolic state. Monitor blood sugar if diabetic or prediabetic.</td></tr>
-      <tr><td>Vitamin C, methylfolate, B12, D3, K2</td><td>No significant interaction expected.</td></tr>
-      <tr><td>Ursodeoxycholic acid</td><td>No significant interaction expected.</td></tr>
-      <tr><td>NAC (N-acetylcysteine)</td><td>No significant interaction expected. Mildly renoprotective.</td></tr>
-      <tr><td>Omega 3 fish oil</td><td>No significant interaction expected.</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p>The yatri must hand a written list of their entire medication and supplement stack to the prescribing doctor before the Diamox Rx is written.</p>
-
-  <h3>Questions to ask your doctor</h3>
-  <ol class="numbered">
-    <li>Am I sulfa-allergic? If unknown, request a skin test or alternative drug.</li>
-    <li>What dose of Diamox do you recommend for my body weight and medical history?</li>
-    <li>Should I take it prophylactically from T-3, or only if symptoms appear?</li>
-    <li>Are there any drugs or supplements in my current stack that interact with Diamox?</li>
-    <li>What are my safe NSAID limits at altitude with Diamox?</li>
-    <li>What is my personal pee-clear hydration baseline?</li>
-    <li>What is the escalation protocol if I develop severe paresthesias, rash, or breathing difficulty?</li>
-    <li>Do I need a glucose-monitoring plan given Diamox metabolic effects?</li>
-    <li>Should I update any of my chronic medications (dose or timing) for the trip duration?</li>
-    <li>If I have a sulfa allergy, what is the safe alternative (Ginkgo Biloba dose and duration)?</li>
-  </ol>
-
-  <div class="callout warn">
-    <span class="ct-label">Disclaimer</span>
-    This is reference information for trip planning, not medical advice. Diamox is a prescription medication. The yatri must consult their own doctor for prescription, dose, and interactions with their personal medication stack. Do not take any drug listed here without the prescribing doctor's confirmation that it is safe for the yatri's specific health profile.
-  </div>
+<!-- Pre-trip spiritual practices (collapsed by default per #42) -->
+<section class="before-only" id="prep-spiritual">
+  <details class="disclosure">
+    <summary>Pre-trip spiritual practices (optional)</summary>
+    <div class="disc-body">
+      <p class="lede">These are presented as optional practices, not requirements. The yatra is open to yatris across the spiritual spectrum.</p>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Practice</th><th>When</th><th>What</th></tr></thead>
+        <tbody>
+          <tr><td>Intention setting (sankalpa)</td><td>T-7 to T-3</td><td>Write one sentence in a notebook. "This yatra is for ______". Bring the notebook on the trip. Re-read at Mansarovar on Day 6.</td></tr>
+          <tr><td>Mantra familiarisation</td><td>T-14 to T-1</td><td>The mantra most often spoken on the Parikrama is <em style="color:var(--yellow);font-family:var(--font-headline);font-style:italic">Om Mani Padme Hum</em>, the six-syllable Buddhist mantra of compassion. Hindu yatris may carry <em style="color:var(--yellow);font-family:var(--font-headline);font-style:italic">Om Namah Shivaya</em> or the Maha Mrityunjaya Mantra. The yatri does not have to chant. Familiarity helps when others around them chant.</td></tr>
+          <tr><td>Light fasting (optional)</td><td>T-1 evening</td><td>Some yatris choose a vegetarian-light dinner the night before departure. Optional. The trip itself becomes vegetarian by default.</td></tr>
+          <tr><td>Ancestral remembrance</td><td>T-3 to T-1</td><td>Some yatris carry a name or photograph of ancestors to remember at the Mansarovar Day 6 puja. Per tradition.</td></tr>
+          <tr><td>Closing the home (optional)</td><td>T-1</td><td>Some yatris light a lamp at home before leaving. Per family tradition.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </details>
 </section>
 
-<!-- =================== CONNECTIVITY PLAYBOOK (before+during) =================== -->
-<section class="not-after" id="connectivity">
-  <h2>Connectivity playbook</h2>
-  <p class="lede">Tibet is behind the Great Firewall. Without a working VPN, WhatsApp, Google, Instagram, Facebook, YouTube, Gmail are all blocked.</p>
-
-  <h3>What is blocked in Tibet (without VPN)</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Service</th><th>Blocked</th><th>Workaround</th></tr></thead>
-    <tbody>
-      <tr><td>WhatsApp</td><td>Yes</td><td>Astrill VPN reconnects, or use WeChat as fallback.</td></tr>
-      <tr><td>Google (search, maps, drive, gmail)</td><td>Yes</td><td>Astrill VPN reconnects, or download Maps.me offline before entry.</td></tr>
-      <tr><td>Instagram, Facebook, YouTube</td><td>Yes</td><td>Astrill VPN reconnects.</td></tr>
-      <tr><td>iMessage, FaceTime</td><td>Mostly yes</td><td>Astrill VPN reconnects.</td></tr>
-      <tr><td>WeChat</td><td>No (allowed by design)</td><td>Useful Tibet-side backup channel.</td></tr>
-      <tr><td>Banking and payment apps</td><td>Variable</td><td>Do critical actions before entry.</td></tr>
-      <tr><td>Streaming (Netflix etc.)</td><td>Yes</td><td>Skip. Download offline content before entry.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>eSIM + VPN setup timeline</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Step</th><th>When</th><th>What</th></tr></thead>
-    <tbody>
-      <tr><td>Install Holafly China eSIM</td><td>T-12</td><td>Purchase and install before leaving home network. Test activation in India.</td></tr>
-      <tr><td>Install Astrill VPN</td><td>T-12</td><td>Annual subscription on phone and laptop. Do not use a free VPN.</td></tr>
-      <tr><td>Test Astrill from India</td><td>T-10</td><td>Toggle VPN on. Confirm WhatsApp and Google still work.</td></tr>
-      <tr><td>Activate Holafly</td><td>T-3</td><td>Activation triggers the data clock. Activate close to KTM departure.</td></tr>
-      <tr><td>Pre-download offline assets</td><td>T-3</td><td>Maps.me Tibet, Spotify, audiobooks, all PDFs.</td></tr>
-      <tr><td>Final connectivity test</td><td>T-2</td><td>Toggle VPN on Holafly eSIM. Keep screenshots of working state.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>Fallback hierarchy when connectivity drops</h3>
-  <ol class="numbered">
-    <li>Toggle Astrill VPN off and on. Single most common fix.</li>
-    <li>Switch VPN server location. Try Hong Kong, Singapore, Japan.</li>
-    <li>Switch to mobile data from WiFi or vice versa. Hotel WiFi sometimes filters more aggressively.</li>
-    <li>Wait 30 minutes. Great Firewall enforcement varies through the day.</li>
-    <li>Use WeChat as fallback. Works without VPN.</li>
-    <li>Switch to the operator-issued China phone for emergencies.</li>
-    <li>Sat phone (operator Sherpa team). Genuine emergency only.</li>
-  </ol>
-
-  <h3>Pre-download checklist (T-3)</h3>
-  <ul class="bullets">
-    <li>Maps.me Tibet region and Kailash kora layer. Confirm tile cache loaded.</li>
-    <li>Google Maps offline area for Kathmandu only.</li>
-    <li>All PDF documents: permits, insurance, tickets, hotel confirmations, this page printed.</li>
-    <li>Spotify or Apple Music playlists for offline.</li>
-    <li>Audiobooks: 2 to 3 books for trek nights.</li>
-    <li>Operator PDF brief from YPO.</li>
-    <li>Mantras and spiritual reading material for the Parikrama leg.</li>
-    <li>Emergency contact card image. Screenshot to camera roll.</li>
-  </ul>
-
-  <div class="callout ochre">
-    <span class="ct-label">What family should install</span>
-    Install <strong>WeChat</strong> before the yatri's departure as a fallback communication channel. WeChat works inside Tibet without a VPN. If WhatsApp goes dark for the yatri, WeChat is the most reliable backup channel.
-  </div>
-</section>
-
-<!-- =================== BAG TRANSITIONS (before+during) =================== -->
-<section class="not-after" id="bags">
-  <h2>Bag transitions: the 4-bag system</h2>
-  <p class="lede">Knowing which bag is where on each day is the single biggest operational unlock.</p>
-
-  <h3>The 4 bags</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>#</th><th>Bag</th><th>Source</th><th>Role</th></tr></thead>
-    <tbody>
-      <tr><td>1</td><td>Main suitcase or duffel 50 to 70 L</td><td>Yatri brings from home</td><td>Checked baggage home to KTM and KTM to Lhasa. Stays in Lhasa hotel storage Days 5 to 10.</td></tr>
-      <tr><td>2</td><td>YPO orange duffle ~50 L</td><td>YPO distributes Day 2</td><td>Trek-leg primary. Porters carry on Parikrama Days 7 to 10.</td></tr>
-      <tr><td>3</td><td>Personal Parikrama daypack 20 to 25 L with hip-belt</td><td>Yatri brings (new purchase)</td><td>Always with the yatri Day 1 onward. Carries everything irreplaceable.</td></tr>
-      <tr><td>4</td><td>YPO orange daypack + sidebag</td><td>YPO distributes Day 2</td><td>Spare or backup.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>What stays where (10 phases)</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Phase</th><th>Main suitcase</th><th>YPO duffle</th><th>Personal daypack</th></tr></thead>
-    <tbody>
-      <tr><td>Days 1, 2 (KTM)</td><td>Marriott KTM room</td><td>Not yet distributed (Day 2 PM)</td><td>With yatri</td></tr>
-      <tr><td>Day 3 (KTM to Lhasa)</td><td>Checked on flight</td><td>Loading begins evening</td><td>Cabin</td></tr>
-      <tr><td>Days 3, 4 (Lhasa)</td><td>St Regis room</td><td>Loading complete by Day 4 evening</td><td>With yatri (sightseeing)</td></tr>
-      <tr><td>Day 5 (Lhasa to Mansarovar) <strong>THE HANDOFF</strong></td><td><svg class="icon icon-16"><use href="#icon-lock-closed"/></svg> Stays in St Regis Lhasa storage (next 5 nights)</td><td>Travels with group</td><td>Cabin baggage on the flight</td></tr>
-      <tr><td>Days 5, 6 (Mansarovar)</td><td><svg class="icon icon-16"><use href="#icon-lock-closed"/></svg> Lhasa</td><td>At hotel</td><td>With yatri</td></tr>
-      <tr><td>Days 7, 8, 9 (Parikrama)</td><td><svg class="icon icon-16"><use href="#icon-lock-closed"/></svg> Lhasa</td><td>Porters carry. Meets at each tent or hotel.</td><td><strong>Always with yatri. 4 to 6 kg target. The critical bag.</strong></td></tr>
-      <tr><td>Day 10 (Darchen to Lhasa) <strong>THE REUNION</strong></td><td><svg class="icon icon-16"><use href="#icon-check"/></svg> Back in hand at St Regis</td><td>Travels with group</td><td>With yatri</td></tr>
-      <tr><td>Day 11 (Lhasa to KTM)</td><td>Checked on flight</td><td>Lighter load</td><td>Cabin</td></tr>
-      <tr><td>Days 11, 12, 13 (KTM return)</td><td>Marriott KTM room</td><td>With group</td><td>With yatri</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>5 critical bag rules</h3>
-  <ol class="numbered">
-    <li>Days 7 to 10 critical items NEVER go in the main suitcase. It is locked in Lhasa for 5 nights.</li>
-    <li>Personal daypack contents on Day 8 = every must-not-lose item. If porters delay the duffle, you survive Day 8 on what is in the daypack.</li>
-    <li>Daypack weight ceiling: 6 kg. Above 7 kg on Day 8 is miserable. Pack twice, weigh once.</li>
-    <li>Suitcase reserve = lost-bag insurance. Keep a month of personal meds, spare power bank, and one clean return-trip outfit in the suitcase.</li>
-    <li>The handoff moment (Day 5 morning): confirm with the Lhasa hotel front desk. Get a printed claim ticket. Photograph it. Keep it in the daypack documents pouch.</li>
-  </ol>
-</section>
-
-<!-- =================== CUSTOMS + IMMIGRATION (before+during) =================== -->
-<section class="not-after" id="customs">
-  <h2>Customs and immigration tips</h2>
-  <p class="lede">Tibet customs at Lhasa airport on Day 3 is the strictest immigration checkpoint of the trip.</p>
-
-  <h3>Phone-clean protocol (T-2)</h3>
-  <p>Tibet customs will scroll the phone gallery. The following content is confiscated, detained, or used as grounds for refusal of entry.</p>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Content type</th><th>Action before T-2</th></tr></thead>
-    <tbody>
-      <tr><td>Dalai Lama photographs (any context)</td><td>Delete from gallery and downloads. Clear iCloud cache.</td></tr>
-      <tr><td>"Free Tibet" content</td><td>Delete. Including social media bookmarks.</td></tr>
-      <tr><td>Political books or magazines on the Tibet situation</td><td>Remove from Kindle or iBooks downloads.</td></tr>
-      <tr><td>Maps of Tibet showing borders different from Chinese cartography</td><td>Delete. Use Maps.me Tibet which follows Chinese cartography.</td></tr>
-      <tr><td>Flags or imagery of the Tibetan flag</td><td>Delete.</td></tr>
-      <tr><td>News articles critical of Chinese policy</td><td>Delete. Clear browser history.</td></tr>
-      <tr><td>Pictures of Taiwan in a sovereign-nation context</td><td>Delete.</td></tr>
-      <tr><td>Social media posts referencing the above</td><td>Delete.</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p>Empty the phone gallery aggressively. A small gallery (under 500 items) gets cleared faster than a 50,000 photo gallery.</p>
-
-  <h3>Allowed (no need to hide)</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Content type</th><th>Status</th></tr></thead>
-    <tbody>
-      <tr><td>Family photos, selfies, personal pictures</td><td>Fine</td></tr>
-      <tr><td>General travel photos</td><td>Fine</td></tr>
-      <tr><td>Religious imagery of Lord Shiva, Hindu deities, non-political Buddhist imagery</td><td>Fine. The yatra is religious. This is expected.</td></tr>
-      <tr><td>Maps.me Tibet (Chinese cartography)</td><td>Fine</td></tr>
-      <tr><td>YPO operator brief and branded materials</td><td>Fine. Proves you are on an organised trip.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>CCC certification check (power banks and electronics)</h3>
-  <ol class="numbered">
-    <li>Verify the CCC mark physically on the power bank casing before packing.</li>
-    <li>If buying new, choose Anker or Xiaomi or brands that publish CCC certification.</li>
-    <li>Capacity ceiling: most airlines allow up to 20,000 mAh in carry-on. Above this, restricted.</li>
-    <li>Pack power banks in carry-on only. Lithium batteries in checked baggage trigger automatic confiscation.</li>
-  </ol>
-
-  <h3>What to bring printed (in case the phone fails)</h3>
-  <ul class="bullets">
-    <li>Passport (original) plus 2 photocopies</li>
-    <li>Tibet Group Permit (operator-issued)</li>
-    <li>Chinese Group Visa (operator-issued, stamped in passport)</li>
-    <li>Travel insurance policy with helpline number</li>
-    <li>Flight tickets KTM to Lhasa and Lhasa to KTM</li>
-    <li>Hotel confirmation (operator's letter)</li>
-    <li>Emergency contact card</li>
-  </ul>
-
-  <div class="callout">
-    <span class="ct-label">Day 2 Embassy NOC visit</span>
-    The Indian Embassy NOC is operator-coordinated. The yatri shows up at the embassy with the group. Operator handles paperwork. Bring: passport (with valid Chinese Group Visa stamped), one photocopy of the passport bio page, a modest collared shirt and pants (embassy dress code). Routine same-morning visit.
-  </div>
-</section>
-
-<!-- =================== ACCLIMATIZATION RULES (before+during) =================== -->
-<section class="not-after" id="acclimatization">
-  <h2>Acclimatization rules</h2>
-  <p class="lede">The biggest risk on this trip is not the pass. It is acute mountain sickness (AMS) from sleep-altitude accumulation.</p>
-
-  <h3>Climb high, sleep low</h3>
-  <p>Sleep altitude matters more than peak altitude. You can visit higher than you sleep (briefly) and recover. You cannot sleep higher than your body has acclimatized to and recover overnight.</p>
-  <p>The YPO itinerary builds this in (Day 3 to 4 Lhasa rest, Day 5 to 6 Mansarovar rest, Day 7 Dirapuk pre-pass), but the yatri must understand the principle to interpret their own symptoms correctly.</p>
-
-  <h3>AMS symptom escalation flow</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Level</th><th>What it feels like</th><th>Action</th></tr></thead>
-    <tbody>
-      <tr><td><svg class="icon icon-sev win"><use href="#icon-win-green"/></svg> Normal acclimatization</td><td>Mild headache, slight breathlessness on exertion, waking 1 to 2 times at night to pee, slight nausea on Day 1 at altitude.</td><td>Continue. Hydrate. Rest. Normal Diamox dose.</td></tr>
-      <tr><td><svg class="icon icon-sev action"><use href="#icon-action-yellow"/></svg> Mild AMS</td><td>Persistent headache despite ibuprofen, poor appetite, fatigue beyond expected, trouble sleeping.</td><td>Stop ascending. Rest at current altitude. Hydrate. Ibuprofen 400 mg every 6 h max. Do not ascend further until headache clears.</td></tr>
-      <tr><td><svg class="icon icon-sev persistence"><use href="#icon-persistence-orange"/></svg> Moderate AMS</td><td>Severe headache, vomiting, ataxia (cannot walk a straight line heel-to-toe), breathlessness at rest.</td><td>DESCEND immediately. Oxygen if available. Operator Sherpa team has cylinders.</td></tr>
-      <tr><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> HACE (Cerebral Edema)</td><td>Confusion, severe ataxia, personality change, drowsiness escalating to coma.</td><td>EMERGENCY DESCENT. Oxygen + dexamethasone. Operator sat phone for evacuation.</td></tr>
-      <tr><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> HAPE (Pulmonary Edema)</td><td>Severe breathlessness at rest, cough with pink frothy sputum, gurgling in chest, lips blue.</td><td>EMERGENCY DESCENT. Oxygen + nifedipine. Operator sat phone for evacuation.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="callout warn">
-    <span class="ct-label">The descent rule</span>
-    If symptoms worsen or are not clearly improving in 12 to 24 hours, descend. Pride at altitude kills. The yatri who insists on continuing through moderate AMS to "not miss Dolma La" is the yatri who needs evacuation.
-  </div>
-
-  <h3>What the operator does at altitude</h3>
-  <ul class="bullets">
-    <li>Sherpa team carries oxygen cylinders, dexamethasone, nifedipine.</li>
-    <li>Pre-Parikrama health check at Mansarovar.</li>
-    <li>Sat phone for genuine evacuation.</li>
-    <li>Local Tibetan guide knows descent paths and helicopter pickup points.</li>
-    <li>China phone issued to the group for low-grade emergencies.</li>
-  </ul>
-
-  <h3>Acclimatization-day discipline</h3>
-  <p>Day 3 evening and Day 4 (Lhasa) are mandatory acclimatization. The yatri who treats Day 4 as "extra Lhasa sightseeing" and walks 8 km plus Potala steps without pacing can trigger AMS by Day 5. Pace decisions on Day 3 to 4 determine Day 8 outcomes.</p>
-</section>
-
-<!-- =================== VISA + PERMITS WORKFLOW (before only) =================== -->
-<section class="before-only" id="visa">
-  <h2>Visa and permits workflow</h2>
-  <p class="lede">The Chinese Group Visa is the single biggest pre-trip dependency the yatri does not control directly.</p>
-
-  <h3>T-30 to T-1 timeline</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>When</th><th>Step</th><th>Owner</th><th>Risk if delayed</th></tr></thead>
-    <tbody>
-      <tr><td>T-30 to T-25</td><td>Operator emails passport-courier instructions</td><td>YPO</td><td>Low. Normal lead time.</td></tr>
-      <tr><td>T-25 to T-22</td><td>Yatri couriers passport to Delhi visa agent with signature-on-delivery</td><td>Yatri</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Critical. Late dispatch = late visa = missed trip.</td></tr>
-      <tr><td>T-22 to T-21</td><td>Passport arrives at the visa agent</td><td>Courier</td><td>Track AWB. Escalate if delivery missed.</td></tr>
-      <tr><td>T-21 to T-15</td><td>Chinese embassy in Delhi processes Group Visa</td><td>Embassy via agent</td><td>Operator handles. Yatri waits.</td></tr>
-      <tr><td>T-15 to T-7</td><td>Visa stamped. Passport ready for return courier.</td><td>Visa agent</td><td>If still stamping at T-7, escalate urgently.</td></tr>
-      <tr><td>T-7 to T-4</td><td>Return courier to yatri</td><td>Visa agent</td><td>Track AWB. Signature-on-delivery for return.</td></tr>
-      <tr><td>T-4 to T-1</td><td>Passport in hand. All documents verified.</td><td>Yatri</td><td>If not back by T-4, operator handles escalation. Trip may be re-scheduled.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>What to do if delayed</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Delay scenario</th><th>Action</th></tr></thead>
-    <tbody>
-      <tr><td>Outbound courier delayed (T-22 missed)</td><td>Contact courier company immediately. Request priority handling. Notify operator and visa agent same day.</td></tr>
-      <tr><td>Visa agent slow to confirm receipt</td><td>Forward courier AWB to visa agent and operator. Request acknowledgment within 24 h.</td></tr>
-      <tr><td>Embassy processing slow (T-7, no return AWB)</td><td>Escalate to operator emergency contact. Operator has direct embassy liaison.</td></tr>
-      <tr><td>Return courier delayed (T-3, still in transit)</td><td>Track AWB live. Contact courier customer care. Request urgent diversion. Operator can sometimes courier replacement permit copies.</td></tr>
-      <tr><td>Passport not in hand by T-1</td><td>Operator handles trip re-scheduling. Insurance covers if rider includes trip disruption.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>Operator vs yatri vs visa agent ownership</h3>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Owner</th><th>Items</th></tr></thead>
-    <tbody>
-      <tr><td>Operator (YPO)</td><td>Group permit application, embassy liaison, group visa stamping, NOC visit on Day 2, permit copies for Tibet border crossing.</td></tr>
-      <tr><td>Yatri</td><td>Passport courier to visa agent, return courier tracking, escalation if delayed, backup photocopies plus insurance docs ready.</td></tr>
-      <tr><td>Visa agent (operator partner)</td><td>Embassy submission, stamping, return courier dispatch, same-day status updates to operator.</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="callout ochre">
-    <span class="ct-label">Photograph everything before couriering</span>
-    Before the passport leaves the yatri's hands, photograph every page (bio page, all visa stamps, blank pages) and back up to private cloud storage. If the passport is lost in transit, the yatri can apply for an emergency replacement using the photographs as proof of identity.
-  </div>
-</section>
-
-<!-- =================== PRE-TRIP SPIRITUAL PRACTICES (before only) =================== -->
-<section class="before-only" id="spiritual-prep">
-  <h2>Pre-trip spiritual practices (optional)</h2>
-  <p class="lede">These are presented as optional practices, not requirements. The yatra is open to yatris across the spiritual spectrum.</p>
-  <div class="table-scroll">
-  <table>
-    <thead><tr><th>Practice</th><th>When</th><th>What</th></tr></thead>
-    <tbody>
-      <tr><td>Intention setting (sankalpa)</td><td>T-7 to T-3</td><td>Write one sentence in a notebook. "This yatra is for ______". Bring the notebook on the trip. Re-read at Mansarovar on Day 6.</td></tr>
-      <tr><td>Mantra familiarisation</td><td>T-14 to T-1</td><td>The mantra most often spoken on the Parikrama is <em style="color:var(--yellow);font-family:var(--font-headline);font-style:italic">Om Mani Padme Hum</em>, the six-syllable Buddhist mantra of compassion. Hindu yatris may carry <em style="color:var(--yellow);font-family:var(--font-headline);font-style:italic">Om Namah Shivaya</em> or the Maha Mrityunjaya Mantra. The yatri does not have to chant. Familiarity helps when others around them chant.</td></tr>
-      <tr><td>Light fasting (optional)</td><td>T-1 evening</td><td>Some yatris choose a vegetarian-light dinner the night before departure. Optional. The trip itself becomes vegetarian by default.</td></tr>
-      <tr><td>Ancestral remembrance</td><td>T-3 to T-1</td><td>Some yatris carry a name or photograph of ancestors to remember at the Mansarovar Day 6 puja. Per tradition.</td></tr>
-      <tr><td>Closing the home (optional)</td><td>T-1</td><td>Some yatris light a lamp at home before leaving. Per family tradition.</td></tr>
-    </tbody>
-  </table>
-  </div>
-</section>
-
-<!-- =================== AFTER PHASE COMPLETION BANNER (after only) =================== -->
+<!-- After-phase completion banner (keep in Prepare as it is pre-trip related context) -->
 <section class="after-only" id="completion">
   <h2>Completion</h2>
   <div class="callout good">
@@ -1987,6 +2057,336 @@
 </section>
 
 </main>
+</div><!-- end tab-pane prepare -->
+
+<!-- =================== TAB: REFERENCE =================== -->
+<div class="tab-pane" data-tab="reference">
+<div class="print-only">Reference</div>
+<main>
+
+<!-- Context chips (#39) -->
+<div class="chip-row" aria-label="Reference sections">
+  <a href="#ref-connectivity">Connectivity</a>
+  <a href="#ref-bags">Bags</a>
+  <a href="#ref-customs">Customs</a>
+  <a href="#ref-acclimatization">Acclimatization</a>
+  <a href="#ref-emergency">Emergency</a>
+</div>
+
+<!-- Connectivity playbook (collapsed by default per #42) -->
+<section class="not-after" id="ref-connectivity">
+  <details class="disclosure">
+    <summary>Connectivity playbook</summary>
+    <div class="disc-body">
+      <p class="lede">Tibet is behind the Great Firewall. Without a working VPN, WhatsApp, Google, Instagram, Facebook, YouTube, Gmail are all blocked.</p>
+
+      <h3>What is blocked in Tibet (without VPN)</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Service</th><th>Blocked</th><th>Workaround</th></tr></thead>
+        <tbody>
+          <tr><td>WhatsApp</td><td>Yes</td><td>Astrill VPN reconnects, or use WeChat as fallback.</td></tr>
+          <tr><td>Google (search, maps, drive, gmail)</td><td>Yes</td><td>Astrill VPN reconnects, or download Maps.me offline before entry.</td></tr>
+          <tr><td>Instagram, Facebook, YouTube</td><td>Yes</td><td>Astrill VPN reconnects.</td></tr>
+          <tr><td>iMessage, FaceTime</td><td>Mostly yes</td><td>Astrill VPN reconnects.</td></tr>
+          <tr><td>WeChat</td><td>No (allowed by design)</td><td>Useful Tibet-side backup channel.</td></tr>
+          <tr><td>Banking and payment apps</td><td>Variable</td><td>Do critical actions before entry.</td></tr>
+          <tr><td>Streaming (Netflix etc.)</td><td>Yes</td><td>Skip. Download offline content before entry.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>eSIM + VPN setup timeline</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Step</th><th>When</th><th>What</th></tr></thead>
+        <tbody>
+          <tr><td>Install Holafly China eSIM</td><td>T-12</td><td>Purchase and install before leaving home network. Test activation in India.</td></tr>
+          <tr><td>Install Astrill VPN</td><td>T-12</td><td>Annual subscription on phone and laptop. Do not use a free VPN.</td></tr>
+          <tr><td>Test Astrill from India</td><td>T-10</td><td>Toggle VPN on. Confirm WhatsApp and Google still work.</td></tr>
+          <tr><td>Activate Holafly</td><td>T-3</td><td>Activation triggers the data clock. Activate close to KTM departure.</td></tr>
+          <tr><td>Pre-download offline assets</td><td>T-3</td><td>Maps.me Tibet, Spotify, audiobooks, all PDFs.</td></tr>
+          <tr><td>Final connectivity test</td><td>T-2</td><td>Toggle VPN on Holafly eSIM. Keep screenshots of working state.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Fallback hierarchy when connectivity drops</h3>
+      <ol class="numbered">
+        <li>Toggle Astrill VPN off and on. Single most common fix.</li>
+        <li>Switch VPN server location. Try Hong Kong, Singapore, Japan.</li>
+        <li>Switch to mobile data from WiFi or vice versa. Hotel WiFi sometimes filters more aggressively.</li>
+        <li>Wait 30 minutes. Great Firewall enforcement varies through the day.</li>
+        <li>Use WeChat as fallback. Works without VPN.</li>
+        <li>Switch to the operator-issued China phone for emergencies.</li>
+        <li>Sat phone (operator Sherpa team). Genuine emergency only.</li>
+      </ol>
+
+      <h3>Pre-download checklist (T-3)</h3>
+      <ul class="bullets">
+        <li>Maps.me Tibet region and Kailash kora layer. Confirm tile cache loaded.</li>
+        <li>Google Maps offline area for Kathmandu only.</li>
+        <li>All PDF documents: permits, insurance, tickets, hotel confirmations, this page printed.</li>
+        <li>Spotify or Apple Music playlists for offline.</li>
+        <li>Audiobooks: 2 to 3 books for trek nights.</li>
+        <li>Operator PDF brief from YPO.</li>
+        <li>Mantras and spiritual reading material for the Parikrama leg.</li>
+        <li>Emergency contact card image. Screenshot to camera roll.</li>
+      </ul>
+
+      <div class="callout ochre">
+        <span class="ct-label">What family should install</span>
+        Install <strong>WeChat</strong> before the yatri's departure as a fallback communication channel. WeChat works inside Tibet without a VPN. If WhatsApp goes dark for the yatri, WeChat is the most reliable backup channel.
+      </div>
+    </div>
+  </details>
+</section>
+
+<!-- Bag transitions (collapsed by default per #42) -->
+<section class="not-after" id="ref-bags">
+  <details class="disclosure">
+    <summary>Bag transitions: the 4-bag system</summary>
+    <div class="disc-body">
+      <p class="lede">Knowing which bag is where on each day is the single biggest operational unlock.</p>
+
+      <h3>The 4 bags</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>Bag</th><th>Source</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Main suitcase or duffel 50 to 70 L</td><td>Yatri brings from home</td><td>Checked baggage home to KTM and KTM to Lhasa. Stays in Lhasa hotel storage Days 5 to 10.</td></tr>
+          <tr><td>2</td><td>YPO orange duffle ~50 L</td><td>YPO distributes Day 2</td><td>Trek-leg primary. Porters carry on Parikrama Days 7 to 10.</td></tr>
+          <tr><td>3</td><td>Personal Parikrama daypack 20 to 25 L with hip-belt</td><td>Yatri brings (new purchase)</td><td>Always with the yatri Day 1 onward. Carries everything irreplaceable.</td></tr>
+          <tr><td>4</td><td>YPO orange daypack + sidebag</td><td>YPO distributes Day 2</td><td>Spare or backup.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>What stays where (10 phases)</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Phase</th><th>Main suitcase</th><th>YPO duffle</th><th>Personal daypack</th></tr></thead>
+        <tbody>
+          <tr><td>Days 1, 2 (KTM)</td><td>Marriott KTM room</td><td>Not yet distributed (Day 2 PM)</td><td>With yatri</td></tr>
+          <tr><td>Day 3 (KTM to Lhasa)</td><td>Checked on flight</td><td>Loading begins evening</td><td>Cabin</td></tr>
+          <tr><td>Days 3, 4 (Lhasa)</td><td>St Regis room</td><td>Loading complete by Day 4 evening</td><td>With yatri (sightseeing)</td></tr>
+          <tr><td>Day 5 (Lhasa to Mansarovar) <strong>THE HANDOFF</strong></td><td><svg class="icon icon-16"><use href="#icon-lock-closed"/></svg> Stays in St Regis Lhasa storage (next 5 nights)</td><td>Travels with group</td><td>Cabin baggage on the flight</td></tr>
+          <tr><td>Days 5, 6 (Mansarovar)</td><td><svg class="icon icon-16"><use href="#icon-lock-closed"/></svg> Lhasa</td><td>At hotel</td><td>With yatri</td></tr>
+          <tr><td>Days 7, 8, 9 (Parikrama)</td><td><svg class="icon icon-16"><use href="#icon-lock-closed"/></svg> Lhasa</td><td>Porters carry. Meets at each tent or hotel.</td><td><strong>Always with yatri. 4 to 6 kg target. The critical bag.</strong></td></tr>
+          <tr><td>Day 10 (Darchen to Lhasa) <strong>THE REUNION</strong></td><td><svg class="icon icon-16"><use href="#icon-check"/></svg> Back in hand at St Regis</td><td>Travels with group</td><td>With yatri</td></tr>
+          <tr><td>Day 11 (Lhasa to KTM)</td><td>Checked on flight</td><td>Lighter load</td><td>Cabin</td></tr>
+          <tr><td>Days 11, 12, 13 (KTM return)</td><td>Marriott KTM room</td><td>With group</td><td>With yatri</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>5 critical bag rules</h3>
+      <ol class="numbered">
+        <li>Days 7 to 10 critical items NEVER go in the main suitcase. It is locked in Lhasa for 5 nights.</li>
+        <li>Personal daypack contents on Day 8 = every must-not-lose item. If porters delay the duffle, you survive Day 8 on what is in the daypack.</li>
+        <li>Daypack weight ceiling: 6 kg. Above 7 kg on Day 8 is miserable. Pack twice, weigh once.</li>
+        <li>Suitcase reserve = lost-bag insurance. Keep a month of personal meds, spare power bank, and one clean return-trip outfit in the suitcase.</li>
+        <li>The handoff moment (Day 5 morning): confirm with the Lhasa hotel front desk. Get a printed claim ticket. Photograph it. Keep it in the daypack documents pouch.</li>
+      </ol>
+    </div>
+  </details>
+</section>
+
+<!-- Customs (collapsed by default per #42) -->
+<section class="not-after" id="ref-customs">
+  <details class="disclosure">
+    <summary>Customs and immigration tips</summary>
+    <div class="disc-body">
+      <p class="lede">Tibet customs at Lhasa airport on Day 3 is the strictest immigration checkpoint of the trip.</p>
+
+      <h3>Phone-clean protocol (T-2)</h3>
+      <p>Tibet customs will scroll the phone gallery. The following content is confiscated, detained, or used as grounds for refusal of entry.</p>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Content type</th><th>Action before T-2</th></tr></thead>
+        <tbody>
+          <tr><td>Dalai Lama photographs (any context)</td><td>Delete from gallery and downloads. Clear iCloud cache.</td></tr>
+          <tr><td>"Free Tibet" content</td><td>Delete. Including social media bookmarks.</td></tr>
+          <tr><td>Political books or magazines on the Tibet situation</td><td>Remove from Kindle or iBooks downloads.</td></tr>
+          <tr><td>Maps of Tibet showing borders different from Chinese cartography</td><td>Delete. Use Maps.me Tibet which follows Chinese cartography.</td></tr>
+          <tr><td>Flags or imagery of the Tibetan flag</td><td>Delete.</td></tr>
+          <tr><td>News articles critical of Chinese policy</td><td>Delete. Clear browser history.</td></tr>
+          <tr><td>Pictures of Taiwan in a sovereign-nation context</td><td>Delete.</td></tr>
+          <tr><td>Social media posts referencing the above</td><td>Delete.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>Empty the phone gallery aggressively. A small gallery (under 500 items) gets cleared faster than a 50,000 photo gallery.</p>
+
+      <h3>Allowed (no need to hide)</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Content type</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Family photos, selfies, personal pictures</td><td>Fine</td></tr>
+          <tr><td>General travel photos</td><td>Fine</td></tr>
+          <tr><td>Religious imagery of Lord Shiva, Hindu deities, non-political Buddhist imagery</td><td>Fine. The yatra is religious. This is expected.</td></tr>
+          <tr><td>Maps.me Tibet (Chinese cartography)</td><td>Fine</td></tr>
+          <tr><td>YPO operator brief and branded materials</td><td>Fine. Proves you are on an organised trip.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>CCC certification check (power banks and electronics)</h3>
+      <ol class="numbered">
+        <li>Verify the CCC mark physically on the power bank casing before packing.</li>
+        <li>If buying new, choose Anker or Xiaomi or brands that publish CCC certification.</li>
+        <li>Capacity ceiling: most airlines allow up to 20,000 mAh in carry-on. Above this, restricted.</li>
+        <li>Pack power banks in carry-on only. Lithium batteries in checked baggage trigger automatic confiscation.</li>
+      </ol>
+
+      <h3>What to bring printed (in case the phone fails)</h3>
+      <ul class="bullets">
+        <li>Passport (original) plus 2 photocopies</li>
+        <li>Tibet Group Permit (operator-issued)</li>
+        <li>Chinese Group Visa (operator-issued, stamped in passport)</li>
+        <li>Travel insurance policy with helpline number</li>
+        <li>Flight tickets KTM to Lhasa and Lhasa to KTM</li>
+        <li>Hotel confirmation (operator's letter)</li>
+        <li>Emergency contact card</li>
+      </ul>
+
+      <div class="callout">
+        <span class="ct-label">Day 2 Embassy NOC visit</span>
+        The Indian Embassy NOC is operator-coordinated. The yatri shows up at the embassy with the group. Operator handles paperwork. Bring: passport (with valid Chinese Group Visa stamped), one photocopy of the passport bio page, a modest collared shirt and pants (embassy dress code). Routine same-morning visit.
+      </div>
+    </div>
+  </details>
+</section>
+
+<!-- Acclimatization (collapsed by default per #42) -->
+<section class="not-after" id="ref-acclimatization">
+  <details class="disclosure">
+    <summary>Acclimatization rules</summary>
+    <div class="disc-body">
+      <p class="lede">The biggest risk on this trip is not the pass. It is acute mountain sickness (AMS) from sleep-altitude accumulation.</p>
+
+      <h3>Climb high, sleep low</h3>
+      <p>Sleep altitude matters more than peak altitude. You can visit higher than you sleep (briefly) and recover. You cannot sleep higher than your body has acclimatized to and recover overnight.</p>
+      <p>The YPO itinerary builds this in (Day 3 to 4 Lhasa rest, Day 5 to 6 Mansarovar rest, Day 7 Dirapuk pre-pass), but the yatri must understand the principle to interpret their own symptoms correctly.</p>
+
+      <h3>AMS symptom escalation flow</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Level</th><th>What it feels like</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><svg class="icon icon-sev win"><use href="#icon-win-green"/></svg> Normal acclimatization</td><td>Mild headache, slight breathlessness on exertion, waking 1 to 2 times at night to pee, slight nausea on Day 1 at altitude.</td><td>Continue. Hydrate. Rest. Normal Diamox dose.</td></tr>
+          <tr><td><svg class="icon icon-sev action"><use href="#icon-action-yellow"/></svg> Mild AMS</td><td>Persistent headache despite ibuprofen, poor appetite, fatigue beyond expected, trouble sleeping.</td><td>Stop ascending. Rest at current altitude. Hydrate. Ibuprofen 400 mg every 6 h max. Do not ascend further until headache clears.</td></tr>
+          <tr><td><svg class="icon icon-sev persistence"><use href="#icon-persistence-orange"/></svg> Moderate AMS</td><td>Severe headache, vomiting, ataxia (cannot walk a straight line heel-to-toe), breathlessness at rest.</td><td>DESCEND immediately. Oxygen if available. Operator Sherpa team has cylinders.</td></tr>
+          <tr><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> HACE (Cerebral Edema)</td><td>Confusion, severe ataxia, personality change, drowsiness escalating to coma.</td><td>EMERGENCY DESCENT. Oxygen + dexamethasone. Operator sat phone for evacuation.</td></tr>
+          <tr><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> HAPE (Pulmonary Edema)</td><td>Severe breathlessness at rest, cough with pink frothy sputum, gurgling in chest, lips blue.</td><td>EMERGENCY DESCENT. Oxygen + nifedipine. Operator sat phone for evacuation.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="ct-label">The descent rule</span>
+        If symptoms worsen or are not clearly improving in 12 to 24 hours, descend. Pride at altitude kills. The yatri who insists on continuing through moderate AMS to "not miss Dolma La" is the yatri who needs evacuation.
+      </div>
+
+      <h3>What the operator does at altitude</h3>
+      <ul class="bullets">
+        <li>Sherpa team carries oxygen cylinders, dexamethasone, nifedipine.</li>
+        <li>Pre-Parikrama health check at Mansarovar.</li>
+        <li>Sat phone for genuine evacuation.</li>
+        <li>Local Tibetan guide knows descent paths and helicopter pickup points.</li>
+        <li>China phone issued to the group for low-grade emergencies.</li>
+      </ul>
+
+      <h3>Acclimatization-day discipline</h3>
+      <p>Day 3 evening and Day 4 (Lhasa) are mandatory acclimatization. The yatri who treats Day 4 as "extra Lhasa sightseeing" and walks 8 km plus Potala steps without pacing can trigger AMS by Day 5. Pace decisions on Day 3 to 4 determine Day 8 outcomes.</p>
+    </div>
+  </details>
+</section>
+
+<!-- Emergency protocol (open by default in during phase, collapsed otherwise per #42) -->
+<section id="ref-emergency">
+  <details class="disclosure" id="emergency-details">
+    <summary>Emergency protocol for family</summary>
+    <div class="disc-body">
+      <p class="lede"><strong>If you do not hear from the yatri on Days 7, 8, or 9 (Parikrama), this is expected.</strong> Operator Sherpa team handles emergencies. Resume contact attempts from Day 10 (Lhasa return).</p>
+
+      <h3>When silence is normal</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Day window</th><th>Silence is</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Days 1, 2 (Kathmandu)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>WhatsApp first. Then YPO emergency line after 6 h.</td></tr>
+          <tr><td>Days 3, 4 (Lhasa)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual but possible (GFW, VPN may drop)</td><td>WhatsApp. Expect VPN delay. 12 h threshold.</td></tr>
+          <tr><td>Days 5, 6 (Mansarovar)</td><td><svg class="icon icon-sev action"><use href="#icon-action-yellow"/></svg> Possible</td><td>Up to 24 h silence is normal. Operator can relay via Sherpa team.</td></tr>
+          <tr><td>Days 7, 8, 9 (Parikrama)</td><td><svg class="icon icon-sev win"><use href="#icon-win-green"/></svg> Expected by design</td><td>Yatri is offline by design. Zero check-ins is normal. Do not call airlines or hospitals.</td></tr>
+          <tr><td>Day 10 (Lhasa return)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>Back online at St Regis. 12 h threshold.</td></tr>
+          <tr><td>Days 11, 12, 13 (Kathmandu)</td><td><svg class="icon icon-sev critical"><use href="#icon-critical-red"/></svg> Unusual</td><td>Reachable again. Same threshold as Days 1, 2.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Operator emergency channels</h3>
+      <p>The page does not publish operator contact numbers. The yatri carries the operator's full contact card. Family should obtain a copy of this card from the yatri before departure.</p>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Channel</th><th>Where it operates</th><th>Latency</th></tr></thead>
+        <tbody>
+          <tr><td>Sherpa team sat phone</td><td>Mansarovar, Kailash, Parikrama leg</td><td>Minutes (genuine emergency only)</td></tr>
+          <tr><td>Operator-issued China phone</td><td>Mansarovar onwards</td><td>Same-day (low-grade emergencies, scheduling)</td></tr>
+          <tr><td>WeChat to operator coordinator</td><td>Anywhere on the Tibet leg</td><td>Same-day</td></tr>
+          <tr><td>Operator office (Kathmandu HQ)</td><td>All days</td><td>Office hours, escalates to ground team</td></tr>
+          <tr><td>YPO emergency line</td><td>All days, 24 by 7</td><td>International calling for family from home</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Evacuation thresholds (when the operator pulls the trigger)</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Threshold</th><th>Operator action</th></tr></thead>
+        <tbody>
+          <tr><td>Moderate AMS not improving after 12 h descent</td><td>Helicopter or vehicle descent to lower altitude. Usually Lhasa hospital.</td></tr>
+          <tr><td>Suspected HACE or HAPE</td><td>Immediate emergency descent. Oxygen plus dexamethasone or nifedipine. Airlift if available.</td></tr>
+          <tr><td>Severe fall or trauma injury</td><td>Stabilise. Descent to nearest medical facility. Operator coordinates ambulance from descent point.</td></tr>
+          <tr><td>Cardiac event</td><td>Stabilise. Oxygen. Emergency descent. Nearest hospital is Lhasa (8 to 12 h drive from Darchen).</td></tr>
+          <tr><td>Severe non-medical (lost, separated, stranded)</td><td>Operator sat phone reaches Sherpa team. Ground team coordinates retrieval.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>What insurance is supposed to cover</h3>
+      <ul class="bullets">
+        <li>Helicopter evacuation from the Parikrama leg</li>
+        <li>Lhasa hospital admission</li>
+        <li>Repatriation to home country if needed</li>
+        <li>Trip disruption coverage (if visa or trip cancellation triggered by a medical event)</li>
+      </ul>
+      <p>Confirm the policy number and 24 by 7 helpline number directly with the yatri before departure.</p>
+    </div>
+  </details>
+</section>
+
+</main>
+</div><!-- end tab-pane reference -->
+
+</div><!-- end .container -->
+
+<!-- =================== MOBILE FLOATING QUICK-ACTIONS (#43) =================== -->
+<div class="quick-actions" aria-label="Quick navigation" role="navigation">
+  <button class="qa-btn" type="button" aria-label="Go to today" title="Today" onclick="quickNav('today')">
+    <svg class="icon icon-16" style="width:20px;height:20px"><use href="#icon-map-pin"/></svg>
+  </button>
+  <button class="qa-btn" type="button" aria-label="Go to Day 8" title="Day 8" onclick="quickNav('day8')">
+    <svg class="icon icon-16" style="width:20px;height:20px"><use href="#icon-mountain"/></svg>
+  </button>
+  <button class="qa-btn" type="button" aria-label="Go to connectivity" title="Connectivity" onclick="quickNav('connectivity')">
+    <svg class="icon icon-16" style="width:20px;height:20px"><use href="#icon-signal-3-bars"/></svg>
+  </button>
+  <button class="qa-btn" type="button" aria-label="Go to emergency protocol" title="Emergency" onclick="quickNav('emergency')">
+    <svg class="icon icon-16" style="width:20px;height:20px"><use href="#icon-lifebuoy"/></svg>
+  </button>
+</div>
 
 <footer>
   <p>Single-file page. No tracking. No analytics. Weather refreshes on every load via Open Meteo.</p>
@@ -2989,15 +3389,118 @@
     applyClassPhase(phase);
   }
 
-  document.addEventListener("DOMContentLoaded", function(){
-    setupTimezone();
-    renderAll();
-    bindChecklistEvents();
-    fetchWeather();
-    document.getElementById("refresh-weather").addEventListener("click", function(){
-      localStorage.removeItem("kailash_wx_cache_v1");
-      fetchWeather();
+  /* =================== TAB NAVIGATION (#37) =================== */
+
+  function activateTab(tabId) {
+    var radio = document.getElementById(tabId);
+    if (radio) {
+      radio.checked = true;
+      try { localStorage.setItem("kailash_active_tab", tabId); } catch(e) {}
+    }
+  }
+
+  function getPhaseDefaultTab(phase) {
+    return (phase === "during") ? "tab-itinerary" : "tab-overview";
+  }
+
+  function initTabs() {
+    var phase = computePhase(getReferenceDate());
+    // 1. Check URL hash first
+    var hash = window.location.hash.replace("#", "");
+    var hashMap = {overview:"tab-overview", itinerary:"tab-itinerary", prepare:"tab-prepare", reference:"tab-reference"};
+    if (hashMap[hash]) {
+      activateTab(hashMap[hash]);
+      return;
+    }
+    // 2. Restore from localStorage
+    var stored = null;
+    try { stored = localStorage.getItem("kailash_active_tab"); } catch(e) {}
+    if (stored && document.getElementById(stored)) {
+      activateTab(stored);
+      return;
+    }
+    // 3. Phase default
+    activateTab(getPhaseDefaultTab(phase));
+  }
+
+  /* =================== SCROLL TO DAY (Journey Map) (#40) =================== */
+  function scrollToDay(dayId) {
+    // Make sure the Itinerary tab is active first
+    activateTab("tab-itinerary");
+    setTimeout(function() {
+      var el = document.getElementById(dayId);
+      if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    }, 50);
+  }
+
+  /* =================== QUICK NAV (mobile floating actions) (#43) =================== */
+  function quickNav(target) {
+    if (target === "today") {
+      var phase = computePhase(getReferenceDate());
+      if (phase === "during") {
+        activateTab("tab-overview");
+        setTimeout(function(){ var el = document.getElementById("today"); if(el) el.scrollIntoView({behavior:"smooth",block:"start"}); }, 50);
+      } else {
+        activateTab("tab-itinerary");
+        setTimeout(function(){ var el = document.getElementById("day-1"); if(el) el.scrollIntoView({behavior:"smooth",block:"start"}); }, 50);
+      }
+    } else if (target === "day8") {
+      activateTab("tab-itinerary");
+      setTimeout(function(){ var el = document.getElementById("day-8"); if(el) el.scrollIntoView({behavior:"smooth",block:"start"}); }, 50);
+    } else if (target === "connectivity") {
+      activateTab("tab-reference");
+      setTimeout(function(){
+        var det = document.querySelector("#ref-connectivity details.disclosure");
+        if (det) det.open = true;
+        var el = document.getElementById("ref-connectivity");
+        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+      }, 50);
+    } else if (target === "emergency") {
+      activateTab("tab-reference");
+      setTimeout(function(){
+        var det = document.getElementById("emergency-details");
+        if (det) det.open = true;
+        var el = document.getElementById("ref-emergency");
+        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+      }, 50);
+    }
+  }
+
+  /* =================== EMERGENCY AUTO-OPEN (#42) =================== */
+  function initEmergencyDisclosure(phase) {
+    var det = document.getElementById("emergency-details");
+    if (!det) return;
+    var saved = null;
+    try { saved = localStorage.getItem("kailash_section_state_emergency"); } catch(e) {}
+    if (saved !== null) {
+      det.open = (saved === "open");
+    } else {
+      // Default: open during phase, closed otherwise
+      det.open = (phase === "during");
+    }
+    det.addEventListener("toggle", function() {
+      try { localStorage.setItem("kailash_section_state_emergency", det.open ? "open" : "closed"); } catch(e) {}
     });
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    // Tab init FIRST so any downstream error does not leave the page blank.
+    try { initTabs(); } catch(e) { /* fallback handled by inline checked attribute on tab-overview */ }
+    try { setupTimezone(); } catch(e) {}
+    try { renderAll(); } catch(e) {}
+    try { bindChecklistEvents(); } catch(e) {}
+    try { fetchWeather(); } catch(e) {}
+    var refreshBtn = document.getElementById("refresh-weather");
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", function(){
+        try { localStorage.removeItem("kailash_wx_cache_v1"); } catch(e) {}
+        try { fetchWeather(); } catch(e) {}
+      });
+    }
+    try {
+      var phase = computePhase(getReferenceDate());
+      initEmergencyDisclosure(phase);
+    } catch(e) {}
   });
 </script>
 
