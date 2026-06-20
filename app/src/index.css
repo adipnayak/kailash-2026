@@ -51,7 +51,7 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
+  --radius: 0;
 
   /* --sacred: warm gold used ONLY for ochre devotional markers
      (Dolma La emphasis, JAI_BHOLE_NATH, progress bar fill, CandleFilled tints,
@@ -96,7 +96,7 @@
   --font-sans: 'Geist Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, monospace;
 
-  --radius: 0.625rem;
+  --radius: 0;
 }
 
 html,

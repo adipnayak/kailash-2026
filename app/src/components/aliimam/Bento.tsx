@@ -90,7 +90,7 @@ export function BentoGridItem({
   return (
     <div
       className={cn(
-        'rounded-xl border border-border bg-card p-5 transition-colors hover:bg-muted/40',
+        'rounded-none border border-border bg-card p-5 transition-colors hover:bg-muted/40',
         className,
       )}
       style={itemStyle}

@@ -55,7 +55,7 @@ function TzToggle() {
         {tzMode === 'local' ? 'Your local time' : 'Trip time (NPT/CST)'}
       </span>
       <div
-        className="inline-flex rounded border border-border overflow-hidden"
+        className="inline-flex rounded-none border border-border overflow-hidden"
         role="group"
         aria-label="Timezone mode"
       >
@@ -241,7 +241,7 @@ function BeforeBento({ state }: { state: JourneyState }) {
         </div>
 
         {/* Route + peak strip */}
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded px-3 py-2 bg-background">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded-none px-3 py-2 bg-background">
           {(['KTM', 'LHASA', 'MANSAROVAR', 'KAILASH', 'KTM'] as const).map((stop, i, arr) => (
             <span key={i} className="flex items-center gap-x-1">
               <span className="text-foreground font-medium">{stop}</span>
@@ -541,7 +541,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded px-3 py-2 bg-background">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded-none px-3 py-2 bg-background">
           {(['KTM', 'LHASA', 'KAILASH', 'KTM'] as const).map((stop, i, arr) => (
             <span key={i} className="flex items-center gap-x-1">
               <span className="text-foreground font-medium">{stop}</span>

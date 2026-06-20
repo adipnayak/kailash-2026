@@ -123,7 +123,7 @@ export function ConnectivityRibbon() {
                 key={d.day}
                 className={[
                   'conn-dot',
-                  'flex flex-col items-center gap-1 rounded',
+                  'flex flex-col items-center gap-1 rounded-none',
                   'border px-1 py-2',
                   'transition-all duration-200',
                   isToday

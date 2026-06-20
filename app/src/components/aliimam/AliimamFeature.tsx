@@ -84,7 +84,7 @@ export function AliimamFeature({
           {ctaLabel && (
             <div className="mt-6 flex items-center gap-2 sm:gap-4">
               <a href={ctaHref}>
-                <button className="h-10 cursor-pointer px-6 bg-primary text-primary-foreground font-medium text-sm rounded hover:opacity-80 transition-opacity">
+                <button className="h-10 cursor-pointer px-6 bg-primary text-primary-foreground font-medium text-sm rounded-none hover:opacity-80 transition-opacity">
                   {ctaLabel}
                 </button>
               </a>
@@ -96,7 +96,7 @@ export function AliimamFeature({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {cards.map((card, i) => (
               <div key={i}>
-                <div className="bg-card flex flex-col rounded-md border border-border p-4 text-sm">
+                <div className="bg-card flex flex-col rounded-none border border-border p-4 text-sm">
                   {card.icon}
                   <div className="mt-2 font-medium text-foreground">{card.title}</div>
                   <p className="mt-1 text-muted-foreground text-xs">{card.body}</p>

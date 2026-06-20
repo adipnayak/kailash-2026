@@ -100,12 +100,12 @@ export function AliimamHero({
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a href={primaryHref}>
-              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 bg-primary text-primary-foreground font-medium text-sm rounded hover:opacity-80 transition-opacity">
+              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 bg-primary text-primary-foreground font-medium text-sm rounded-none hover:opacity-80 transition-opacity">
                 {primaryLabel}
               </button>
             </a>
             <a href={secondaryHref}>
-              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 border border-border text-foreground font-medium text-sm rounded hover:bg-card transition-colors">
+              <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 border border-border text-foreground font-medium text-sm rounded-none hover:bg-card transition-colors">
                 {secondaryLabel}
               </button>
             </a>

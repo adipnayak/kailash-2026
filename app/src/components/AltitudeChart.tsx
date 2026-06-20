@@ -90,7 +90,7 @@ function SegmentedControl({
     <div
       role="group"
       aria-label="Altitude series"
-      className="inline-flex rounded border border-border overflow-hidden font-mono text-xs"
+      className="inline-flex rounded-none border border-border overflow-hidden font-mono text-xs"
     >
       {(['walking', 'sleeping'] as AltMode[]).map((m) => (
         <button
@@ -365,7 +365,7 @@ export function AltitudeChart() {
                                 ? gained.toLocaleString('en-US') + ' m'
                                 : '0 m';
                             return (
-                              <div className="bg-card border border-border rounded px-3 py-2 text-xs shadow-sm min-w-[160px]">
+                              <div className="bg-card border border-border rounded-none px-3 py-2 text-xs shadow-sm min-w-[160px]">
                                 <div className="font-sans font-medium text-foreground text-sm mb-1">
                                   D{d.day} - {shortLocation(d.location)}
                                 </div>

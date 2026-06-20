@@ -45,7 +45,7 @@ function CalloutBlock({ block }: { block: Extract<RefBlock, { type: "callout" }>
         : "text-muted-foreground";
 
   return (
-    <div className={`my-4 rounded border-l-4 ${borderColor} bg-card px-4 py-3`}>
+    <div className={`my-4 rounded-none border-l-4 ${borderColor} bg-card px-4 py-3`}>
       {block.title && (
         <p className={`mb-1 text-xs font-semibold uppercase tracking-wide ${labelColor}`}>
           {block.title}
@@ -177,7 +177,7 @@ export function ReferenceTab() {
                 <a
                   key={article.id}
                   href={`#${article.id}`}
-                  className="inline-flex items-center gap-2 rounded border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-card transition-colors"
+                  className="inline-flex items-center gap-2 rounded-none border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-card transition-colors"
                 >
                   <span className="text-muted-foreground">{icon}</span>
                   {article.title}

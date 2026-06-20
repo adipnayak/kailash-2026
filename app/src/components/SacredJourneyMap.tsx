@@ -169,7 +169,7 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
     >
       {/* Maurten light register overlay: desaturate positron tiles slightly */}
       <div
-        className="kailash-map-shell w-full h-full rounded-sm overflow-hidden"
+        className="kailash-map-shell w-full h-full rounded-none overflow-hidden"
         style={{ filter: 'saturate(0.6) brightness(1.02)' }}
       >
         <MapArc
