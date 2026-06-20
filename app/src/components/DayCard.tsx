@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check, Mountain, Clock, Ruler, Wifi, WifiOff, Bed } from 'lucide-react';
+import { ChevronDown, Mountain, Clock, Ruler, Wifi, WifiOff, Bed, CircleCheck } from '@aliimam/icons';
 import gsap from 'gsap';
 import type { TripDay } from '../lib/trip-data';
 import { formatAltitude, mToFt } from '../lib/conversions';
@@ -428,7 +428,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
       {showCompleted && (
         <div className="px-4 pt-2 pb-0">
           <span className="inline-flex items-center gap-1 rounded bg-green/10 border border-green/30 px-2 py-0.5 font-mono text-[10px] text-green uppercase tracking-wide">
-            <Check size={10} /> Completed
+            <CircleCheck size={10} /> Completed
           </span>
         </div>
       )}

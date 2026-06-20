@@ -11,7 +11,7 @@ import { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { Mountain, MapPin, Radio, AlertTriangle, Clock } from 'lucide-react';
+import { Mountain, MapPin, Radio, TriangleAlert, Clock } from '@aliimam/icons';
 import type { JourneyState } from '../lib/journey-state';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
@@ -46,7 +46,7 @@ function ConnIcon({ status }: { status: 'good' | 'intermittent' | 'offline' }) {
     return <Radio size={12} className="text-green" aria-label="Good connectivity" />;
   if (status === 'intermittent')
     return <Radio size={12} className="text-accent" aria-label="Intermittent connectivity" />;
-  return <AlertTriangle size={12} className="text-red" aria-label="No connectivity" />;
+  return <TriangleAlert size={12} className="text-red" aria-label="No connectivity" />;
 }
 
 // ---------------------------------------------------------------------------

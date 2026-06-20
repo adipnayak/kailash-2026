@@ -11,7 +11,7 @@
  */
 import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
-import { Wifi, WifiOff, Circle } from 'lucide-react';
+import { Wifi, WifiOff, Signal } from '@aliimam/icons';
 import { DAYS, type ConnStatus } from '../lib/trip-data';
 import { useJourneyState } from '../hooks/useJourneyState';
 
@@ -116,7 +116,7 @@ export function ConnectivityRibbon() {
                 ? Wifi
                 : d.conn_status === 'offline'
                 ? WifiOff
-                : Circle;
+                : Signal;
 
             return (
               <li

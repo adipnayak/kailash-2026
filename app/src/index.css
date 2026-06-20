@@ -55,3 +55,33 @@ body,
 body {
   margin: 0;
 }
+
+/* =============================================================
+ * Maurten token override-and-pin (aliimam-in/aliimam guard).
+ * aliimam blocks reference shadcn tokens like --primary, --background,
+ * --foreground, --muted-foreground, --secondary. We map them to Maurten
+ * values so aliimam components render correctly without any token conflict.
+ * These declarations come AFTER all imports so they always win.
+ * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes.
+ * ============================================================= */
+
+:root {
+  /* shadcn-to-Maurten bridge (aliimam uses these internally) */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--bg);
+  --secondary: var(--card);
+  --secondary-foreground: var(--ink);
+  --muted-foreground: var(--muted);
+  --card-foreground: var(--ink);
+  --popover: var(--card);
+  --popover-foreground: var(--ink);
+  --destructive: var(--red);
+  --destructive-foreground: var(--bg);
+  --ring: var(--border);
+  --input: var(--border);
+
+  /* aliimam blocks also use --radius */
+  --radius: 4px;
+}
