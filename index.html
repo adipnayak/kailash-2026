@@ -5817,11 +5817,20 @@
    */
   function detectOriginFromTz(tz) {
     if (!tz) return "all";
+    /* PRD v3.10 §0.14.3 mapping table. */
     if (tz === "Asia/Kolkata" || tz === "Asia/Calcutta") return "mumbai";
     if (tz === "Asia/Dubai"   || tz === "Asia/Abu_Dhabi") return "uae";
     if (tz === "Indian/Mauritius") return "mauritius";
     if (tz.indexOf("America/") === 0) return "us";
     return "all";
+  }
+  /* Re-resolve origin when persisted choice is 'auto'. */
+  function resolveOrigin(saved) {
+    if (saved && saved !== "auto") return saved;
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      return detectOriginFromTz(tz);
+    } catch(e) { return "all"; }
   }
   function applyOriginToMap(origin) {
     var svg = document.getElementById("master-journey-map");
@@ -5841,28 +5850,16 @@
     if (!sel) return;
     var saved = null;
     try { saved = localStorage.getItem("kailash_origin"); } catch(e) {}
-    var resolved;
     if (saved && saved !== "auto") {
-      resolved = saved;
       sel.value = saved;
     } else {
       sel.value = "auto";
-      try {
-        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        resolved = detectOriginFromTz(tz);
-      } catch(e) { resolved = "all"; }
     }
-    applyOriginToMap(resolved);
+    applyOriginToMap(resolveOrigin(saved));
     sel.addEventListener("change", function() {
       var v = sel.value;
       try { localStorage.setItem("kailash_origin", v); } catch(e) {}
-      if (v === "auto") {
-        var tz2;
-        try { tz2 = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) { tz2 = ""; }
-        applyOriginToMap(detectOriginFromTz(tz2));
-      } else {
-        applyOriginToMap(v);
-      }
+      applyOriginToMap(resolveOrigin(v));
     });
   }
 
