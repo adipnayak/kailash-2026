@@ -4261,15 +4261,25 @@
     /* After phase: static. No dynamic updates needed. */
   }
 
-  /* Render the dynamic nav prepare badge. */
+  /* Render the dynamic nav prepare badge + phase-adaptive labels (#53). */
   function renderNavBadge(state) {
     var prepLabel = document.getElementById("nav-prepare-label");
-    if (!prepLabel) return;
-    if (state.phase === "before" && state.prepOpenCount > 0) {
-      prepLabel.innerHTML = 'Prepare <span class="nav-badge">' + state.prepOpenCount + '</span>';
-    } else {
-      prepLabel.textContent = "Prepare";
+    if (prepLabel) {
+      if (state.phase === "before" && state.prepOpenCount > 0) {
+        prepLabel.innerHTML = 'Prepare <span class="nav-badge">' + state.prepOpenCount + '</span>';
+      } else {
+        prepLabel.textContent = "Prepare";
+      }
     }
+    /* Ensure the during/after labels still respect the .before-only / .during-only /
+     * .after-only CSS classes (handled globally). Surface the during phase labels for
+     * Today / Tomorrow and after-phase Summary explicitly so they read correctly. */
+    var todayLabel = document.getElementById("nav-today-label");
+    var tmrwLabel  = document.getElementById("nav-tomorrow-label");
+    var summLabel  = document.getElementById("nav-summary-label");
+    if (todayLabel) todayLabel.textContent = "Today";
+    if (tmrwLabel)  tmrwLabel.textContent  = "Tomorrow";
+    if (summLabel)  summLabel.textContent  = "Summary";
   }
 
   /* Render the TODAY card (during phase only). */
