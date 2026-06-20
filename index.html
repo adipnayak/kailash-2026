@@ -1209,83 +1209,86 @@
 <section id="altitude">
   <h2>Altitude profile</h2>
   <div class="altitude-wrap">
-    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" id="alt-svg" aria-label="13 day sleep altitude chart" style="color: var(--ink)">
-      <!-- Y grid lines. -->
-      <g class="alt-grid" stroke-width="1" fill="none">
-        <line x1="40" y1="40" x2="690" y2="40"/>
-        <line x1="40" y1="90" x2="690" y2="90"/>
-        <line x1="40" y1="140" x2="690" y2="140"/>
-        <line x1="40" y1="190" x2="690" y2="190"/>
-        <line x1="40" y1="240" x2="690" y2="240"/>
+    <!--
+      Geometry: viewBox 0 0 720 240. 13 days, x = 30 + (dayIndex * 55).
+      Y formula: y = 240 - (altitude_m * 0.03833).
+      Sleep altitudes (m): 1380, 1380, 3656, 3656, 4670, 4670, 4900, 4670, 4760, 3656, 1380, 1380, 0
+      Sleep y values:       187,  187,  100,  100,   61,   61,   52,   61,   57,  100,  187,  187, 240
+      Day 8 peak dot: 5630m -> y = 240 - (5630 * 0.03833) = 24. cx=415, cy=24.
+      Day 8 sleep vertex at (415, 61). Gap of 37px = climb-high-sleep-low principle.
+    -->
+    <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" id="alt-svg" aria-label="13 day sleep altitude chart" style="color: var(--ink)">
+      <!-- Y grid lines at key altitudes. -->
+      <g class="alt-grid" stroke-width="0.5" fill="none">
+        <line x1="20" y1="10" x2="710" y2="10"/>
+        <line x1="20" y1="52" x2="710" y2="52"/>
+        <line x1="20" y1="100" x2="710" y2="100"/>
+        <line x1="20" y1="187" x2="710" y2="187"/>
+        <line x1="20" y1="230" x2="710" y2="230"/>
       </g>
-      <!-- Y axis labels (m). 6000 at top, 0 at bottom. -->
-      <g class="alt-axis-num" font-size="10">
-        <text x="35" y="44" text-anchor="end">6000</text>
-        <text x="35" y="94" text-anchor="end">4500</text>
-        <text x="35" y="144" text-anchor="end">3000</text>
-        <text x="35" y="194" text-anchor="end">1500</text>
-        <text x="35" y="244" text-anchor="end">0</text>
+      <!-- Y axis labels. -->
+      <g class="alt-axis-num" font-size="9">
+        <text x="18" y="14" text-anchor="end">6000</text>
+        <text x="18" y="56" text-anchor="end">4900</text>
+        <text x="18" y="104" text-anchor="end">3650</text>
+        <text x="18" y="191" text-anchor="end">1380</text>
+        <text x="18" y="234" text-anchor="end">0</text>
       </g>
       <!-- X axis day labels. -->
-      <g class="alt-axis-num" font-size="10">
-        <text x="60" y="260" text-anchor="middle">D1</text>
-        <text x="112" y="260" text-anchor="middle">D2</text>
-        <text x="164" y="260" text-anchor="middle">D3</text>
-        <text x="216" y="260" text-anchor="middle">D4</text>
-        <text x="268" y="260" text-anchor="middle">D5</text>
-        <text x="320" y="260" text-anchor="middle">D6</text>
-        <text x="372" y="260" text-anchor="middle">D7</text>
-        <text x="424" y="260" text-anchor="middle">D8</text>
-        <text x="476" y="260" text-anchor="middle">D9</text>
-        <text x="528" y="260" text-anchor="middle">D10</text>
-        <text x="580" y="260" text-anchor="middle">D11</text>
-        <text x="632" y="260" text-anchor="middle">D12</text>
-        <text x="684" y="260" text-anchor="middle">D13</text>
+      <g class="alt-axis-num" font-size="9">
+        <text x="30"  y="238" text-anchor="middle">D1</text>
+        <text x="85"  y="238" text-anchor="middle">D2</text>
+        <text x="140" y="238" text-anchor="middle">D3</text>
+        <text x="195" y="238" text-anchor="middle">D4</text>
+        <text x="250" y="238" text-anchor="middle">D5</text>
+        <text x="305" y="238" text-anchor="middle">D6</text>
+        <text x="360" y="238" text-anchor="middle">D7</text>
+        <text x="415" y="238" text-anchor="middle">D8</text>
+        <text x="470" y="238" text-anchor="middle">D9</text>
+        <text x="525" y="238" text-anchor="middle">D10</text>
+        <text x="580" y="238" text-anchor="middle">D11</text>
+        <text x="635" y="238" text-anchor="middle">D12</text>
+        <text x="690" y="238" text-anchor="middle">D13</text>
       </g>
-      <!-- Sleep line. Y = 240 - (sleep_m / 6000) * 200; sleep values: 1380,1380,3656,3656,4670,4670,4900,4670,4760,3656,1380,1380,0 -->
-      <polyline
+      <!-- Sleep line. Pre-computed coordinates per Opus. -->
+      <path
         class="alt-sleep-line"
         fill="none"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        points="60,194 112,194 164,118 216,118 268,84 320,84 372,77 424,84 476,81 528,118 580,194 632,194 684,240"
+        d="M 30,187 L 85,187 L 140,100 L 195,100 L 250,61 L 305,61 L 360,52 L 415,61 L 470,57 L 525,100 L 580,187 L 635,187 L 690,230"
       />
-      <!-- Sleep dots. -->
+      <!-- Sleep dots at each vertex. -->
       <g class="alt-sleep-dot" stroke="none">
-        <circle cx="60" cy="194" r="3"/>
-        <circle cx="112" cy="194" r="3"/>
-        <circle cx="164" cy="118" r="3"/>
-        <circle cx="216" cy="118" r="3"/>
-        <circle cx="268" cy="84" r="3"/>
-        <circle cx="320" cy="84" r="3"/>
-        <circle cx="372" cy="77" r="3"/>
-        <circle cx="424" cy="84" r="3"/>
-        <circle cx="476" cy="81" r="3"/>
-        <circle cx="528" cy="118" r="3"/>
-        <circle cx="580" cy="194" r="3"/>
-        <circle cx="632" cy="194" r="3"/>
-        <circle cx="684" cy="240" r="3"/>
+        <circle cx="30"  cy="187" r="3"/>
+        <circle cx="85"  cy="187" r="3"/>
+        <circle cx="140" cy="100" r="3"/>
+        <circle cx="195" cy="100" r="3"/>
+        <circle cx="250" cy="61"  r="3"/>
+        <circle cx="305" cy="61"  r="3"/>
+        <circle cx="360" cy="52"  r="3"/>
+        <circle cx="415" cy="61"  r="3"/>
+        <circle cx="470" cy="57"  r="3"/>
+        <circle cx="525" cy="100" r="3"/>
+        <circle cx="580" cy="187" r="3"/>
+        <circle cx="635" cy="187" r="3"/>
+        <circle cx="690" cy="230" r="3"/>
       </g>
-      <!-- Peak dots above the line. Day 7 4900 (y=77) ; Day 8 5630 (y=53.7) ; Day 9 4900 (y=77). -->
-      <g>
-        <circle class="alt-peak-other" cx="372" cy="77" r="4" stroke-width="1" fill="none"/>
-        <circle class="alt-peak-day8" cx="424" cy="53" r="8" stroke="none"/>
-        <circle class="alt-peak-other" cx="476" cy="77" r="4" stroke-width="1" fill="none"/>
+      <!-- Day 8 peak dot. Visual hero: 5630m. cy=24 sits 37px above sleep vertex at cy=61. -->
+      <circle class="alt-peak-day8" cx="415" cy="24" r="6" stroke="none"/>
+      <!-- Anchor labels. Three only per spec. -->
+      <g class="alt-anchor" font-size="11">
+        <text class="alt-anchor-day8" x="415" y="16" text-anchor="middle" font-weight="700">Dolma La 5,630 m</text>
+        <text x="305" y="50" text-anchor="middle">Mansarovar 4,670 m</text>
+        <text x="30" y="178" text-anchor="start">Kathmandu 1,380 m</text>
       </g>
-      <!-- Anchor labels. -->
-      <g class="alt-anchor" font-size="12">
-        <text class="alt-anchor-day8" x="424" y="40" text-anchor="middle" font-weight="700">Dolma La 5,630 m</text>
-        <text x="294" y="73" text-anchor="middle">Mansarovar 4,670 m</text>
-        <text x="60" y="184" text-anchor="middle">Kathmandu 1,380 m</text>
-      </g>
-      <!-- During-phase today cursor. -->
-      <line id="today-cursor" class="alt-cursor" x1="0" y1="40" x2="0" y2="240" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>
+      <!-- During-phase today cursor: dashed vertical at current day x. -->
+      <line id="today-cursor" class="alt-cursor" x1="0" y1="10" x2="0" y2="230" stroke-width="1" stroke-dasharray="2 4" style="display:none"/>
     </svg>
     <div class="alt-legend">
       <span><span class="legend-dot" style="background:var(--border-s)"></span>Sleep altitude</span>
       <span><span class="legend-dot" style="background:var(--red)"></span>Day 8 peak (5,630 m)</span>
-      <span><span class="legend-dot" style="background:transparent;border:1px solid var(--muted)"></span>Peak above sleep (Days 7, 9)</span>
     </div>
   </div>
 </section>
@@ -2489,7 +2492,8 @@
   function renderAltCursor(todayIdx) {
     var cursor = document.getElementById("today-cursor");
     if (!todayIdx) { cursor.style.display = "none"; return; }
-    var xs = [60,112,164,216,268,320,372,424,476,528,580,632,684];
+    // Pre-computed x-coordinates: x = 30 + (dayIndex * 55), dayIndex 0-based.
+    var xs = [30,85,140,195,250,305,360,415,470,525,580,635,690];
     var x = xs[todayIdx-1];
     cursor.setAttribute("x1", x);
     cursor.setAttribute("x2", x);
