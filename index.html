@@ -4079,34 +4079,41 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
     </g>
   </g>
 
-  <!-- ===== SACRED MARKERS (hidden by default) ===== -->
+  <!-- ===== SACRED MARKERS (v3.12 #4: first-occurrence gloss labels) ===== -->
   <g class="sacred-markers" font-family="JetBrains Mono, monospace" style="display:none;">
     <g class="sacred-marker">
       <use href="#icon-temple-line" x="475" y="395" width="14" height="14" color="var(--accent)" />
+      <text x="493" y="407" font-size="8" fill="var(--accent)" letter-spacing="0.05em">Pashupatinath</text>
       <title>Pashupatinath &middot; sacred Shiva temple &middot; Day 2 darshan</title>
     </g>
     <g class="sacred-marker">
       <use href="#icon-temple-line" x="615" y="345" width="14" height="14" color="var(--accent)" />
-      <title>Jokhang Temple &middot; Day 4 &middot; most sacred temple in Tibetan Buddhism</title>
+      <text x="633" y="357" font-size="8" fill="var(--accent)" letter-spacing="0.05em">Jokhang</text>
+      <title>Jokhang &middot; Day 4 &middot; most sacred temple in Tibetan Buddhism</title>
     </g>
     <g class="sacred-marker">
       <use href="#icon-lake-ripple-line" x="190" y="332" width="16" height="14" color="var(--accent)" />
-      <title>Mansarovar holy bath &middot; Day 6 &middot; the lake of the mind</title>
+      <text x="190" y="350" font-size="8" fill="var(--accent)" letter-spacing="0.05em" text-anchor="middle">Mansarovar Snan (holy bath)</text>
+      <title>Mansarovar Snan (holy bath) &middot; Day 6 &middot; the lake of the mind</title>
     </g>
     <g class="sacred-marker">
-      <use href="#icon-temple-line" x="220" y="335" width="14" height="14" color="var(--accent)" />
-      <title>Chiu Gompa &middot; Day 6 &middot; monastery overlooking Mansarovar</title>
+      <use href="#icon-monastery-line" x="220" y="335" width="14" height="14" color="var(--accent)" />
+      <text x="238" y="347" font-size="8" fill="var(--accent)" letter-spacing="0.05em">Chiu Gompa Puja (worship)</text>
+      <title>Chiu Gompa Puja (worship) &middot; Day 6 &middot; monastery overlooking Mansarovar</title>
     </g>
     <g class="sacred-marker">
       <use href="#icon-mountain" x="155" y="248" width="14" height="14" color="var(--accent)" />
-      <title>Mount Kailash &middot; viewpoint Day 7 &middot; the sacred mountain</title>
+      <text x="173" y="260" font-size="8" fill="var(--accent)" letter-spacing="0.05em">First Kailash Darshan (sacred sight)</text>
+      <title>First Kailash Darshan (sacred sight) &middot; viewpoint Day 7 &middot; the sacred mountain</title>
     </g>
     <g class="sacred-marker">
       <circle cx="145" cy="225" r="16" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2,3" />
-      <title>Dolma La &middot; spiritual crossing &middot; death and rebirth in pilgrim tradition</title>
+      <text x="60" y="215" font-size="8" fill="var(--accent)" letter-spacing="0.05em" text-anchor="end">Dolma La Crossing (spiritual crossing)</text>
+      <title>Dolma La Crossing (spiritual crossing) &middot; Day 8 &middot; death and rebirth in pilgrim tradition</title>
     </g>
     <g class="sacred-marker">
       <use href="#icon-lake-ripple-line" x="155" y="245" width="13" height="11" color="var(--accent)" />
+      <text x="172" y="256" font-size="8" fill="var(--accent)" letter-spacing="0.05em">Gauri Kund</text>
       <title>Gauri Kund &middot; Day 8 descent &middot; sacred glacial lake</title>
     </g>
   </g>
@@ -8471,6 +8478,26 @@ function highlightCurrentTimelineEvent() {
 }
 
 /* =========================================================
+   #4 - Sacred milestone labels: after-phase completion banner
+   Shows count of sacred sites visited (4: Pashupatinath, Jokhang,
+   Mansarovar Snan, Chiu Gompa Puja, First Kailash Darshan, Dolma La)
+   ========================================================= */
+function renderSacredCompletionBanner() {
+  var phase;
+  try { phase = getJourneyState().phase; } catch(e) { return; }
+  if (phase !== "after") return;
+  /* Append sacred site count to journey-summary */
+  var sumEl = document.getElementById("journey-summary");
+  if (!sumEl || document.getElementById("sacred-sites-count")) return;
+  var countEl = document.createElement("div");
+  countEl.id = "sacred-sites-count";
+  countEl.style.cssText = "font-family:'Inter Tight',sans-serif;font-size:13px;color:var(--yellow);margin-top:var(--s-3);display:flex;align-items:center;gap:6px";
+  countEl.innerHTML = '<svg class="icon" style="width:14px;height:14px;stroke:var(--yellow);fill:none;stroke-width:1.5"><use href="#icon-temple-line"/></svg>'
+    + '6 sacred sites visited: Pashupatinath &middot; Jokhang &middot; Mansarovar Snan (holy bath) &middot; Chiu Gompa Puja (worship) &middot; First Kailash Darshan (sacred sight) &middot; Dolma La Crossing (spiritual crossing)';
+  sumEl.appendChild(countEl);
+}
+
+/* =========================================================
    Init: hook into DOMContentLoaded (or run now if already ready)
    ========================================================= */
 function initXcut() {
@@ -8495,6 +8522,7 @@ function initXcut() {
   } catch(e) {}
   try { applyDay8Expansion(); } catch(e) {}
   try { highlightCurrentTimelineEvent(); } catch(e) {}
+  try { renderSacredCompletionBanner(); } catch(e) {}
 }
 
 if (document.readyState === "loading") {
