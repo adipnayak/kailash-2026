@@ -11,7 +11,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { Thermometer, Wind, Droplet, Sun } from 'lucide-react';
+import { Thermometer, WindFilled, DropFilled, Sun } from '@aliimam/icons';
 import { useJourneyState } from '../hooks/useJourneyState';
 import gsap from 'gsap';
 
@@ -181,12 +181,12 @@ function WeatherCard({ point, badge }: WeatherCardProps) {
           value={`${point.tempMin} to ${point.tempMax} C`}
         />
         <Chip
-          icon={<Wind size={12} />}
+          icon={<WindFilled size={12} />}
           label="Wind"
           value={`${point.windspeed} km/h`}
         />
         <Chip
-          icon={<Droplet size={12} />}
+          icon={<DropFilled size={12} />}
           label="Rain"
           value={`${point.precipitation} mm`}
         />
@@ -231,8 +231,8 @@ function AfterSummary() {
       <p className="text-ink">Range during trip: -5 C to 18 C</p>
       <div className="flex flex-wrap gap-3">
         <Chip icon={<Thermometer size={14} />} label="Range"      value="-5 C to 18 C" />
-        <Chip icon={<Wind size={14} />}        label="Wind days"  value="2" />
-        <Chip icon={<Droplet size={14} />}     label="Rain days"  value="0" />
+        <Chip icon={<WindFilled size={14} />}        label="Wind days"  value="2" />
+        <Chip icon={<DropFilled size={14} />}     label="Rain days"  value="0" />
         <Chip icon={<Sun size={14} />}         label="Clear days" value="8 of 13" />
       </div>
     </div>

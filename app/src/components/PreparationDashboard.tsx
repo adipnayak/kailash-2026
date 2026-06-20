@@ -22,7 +22,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, Clock, AlertCircle, Minus } from 'lucide-react';
+import { CircleCheck, Clock, CircleAlert, CircleMinus } from '@aliimam/icons';
 import { useJourneyState } from '../hooks/useJourneyState';
 import gsap from 'gsap';
 
@@ -275,15 +275,15 @@ function saveStatus(map: StatusMap): void {
 
 function StatusIcon({ status }: { status: ItemStatus }) {
   if (status === 'complete') {
-    return <CheckCircle size={16} className="text-green shrink-0" />;
+    return <CircleCheck size={16} className="text-green shrink-0" />;
   }
   if (status === 'pending') {
     return <Clock size={16} className="text-accent shrink-0" />;
   }
   if (status === 'action-needed') {
-    return <AlertCircle size={16} className="text-red shrink-0" />;
+    return <CircleAlert size={16} className="text-red shrink-0" />;
   }
-  return <Minus size={16} className="text-muted shrink-0" />;
+  return <CircleMinus size={16} className="text-muted shrink-0" />;
 }
 
 function statusLabel(status: ItemStatus): string {
