@@ -8395,7 +8395,10 @@ function applyDay8Expansion() {
 }
 
 /* =========================================================
-   #7 - Per-day inner timeline: current event highlight (during)
+   #7 - Per-day inner timeline (21st.dev agent-plan inspired Level 2 content)
+   Vertical timeline with time-left + event-right + connecting rule.
+   Day 8 Dolma La row: red text, bold, larger.
+   During-phase: current event highlighted, past dimmed, future full opacity.
    ========================================================= */
 function highlightCurrentTimelineEvent() {
   var phase, tripDayIndex;
@@ -8406,7 +8409,7 @@ function highlightCurrentTimelineEvent() {
   var tl = DAY_INNER_TIMELINE[tripDayIndex];
   if (!tl) return;
 
-  var now = new Date();
+  var now = getReferenceDate ? getReferenceDate() : new Date();
   var nowMin = now.getHours() * 60 + now.getMinutes();
   var currentIdx = tl.length - 1;
   for (var i = 0; i < tl.length; i++) {
@@ -8415,9 +8418,13 @@ function highlightCurrentTimelineEvent() {
     if (evMin > nowMin) { currentIdx = Math.max(0, i - 1); break; }
   }
 
-  /* Find the day card's inner timeline ol */
+  /* Find the today day card's inner timeline ol (auto-open its details) */
   var cardEl = document.getElementById("day-" + tripDayIndex);
   if (!cardEl) return;
+  /* Auto-open the details on the current day during phase */
+  var detEl = cardEl.querySelector("details");
+  if (detEl && !detEl.open) detEl.open = true;
+
   var items = cardEl.querySelectorAll(".day-inner-timeline li");
   items.forEach(function(li, idx) {
     li.classList.remove("tl-past","tl-current");
