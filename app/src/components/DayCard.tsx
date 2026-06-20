@@ -106,7 +106,7 @@ interface ChipProps {
 }
 
 function Chip({ icon, label, value, dominant, red }: ChipProps) {
-  const base = 'flex items-center gap-1.5 rounded px-2 py-1 font-mono text-xs border';
+  const base = 'flex items-center gap-1.5 rounded-none px-2 py-1 font-mono text-xs border';
   const color = red
     ? 'bg-destructive/10 border-destructive/30 text-destructive'
     : dominant
@@ -590,7 +590,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
     <>
       {/* Day 8 critical warn banner ABOVE the card */}
       {isClimb && (
-        <div className="mb-2 rounded border-2 border-destructive bg-destructive/10 px-4 py-2 flex items-start gap-2">
+        <div className="mb-2 rounded-none border-2 border-destructive bg-destructive/10 px-4 py-2 flex items-start gap-2">
           <TriangleAlert size={14} className="text-destructive shrink-0 mt-0.5" />
           <p className="font-mono text-xs text-destructive font-medium">
             22 km on foot. 5,630 m pass. 04:00 wake. No bailout after the pass.
@@ -602,7 +602,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
         data-day={day.day}
         data-pattern={pattern}
         className={[
-          'rounded overflow-hidden transition-shadow',
+          'rounded-none overflow-hidden transition-shadow',
           cardBorderWidth,
           cardBg,
           cardBorderColor,
@@ -622,7 +622,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
         {/* Rest badge */}
         {isRest && (
           <div className="px-4 pt-3 pb-0 flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
+            <span className="inline-flex items-center gap-1 rounded-none bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
               <Bed size={10} /> Rest day
             </span>
           </div>
@@ -631,7 +631,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
         {/* Completed badge */}
         {showCompleted && (
           <div className="px-4 pt-2 pb-0">
-            <span className="inline-flex items-center gap-1 rounded bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
+            <span className="inline-flex items-center gap-1 rounded-none bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
               <CircleCheck size={10} /> Completed
             </span>
           </div>
@@ -671,7 +671,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
             {day.badge && (
               <span
                 className={[
-                  'font-mono text-[10px] uppercase tracking-wide rounded border px-2 py-0.5 shrink-0 mt-0.5',
+                  'font-mono text-[10px] uppercase tracking-wide rounded-none border px-2 py-0.5 shrink-0 mt-0.5',
                   badgeColor(day.badge),
                 ].join(' ')}
               >
@@ -684,7 +684,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
           <p className="mt-2 text-sm text-foreground leading-snug">
             {day.subtitle}
             {pattern === 'combo' && (
-              <span className="ml-2 font-mono text-[10px] bg-sacred/10 text-sacred border border-sacred/20 rounded px-1.5 py-0.5 uppercase tracking-wide">
+              <span className="ml-2 font-mono text-[10px] bg-sacred/10 text-sacred border border-sacred/20 rounded-none px-1.5 py-0.5 uppercase tracking-wide">
                 LONG DAY
               </span>
             )}

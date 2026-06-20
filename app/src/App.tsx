@@ -6,7 +6,6 @@ import { OverviewTab } from './components/tabs/OverviewTab';
 import { ItineraryTab } from './components/tabs/ItineraryTab';
 import { PrepareTab } from './components/tabs/PrepareTab';
 import { ReferenceTab } from './components/tabs/ReferenceTab';
-import { AliimamHero } from './components/aliimam/AliimamHero';
 
 export default function App() {
   const phase = useJourneyState();
@@ -14,14 +13,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <AliimamHero
-        title="Kailash Manasarovar 2026"
-        subtitle="A sacred journey across the roof of the world. 13 days. 5,630 m."
-        primaryLabel="View Itinerary"
-        primaryHref="#itinerary"
-        secondaryLabel="Prepare"
-        secondaryHref="#prepare"
-      />
       <Hero phase={phase} />
       <Nav tab={tab} onTab={setTab} />
       <main>

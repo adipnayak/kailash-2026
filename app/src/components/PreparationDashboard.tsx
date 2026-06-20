@@ -337,7 +337,7 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
         </span>
         <span
           className={[
-            'shrink-0 rounded px-1.5 py-0.5 font-mono text-xs',
+            'shrink-0 rounded-none px-1.5 py-0.5 font-mono text-xs',
             isBlocking
               ? 'bg-destructive/10 text-destructive'
               : isComplete
@@ -415,7 +415,7 @@ function CategoryCard({ category, statusMap, onCycle }: CategoryCardProps) {
   return (
     <div
       className={[
-        'rounded border bg-card overflow-hidden',
+        'rounded-none border bg-card overflow-hidden',
         hasBlocking ? 'border-destructive/40' : allDone ? 'border-emerald/40' : 'border-border',
       ].join(' ')}
     >
@@ -423,17 +423,17 @@ function CategoryCard({ category, statusMap, onCycle }: CategoryCardProps) {
         <div className="flex items-center gap-2">
           <h3 className="font-sans text-sm font-semibold text-foreground">{category.label}</h3>
           {category.optional && (
-            <span className="rounded border border-muted/30 px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+            <span className="rounded-none border border-muted/30 px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
               optional
             </span>
           )}
           {hasBlocking && (
-            <span className="rounded bg-destructive/10 px-1.5 py-0.5 font-mono text-xs text-destructive">
+            <span className="rounded-none bg-destructive/10 px-1.5 py-0.5 font-mono text-xs text-destructive">
               action needed
             </span>
           )}
           {allDone && !hasBlocking && (
-            <span className="rounded bg-emerald/10 px-1.5 py-0.5 font-mono text-xs text-emerald">
+            <span className="rounded-none bg-emerald/10 px-1.5 py-0.5 font-mono text-xs text-emerald">
               complete
             </span>
           )}
@@ -562,7 +562,7 @@ export function PreparationDashboard() {
             </div>
             <div className="flex items-center gap-3">
               {blocking > 0 && (
-                <span className="rounded bg-destructive/10 px-2 py-1 font-mono text-xs text-destructive">
+                <span className="rounded-none bg-destructive/10 px-2 py-1 font-mono text-xs text-destructive">
                   {blocking} action{blocking === 1 ? '' : 's'} needed
                 </span>
               )}

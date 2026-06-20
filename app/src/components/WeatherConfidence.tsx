@@ -147,7 +147,7 @@ interface ChipProps {
 
 function Chip({ icon, label, value }: ChipProps) {
   return (
-    <div className="flex items-center gap-1.5 rounded border border-border bg-background px-3 py-2 text-sm">
+    <div className="flex items-center gap-1.5 rounded-none border border-border bg-background px-3 py-2 text-sm">
       <span className="text-muted-foreground">{icon}</span>
       <span className="text-muted-foreground font-mono text-xs">{label}</span>
       <span className="font-medium text-foreground">{value}</span>
@@ -166,7 +166,7 @@ interface WeatherCardProps {
 
 function WeatherCard({ point, badge }: WeatherCardProps) {
   return (
-    <div className="rounded border border-border bg-card p-4">
+    <div className="rounded-none border border-border bg-card p-4">
       <div className="flex items-center justify-between">
         <span className="font-medium text-foreground text-sm">{point.location}</span>
         {badge && (
@@ -203,7 +203,7 @@ function StaticRanges() {
   return (
     <div className="mt-4 space-y-3">
       {LOCATIONS.map((loc) => (
-        <div key={loc.label} className="rounded border border-border bg-card p-4">
+        <div key={loc.label} className="rounded-none border border-border bg-card p-4">
           <span className="font-medium text-foreground text-sm">{loc.label}</span>
           <div className="mt-2 flex flex-wrap gap-2">
             <Chip
