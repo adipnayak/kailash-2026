@@ -2914,7 +2914,10 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
   color: var(--ink);
 }
 
-/* #10 Preparation Dashboard */
+/* #10 Preparation Dashboard: hide entirely during + after */
+[data-phase="during"] #prep-dashboard-v312,
+[data-phase="after"]  #prep-dashboard-v312 { display: none !important; }
+
 .prep-dashboard-v312 {
   padding: var(--s-3) 0 var(--s-4);
 }
@@ -7958,6 +7961,26 @@ var PREP_BLOCKING = {
   connectivity: "Holafly eSIM + Astrill VPN must be tested",
   packing:      "Trek-day gear and Day 8 cold-weather items outstanding"
 };
+/* Migration: kailash_prep_v3 -> kailash_prep_v2 (Insurance category removed) */
+(function migratePrepState() {
+  try {
+    var v3 = localStorage.getItem("kailash_prep_v3");
+    var v2 = localStorage.getItem("kailash_prep_v2");
+    if (v3 && !v2) {
+      var parsed = JSON.parse(v3);
+      if (parsed && parsed.insurance !== undefined) delete parsed.insurance;
+      localStorage.setItem("kailash_prep_v2", JSON.stringify(parsed));
+    }
+    /* Always purge insurance from v2 */
+    if (v2) {
+      var p2 = JSON.parse(v2);
+      if (p2 && p2.insurance !== undefined) {
+        delete p2.insurance;
+        localStorage.setItem("kailash_prep_v2", JSON.stringify(p2));
+      }
+    }
+  } catch(e) {}
+})();
 
 function renderPrepDashboard() {
   var el = document.getElementById("prep-dashboard-cats");
@@ -7991,17 +8014,26 @@ function renderPrepDashboard() {
   });
   el.innerHTML = html;
 
-  /* count required outstanding for hero */
+  /* count required outstanding for hero (exclude Medical = optional) */
   var openRequired = 0;
+  var openNames = [];
   PREP_CATS.forEach(function(cat) {
     if (!cat.required) return;
     var s = state[cat.id] || "red";
-    if (s !== "green") openRequired++;
+    if (s !== "green") { openRequired++; openNames.push(cat.label); }
   });
-  /* update hero before-num if present */
-  var heroSub = document.getElementById("prep-milestone");
-  if (heroSub && openRequired > 0) {
-    /* keep existing milestone text but note count */
+  /* wire into hero before countdown */
+  var heroBeforeNum = document.getElementById("hero-before-num");
+  if (heroBeforeNum && openRequired > 0) {
+    /* append outstanding items note below the days-to-departure number */
+    var existingNote = document.getElementById("hero-prep-outstanding");
+    if (!existingNote) {
+      existingNote = document.createElement("div");
+      existingNote.id = "hero-prep-outstanding";
+      existingNote.style.cssText = "font-family:'Inter Tight',sans-serif;font-size:13px;color:var(--red);margin-top:4px";
+      heroBeforeNum.parentNode.insertBefore(existingNote, heroBeforeNum.nextSibling);
+    }
+    existingNote.textContent = openRequired + " thing" + (openRequired === 1 ? "" : "s") + " left: " + openNames.join(", ");
   }
 }
 
