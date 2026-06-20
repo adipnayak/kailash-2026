@@ -1027,7 +1027,10 @@
   #tab-overview:checked  ~ .container .tab-nav label[for="tab-overview"],
   #tab-itinerary:checked ~ .container .tab-nav label[for="tab-itinerary"],
   #tab-prepare:checked   ~ .container .tab-nav label[for="tab-prepare"],
-  #tab-reference:checked ~ .container .tab-nav label[for="tab-reference"] {
+  #tab-reference:checked ~ .container .tab-nav label[for="tab-reference"],
+  #tab-today:checked     ~ .container .tab-nav label[for="tab-today"],
+  #tab-tomorrow:checked  ~ .container .tab-nav label[for="tab-tomorrow"],
+  #tab-summary:checked   ~ .container .tab-nav label[for="tab-summary"] {
     color: var(--ink);
     border-bottom-color: var(--ink);
   }
@@ -1039,6 +1042,24 @@
   #tab-reference:checked ~ .container .tab-pane[data-tab="reference"] {
     display: block;
   }
+
+  /* today/tomorrow/summary tabs: switching to overview which contains them via JS */
+  /* (these panes are not separate panes; the JS scrolls to the right section) */
+  #tab-today:checked ~ .container .tab-pane[data-tab="overview"],
+  #tab-tomorrow:checked ~ .container .tab-pane[data-tab="overview"],
+  #tab-summary:checked ~ .container .tab-pane[data-tab="overview"] {
+    display: block;
+  }
+
+  /* Phase-dependent nav label visibility */
+  .phase-before .during-only { display: none !important; }
+  .phase-before .after-only  { display: none !important; }
+  .phase-during .before-only { display: none !important; }
+  .phase-during .after-only  { display: none !important; }
+  .phase-after  .before-only { display: none !important; }
+  .phase-after  .during-only { display: none !important; }
+  /* Extra: hide prepare from after phase */
+  .phase-after .after-hidden { display: none !important; }
 
   /* =================== CONTEXT CHIPS (#39) =================== */
   .chip-row {
@@ -1245,15 +1266,729 @@
   }
   .alt-anchor-day8 { fill: var(--red); }
   .alt-cursor { stroke: var(--ink); }
+
+  /* =================== v3.8 + v3.9 ADDITIONS =================== */
+
+  /* Journey progress bar (top of page, 4px) */
+  .journey-progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .journey-progress-bar {
+    height: 4px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .journey-progress-bar .jp-fill {
+    height: 100%;
+    background: var(--muted);
+    transition: width 0.2s ease;
+    position: absolute;
+    left: 0; top: 0;
+  }
+  .journey-progress-bar .jp-fill.green { background: var(--green); }
+  .journey-progress-label {
+    font-family: var(--font-body);
+    font-size: 0.625rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px var(--s-4);
+    text-align: right;
+  }
+
+  /* Contextual banner (above hero) */
+  .ctx-banner {
+    border-left: 3px solid var(--muted);
+    padding: 0.5rem 0 0.5rem 1rem;
+    margin: 0 0 var(--s-5);
+    font-size: 0.8125rem;
+  }
+  .ctx-banner.banner-prep-window { border-color: var(--muted); }
+  .ctx-banner.banner-final-prep  { border-color: var(--yellow); }
+  .ctx-banner.banner-prepare-for-parikrama { border-color: var(--yellow); }
+  .ctx-banner.banner-critical-day { border-color: var(--red); }
+  .ctx-banner.banner-recovery-day { border-color: var(--green); }
+  .ctx-banner .banner-title {
+    font-family: var(--font-headline);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+  .ctx-banner .banner-body {
+    color: var(--muted);
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+
+  /* Hero command center (v3.9 §0.13.2) */
+  .hero-cmd {
+    margin: 0 0 var(--s-6);
+  }
+  .hero-cmd h1 {
+    font-family: var(--font-headline);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin: 0 0 var(--s-4);
+    border: none;
+    padding: 0;
+    display: block;
+    text-transform: none;
+  }
+  .hero-cmd h1::before { content: none; }
+  .hero-cmd .hero-phase-label {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--s-2);
+  }
+  .hero-cmd .hero-big-num {
+    font-family: var(--font-body);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 var(--s-2);
+  }
+  .hero-cmd .hero-sub {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: var(--s-4);
+  }
+
+  /* Hero stat tiles (4-cell grid in before/after, 2-cell in during) */
+  .hero-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    margin-top: var(--s-4);
+  }
+  .hero-stat-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) {
+    .hero-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-stat-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  }
+  .hero-stat-cell {
+    padding: var(--s-4) var(--s-3);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .hero-stat-cell:last-child { border-right: none; }
+  .hero-stat-cell .stat-icon {
+    color: var(--muted);
+    display: block;
+    margin-bottom: var(--s-1);
+    width: 16px; height: 16px;
+  }
+  .hero-stat-cell .stat-num {
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    display: block;
+    line-height: 1.1;
+  }
+  .hero-stat-cell .stat-num.warn { color: var(--red); }
+  .hero-stat-cell .stat-lab {
+    font-family: var(--font-headline);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+  }
+  .hero-stat-cell .stat-loc {
+    font-size: 0.75rem;
+    color: var(--ink);
+    margin-top: 4px;
+    display: block;
+    font-weight: 500;
+  }
+
+  /* Trip Stats Dashboard (v3.9 §0.13.3) */
+  .trip-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: var(--s-6);
+    overflow: hidden;
+  }
+  @media (max-width: 600px) {
+    .trip-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  .trip-stat-cell {
+    padding: var(--s-4);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .trip-stat-cell:nth-child(3n) { border-right: none; }
+  @media (max-width: 600px) {
+    .trip-stat-cell:nth-child(3n) { border-right: 1px solid var(--border); }
+    .trip-stat-cell:nth-child(2n) { border-right: none; }
+  }
+  .trip-stat-cell .ts-icon {
+    color: var(--muted);
+    width: 20px; height: 20px;
+    margin-bottom: var(--s-1);
+    display: block;
+  }
+  .trip-stat-cell .ts-num {
+    font-family: var(--font-body);
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    display: block;
+    line-height: 1;
+  }
+  .trip-stat-cell .ts-lab {
+    font-family: var(--font-headline);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* TODAY card (v3.8 §0.12.10) */
+  .today-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: var(--s-5);
+    margin-bottom: var(--s-6);
+  }
+  .today-card .today-card-header {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: var(--s-3);
+  }
+  .today-card .today-3cell {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--s-4);
+  }
+  @media (max-width: 480px) {
+    .today-card .today-3cell { grid-template-columns: 1fr; }
+  }
+  .today-3cell-item {
+    padding: var(--s-3) 0;
+    border-right: 1px solid var(--border);
+    padding-right: var(--s-3);
+    padding-left: var(--s-3);
+  }
+  .today-3cell-item:last-child { border-right: none; }
+  .today-3cell-item .cell-lab {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--font-headline);
+  }
+  .today-3cell-item .cell-val {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .today-card .today-chips {
+    display: flex;
+    gap: var(--s-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--s-4);
+  }
+  .today-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .today-chip.good { border-color: var(--green); color: var(--green); }
+  .today-chip.intermittent { border-color: var(--yellow); color: var(--yellow); }
+  .today-chip.offline { border-color: var(--red); color: var(--red); }
+  .today-card .today-next-event {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-2);
+    padding: var(--s-3) 0;
+    border-top: 1px solid var(--border);
+    font-size: 0.8125rem;
+  }
+  .today-card .today-next-event .icon { color: var(--muted); flex-shrink: 0; }
+  .today-card .today-tomorrow {
+    border-top: 1px solid var(--border);
+    padding-top: var(--s-3);
+    margin-top: var(--s-1);
+  }
+  .today-card .today-tomorrow .tmrw-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-family: var(--font-headline);
+    display: block;
+    margin-bottom: var(--s-1);
+  }
+  .today-card .today-tomorrow .tmrw-loc {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+  .today-card .today-tomorrow .tmrw-alt {
+    color: var(--muted);
+    font-size: 0.8125rem;
+    margin-left: var(--s-2);
+  }
+
+  /* Multi-target countdowns (before phase) */
+  .countdown-stack {
+    margin-bottom: var(--s-6);
+  }
+  .countdown-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding: var(--s-2) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8125rem;
+  }
+  .countdown-row:last-child { border-bottom: none; }
+  .countdown-row .cd-num {
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    min-width: 2.5rem;
+  }
+  .countdown-row .cd-label {
+    color: var(--muted);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.75rem;
+  }
+
+  /* "What matters today" card */
+  #preparation-status {
+    margin-bottom: var(--s-6);
+  }
+  .wmt-header {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: var(--s-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .wmt-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-3);
+    padding: var(--s-3) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8125rem;
+  }
+  .wmt-item:last-child { border-bottom: none; }
+  .wmt-item input[type=checkbox] {
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .wmt-item.done { opacity: 0.5; }
+  .wmt-item.done .wmt-text { text-decoration: line-through; }
+  .wmt-check-icon { color: var(--green); flex-shrink: 0; }
+
+  /* Connectivity ribbon (v3.9 §0.13.5) */
+  .conn-ribbon {
+    margin-bottom: var(--s-6);
+    overflow-x: auto;
+  }
+  .conn-ribbon-title {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: var(--s-3);
+  }
+  .conn-ribbon-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    min-width: 400px;
+  }
+  .conn-ribbon-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    cursor: default;
+  }
+  .conn-ribbon-cell .cr-day {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .conn-ribbon-cell .cr-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+  }
+  .conn-ribbon-cell .cr-dot.good { background: var(--green); border-color: var(--green); }
+  .conn-ribbon-cell .cr-dot.intermittent { background: var(--bg); border-color: var(--yellow); box-shadow: inset 6px 0 0 var(--yellow); }
+  .conn-ribbon-cell .cr-dot.offline { background: var(--bg); border-color: var(--red); }
+  .conn-ribbon-line {
+    height: 1px;
+    background: var(--border);
+    flex: 1;
+    align-self: center;
+    margin-top: 12px;
+  }
+
+  /* Difficulty indicator (v3.9 §0.13.6) */
+  .diff-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-bottom: var(--s-3);
+  }
+  .diff-indicator .diff-label {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    min-width: 60px;
+  }
+  .diff-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .diff-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .diff-dot.filled.easy { background: var(--green); }
+  .diff-dot.filled.moderate { background: var(--yellow); }
+  .diff-dot.filled.hard { background: var(--red); }
+  .diff-indicator .diff-word {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .diff-indicator .diff-word.easy { color: var(--green); }
+  .diff-indicator .diff-word.moderate { color: var(--yellow); }
+  .diff-indicator .diff-word.hard { color: var(--red); }
+
+  /* Day card header dashboard (v3.9 §0.13.7) */
+  .day-header-dash {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--s-4);
+    overflow-x: auto;
+  }
+  @media (max-width: 480px) {
+    .day-header-dash { grid-template-columns: repeat(3, 1fr); }
+  }
+  .dhd-cell {
+    padding: var(--s-3) var(--s-2);
+    border-right: 1px solid var(--border);
+    min-width: 70px;
+  }
+  .dhd-cell:last-child { border-right: none; }
+  .dhd-cell .dhd-icon { color: var(--muted); display: block; margin-bottom: 2px; width: 14px; height: 14px; }
+  .dhd-cell .dhd-val {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    display: block;
+    color: var(--ink);
+  }
+  .dhd-cell .dhd-val.warn { color: var(--red); }
+  .dhd-cell .dhd-lab {
+    font-family: var(--font-headline);
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: block;
+    margin-top: 1px;
+  }
+
+  /* Weather chips (v3.9 §0.13.8) */
+  .wx-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin-bottom: var(--s-4);
+  }
+  .wx-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .wx-chip .icon { width: 14px; height: 14px; color: var(--muted); }
+  .wx-chip.warn { border-color: var(--red); }
+  .wx-chip.warn .icon { color: var(--red); }
+
+  /* Layering level + Exposure (v3.9 §0.13.9) */
+  .layering-status {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-bottom: var(--s-3);
+  }
+  .layering-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .layering-dot.light { background: var(--green); }
+  .layering-dot.standard { background: var(--muted); }
+  .layering-dot.cold { background: var(--yellow); }
+  .layering-dot.full-winter { background: var(--red); }
+  .layering-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+  .layering-label.light { color: var(--green); }
+  .layering-label.standard { color: var(--muted); }
+  .layering-label.cold { color: var(--yellow); }
+  .layering-label.full-winter { color: var(--red); }
+  .exposure-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-2);
+    margin-bottom: var(--s-4);
+  }
+  .exp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+    color: var(--muted);
+  }
+  .exp-chip .icon { width: 14px; height: 14px; }
+  .exp-chip .exp-label { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.6rem; }
+  .exp-chip .exp-val { font-weight: 600; color: var(--ink); }
+  .exp-chip.warn .exp-val { color: var(--red); }
+
+  /* Emergency readiness grid (v3.9 §0.13.10) */
+  .emrg-grid { margin-bottom: var(--s-5); }
+  .emrg-row {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    gap: var(--s-3);
+    align-items: flex-start;
+    padding: var(--s-3) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8125rem;
+  }
+  .emrg-row:last-child { border-bottom: none; }
+  .emrg-sev-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .emrg-sev-dot.green { background: var(--green); }
+  .emrg-sev-dot.yellow { background: var(--yellow); }
+  .emrg-sev-dot.red { background: var(--red); }
+  .emrg-row .emrg-name {
+    font-family: var(--font-headline);
+    font-weight: 600;
+    display: block;
+  }
+  .emrg-row .emrg-note { color: var(--muted); font-size: 0.75rem; display: block; }
+  .emrg-row .emrg-icon { color: var(--muted); align-self: center; }
+
+  /* Operator vs Yatri icon table (v3.9 §0.13.11) */
+  .op-icon-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: var(--s-5);
+  }
+  .op-icon-col { padding: var(--s-4); }
+  .op-icon-col:first-child { border-right: 1px solid var(--border); }
+  .op-icon-col h4 {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 0 0 var(--s-3);
+    font-weight: 400;
+  }
+  .op-icon-row {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8125rem;
+  }
+  .op-icon-row:last-child { border-bottom: none; }
+  .op-icon-row .icon { color: var(--muted); width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* Timeline marker pattern (v3.9 §0.13.13) */
+  .tl-marker-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--s-4);
+    position: relative;
+  }
+  .tl-marker-item {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: var(--s-2);
+    padding-bottom: var(--s-3);
+    position: relative;
+  }
+  .tl-marker-item:last-child { padding-bottom: 0; }
+  .tl-marker-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    margin-top: 3px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .tl-marker-dot.critical { background: var(--red); border-color: var(--red); }
+  .tl-marker-item:not(:last-child) .tl-marker-dot::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    width: 1px;
+    background: var(--border);
+    height: calc(100% + var(--s-3) - 10px);
+    margin-top: 2px;
+  }
+  .tl-marker-content .tl-time {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: block;
+    font-variant-numeric: tabular-nums;
+  }
+  .tl-marker-content .tl-event {
+    font-size: 0.8125rem;
+    color: var(--ink);
+  }
+
+  /* Altitude profile elevated (v3.9 §0.13.12) -- acclim zone tint */
+  .alt-acclim-zone { fill: var(--yellow); opacity: 0.08; }
+
+  /* Dynamic nav badges */
+  .tab-nav .nav-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 10px;
+    padding: 1px 5px;
+    margin-left: 4px;
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-body);
+    vertical-align: middle;
+  }
+
+  /* Journey summary (after phase) */
+  #journey-summary {
+    margin-bottom: var(--s-6);
+  }
+  .journey-summary-title {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: var(--s-3);
+  }
+
 </style>
 </head>
 <body>
-<!-- =================== TAB RADIO INPUTS (#37) =================== -->
+<!-- =================== TAB RADIO INPUTS (#37 + v3.8) =================== -->
 <!-- Must be direct children of body so the :checked ~ .container combinator reaches the container -->
 <input type="radio" name="kailash-tabs" id="tab-overview"   value="overview" checked>
 <input type="radio" name="kailash-tabs" id="tab-itinerary"  value="itinerary">
 <input type="radio" name="kailash-tabs" id="tab-prepare"    value="prepare">
 <input type="radio" name="kailash-tabs" id="tab-reference"  value="reference">
+<!-- v3.8 dynamic nav tabs: today, tomorrow, summary route to content via JS -->
+<input type="radio" name="kailash-tabs" id="tab-today"      value="today">
+<input type="radio" name="kailash-tabs" id="tab-tomorrow"   value="tomorrow">
+<input type="radio" name="kailash-tabs" id="tab-summary"    value="summary">
 
 <button class="theme-toggle" type="button" aria-label="Toggle theme" onclick="(function(){var r=document.documentElement;var cur=r.getAttribute('data-theme');var next=cur==='dark'?'light':'dark';r.setAttribute('data-theme',next);try{localStorage.setItem('kailash_theme_pref',next);}catch(e){}})()">
   <span class="light-only">Dark</span>
@@ -1474,26 +2209,144 @@
   </defs>
 </svg>
 
+<!-- Journey progress bar (top of page, 4px, phase-aware) -->
+<div class="journey-progress-wrap" id="progress-wrap" aria-hidden="true">
+  <div class="journey-progress-bar">
+    <div class="jp-fill" id="jp-fill" style="width:0%"></div>
+  </div>
+  <div class="journey-progress-label" id="jp-label"></div>
+</div>
+
 <!-- =================== CONTAINER (wraps sticky nav + all tab panes) =================== -->
 <div class="container">
 
-<!-- Sticky 4-tab nav (#37) -->
-<nav class="tab-nav" aria-label="Page sections">
+<!-- Sticky 4-tab nav (phase-adaptive, v3.8 §0.12.7) -->
+<nav class="tab-nav" aria-label="Page sections" id="main-tab-nav">
   <label for="tab-overview">Overview</label>
+  <!-- Before phase: Prepare (N) -->
+  <label for="tab-prepare" class="before-only after-hidden" id="nav-prepare-label">Prepare</label>
+  <!-- During phase: Today + Tomorrow -->
+  <label for="tab-today" class="during-only" id="nav-today-label">Today</label>
+  <label for="tab-tomorrow" class="during-only" id="nav-tomorrow-label">Tomorrow</label>
+  <!-- After phase: Summary -->
+  <label for="tab-summary" class="after-only" id="nav-summary-label">Summary</label>
   <label for="tab-itinerary">Itinerary</label>
-  <label for="tab-prepare">Prepare</label>
   <label for="tab-reference">Reference</label>
 </nav>
 
 <!-- =================== TAB: OVERVIEW =================== -->
 <div class="tab-pane" data-tab="overview">
 
-<!-- HEADER + HERO -->
+<!-- HEADER + HERO COMMAND CENTER (v3.9 §0.13.2) -->
 <header class="site">
-  <h1>Kailash Mansarovar Yatra 2026</h1>
-  <p class="subtitle">A pilgrimage to the abode of Lord Shiva</p>
-  <p class="devotional">Jai Bhole Nath</p>
-  <p class="country-mix">This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.</p>
+  <!-- Contextual banner strip (renders above hero when bannerKey != 'none') -->
+  <div id="ctx-banner" aria-live="polite" style="display:none"></div>
+
+  <div class="hero-cmd">
+    <h1>Kailash Mansarovar Yatra 2026</h1>
+    <p class="devotional">Jai Bhole Nath</p>
+    <p class="country-mix"><em>This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.</em></p>
+
+    <!-- Before-phase hero command center -->
+    <div class="before-only" id="hero-before">
+      <div class="hero-phase-label">Preparation Phase</div>
+      <div class="hero-big-num" id="hero-before-num">-- days to departure</div>
+      <div class="hero-sub" id="prep-milestone">Preparation window open</div>
+      <!-- Before-phase progress bar inline -->
+      <div style="margin:var(--s-3) 0 var(--s-4)">
+        <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+          <div id="before-prog-fill" style="height:100%;background:var(--muted);width:0%;transition:width 0.2s ease"></div>
+        </div>
+        <div style="font-size:0.625rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;text-align:right" id="before-prog-label">Preparation 0%</div>
+      </div>
+      <!-- 4 stat tiles: before phase -->
+      <div class="hero-stat-grid" id="hero-before-stats">
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-mountain"/></svg>
+          <span class="stat-num">5,630 m</span>
+          <span class="stat-lab">Highest altitude</span>
+        </div>
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-walking-line"/></svg>
+          <span class="stat-num">52 km</span>
+          <span class="stat-lab">Parikrama</span>
+        </div>
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-signal-off"/></svg>
+          <span class="stat-num">3</span>
+          <span class="stat-lab">Offline days</span>
+        </div>
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-bed-line"/></svg>
+          <span class="stat-num">4,900 m</span>
+          <span class="stat-lab">Highest sleep</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- During-phase hero command center -->
+    <div class="during-only" id="hero-during">
+      <div class="hero-phase-label">On the Yatra</div>
+      <div class="hero-big-num" id="hero-day-label">Day -- of 13</div>
+      <div class="hero-sub" id="hero-location-sub">--</div>
+      <!-- During-phase progress bar inline -->
+      <div style="margin:var(--s-3) 0 var(--s-4)">
+        <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+          <div id="during-prog-fill" style="height:100%;background:var(--green);width:0%;transition:width 0.2s ease"></div>
+        </div>
+        <div style="font-size:0.625rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;text-align:right" id="during-prog-label">Journey 0%</div>
+      </div>
+      <!-- 2 stat tiles: today + tomorrow -->
+      <div class="hero-stat-grid cols-2" id="hero-during-stats">
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-bed-line"/></svg>
+          <span class="stat-num" id="hd-today-loc">Today</span>
+          <span class="stat-lab" id="hd-today-alt">--</span>
+        </div>
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-mountain"/></svg>
+          <span class="stat-num" id="hd-tmrw-loc">Tomorrow</span>
+          <span class="stat-lab" id="hd-tmrw-alt">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- After-phase hero command center -->
+    <div class="after-only" id="hero-after">
+      <div class="hero-phase-label">Yatra completed</div>
+      <div class="hero-big-num">Yatra complete</div>
+      <!-- 100% progress bar -->
+      <div style="margin:var(--s-3) 0 var(--s-4)">
+        <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+          <div style="height:100%;background:var(--green);width:100%"></div>
+        </div>
+        <div style="font-size:0.625rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;text-align:right">Journey 100%</div>
+      </div>
+      <!-- 4 stat tiles: after phase -->
+      <div class="hero-stat-grid" id="hero-after-stats">
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-mountain"/></svg>
+          <span class="stat-num">5,630 m</span>
+          <span class="stat-lab">Highest altitude</span>
+        </div>
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-walking-line"/></svg>
+          <span class="stat-num">52 km</span>
+          <span class="stat-lab">Parikrama</span>
+        </div>
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-bed-line"/></svg>
+          <span class="stat-num">13</span>
+          <span class="stat-lab">Days</span>
+        </div>
+        <div class="hero-stat-cell">
+          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-globe-line"/></svg>
+          <span class="stat-num">4</span>
+          <span class="stat-lab">Countries</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- end hero-cmd -->
 
   <div class="tz-wrap">
     <span class="tz-label" id="tz-indicator">Times shown in your local time</span>
@@ -1516,99 +2369,139 @@
       </div>
     </div>
   </div>
-
-  <!-- Before-phase hero. -->
-  <div class="hero-panel before-only">
-    <div class="countdown" id="countdown-before">Yatra begins in <span id="days-to-go">17</span> days</div>
-    <div class="hero-row">
-      <span class="label">Depart</span>
-      <span class="value">07 Jul 2026 · Tue</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Return</span>
-      <span class="value">19 Jul 2026 · Sun</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Preparation milestone</span>
-      <span class="value" id="prep-milestone">Permits in transit</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Weather forecast</span>
-      <span class="value" id="live-forecast-countdown">Becomes more accurate closer to departure</span>
-    </div>
-  </div>
-
-  <!-- During-phase hero. -->
-  <div class="hero-panel during-only">
-    <div class="countdown"><span id="hero-day-num">Day K</span> of 13</div>
-    <div class="hero-row">
-      <span class="label">Today</span>
-      <span class="value" id="hero-location">Location</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Today's peak altitude</span>
-      <span class="value" id="hero-peak">0 m</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Sleep tonight</span>
-      <span class="value" id="hero-sleep">0 m</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Connectivity</span>
-      <span class="value" id="hero-conn">Good</span>
-    </div>
-  </div>
-
-  <!-- After-phase hero. -->
-  <div class="hero-panel after-only">
-    <div class="countdown">Yatra completed</div>
-    <div class="hero-row">
-      <span class="label">Days</span>
-      <span class="value">13</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Locations</span>
-      <span class="value">6</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Max altitude</span>
-      <span class="value">5,630 m</span>
-    </div>
-    <div class="hero-row">
-      <span class="label">Archive</span>
-      <span class="value"><a href="#day-cards" style="color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border)">View route</a></span>
-    </div>
-  </div>
 </header>
 
 <main>
 
 <!-- OVERVIEW TAB CONTENT -->
-<!-- =================== HEALTH DASHBOARD =================== -->
-<section id="health">
-  <h2>The trip in 6 numbers</h2>
-  <div class="health-grid">
-    <div class="health-cell"><span class="num">5,630 m</span><span class="lab">Highest altitude</span><div class="sub">Dolma La pass · Day 8</div></div>
-    <div class="health-cell"><span class="num">22 km</span><span class="lab">Longest trek day</span><div class="sub">8 to 9 h · Day 8</div></div>
-    <div class="health-cell"><span class="num">-5 to +5 &deg;C</span><span class="lab">Coldest expected</span><div class="sub">Pass overnight low</div></div>
-    <div class="health-cell"><span class="num">29 &deg;C</span><span class="lab">Warmest expected</span><div class="sub">Kathmandu monsoon</div></div>
-    <div class="health-cell"><span class="num">3 days</span><span class="lab">Offline</span><div class="sub">Parikrama · Days 7, 8, 9</div></div>
-    <div class="health-cell"><span class="num">2</span><span class="lab">Border crossings</span><div class="sub">Nepal to China and back</div></div>
+
+<!-- Multi-target countdown stack (before phase only) -->
+<section class="before-only" id="countdown-section">
+  <div class="countdown-stack" id="countdown-stack">
+    <!-- Populated by JS -->
   </div>
 </section>
 
-<!-- =================== TODAY'S STATUS (during only) =================== -->
+<!-- =================== TRIP STATS DASHBOARD (v3.9 §0.13.3) =================== -->
+<section id="health">
+  <div class="trip-stats" aria-label="Trip statistics">
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-mountain"/></svg>
+      <span class="ts-num">5,630 m</span>
+      <span class="ts-lab">Max altitude</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-bed-line"/></svg>
+      <span class="ts-num">4,900 m</span>
+      <span class="ts-lab">Max sleeping altitude</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-walking-line"/></svg>
+      <span class="ts-num">52 km</span>
+      <span class="ts-lab">Trek distance</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-signal-off"/></svg>
+      <span class="ts-num">3</span>
+      <span class="ts-lab">Offline days</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-thermometer"/></svg>
+      <span class="ts-num" style="font-size:1.75rem">-5 to 29</span>
+      <span class="ts-lab">Temperature range (C)</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-globe-line"/></svg>
+      <span class="ts-num">4</span>
+      <span class="ts-lab">Countries</span>
+    </div>
+  </div>
+</section>
+
+<!-- =================== CONNECTIVITY RIBBON (v3.9 §0.13.5) =================== -->
+<section id="conn-ribbon-section">
+  <div class="conn-ribbon">
+    <div class="conn-ribbon-title">Connectivity overview · 13 day view</div>
+    <div class="conn-ribbon-track" id="conn-ribbon-track">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- =================== TODAY CARD (v3.8 §0.12.10, during only) =================== -->
 <section class="during-only" id="today">
-  <h2>Today's status</h2>
-  <div class="today-status">
-    <div class="today-row"><span class="label">Day</span><span class="value" id="ts-day">Day K of 13</span></div>
-    <div class="today-row"><span class="label">Location</span><span class="value" id="ts-loc">--</span></div>
-    <div class="today-row"><span class="label">Today's peak altitude</span><span class="value" id="ts-peak">--</span></div>
-    <div class="today-row"><span class="label">Sleep altitude tonight</span><span class="value" id="ts-sleep">--</span></div>
-    <div class="today-row"><span class="label">Altitude gain vs last night</span><span class="value" id="ts-gain">--</span></div>
-    <div class="today-row"><span class="label">Connectivity right now</span><span class="value" id="ts-conn">--</span></div>
-    <div class="today-row"><span class="label">Reachability today</span><span class="value" id="ts-next">--</span></div>
-    <div class="today-row"><span class="label">Today's weather</span><span class="value" id="ts-weather">--</span></div>
+  <div class="today-card" aria-label="Today on the yatra">
+    <div class="today-card-header">Today</div>
+    <div class="today-3cell">
+      <div class="today-3cell-item">
+        <span class="cell-lab">Date</span>
+        <span class="cell-val" id="today-date">--</span>
+      </div>
+      <div class="today-3cell-item">
+        <span class="cell-lab">Location</span>
+        <span class="cell-val" id="today-loc">--</span>
+      </div>
+      <div class="today-3cell-item">
+        <span class="cell-lab">Altitude</span>
+        <span class="cell-val" id="today-alt">--</span>
+      </div>
+    </div>
+    <div class="today-chips" id="today-chips">
+      <!-- Weather + Connectivity chips, populated by JS -->
+    </div>
+    <div class="today-next-event" id="today-next-event">
+      <svg class="icon icon-16" style="margin-top:2px"><use href="#icon-clock"/></svg>
+      <span id="today-next-text">--</span>
+    </div>
+    <div class="today-tomorrow">
+      <span class="tmrw-label">Tomorrow</span>
+      <span class="tmrw-loc" id="today-tmrw-loc">--</span>
+      <span class="tmrw-alt" id="today-tmrw-alt"></span>
+    </div>
+  </div>
+</section>
+
+<!-- =================== WHAT MATTERS TODAY (v3.8 §0.12.6) =================== -->
+<section id="preparation-status">
+  <div id="wmt-container">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- =================== JOURNEY SUMMARY (after only) =================== -->
+<section class="after-only" id="journey-summary">
+  <div class="journey-summary-title">Journey complete</div>
+  <div class="trip-stats" aria-label="Completed journey stats">
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-mountain"/></svg>
+      <span class="ts-num">5,630 m</span>
+      <span class="ts-lab">Highest reached</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-walking-line"/></svg>
+      <span class="ts-num">52 km</span>
+      <span class="ts-lab">Parikrama completed</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-globe-line"/></svg>
+      <span class="ts-num">13</span>
+      <span class="ts-lab">Days on the yatra</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-flag-line"/></svg>
+      <span class="ts-num">4</span>
+      <span class="ts-lab">Countries traversed</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-bed-line"/></svg>
+      <span class="ts-num">4,900 m</span>
+      <span class="ts-lab">Highest night slept</span>
+    </div>
+    <div class="trip-stat-cell">
+      <svg class="icon ts-icon"><use href="#icon-signal-off"/></svg>
+      <span class="ts-num">3</span>
+      <span class="ts-lab">Offline days</span>
+    </div>
   </div>
 </section>
 
@@ -3251,67 +4144,246 @@
     c.innerHTML = DAYS.map(function(d){ return renderDayCard(d, todayIdx); }).join("");
   }
 
-  /* =================== HERO + TODAY PANEL =================== */
-  function renderHeroBefore(now) {
-    var depart = new Date(DEPART + "T00:00:00");
-    var nowMid = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var diff = Math.ceil((depart - nowMid) / (1000*60*60*24));
-    if (diff < 0) diff = 0;
-    document.getElementById("days-to-go").textContent = diff;
-    // Preparation milestone: phase-aware trip-level status.
-    var milestoneEl = document.getElementById("prep-milestone");
-    if (milestoneEl) {
-      var milestone = "Departure imminent";
-      if (diff >= 15) milestone = "Permits in transit";
-      else if (diff >= 7) milestone = "Medical and insurance checks";
-      else if (diff >= 3) milestone = "Final packing window";
-      milestoneEl.textContent = milestone;
-    }
-    // Forecast freshness label.
-    var lf = document.getElementById("live-forecast-countdown");
-    if (diff <= 16) {
-      lf.textContent = "Live forecast available for the first days";
+  /* =================== v3.8 HERO + TODAY CARD + DYNAMIC SURFACES =================== */
+
+  /* Render the journey progress bar at top of page. */
+  function renderProgressBar(state) {
+    var fill = document.getElementById("jp-fill");
+    var label = document.getElementById("jp-label");
+    if (!fill || !label) return;
+    var pct = state.progressPct;
+    fill.style.width = pct + "%";
+    if (state.phase === "during") {
+      fill.className = "jp-fill green";
+      label.textContent = "Day " + state.tripDayIndex + " of 13 \xb7 " + pct + "%";
+    } else if (state.phase === "after") {
+      fill.className = "jp-fill green";
+      label.textContent = "Completed";
     } else {
-      lf.textContent = "Becomes more accurate closer to departure";
+      fill.className = "jp-fill";
+      label.textContent = "Preparation " + pct + "%";
     }
+  }
+
+  /* Render contextual banner. */
+  function renderContextualBanner(state) {
+    var el = document.getElementById("ctx-banner");
+    if (!el) return;
+    var key = state.bannerKey;
+    if (key === "none") { el.style.display = "none"; el.innerHTML = ""; return; }
+    var titles = {
+      "prep-window":             "Preparation Window",
+      "final-prep":              "Final Preparation",
+      "prepare-for-parikrama":   "Parikrama Begins Tomorrow",
+      "critical-day":            "Critical Day",
+      "recovery-day":            "Recovery Day"
+    };
+    var bodies = {
+      "prep-window":           "Focus on: Passport \xb7 Insurance \xb7 Medical clearance",
+      "final-prep":            "Focus on: Diamox \xb7 Packing \xb7 Offline downloads",
+      "prepare-for-parikrama": "Connectivity will become limited. Weather and altitude become the primary risks.",
+      "critical-day":          "Highest altitude of the journey. Weather can change rapidly. Start early.",
+      "recovery-day":          "Formal program complete. Rest and hydration recommended."
+    };
+    el.className = "ctx-banner banner-" + key;
+    el.style.display = "block";
+    el.innerHTML = '<span class="banner-title">' + (titles[key] || key) + '</span>' +
+      '<span class="banner-body">' + (bodies[key] || "") + '</span>';
+  }
+
+  /* Render the dynamic hero command center. */
+  function renderHeroCmd(state) {
+    if (state.phase === "before") {
+      var numEl = document.getElementById("hero-before-num");
+      if (numEl) numEl.textContent = state.daysToDeparture + " days to departure";
+      /* Preparation milestone. */
+      var milestoneEl = document.getElementById("prep-milestone");
+      if (milestoneEl) {
+        var d = state.daysToDeparture;
+        var milestone = "Departure imminent";
+        if (d >= 15) milestone = "Permits in transit";
+        else if (d >= 7) milestone = "Medical and insurance checks";
+        else if (d >= 3) milestone = "Final packing window";
+        milestoneEl.textContent = milestone;
+      }
+      /* Before-phase progress fill (prep items). */
+      var bfill = document.getElementById("before-prog-fill");
+      var blab  = document.getElementById("before-prog-label");
+      if (bfill) bfill.style.width = state.progressPct + "%";
+      if (blab)  blab.textContent = "Preparation " + state.progressPct + "%";
+    } else if (state.phase === "during" && state.tripDayIndex) {
+      var dayLab = document.getElementById("hero-day-label");
+      if (dayLab) dayLab.textContent = "Day " + state.tripDayIndex + " of 13";
+      var locSub = document.getElementById("hero-location-sub");
+      if (locSub) {
+        var shortl = state.currentLocation.replace(", Tibet","").replace(", Nepal","");
+        locSub.textContent = shortl + " \xb7 " + state.currentAltitude_m.toLocaleString() + " m";
+      }
+      /* During-phase progress. */
+      var dfill = document.getElementById("during-prog-fill");
+      var dlab  = document.getElementById("during-prog-label");
+      if (dfill) dfill.style.width = state.progressPct + "%";
+      if (dlab)  dlab.textContent = "Journey " + state.progressPct + "%";
+      /* Today + Tomorrow stat cells. */
+      var todayLocEl = document.getElementById("hd-today-loc");
+      var todayAltEl = document.getElementById("hd-today-alt");
+      var tmrwLocEl  = document.getElementById("hd-tmrw-loc");
+      var tmrwAltEl  = document.getElementById("hd-tmrw-alt");
+      if (todayLocEl) todayLocEl.textContent = state.currentLocation.replace(", Tibet","").replace(", Nepal","");
+      if (todayAltEl) todayAltEl.textContent = state.currentAltitude_m.toLocaleString() + " m";
+      if (state.tomorrowData) {
+        if (tmrwLocEl) tmrwLocEl.textContent = state.tomorrowLocation.replace(", Tibet","").replace(", Nepal","");
+        if (tmrwAltEl) {
+          tmrwAltEl.textContent = state.tomorrowData.altitude_peak.toLocaleString() + " m";
+          /* Day 8 tomorrow -> --red */
+          if (state.tomorrowData.day === 8) {
+            tmrwLocEl && (tmrwLocEl.className = "stat-num warn");
+          }
+        }
+      }
+    }
+    /* After phase: static. No dynamic updates needed. */
+  }
+
+  /* Render the dynamic nav prepare badge. */
+  function renderNavBadge(state) {
+    var prepLabel = document.getElementById("nav-prepare-label");
+    if (!prepLabel) return;
+    if (state.phase === "before" && state.prepOpenCount > 0) {
+      prepLabel.innerHTML = 'Prepare <span class="nav-badge">' + state.prepOpenCount + '</span>';
+    } else {
+      prepLabel.textContent = "Prepare";
+    }
+  }
+
+  /* Render the TODAY card (during phase only). */
+  function renderTodayCard(state, now) {
+    if (state.phase !== "during" || !state.todayData) return;
+    var d = state.todayData;
+    /* Date. */
+    var dateEl = document.getElementById("today-date");
+    if (dateEl) {
+      var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      dateEl.textContent = now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
+    }
+    /* Location. */
+    var locEl = document.getElementById("today-loc");
+    if (locEl) locEl.textContent = d.location.replace(", Tibet","").replace(", Nepal","");
+    /* Altitude. */
+    var altEl = document.getElementById("today-alt");
+    if (altEl) altEl.textContent = d.altitude_peak.toLocaleString() + " m";
+    /* Connectivity chip. */
+    var chipsEl = document.getElementById("today-chips");
+    if (chipsEl) {
+      var connClass2 = d.conn_status;
+      var connText = d.conn_status === "good" ? "Likely reachable" : (d.conn_status === "offline" ? "Likely offline" : "Intermittent");
+      var wxText = d.weather.high + " / " + d.weather.low + " \xb0C";
+      chipsEl.innerHTML =
+        '<span class="today-chip"><svg class="icon icon-16"><use href="#icon-thermometer"/></svg>' + wxText + '</span>' +
+        '<span class="today-chip ' + connClass2 + '"><svg class="icon icon-16"><use href="#icon-signal-' + (d.conn_status === 'good' ? '3-bars' : (d.conn_status === 'offline' ? 'off' : '1-bar')) + '"/></svg>' + connText + '</span>';
+    }
+    /* Next event (first timeline entry after now). */
+    var nextEl = document.getElementById("today-next-text");
+    if (nextEl && d.timeline && d.timeline.length) {
+      var nowH = now.getHours() * 60 + now.getMinutes();
+      var nextEv = null;
+      for (var ei = 0; ei < d.timeline.length; ei++) {
+        var ev = d.timeline[ei];
+        var tstr = ev.time.split("-")[0].split(":");
+        var evMin = parseInt(tstr[0],10)*60 + (parseInt(tstr[1],10)||0);
+        if (evMin > nowH) { nextEv = ev; break; }
+      }
+      if (!nextEv) nextEv = d.timeline[d.timeline.length-1];
+      nextEl.textContent = nextEv.time + " \xb7 " + nextEv.event;
+    }
+    /* Tomorrow block. */
+    var tmrwLocE = document.getElementById("today-tmrw-loc");
+    var tmrwAltE = document.getElementById("today-tmrw-alt");
+    if (state.tomorrowData) {
+      if (tmrwLocE) tmrwLocE.textContent = state.tomorrowLocation.replace(", Tibet","").replace(", Nepal","");
+      if (tmrwAltE) tmrwAltE.textContent = state.tomorrowData.altitude_peak.toLocaleString() + " m";
+    }
+  }
+
+  /* Render the multi-target countdown stack (before phase only). */
+  function renderCountdowns(state) {
+    var el = document.getElementById("countdown-stack");
+    if (!el) return;
+    if (state.phase !== "before") { el.parentElement && (el.parentElement.style.display = "none"); return; }
+    if (el.parentElement) el.parentElement.style.display = "";
+    var dtd = state.daysToDeparture;
+    var rows = [
+      {num: dtd, label: "days to departure"},
+      {num: Math.max(0, dtd - 16), label: "days until weather forecasts become reliable"},
+      {num: dtd + 4, label: "days until Mansarovar"},
+      {num: dtd + 6, label: "days until Parikrama begins"},
+      {num: dtd + 7, label: "days until Dolma La"}
+    ];
+    el.innerHTML = rows.map(function(r){
+      return '<div class="countdown-row"><span class="cd-num">' + r.num + '</span><span class="cd-label">' + r.label + '</span></div>';
+    }).join("");
+  }
+
+  /* Render "What matters today" card. */
+  function renderWhatMatters(state) {
+    var el = document.getElementById("wmt-container");
+    if (!el) return;
+    var items = state.whatMattersToday;
+    var isAfter = state.phase === "after";
+    var isDuring = state.phase === "during";
+    var title = isAfter ? "What mattered most" : "What matters today";
+    var savedKey = "kailash_wmt_state";
+    var savedState = {};
+    try { savedState = JSON.parse(localStorage.getItem(savedKey) || "{}"); } catch(e) {}
+    var html = '<div class="wmt-header"><span>' + title + '</span></div>';
+    items.forEach(function(item, idx) {
+      var id = "wmt-" + idx;
+      var done = isAfter || !!savedState[id];
+      var icon = isAfter
+        ? '<svg class="icon wmt-check-icon" style="width:16px;height:16px"><use href="#icon-check"/></svg>'
+        : '<input type="checkbox" data-wmtid="' + id + '" ' + (done ? "checked" : "") + '>';
+      html += '<div class="wmt-item' + (done ? " done" : "") + '" id="wmt-item-' + idx + '">' + icon + '<span class="wmt-text">' + escapeHtml(item) + '</span></div>';
+    });
+    el.innerHTML = html;
+    /* Bind checkboxes. */
+    el.querySelectorAll('input[type=checkbox]').forEach(function(cb) {
+      cb.addEventListener("change", function() {
+        try {
+          var s = JSON.parse(localStorage.getItem(savedKey) || "{}");
+          s[cb.dataset.wmtid] = cb.checked;
+          localStorage.setItem(savedKey, JSON.stringify(s));
+        } catch(e) {}
+        var li = cb.closest(".wmt-item");
+        if (li) li.classList.toggle("done", cb.checked);
+      });
+    });
+  }
+
+  /* Render connectivity ribbon. */
+  function renderConnRibbon() {
+    var el = document.getElementById("conn-ribbon-track");
+    if (!el) return;
+    var conn = ["good","good","good","good","intermittent","intermittent","offline","offline","intermittent","intermittent","good","good","good"];
+    var html = "";
+    conn.forEach(function(c, i) {
+      html += '<div class="conn-ribbon-cell" title="Day ' + (i+1) + ': ' + c + '">';
+      html += '<span class="cr-day">D' + (i+1) + '</span>';
+      html += '<span class="cr-dot ' + c + '"></span>';
+      html += '</div>';
+      if (i < 12) html += '<div class="conn-ribbon-line"></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  /* Legacy hero/today helpers kept for reference but replaced by v3.8 functions above. */
+  function renderHeroBefore(now) {
+    /* Delegated to renderHeroCmd via renderAll. */
   }
   function renderHeroDuring(todayIdx) {
-    if (!todayIdx) return;
-    var d = DAYS[todayIdx-1];
-    document.getElementById("hero-day-num").textContent = "Day " + d.day;
-    document.getElementById("hero-location").textContent = d.location;
-    document.getElementById("hero-peak").textContent = d.altitude_peak.toLocaleString() + " m";
-    document.getElementById("hero-sleep").textContent = d.altitude_sleep.toLocaleString() + " m";
-    document.getElementById("hero-conn").textContent = d.conn_status;
+    /* Delegated to renderHeroCmd via renderAll. */
   }
   function renderTodayPanel(todayIdx) {
-    if (!todayIdx) return;
-    var d = DAYS[todayIdx-1];
-    var prev = todayIdx > 1 ? DAYS[todayIdx-2] : null;
-    document.getElementById("ts-day").textContent = "Day " + d.day + " of 13";
-    document.getElementById("ts-loc").textContent = d.location;
-    document.getElementById("ts-peak").textContent = d.altitude_peak.toLocaleString() + " m";
-    document.getElementById("ts-sleep").textContent = d.altitude_sleep.toLocaleString() + " m";
-    if (prev) {
-      var gain = d.altitude_sleep - prev.altitude_sleep;
-      var sign = gain >= 0 ? "+" : "";
-      var label = gain >= 0 ? "ascent" : "descent";
-      document.getElementById("ts-gain").textContent = sign + gain.toLocaleString() + " m (" + label + ")";
-    } else {
-      document.getElementById("ts-gain").textContent = "baseline";
-    }
-    document.getElementById("ts-conn").textContent = d.conn_status;
-    var tsReach = "";
-    if (d.conn_status === "good") {
-      tsReach = "Likely reachable today";
-    } else if (d.conn_status === "offline") {
-      tsReach = d.next_signal ? "Likely offline. Back online " + d.next_signal : "Likely offline today";
-    } else {
-      tsReach = d.next_signal ? "Intermittent. Try " + d.next_signal : "Intermittent connectivity";
-    }
-    document.getElementById("ts-next").textContent = tsReach;
-    var w = d.weather;
-    document.getElementById("ts-weather").textContent = "High " + w.high + " / Low " + w.low + " degC, Wind " + w.wind + " km/h";
+    /* Delegated to renderTodayCard via renderAll. */
   }
 
   /* =================== ALTITUDE CURSOR =================== */
@@ -3636,15 +4708,47 @@
     var mode = localStorage.getItem("kailash_tz_mode") || "local";
     var tripTzName = getTripTz(todayIdx, phase);
     updateTzIndicator(mode, tripTzName);
-    renderHeroBefore(now);
-    renderHeroDuring(todayIdx);
-    renderTodayPanel(todayIdx);
+
+    /* v3.8 Journey State Engine. */
+    try {
+      var state = refreshJourneyState();
+      renderProgressBar(state);
+      renderContextualBanner(state);
+      renderHeroCmd(state);
+      renderNavBadge(state);
+      renderTodayCard(state, now);
+      renderCountdowns(state);
+      renderWhatMatters(state);
+    } catch(e) { /* fallback: non-fatal */ }
+
+    /* Connectivity ribbon (static data, render once). */
+    try { renderConnRibbon(); } catch(e) {}
+
+    /* Legacy + v3.7 renders. */
     renderAltCursor(todayIdx);
     renderTOC();
     renderDayCards(todayIdx);
     renderPretrip();
     renderMaster();
     applyClassPhase(phase);
+
+    /* Auto-scroll on initial load (§0.12.9). */
+    try { applyAutoScroll(phase); } catch(e) {}
+  }
+
+  /* Auto-scroll to right anchor on initial page load (§0.12.9). */
+  var _didAutoScroll = false;
+  function applyAutoScroll(phase) {
+    if (_didAutoScroll) return;
+    /* If URL has a hash, let the hash win. */
+    if (window.location.hash && window.location.hash.length > 1) return;
+    _didAutoScroll = true;
+    var anchors = {before:"preparation-status", during:"today", after:"journey-summary"};
+    var anchorId = anchors[phase] || "preparation-status";
+    requestAnimationFrame(function() {
+      var el = document.getElementById(anchorId);
+      if (el) el.scrollIntoView({behavior:"instant", block:"start"});
+    });
   }
 
   /* =================== TAB NAVIGATION (#37) =================== */
@@ -3663,22 +4767,67 @@
 
   function initTabs() {
     var phase = computePhase(getReferenceDate());
-    // 1. Check URL hash first
+    /* 1. Check URL hash first. */
     var hash = window.location.hash.replace("#", "");
     var hashMap = {overview:"tab-overview", itinerary:"tab-itinerary", prepare:"tab-prepare", reference:"tab-reference"};
     if (hashMap[hash]) {
       activateTab(hashMap[hash]);
       return;
     }
-    // 2. Restore from localStorage
+    /* 2. Restore from localStorage (only allow valid tabs for current phase). */
     var stored = null;
     try { stored = localStorage.getItem("kailash_active_tab"); } catch(e) {}
+    if (stored && document.getElementById(stored)) {
+      /* Don't restore during-only tabs in wrong phase. */
+      var duringOnly = {"tab-today":1, "tab-tomorrow":1};
+      var afterOnly = {"tab-summary":1};
+      if (phase !== "during" && duringOnly[stored]) stored = null;
+      if (phase !== "after" && afterOnly[stored]) stored = null;
+    }
     if (stored && document.getElementById(stored)) {
       activateTab(stored);
       return;
     }
-    // 3. Phase default
+    /* 3. Phase default. */
     activateTab(getPhaseDefaultTab(phase));
+  }
+
+  /* Handle Today/Tomorrow/Summary tab clicks -- they show overview pane and scroll. */
+  function setupDynamicTabHandlers() {
+    var todayLabel = document.getElementById("nav-today-label");
+    var tmrwLabel  = document.getElementById("nav-tomorrow-label");
+    var summLabel  = document.getElementById("nav-summary-label");
+    function handleToday(e) {
+      e.preventDefault();
+      /* tab-today radio shows overview pane via CSS; scroll to #today */
+      setTimeout(function() {
+        var el = document.getElementById("today");
+        if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+      }, 50);
+    }
+    function handleTmrw(e) {
+      e.preventDefault();
+      var state = getJourneyState();
+      if (state.tomorrowData) {
+        setTimeout(function() {
+          activateTab("tab-itinerary");
+          setTimeout(function() {
+            var el = document.getElementById("day-" + state.tomorrowData.day);
+            if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+          }, 50);
+        }, 0);
+      }
+    }
+    function handleSumm(e) {
+      e.preventDefault();
+      setTimeout(function() {
+        var el = document.getElementById("journey-summary");
+        if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+      }, 50);
+    }
+    if (todayLabel) todayLabel.addEventListener("click", handleToday);
+    if (tmrwLabel)  tmrwLabel.addEventListener("click", handleTmrw);
+    if (summLabel)  summLabel.addEventListener("click", handleSumm);
   }
 
   /* =================== SCROLL TO DAY (Journey Map) (#40) =================== */
@@ -3742,8 +4891,9 @@
   }
 
   document.addEventListener("DOMContentLoaded", function(){
-    // Tab init FIRST so any downstream error does not leave the page blank.
+    /* Tab init FIRST so any downstream error does not leave the page blank. */
     try { initTabs(); } catch(e) { /* fallback handled by inline checked attribute on tab-overview */ }
+    try { setupDynamicTabHandlers(); } catch(e) {}
     try { setupTimezone(); } catch(e) {}
     try { renderAll(); } catch(e) {}
     try { bindChecklistEvents(); } catch(e) {}
