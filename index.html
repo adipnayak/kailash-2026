@@ -3531,11 +3531,11 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
         </div>
         <div style="font-size:0.625rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;text-align:right" id="before-prog-label">Preparation 0%</div>
       </div>
-      <!-- 4 stat tiles: before phase -->
+      <!-- 4 stat tiles: before phase (v3.12 #11 + #2 dual-unit) -->
       <div class="hero-stat-grid" id="hero-before-stats">
         <div class="hero-stat-cell">
           <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-mountain"/></svg>
-          <span class="stat-num">5,630 m</span>
+          <span class="stat-num">5,630m<span class="altitude-value-feet">18,471ft</span></span>
           <span class="stat-lab">Highest altitude</span>
         </div>
         <div class="hero-stat-cell">
@@ -3550,7 +3550,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
         </div>
         <div class="hero-stat-cell">
           <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-bed-line"/></svg>
-          <span class="stat-num">4,900 m</span>
+          <span class="stat-num">4,900m<span class="altitude-value-feet">16,076ft</span></span>
           <span class="stat-lab">Highest sleep</span>
         </div>
       </div>
@@ -3568,17 +3568,35 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
         </div>
         <div style="font-size:0.625rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;text-align:right" id="during-prog-label">Journey 0%</div>
       </div>
-      <!-- 2 stat tiles: today + tomorrow -->
-      <div class="hero-stat-grid cols-2" id="hero-during-stats">
-        <div class="hero-stat-cell">
-          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-bed-line"/></svg>
-          <span class="stat-num" id="hd-today-loc">Today</span>
-          <span class="stat-lab" id="hd-today-alt">--</span>
+      <!-- v3.12 #11: TODAY + TOMORROW dual panel (merged TODAY card) -->
+      <div class="hero-v312-during" id="hero-v312-during-panel">
+        <div class="hero-v312-today">
+          <span class="hero-v312-label">TODAY</span>
+          <div class="hero-v312-loc" id="hd-today-loc">--</div>
+          <div class="hero-v312-chips" id="hd-today-chips">
+            <span class="hero-v312-chip">
+              <svg class="icon" style="width:10px;height:10px"><use href="#icon-mountain"/></svg>
+              <span id="hd-today-alt">--</span>
+            </span>
+            <span class="hero-v312-chip" id="hd-today-wx">
+              <svg class="icon" style="width:10px;height:10px"><use href="#icon-thermometer"/></svg>
+              <span>--</span>
+            </span>
+            <span class="hero-v312-chip" id="hd-today-conn">
+              <svg class="icon" style="width:10px;height:10px"><use href="#icon-signal-3-bars"/></svg>
+              <span>--</span>
+            </span>
+          </div>
         </div>
-        <div class="hero-stat-cell">
-          <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-mountain"/></svg>
-          <span class="stat-num" id="hd-tmrw-loc">Tomorrow</span>
-          <span class="stat-lab" id="hd-tmrw-alt">--</span>
+        <div class="hero-v312-tomorrow">
+          <span class="hero-v312-label">TOMORROW</span>
+          <div class="hero-v312-loc" id="hd-tmrw-loc">--</div>
+          <div class="hero-v312-chips">
+            <span class="hero-v312-chip">
+              <svg class="icon" style="width:10px;height:10px"><use href="#icon-mountain"/></svg>
+              <span id="hd-tmrw-alt">--</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -3586,7 +3604,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
     <!-- After-phase hero command center -->
     <div class="after-only" id="hero-after">
       <div class="hero-phase-label">Yatra completed</div>
-      <div class="hero-big-num">Yatra complete</div>
+      <div class="hero-big-num">Yatra Sampoorna (yatra complete)</div>
       <!-- 100% progress bar -->
       <div style="margin:var(--s-3) 0 var(--s-4)">
         <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
@@ -3598,7 +3616,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
       <div class="hero-stat-grid" id="hero-after-stats">
         <div class="hero-stat-cell">
           <svg class="icon stat-icon" style="width:16px;height:16px"><use href="#icon-mountain"/></svg>
-          <span class="stat-num">5,630 m</span>
+          <span class="stat-num">5,630m<span class="altitude-value-feet">18,471ft</span></span>
           <span class="stat-lab">Highest altitude</span>
         </div>
         <div class="hero-stat-cell">
@@ -8246,19 +8264,47 @@ function renderDayCardsV312(todayIdx) {
    The existing before/during/after hero already handles phases;
    we enhance the during-phase hero with proper 4+2 chip layout.
    ========================================================= */
+/* #11 Hero refactor: TODAY card merged into Hero stripe, 3 phase variants */
 function renderHeroV312(state) {
   if (state.phase !== "during" || !state.todayData) return;
   var d = state.todayData;
   var td = state.tomorrowData;
-  /* Update existing hero during stat cells */
+
+  /* Location */
   var todayLocEl = document.getElementById("hd-today-loc");
-  var todayAltEl = document.getElementById("hd-today-alt");
-  var tmrwLocEl  = document.getElementById("hd-tmrw-loc");
-  var tmrwAltEl  = document.getElementById("hd-tmrw-alt");
   if (todayLocEl) todayLocEl.textContent = (d.location || "").replace(", Tibet","").replace(", Nepal","");
+
+  /* Altitude chip - dual unit */
+  var todayAltEl = document.getElementById("hd-today-alt");
   if (todayAltEl) todayAltEl.innerHTML = altHtml(d.altitude_peak);
+
+  /* Weather chip */
+  var todayWxEl = document.getElementById("hd-today-wx");
+  if (todayWxEl) {
+    var wxSpan = todayWxEl.querySelector("span");
+    if (wxSpan) wxSpan.textContent = d.weather.high + "/" + d.weather.low + " degC";
+  }
+
+  /* Connectivity chip */
+  var todayConnEl = document.getElementById("hd-today-conn");
+  if (todayConnEl) {
+    var connSpan = todayConnEl.querySelector("span");
+    var connIcon = todayConnEl.querySelector("svg use");
+    var connLabel = d.conn_status === "good" ? "Reachable" : d.conn_status === "offline" ? "Offline" : "Limited";
+    var connHref = d.conn_status === "good" ? "#icon-signal-3-bars" : d.conn_status === "offline" ? "#icon-signal-off" : "#icon-signal-1-bar";
+    if (connSpan) connSpan.textContent = connLabel;
+    if (connIcon) connIcon.setAttribute("href", connHref);
+  }
+
+  /* Tomorrow */
+  var tmrwLocEl = document.getElementById("hd-tmrw-loc");
+  var tmrwAltEl = document.getElementById("hd-tmrw-alt");
   if (tmrwLocEl && td) tmrwLocEl.textContent = (td.location || "").replace(", Tibet","").replace(", Nepal","");
   if (tmrwAltEl && td) tmrwAltEl.innerHTML = altHtml(td.altitude_peak);
+
+  /* Hide the old legacy today-card if still present */
+  var oldToday = document.getElementById("today");
+  if (oldToday) oldToday.style.display = "none";
 }
 
 /* =========================================================
