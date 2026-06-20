@@ -2692,7 +2692,7 @@
 
 <!-- Why this place matters (moved from before-phase inline) -->
 <section class="before-only" id="prep-why">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-why">
     <summary>Why this place matters</summary>
     <div class="disc-body">
       <p class="lede">Mount Kailash, at the western edge of the Tibetan plateau, is one of the few mountains in the world considered sacred across four religions. In Hinduism it is the abode of Lord Shiva. In Buddhism it is the dwelling of Demchok, embodiment of supreme bliss. In Jainism it is where Rishabhadeva attained liberation. In Bon it is the seat of the spiritual hierarchy of the cosmos.</p>
@@ -2745,7 +2745,7 @@
     </div>
   </div>
 
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-operator">
     <summary>See full procurement detail <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg></summary>
     <div class="disc-body">
       <h3>Gear distributed on Day 2 (YPO orange kit, one set per yatri)</h3>
@@ -2858,7 +2858,7 @@
 
 <!-- Medicines (collapsed by default per #42) -->
 <section id="prep-medicine">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-medicine">
     <summary>Medicines and Diamox protocol</summary>
     <div class="disc-body">
       <h3>Master medicines list</h3>
@@ -2961,7 +2961,7 @@
 
 <!-- Visa workflow (collapsed by default per #42) -->
 <section class="before-only" id="prep-visa">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-visa">
     <summary>Visa and permits workflow</summary>
     <div class="disc-body">
       <p class="lede">The Chinese Group Visa is the single biggest pre-trip dependency the yatri does not control directly.</p>
@@ -3017,7 +3017,7 @@
 
 <!-- Pre-trip spiritual practices (collapsed by default per #42) -->
 <section class="before-only" id="prep-spiritual">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="prep-spiritual">
     <summary>Pre-trip spiritual practices (optional)</summary>
     <div class="disc-body">
       <p class="lede">These are presented as optional practices, not requirements. The yatra is open to yatris across the spiritual spectrum.</p>
@@ -3065,7 +3065,7 @@
 
 <!-- Connectivity playbook (collapsed by default per #42) -->
 <section class="not-after" id="ref-connectivity">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="ref-connectivity">
     <summary>Connectivity playbook</summary>
     <div class="disc-body">
       <p class="lede">Tibet is behind the Great Firewall. Without a working VPN, WhatsApp, Google, Instagram, Facebook, YouTube, Gmail are all blocked.</p>
@@ -3134,7 +3134,7 @@
 
 <!-- Bag transitions (collapsed by default per #42) -->
 <section class="not-after" id="ref-bags">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="ref-bags">
     <summary>Bag transitions: the 4-bag system</summary>
     <div class="disc-body">
       <p class="lede">Knowing which bag is where on each day is the single biggest operational unlock.</p>
@@ -3184,7 +3184,7 @@
 
 <!-- Customs (collapsed by default per #42) -->
 <section class="not-after" id="ref-customs">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="ref-customs">
     <summary>Customs and immigration tips</summary>
     <div class="disc-body">
       <p class="lede">Tibet customs at Lhasa airport on Day 3 is the strictest immigration checkpoint of the trip.</p>
@@ -3251,7 +3251,7 @@
 
 <!-- Acclimatization (collapsed by default per #42) -->
 <section class="not-after" id="ref-acclimatization">
-  <details class="disclosure">
+  <details class="disclosure" data-section-key="ref-acclimatization">
     <summary>Acclimatization rules</summary>
     <div class="disc-body">
       <p class="lede">The biggest risk on this trip is not the pass. It is acute mountain sickness (AMS) from sleep-altitude accumulation.</p>
@@ -3296,7 +3296,7 @@
 
 <!-- Emergency protocol (open by default in during phase, collapsed otherwise per #42) -->
 <section id="ref-emergency">
-  <details class="disclosure" id="emergency-details">
+  <details class="disclosure" id="emergency-details" data-section-key="ref-emergency">
     <summary>Emergency protocol for family</summary>
     <div class="disc-body">
       <p class="lede"><strong>If you do not hear from the yatri on Days 7, 8, or 9 (Parikrama), this is expected.</strong> Operator Sherpa team handles emergencies. Resume contact attempts from Day 10 (Lhasa return).</p>
@@ -4906,6 +4906,47 @@
     });
   }
 
+  /* =================== PHASE-DRIVEN SECTION DEFAULTS (#51, §0.12.3) ===================
+   * Per-section open/collapsed defaults, with localStorage override per-section.
+   * Section keys: prep-why, prep-operator, prep-medicine, prep-visa, prep-spiritual,
+   *               ref-connectivity, ref-bags, ref-customs, ref-acclimatization, ref-emergency
+   */
+  var SECTION_DEFAULTS = {
+    /* key:        [before, during, after] -- true=open, false=closed */
+    "prep-why":             [true,  false, false],
+    "prep-operator":        [true,  false, false],
+    "prep-medicine":        [true,  false, false],
+    "prep-visa":            [true,  false, false],
+    "prep-spiritual":       [true,  false, false],
+    "ref-connectivity":     [false, true,  false],
+    "ref-bags":             [false, false, false],
+    "ref-customs":          [false, false, false],
+    "ref-acclimatization":  [false, false, false],
+    "ref-emergency":        [false, true,  false]
+  };
+  function initSectionDefaults(phase) {
+    var phaseIdx = phase === "before" ? 0 : (phase === "during" ? 1 : 2);
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem("kailash_section_state") || "{}"); } catch(e) {}
+    document.querySelectorAll("details.disclosure[data-section-key]").forEach(function(det) {
+      var key = det.getAttribute("data-section-key");
+      if (key === "ref-emergency") return; /* handled separately by initEmergencyDisclosure */
+      if (saved[key] !== undefined) {
+        det.open = !!saved[key];
+      } else {
+        var def = SECTION_DEFAULTS[key];
+        if (def) det.open = !!def[phaseIdx];
+      }
+      det.addEventListener("toggle", function() {
+        try {
+          var s = JSON.parse(localStorage.getItem("kailash_section_state") || "{}");
+          s[key] = det.open;
+          localStorage.setItem("kailash_section_state", JSON.stringify(s));
+        } catch(e) {}
+      });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function(){
     /* Tab init FIRST so any downstream error does not leave the page blank. */
     try { initTabs(); } catch(e) { /* fallback handled by inline checked attribute on tab-overview */ }
@@ -4924,6 +4965,7 @@
     try {
       var phase = computePhase(getReferenceDate());
       initEmergencyDisclosure(phase);
+      initSectionDefaults(phase);
     } catch(e) {}
   });
 </script>
