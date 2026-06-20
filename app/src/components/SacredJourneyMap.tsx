@@ -174,7 +174,7 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
     <section
       data-section="sacred-journey-map"
       aria-label="Sacred Journey Map"
-      className="w-full overflow-x-auto border-b border-border bg-bg py-0"
+      className="w-full overflow-x-auto border-b border-border bg-background py-0"
     >
       <svg
         ref={svgRef}
@@ -201,15 +201,15 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             #sacred-journey-map .stop { cursor: pointer; }
             #sacred-journey-map .stop:hover .stop-node { stroke-width: 3; }
             #sacred-journey-map .stop:focus { outline: none; }
-            #sacred-journey-map .stop:focus .stop-node { stroke: var(--accent); stroke-width: 3; }
+            #sacred-journey-map .stop:focus .stop-node { stroke: var(--accent-foreground); stroke-width: 3; }
 
             #sacred-journey-map[data-phase="during"] .stop:not(.you-are-here) { opacity: 0.3; transition: opacity 400ms; }
             #sacred-journey-map[data-phase="during"] .stop.you-are-here { opacity: 1; }
 
-            #sacred-journey-map[data-phase="after"] .sacred-marker use { color: var(--accent); }
+            #sacred-journey-map[data-phase="after"] .sacred-marker use { color: var(--accent-foreground); }
 
             #sacred-journey-map .origin-ray {
-              stroke: var(--muted);
+              stroke: var(--muted-foreground);
               stroke-width: 1;
               stroke-dasharray: 3,3;
               transition: stroke 400ms, stroke-width 400ms, stroke-dasharray 400ms;
@@ -219,7 +219,7 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             #sacred-journey-map.origin-active-uae    .origin-group[data-origin="uae"]    .origin-ray,
             #sacred-journey-map.origin-active-us     .origin-group[data-origin="us"]     .origin-ray,
             #sacred-journey-map.origin-active-mauritius .origin-group[data-origin="mauritius"] .origin-ray {
-              stroke: var(--ink);
+              stroke: var(--foreground);
               stroke-width: 2.5;
               stroke-dasharray: none;
             }
@@ -250,9 +250,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             fill="var(--card)"
             fillOpacity="0.35"
           />
-          <text x="900" y="455" fontFamily="Inter Tight, sans-serif" fontSize="11" fill="var(--muted)" letterSpacing="0.2em">INDIA</text>
-          <text x="520" y="385" fontFamily="Inter Tight, sans-serif" fontSize="10" fill="var(--muted)" letterSpacing="0.18em">NEPAL</text>
-          <text x="780" y="190" fontFamily="Inter Tight, sans-serif" fontSize="11" fill="var(--muted)" letterSpacing="0.2em">TIBET</text>
+          <text x="900" y="455" fontFamily="Geist Sans, sans-serif" fontSize="11" fill="var(--muted-foreground)" letterSpacing="0.2em">INDIA</text>
+          <text x="520" y="385" fontFamily="Geist Sans, sans-serif" fontSize="10" fill="var(--muted-foreground)" letterSpacing="0.18em">NEPAL</text>
+          <text x="780" y="190" fontFamily="Geist Sans, sans-serif" fontSize="11" fill="var(--muted-foreground)" letterSpacing="0.2em">TIBET</text>
         </g>
 
         {/* Origin rays */}
@@ -272,31 +272,31 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
         </g>
 
         {/* Origin labels */}
-        <g className="origins" fontFamily="JetBrains Mono, monospace">
+        <g className="origins" fontFamily="Geist Mono, monospace">
           <g className="origin" data-origin="us">
-            <circle className="origin-node" cx="60" cy="140" r="6" fill="var(--bg)" stroke="var(--ink)" strokeWidth="1.5" />
-            <text x="75" y="144" fontSize="11" fill="var(--ink)" letterSpacing="0.05em">NEW YORK</text>
-            <text x="75" y="156" fontSize="8" fill="var(--muted)" letterSpacing="0.1em">America/New_York</text>
+            <circle className="origin-node" cx="60" cy="140" r="6" fill="var(--background)" stroke="var(--foreground)" strokeWidth="1.5" />
+            <text x="75" y="144" fontSize="11" fill="var(--foreground)" letterSpacing="0.05em">NEW YORK</text>
+            <text x="75" y="156" fontSize="8" fill="var(--muted-foreground)" letterSpacing="0.1em">America/New_York</text>
           </g>
           <g className="origin" data-origin="uae">
-            <circle className="origin-node" cx="60" cy="240" r="6" fill="var(--bg)" stroke="var(--ink)" strokeWidth="1.5" />
-            <text x="75" y="244" fontSize="11" fill="var(--ink)" letterSpacing="0.05em">DUBAI</text>
-            <text x="75" y="256" fontSize="8" fill="var(--muted)" letterSpacing="0.1em">Asia/Dubai</text>
+            <circle className="origin-node" cx="60" cy="240" r="6" fill="var(--background)" stroke="var(--foreground)" strokeWidth="1.5" />
+            <text x="75" y="244" fontSize="11" fill="var(--foreground)" letterSpacing="0.05em">DUBAI</text>
+            <text x="75" y="256" fontSize="8" fill="var(--muted-foreground)" letterSpacing="0.1em">Asia/Dubai</text>
           </g>
           <g className="origin" data-origin="mumbai">
-            <circle className="origin-node" cx="135" cy="440" r="6" fill="var(--bg)" stroke="var(--ink)" strokeWidth="1.5" />
-            <text x="150" y="444" fontSize="11" fill="var(--ink)" letterSpacing="0.05em">MUMBAI</text>
-            <text x="150" y="456" fontSize="8" fill="var(--muted)" letterSpacing="0.1em">Asia/Kolkata</text>
+            <circle className="origin-node" cx="135" cy="440" r="6" fill="var(--background)" stroke="var(--foreground)" strokeWidth="1.5" />
+            <text x="150" y="444" fontSize="11" fill="var(--foreground)" letterSpacing="0.05em">MUMBAI</text>
+            <text x="150" y="456" fontSize="8" fill="var(--muted-foreground)" letterSpacing="0.1em">Asia/Kolkata</text>
           </g>
           <g className="origin" data-origin="mauritius">
-            <circle className="origin-node" cx="60" cy="470" r="6" fill="var(--bg)" stroke="var(--ink)" strokeWidth="1.5" />
-            <text x="75" y="474" fontSize="11" fill="var(--ink)" letterSpacing="0.05em">PORT LOUIS</text>
-            <text x="75" y="486" fontSize="8" fill="var(--muted)" letterSpacing="0.1em">Indian/Mauritius</text>
+            <circle className="origin-node" cx="60" cy="470" r="6" fill="var(--background)" stroke="var(--foreground)" strokeWidth="1.5" />
+            <text x="75" y="474" fontSize="11" fill="var(--foreground)" letterSpacing="0.05em">PORT LOUIS</text>
+            <text x="75" y="486" fontSize="8" fill="var(--muted-foreground)" letterSpacing="0.1em">Indian/Mauritius</text>
           </g>
         </g>
 
         {/* Route segments */}
-        <g className="route-segments" fill="none" stroke="var(--ink)" strokeWidth="1.5" strokeLinecap="round">
+        <g className="route-segments" fill="none" stroke="var(--foreground)" strokeWidth="1.5" strokeLinecap="round">
           <path className="delight-route-draw" d="M 480,380 Q 700,330 940,280" strokeDasharray="6,4" />
           <path className="delight-route-draw" d="M 940,280 Q 700,250 480,220" strokeDasharray="6,4" />
           <path className="delight-route-draw" d="M 480,220 L 420,235" />
@@ -306,7 +306,7 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
         </g>
 
         {/* Parikrama loop (2.5px, visual hero) */}
-        <g className="parikrama-loop" fill="none" stroke="var(--ink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <g className="parikrama-loop" fill="none" stroke="var(--foreground)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path
             className="delight-parikrama-loop"
             d="M 420,235 Q 360,200 290,180 Q 240,150 260,110 Q 280,85 320,100 Q 380,140 380,180 Q 360,210 420,235 Z"
@@ -314,7 +314,7 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
         </g>
 
         {/* Trip stops (clickable) */}
-        <g className="trip-stops" fontFamily="JetBrains Mono, monospace">
+        <g className="trip-stops" fontFamily="Geist Mono, monospace">
 
           <g
             className={`stop stop-kathmandu${currentStopClass === 'stop-kathmandu' ? ' you-are-here' : ''}`}
@@ -325,9 +325,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onClick={() => handleStopClick('day-1')}
             onKeyDown={(e) => handleStopKeyDown(e, 'day-1')}
           >
-            <circle className="stop-node" cx="480" cy="380" r="9" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2" />
-            <text x="495" y="385" fontSize="13" fill="var(--ink)" fontWeight="600">Kathmandu</text>
-            <text x="495" y="399" fontSize="9" fill="var(--muted)" letterSpacing="0.1em">D1 D2 D11 D12 D13 - 1,380M</text>
+            <circle className="stop-node" cx="480" cy="380" r="9" fill="var(--background)" stroke="var(--foreground)" strokeWidth="2" />
+            <text x="495" y="385" fontSize="13" fill="var(--foreground)" fontWeight="600">Kathmandu</text>
+            <text x="495" y="399" fontSize="9" fill="var(--muted-foreground)" letterSpacing="0.1em">D1 D2 D11 D12 D13 - 1,380M</text>
             <title>Kathmandu - 1,380m / 4,528ft</title>
           </g>
 
@@ -340,9 +340,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onClick={() => handleStopClick('day-3')}
             onKeyDown={(e) => handleStopKeyDown(e, 'day-3')}
           >
-            <circle className="stop-node" cx="940" cy="280" r="9" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2" />
-            <text x="955" y="285" fontSize="13" fill="var(--ink)" fontWeight="600">Lhasa</text>
-            <text x="955" y="299" fontSize="9" fill="var(--muted)" letterSpacing="0.1em">D3 D4 D10 - 3,656M</text>
+            <circle className="stop-node" cx="940" cy="280" r="9" fill="var(--background)" stroke="var(--foreground)" strokeWidth="2" />
+            <text x="955" y="285" fontSize="13" fill="var(--foreground)" fontWeight="600">Lhasa</text>
+            <text x="955" y="299" fontSize="9" fill="var(--muted-foreground)" letterSpacing="0.1em">D3 D4 D10 - 3,656M</text>
             <title>Lhasa - 3,656m / 11,995ft</title>
           </g>
 
@@ -355,9 +355,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onClick={() => handleStopClick('day-5')}
             onKeyDown={(e) => handleStopKeyDown(e, 'day-5')}
           >
-            <circle className="stop-node" cx="480" cy="220" r="9" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2" />
-            <text x="495" y="225" fontSize="13" fill="var(--ink)" fontWeight="600">Mansarovar</text>
-            <text x="495" y="239" fontSize="9" fill="var(--muted)" letterSpacing="0.1em">D5 D6 - 4,570M</text>
+            <circle className="stop-node" cx="480" cy="220" r="9" fill="var(--background)" stroke="var(--foreground)" strokeWidth="2" />
+            <text x="495" y="225" fontSize="13" fill="var(--foreground)" fontWeight="600">Mansarovar</text>
+            <text x="495" y="239" fontSize="9" fill="var(--muted-foreground)" letterSpacing="0.1em">D5 D6 - 4,570M</text>
             <title>Mansarovar - 4,570m / 14,993ft - holy lake</title>
           </g>
 
@@ -370,9 +370,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onClick={() => handleStopClick('day-7')}
             onKeyDown={(e) => handleStopKeyDown(e, 'day-7')}
           >
-            <circle className="stop-node" cx="420" cy="235" r="8" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2" />
-            <text x="405" y="261" fontSize="11" fill="var(--ink)" fontWeight="600" textAnchor="end">Darchen</text>
-            <text x="405" y="273" fontSize="8" fill="var(--muted)" letterSpacing="0.1em" textAnchor="end">D7 START D9 FINISH - 4,575M</text>
+            <circle className="stop-node" cx="420" cy="235" r="8" fill="var(--background)" stroke="var(--foreground)" strokeWidth="2" />
+            <text x="405" y="261" fontSize="11" fill="var(--foreground)" fontWeight="600" textAnchor="end">Darchen</text>
+            <text x="405" y="273" fontSize="8" fill="var(--muted-foreground)" letterSpacing="0.1em" textAnchor="end">D7 START D9 FINISH - 4,575M</text>
             <title>Darchen - 4,575m / 15,010ft - parikrama trailhead</title>
           </g>
 
@@ -385,9 +385,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onClick={() => handleStopClick('day-7')}
             onKeyDown={(e) => handleStopKeyDown(e, 'day-7')}
           >
-            <circle className="stop-node" cx="290" cy="180" r="8" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2" />
-            <text x="275" y="173" fontSize="11" fill="var(--ink)" fontWeight="600" textAnchor="end">Dirapuk</text>
-            <text x="275" y="161" fontSize="8" fill="var(--muted)" letterSpacing="0.1em" textAnchor="end">D7 NIGHT - 4,900M</text>
+            <circle className="stop-node" cx="290" cy="180" r="8" fill="var(--background)" stroke="var(--foreground)" strokeWidth="2" />
+            <text x="275" y="173" fontSize="11" fill="var(--foreground)" fontWeight="600" textAnchor="end">Dirapuk</text>
+            <text x="275" y="161" fontSize="8" fill="var(--muted-foreground)" letterSpacing="0.1em" textAnchor="end">D7 NIGHT - 4,900M</text>
             <title>Dirapuk - 4,900m / 16,076ft - Day 7 night camp</title>
           </g>
 
@@ -401,9 +401,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onClick={() => handleStopClick('day-8')}
             onKeyDown={(e) => handleStopKeyDown(e, 'day-8')}
           >
-            <circle className="stop-node delight-breathing" cx="260" cy="110" r="14" fill="var(--red)" stroke="var(--red)" strokeWidth="2" />
-            <text x="245" y="98" fontSize="14" fill="var(--red)" fontWeight="700" textAnchor="end">Dolma La</text>
-            <text x="245" y="86" fontSize="10" fill="var(--red)" letterSpacing="0.1em" fontWeight="600" textAnchor="end">D8 - 5,630M / 18,471FT</text>
+            <circle className="stop-node delight-breathing" cx="260" cy="110" r="14" fill="var(--destructive)" stroke="var(--destructive)" strokeWidth="2" />
+            <text x="245" y="98" fontSize="14" fill="var(--destructive)" fontWeight="700" textAnchor="end">Dolma La</text>
+            <text x="245" y="86" fontSize="10" fill="var(--destructive)" letterSpacing="0.1em" fontWeight="600" textAnchor="end">D8 - 5,630M / 18,471FT</text>
             <title>Dolma La pass - 5,630m / 18,471ft - Day 8 - the highest point of the journey</title>
           </g>
 
@@ -416,9 +416,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onClick={() => handleStopClick('day-8')}
             onKeyDown={(e) => handleStopKeyDown(e, 'day-8')}
           >
-            <circle className="stop-node" cx="330" cy="190" r="8" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2" />
-            <text x="345" y="195" fontSize="11" fill="var(--ink)" fontWeight="600">Zuthulphuk</text>
-            <text x="345" y="207" fontSize="8" fill="var(--muted)" letterSpacing="0.1em">D8 NIGHT - 4,790M</text>
+            <circle className="stop-node" cx="330" cy="190" r="8" fill="var(--background)" stroke="var(--foreground)" strokeWidth="2" />
+            <text x="345" y="195" fontSize="11" fill="var(--foreground)" fontWeight="600">Zuthulphuk</text>
+            <text x="345" y="207" fontSize="8" fill="var(--muted-foreground)" letterSpacing="0.1em">D8 NIGHT - 4,790M</text>
             <title>Zuthulphuk - 4,790m / 15,715ft - Day 8 night camp</title>
           </g>
         </g>
@@ -427,28 +427,28 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
         <g className="icon-overlays" aria-hidden="true">
           {/* MapPin at Kathmandu */}
           <foreignObject x="462" y="362" width="16" height="16">
-            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+            <MapPin size={14} style={{ color: 'var(--foreground)' }} />
           </foreignObject>
           {/* MapPin at Lhasa */}
           <foreignObject x="922" y="262" width="16" height="16">
-            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+            <MapPin size={14} style={{ color: 'var(--foreground)' }} />
           </foreignObject>
           {/* MapPin at Mansarovar */}
           <foreignObject x="462" y="202" width="16" height="16">
-            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+            <MapPin size={14} style={{ color: 'var(--foreground)' }} />
           </foreignObject>
           {/* MapPin at Darchen */}
           <foreignObject x="402" y="217" width="16" height="16">
-            <MapPin size={14} style={{ color: 'var(--ink)' }} />
+            <MapPin size={14} style={{ color: 'var(--foreground)' }} />
           </foreignObject>
           {/* Mountain at Dolma La (red) */}
           <foreignObject x="243" y="92" width="18" height="18">
-            <Mountain size={16} style={{ color: 'var(--red)' }} />
+            <Mountain size={16} style={{ color: 'var(--destructive)' }} />
           </foreignObject>
         </g>
 
         {/* Sacred markers (always visible per v3.12 lock) */}
-        <g className="sacred-markers" fontFamily="Inter Tight, sans-serif">
+        <g className="sacred-markers" fontFamily="Geist Sans, sans-serif">
 
           {/* Pashupatinath (KTM Day 2) */}
           <g
@@ -461,8 +461,8 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onKeyDown={(e) => handleStopKeyDown(e, 'day-2')}
             style={{ cursor: 'pointer' }}
           >
-            <rect x="430" y="395" width="10" height="10" fill="var(--accent)" opacity="0.8" rx="1" />
-            <text x="425" y="425" fontSize="9" fill="var(--accent)" fontStyle="italic" textAnchor="end" letterSpacing="0.05em">Pashupatinath</text>
+            <rect x="430" y="395" width="10" height="10" fill="var(--accent-foreground)" opacity="0.8" rx="1" />
+            <text x="425" y="425" fontSize="9" fill="var(--accent-foreground)" fontStyle="italic" textAnchor="end" letterSpacing="0.05em">Pashupatinath</text>
             <title>Pashupatinath - Kathmandu Day 2 - sacred Shiva temple</title>
           </g>
 
@@ -477,8 +477,8 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onKeyDown={(e) => handleStopKeyDown(e, 'day-4')}
             style={{ cursor: 'pointer' }}
           >
-            <rect x="970" y="245" width="10" height="10" fill="var(--accent)" opacity="0.8" rx="1" />
-            <text x="985" y="258" fontSize="9" fill="var(--accent)" fontStyle="italic" letterSpacing="0.05em">Jokhang</text>
+            <rect x="970" y="245" width="10" height="10" fill="var(--accent-foreground)" opacity="0.8" rx="1" />
+            <text x="985" y="258" fontSize="9" fill="var(--accent-foreground)" fontStyle="italic" letterSpacing="0.05em">Jokhang</text>
             <title>Jokhang Temple - Lhasa Day 4 - most sacred temple in Tibetan Buddhism</title>
           </g>
 
@@ -493,8 +493,8 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onKeyDown={(e) => handleStopKeyDown(e, 'day-6')}
             style={{ cursor: 'pointer' }}
           >
-            <ellipse cx="433" cy="198" rx="7" ry="4" fill="none" stroke="var(--accent)" strokeWidth="1.5" opacity="0.9" />
-            <text x="425" y="183" fontSize="9" fill="var(--accent)" fontStyle="italic" textAnchor="end" letterSpacing="0.05em">Mansarovar Snan</text>
+            <ellipse cx="433" cy="198" rx="7" ry="4" fill="none" stroke="var(--accent-foreground)" strokeWidth="1.5" opacity="0.9" />
+            <text x="425" y="183" fontSize="9" fill="var(--accent-foreground)" fontStyle="italic" textAnchor="end" letterSpacing="0.05em">Mansarovar Snan</text>
             <title>Mansarovar Snan (holy bath) - Day 6 - the lake of the mind</title>
           </g>
 
@@ -509,8 +509,8 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onKeyDown={(e) => handleStopKeyDown(e, 'day-6')}
             style={{ cursor: 'pointer' }}
           >
-            <rect x="510" y="197" width="9" height="9" fill="var(--accent)" opacity="0.8" rx="1" />
-            <text x="523" y="209" fontSize="9" fill="var(--accent)" fontStyle="italic" letterSpacing="0.05em">Chiu Gompa</text>
+            <rect x="510" y="197" width="9" height="9" fill="var(--accent-foreground)" opacity="0.8" rx="1" />
+            <text x="523" y="209" fontSize="9" fill="var(--accent-foreground)" fontStyle="italic" letterSpacing="0.05em">Chiu Gompa</text>
             <title>Chiu Gompa Puja - Day 6 - monastery overlooking Mansarovar</title>
           </g>
 
@@ -525,14 +525,14 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onKeyDown={(e) => handleStopKeyDown(e, 'day-7')}
             style={{ cursor: 'pointer' }}
           >
-            <polygon points="312,161 318,148 324,161" fill="var(--accent)" opacity="0.8" />
-            <text x="295" y="145" fontSize="9" fill="var(--accent)" fontStyle="italic" textAnchor="end" letterSpacing="0.05em">Kailash Darshan</text>
+            <polygon points="312,161 318,148 324,161" fill="var(--accent-foreground)" opacity="0.8" />
+            <text x="295" y="145" fontSize="9" fill="var(--accent-foreground)" fontStyle="italic" textAnchor="end" letterSpacing="0.05em">Kailash Darshan</text>
             <title>First Kailash Darshan (sacred sight) - Day 7 - the sacred mountain viewpoint</title>
           </g>
 
           {/* Dolma La sacred ring */}
           <g className="sacred-marker delight-sacred-marker" data-day-id="day-8">
-            <circle cx="260" cy="110" r="22" fill="none" stroke="var(--accent)" strokeWidth="1" strokeDasharray="2,3" opacity="0.7" />
+            <circle cx="260" cy="110" r="22" fill="none" stroke="var(--accent-foreground)" strokeWidth="1" strokeDasharray="2,3" opacity="0.7" />
             <title>Dolma La Crossing (spiritual crossing) - Day 8 - death and rebirth in pilgrim tradition</title>
           </g>
 
@@ -547,8 +547,8 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
             onKeyDown={(e) => handleStopKeyDown(e, 'day-8')}
             style={{ cursor: 'pointer' }}
           >
-            <ellipse cx="291" cy="155" rx="6" ry="3.5" fill="none" stroke="var(--accent)" strokeWidth="1.5" opacity="0.9" />
-            <text x="300" y="170" fontSize="9" fill="var(--accent)" fontStyle="italic" letterSpacing="0.05em">Gauri Kund</text>
+            <ellipse cx="291" cy="155" rx="6" ry="3.5" fill="none" stroke="var(--accent-foreground)" strokeWidth="1.5" opacity="0.9" />
+            <text x="300" y="170" fontSize="9" fill="var(--accent-foreground)" fontStyle="italic" letterSpacing="0.05em">Gauri Kund</text>
             <title>Gauri Kund (sacred glacial lake) - Day 8 descent</title>
           </g>
         </g>
@@ -558,7 +558,7 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
           <path
             d="M 420,235 Q 360,200 290,180 Q 240,150 260,110 Q 280,85 320,100 Q 380,140 380,180 Q 360,210 420,235 Z"
             fill="none"
-            stroke="var(--accent)"
+            stroke="var(--accent-foreground)"
             strokeWidth="6"
             opacity="0.15"
             strokeLinecap="round"
@@ -567,9 +567,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
           <text
             x="600"
             y="475"
-            fontFamily="JetBrains Mono, monospace"
+            fontFamily="Geist Mono, monospace"
             fontSize="11"
-            fill="var(--muted)"
+            fill="var(--muted-foreground)"
             textAnchor="middle"
             letterSpacing="0.15em"
             fontWeight="600"
@@ -583,9 +583,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
           <text
             x="600"
             y="475"
-            fontFamily="JetBrains Mono, monospace"
+            fontFamily="Geist Mono, monospace"
             fontSize="11"
-            fill="var(--ink)"
+            fill="var(--foreground)"
             textAnchor="middle"
             letterSpacing="0.15em"
             fontWeight="600"
@@ -602,16 +602,16 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
               cx={cx + 12}
               cy={STOP_CY[stopCls] - 14}
               r="5"
-              fill="var(--green)"
+              fill="oklch(0.5 0.15 145)"
               opacity="0.85"
             />
           ))}
           <text
             x="600"
             y="475"
-            fontFamily="JetBrains Mono, monospace"
+            fontFamily="Geist Mono, monospace"
             fontSize="11"
-            fill="var(--accent)"
+            fill="var(--accent-foreground)"
             textAnchor="middle"
             letterSpacing="0.15em"
             fontWeight="700"
@@ -621,19 +621,19 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
         </g>
 
         {/* Legend */}
-        <g className="map-legend" fontFamily="JetBrains Mono, monospace" fontSize="9" fill="var(--muted)" letterSpacing="0.05em">
-          <text x="1000" y="25" fontWeight="700" fontSize="10" letterSpacing="0.12em" fill="var(--ink)">LEGEND</text>
-          <line x1="1000" y1="38" x2="1025" y2="38" stroke="var(--ink)" strokeWidth="2.5" />
+        <g className="map-legend" fontFamily="Geist Mono, monospace" fontSize="9" fill="var(--muted-foreground)" letterSpacing="0.05em">
+          <text x="1000" y="25" fontWeight="700" fontSize="10" letterSpacing="0.12em" fill="var(--foreground)">LEGEND</text>
+          <line x1="1000" y1="38" x2="1025" y2="38" stroke="var(--foreground)" strokeWidth="2.5" />
           <text x="1032" y="41">PARIKRAMA LOOP</text>
-          <line x1="1000" y1="51" x2="1025" y2="51" stroke="var(--ink)" strokeWidth="1.5" />
+          <line x1="1000" y1="51" x2="1025" y2="51" stroke="var(--foreground)" strokeWidth="1.5" />
           <text x="1032" y="54">DRIVE / FOOT</text>
-          <line x1="1000" y1="64" x2="1025" y2="64" stroke="var(--ink)" strokeWidth="1.5" strokeDasharray="6,4" />
+          <line x1="1000" y1="64" x2="1025" y2="64" stroke="var(--foreground)" strokeWidth="1.5" strokeDasharray="6,4" />
           <text x="1032" y="67">FLIGHT</text>
-          <circle cx="1012" cy="78" r="6" fill="var(--bg)" stroke="var(--ink)" strokeWidth="2" />
+          <circle cx="1012" cy="78" r="6" fill="var(--background)" stroke="var(--foreground)" strokeWidth="2" />
           <text x="1032" y="81">STOP</text>
-          <circle cx="1012" cy="93" r="7" fill="var(--red)" />
+          <circle cx="1012" cy="93" r="7" fill="var(--destructive)" />
           <text x="1032" y="96">PEAK - DOLMA LA</text>
-          <rect x="1005" y="103" width="10" height="10" fill="var(--accent)" opacity="0.8" rx="1" />
+          <rect x="1005" y="103" width="10" height="10" fill="var(--accent-foreground)" opacity="0.8" rx="1" />
           <text x="1032" y="113">SACRED SITE</text>
         </g>
       </svg>

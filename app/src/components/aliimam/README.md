@@ -35,8 +35,8 @@ Named exports from the package root:
 import { Mountain, Wifi, Clock, Thermometer } from '@aliimam/icons';
 
 // All icons accept size, className, strokeWidth props
-<Mountain size={16} className="text-ink" />
-<Wifi size={16} className="text-green" />
+<Mountain size={16} className="text-foreground" />
+<Wifi size={16} className="text-emerald-600" />
 ```
 
 ### Icon prop interface
@@ -74,26 +74,11 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 
 ---
 
-## Maurten color override pattern
+## Token system
 
-aliimam blocks reference shadcn CSS tokens (`--primary`, `--background`, etc.).
-We bridge them to Maurten values at the bottom of `src/index.css`:
-
-```css
-:root {
-  --background: var(--bg);
-  --foreground: var(--ink);
-  --primary: var(--ink);
-  --primary-foreground: var(--bg);
-  --secondary: var(--card);
-  --muted-foreground: var(--muted);
-  /* ...full list in src/index.css */
-}
-```
-
-This comes AFTER all @import lines so it always wins over any aliimam defaults.
-The Maurten @theme block (`bg / ink / card / border / muted / red / accent / green`)
-is untouched and remains authoritative.
+aliimam blocks use shadcn-compatible CSS variables natively (`--primary`, `--background`, etc.).
+`src/index.css` now defines these tokens directly using aliimam light-mode defaults (oklch values).
+There is no Maurten override layer. See THEME.md for the full token table and delta vs old Maurten values.
 
 ---
 

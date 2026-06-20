@@ -73,25 +73,25 @@ export function AliimamFeature({
         {(eyebrow || title || body || ctaLabel) && (
           <div className="flex w-full flex-col items-center px-4 text-center">
             {eyebrow && (
-              <span className="flex items-center gap-2 text-base font-medium text-muted">
+              <span className="flex items-center gap-2 text-base font-medium text-muted-foreground">
                 <Mountain className="size-5" />
                 {eyebrow}
               </span>
             )}
             {title && (
-              <h2 className="mt-3 text-3xl font-medium text-pretty sm:text-4xl md:text-5xl text-ink">
+              <h2 className="mt-3 text-3xl font-medium text-pretty sm:text-4xl md:text-5xl text-foreground">
                 {title}
               </h2>
             )}
             {body && (
-              <p className="mt-3 text-base text-pretty sm:text-lg text-muted">
+              <p className="mt-3 text-base text-pretty sm:text-lg text-muted-foreground">
                 {body}
               </p>
             )}
             {ctaLabel && (
               <div className="mt-6 flex items-center gap-2 sm:gap-4">
                 <a href={ctaHref}>
-                  <button className="h-10 cursor-pointer px-6 bg-ink text-bg font-medium text-sm rounded hover:opacity-80 transition-opacity">
+                  <button className="h-10 cursor-pointer px-6 bg-foreground text-background font-medium text-sm rounded hover:opacity-80 transition-opacity">
                     {ctaLabel}
                   </button>
                 </a>
@@ -106,10 +106,10 @@ export function AliimamFeature({
               <div key={i}>
                 <div className="bg-card flex flex-col rounded-md border border-border p-4 text-sm">
                   {card.icon}
-                  <div className="mt-2 font-medium text-ink">{card.title}</div>
-                  <p className="mt-1 text-muted text-xs">{card.body}</p>
+                  <div className="mt-2 font-medium text-foreground">{card.title}</div>
+                  <p className="mt-1 text-muted-foreground text-xs">{card.body}</p>
                   {card.date && (
-                    <span className="mt-2 text-xs text-muted opacity-70">
+                    <span className="mt-2 text-xs text-muted-foreground opacity-70">
                       {card.date}
                     </span>
                   )}
