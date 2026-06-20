@@ -5863,7 +5863,12 @@
     });
   }
 
-  /* =================== SACRED JOURNEY TOGGLE (v3.10 §0.14.6) =================== */
+  /* =================== SACRED JOURNEY TOGGLE (v3.10 §0.14.6) ===================
+   * Default is Logistics (PRD P4b · page is a yatra page, not a religious portal).
+   * Pilgrimage mode adds .sacred-mode on the SVG root, surfacing the 7 pre-baked
+   * sacred markers via CSS. Mode persists across reloads via localStorage
+   * kailash_map_mode. Mode is layer-only -- does NOT alter route geometry.
+   */
   function initSacredToggle() {
     var btnLog = document.getElementById("mjm-mode-logistics");
     var btnPil = document.getElementById("mjm-mode-pilgrimage");
@@ -5880,6 +5885,7 @@
       btnPil.setAttribute("aria-pressed",  pilgrim);
       try { localStorage.setItem("kailash_map_mode", mode); } catch(e) {}
     }
+    /* Default: Logistics (per PRD P4b). Override only if user picked Pilgrimage previously. */
     setMode(saved === "pilgrimage" ? "pilgrimage" : "logistics");
     btnLog.addEventListener("click", function(){ setMode("logistics"); });
     btnPil.addEventListener("click", function(){ setMode("pilgrimage"); });
