@@ -1,20 +1,197 @@
 /**
  * ReferenceTab.
- * TODO: glossary of sacred terms with first-occurrence gloss list,
- *   acronym index, citation links.
+ * 7 reference articles: Medicines/Connectivity/Bags/Customs/Acclim/Visa/Spiritual.
+ *
+ * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
+ * Icons confirmed in @aliimam/icons dist.
  */
+
+import {
+  Pill,
+  Wifi,
+  Backpack,
+  ShieldCheck,
+  Mountain,
+  FileText,
+  Heart,
+} from "@aliimam/icons";
+import type { RefArticle, RefBlock } from "../../lib/reference-data";
+import { REFERENCE_ARTICLES } from "../../lib/reference-data";
+
+// Map icon string names to actual icon components
+const ICON_MAP: Record<string, React.ReactNode> = {
+  Pill: <Pill size={20} />,
+  Wifi: <Wifi size={20} />,
+  Backpack: <Backpack size={20} />,
+  ShieldCheck: <ShieldCheck size={20} />,
+  Mountain: <Mountain size={20} />,
+  FileText: <FileText size={20} />,
+  Heart: <Heart size={20} />,
+};
+
+function CalloutBlock({ block }: { block: Extract<RefBlock, { type: "callout" }> }) {
+  const borderColor =
+    block.tone === "critical"
+      ? "border-red"
+      : block.tone === "warning"
+        ? "border-accent"
+        : "border-border";
+
+  const labelColor =
+    block.tone === "critical"
+      ? "text-red"
+      : block.tone === "warning"
+        ? "text-accent"
+        : "text-muted";
+
+  return (
+    <div className={`my-4 rounded border-l-4 ${borderColor} bg-card px-4 py-3`}>
+      {block.title && (
+        <p className={`mb-1 text-xs font-semibold uppercase tracking-wide ${labelColor}`}>
+          {block.title}
+        </p>
+      )}
+      <p className="text-sm text-ink leading-relaxed">{block.body}</p>
+    </div>
+  );
+}
+
+function BlockRenderer({ block }: { block: RefBlock }) {
+  switch (block.type) {
+    case "prose":
+      return <p className="my-3 text-sm text-ink leading-relaxed">{block.body}</p>;
+
+    case "heading":
+      return (
+        <h3 className="mt-6 mb-2 text-xs font-semibold uppercase tracking-widest text-muted">
+          {block.text}
+        </h3>
+      );
+
+    case "table":
+      return (
+        <div className="my-4 w-full overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-border bg-card">
+                {block.headers.map((h, i) => (
+                  <th
+                    key={i}
+                    className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted whitespace-nowrap"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {block.rows.map((row, ri) => (
+                <tr
+                  key={ri}
+                  className={ri % 2 === 0 ? "bg-bg" : "bg-card"}
+                >
+                  {row.map((cell, ci) => (
+                    <td
+                      key={ci}
+                      className="px-3 py-2 text-xs text-ink align-top border-b border-border leading-relaxed"
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+
+    case "ordered-list":
+      return (
+        <ol className="my-3 ml-5 list-decimal space-y-1">
+          {block.items.map((item, i) => (
+            <li key={i} className="text-sm text-ink leading-relaxed">
+              {item}
+            </li>
+          ))}
+        </ol>
+      );
+
+    case "unordered-list":
+      return (
+        <ul className="my-3 ml-5 list-disc space-y-1">
+          {block.items.map((item, i) => (
+            <li key={i} className="text-sm text-ink leading-relaxed">
+              {item}
+            </li>
+          ))}
+        </ul>
+      );
+
+    case "callout":
+      return <CalloutBlock block={block} />;
+
+    default:
+      return null;
+  }
+}
+
+function ArticleSection({ article }: { article: RefArticle }) {
+  const icon = ICON_MAP[article.icon] ?? <FileText size={20} />;
+
+  return (
+    <section
+      id={article.id}
+      className="border-b border-border bg-bg px-6 py-8 scroll-mt-16"
+    >
+      <div className="mx-auto max-w-5xl">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-muted">{icon}</span>
+          <h2 className="font-sans text-xl font-medium text-ink">{article.title}</h2>
+        </div>
+        {article.intro && (
+          <p className="mb-4 text-sm text-muted leading-relaxed">{article.intro}</p>
+        )}
+        {article.blocks.map((block, i) => (
+          <BlockRenderer key={i} block={block} />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export function ReferenceTab() {
   return (
     <div data-tab="reference">
-      <section className="border-b border-border bg-bg px-6 py-8">
+      {/* Header + table of contents */}
+      <section className="border-b border-border bg-card px-6 py-8">
         <div className="mx-auto max-w-5xl">
           <h2 className="font-sans text-2xl font-medium text-ink">Reference</h2>
-          <p className="mt-2 text-muted">
-            TODO: glossary, acronym index, citations, contact tree.
+          <p className="mt-2 text-sm text-muted leading-relaxed">
+            Seven reference articles covering every operational and safety topic for the yatra.
+            Jump directly to any section below.
           </p>
+          <nav className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
+            {REFERENCE_ARTICLES.map((article) => {
+              const icon = ICON_MAP[article.icon] ?? <FileText size={14} />;
+              return (
+                <a
+                  key={article.id}
+                  href={`#${article.id}`}
+                  className="inline-flex items-center gap-2 rounded border border-border bg-bg px-3 py-1.5 text-xs font-medium text-ink hover:bg-card transition-colors"
+                >
+                  <span className="text-muted">{icon}</span>
+                  {article.title}
+                </a>
+              );
+            })}
+          </nav>
         </div>
       </section>
+
+      {/* Articles */}
+      {REFERENCE_ARTICLES.map((article) => (
+        <ArticleSection key={article.id} article={article} />
+      ))}
     </div>
   );
 }
