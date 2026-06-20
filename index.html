@@ -1250,7 +1250,7 @@
 <body>
 <!-- =================== TAB RADIO INPUTS (#37) =================== -->
 <!-- Must be direct children of body so the :checked ~ .container combinator reaches the container -->
-<input type="radio" name="kailash-tabs" id="tab-overview"   value="overview">
+<input type="radio" name="kailash-tabs" id="tab-overview"   value="overview" checked>
 <input type="radio" name="kailash-tabs" id="tab-itinerary"  value="itinerary">
 <input type="radio" name="kailash-tabs" id="tab-prepare"    value="prepare">
 <input type="radio" name="kailash-tabs" id="tab-reference"  value="reference">
@@ -3484,18 +3484,23 @@
   }
 
   document.addEventListener("DOMContentLoaded", function(){
-    setupTimezone();
-    renderAll();
-    bindChecklistEvents();
-    fetchWeather();
-    document.getElementById("refresh-weather").addEventListener("click", function(){
-      localStorage.removeItem("kailash_wx_cache_v1");
-      fetchWeather();
-    });
-    // Tab init after render so phase is known
-    initTabs();
-    var phase = computePhase(getReferenceDate());
-    initEmergencyDisclosure(phase);
+    // Tab init FIRST so any downstream error does not leave the page blank.
+    try { initTabs(); } catch(e) { /* fallback handled by inline checked attribute on tab-overview */ }
+    try { setupTimezone(); } catch(e) {}
+    try { renderAll(); } catch(e) {}
+    try { bindChecklistEvents(); } catch(e) {}
+    try { fetchWeather(); } catch(e) {}
+    var refreshBtn = document.getElementById("refresh-weather");
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", function(){
+        try { localStorage.removeItem("kailash_wx_cache_v1"); } catch(e) {}
+        try { fetchWeather(); } catch(e) {}
+      });
+    }
+    try {
+      var phase = computePhase(getReferenceDate());
+      initEmergencyDisclosure(phase);
+    } catch(e) {}
   });
 </script>
 
