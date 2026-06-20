@@ -880,6 +880,27 @@
     display: block !important;
   }
 
+  /* v3.10 §0.14.4 · day-level mini-maps */
+  .day-mini-wrapper {
+    width: 100%;
+    margin: 0.75rem 0 0.5rem;
+    overflow: hidden;
+  }
+  .day-mini {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+  }
+  .day-mini-hero {
+    /* Day 8 dominates visually -- slight scale-up + accent border-top */
+    border-top: 1px solid var(--red);
+    padding-top: 4px;
+  }
+  @media (max-width: 480px) {
+    .day-mini-wrapper { margin: 0.5rem 0 0.25rem; }
+  }
+
   .day-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
   .day-num {
     font-family: var(--font-body);
@@ -4682,6 +4703,176 @@
   function escapeHtml(s) {
     return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
+  /* v3.10 §0.14.4 · 13 day-level mini-maps (pre-baked, paste verbatim per day) */
+  var DAY_MINI_MAPS = {
+    1: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 1 route: Mumbai to Kathmandu by flight">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 1</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Mumbai &middot; Kathmandu</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">1,380 M</text>' +
+       '<line x1="40" y1="68" x2="240" y2="60" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="68" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">BOM</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="140" y="50" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">FLIGHT &middot; 6E-1157 &middot; 2h 50m</text>' +
+       '</svg>',
+    2: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 2: Kathmandu acclimatization with Pashupatinath darshan">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 2</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; darshan</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">STATIC &middot; 1,380 M</text>' +
+       '<circle cx="140" cy="55" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-temple-line" x="100" y="48" width="14" height="14" color="var(--accent)"/>' +
+       '<text x="118" y="59" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" letter-spacing="0.05em">PASHUPATINATH</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">REST + DARSHAN &middot; ALL DAY</text>' +
+       '</svg>',
+    3: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 3 route: Kathmandu to Lhasa by flight, altitude jump to 3656 meters">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 3</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; Lhasa</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">3,656 M</text>' +
+       '<line x1="40" y1="60" x2="240" y2="46" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="140" y="35" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">FLIGHT &middot; 1h 30m</text>' +
+       '<text x="140" y="75" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--accent)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">+2,276 M ALTITUDE GAIN</text>' +
+       '</svg>',
+    4: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 4: Lhasa acclimatization with Jokhang and Potala darshan">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 4</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Lhasa &middot; acclim</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">STATIC &middot; 3,656 M</text>' +
+       '<circle cx="140" cy="50" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-temple-line" x="98" y="44" width="14" height="14" color="var(--accent)"/>' +
+       '<text x="116" y="55" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" letter-spacing="0.05em">JOKHANG</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">REST + DARSHAN &middot; HYDRATE</text>' +
+       '</svg>',
+    5: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 5 route: Lhasa to Mansarovar combo flight to Ali and drive, long day">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 5</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Lhasa &middot; Mansarovar</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">4,570 M</text>' +
+       '<line x1="40" y1="46" x2="140" y2="42" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<line x1="140" y1="42" x2="240" y2="38" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="40" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="140" cy="42" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="38" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="140" y="56" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ALI</text>' +
+       '<text x="240" y="56" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">MANASA</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--accent)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">FLIGHT + 7H DRIVE &middot; LONG DAY</text>' +
+       '</svg>',
+    6: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 6: Mansarovar lake parikrama by car with holy bath">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 6</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Mansarovar parikrama</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">88 KM LOOP &middot; 4,570 M</text>' +
+       '<ellipse cx="140" cy="55" rx="50" ry="14" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="3,2"/>' +
+       '<circle cx="140" cy="55" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-lake-ripple-line" x="95" y="48" width="14" height="14" color="var(--accent)"/>' +
+       '<use href="#icon-temple-line" x="180" y="48" width="14" height="14" color="var(--accent)"/>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">HOLY BATH &middot; CHIU GOMPA</text>' +
+       '</svg>',
+    7: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 7 route: Mansarovar to Dirapuk via Yam Dwar, drive plus trek, parikrama begins">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 7</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Mansarovar &middot; Dirapuk</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">4,900 M</text>' +
+       '<path d="M 40,38 Q 100,38 130,36 L 240,33" fill="none" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="40" cy="38" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="130" cy="36" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="33" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="56" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">MANASA</text>' +
+       '<text x="130" y="50" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">YAM DWAR</text>' +
+       '<text x="240" y="50" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DIRAPUK</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">DRIVE 2H &middot; TREK 14 KM &middot; 6H</text>' +
+       '</svg>',
+    8: '<svg class="day-mini day-mini-hero" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 8 critical day: Dirapuk to Dolma La pass at 5630 meters to Zuthulphuk, 22 kilometer trek, highest point of the journey">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--red)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 8</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--red)" font-weight="700">Dolma La &middot; the climb</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--red)" text-anchor="end" letter-spacing="0.1em" font-weight="700">5,630 M PEAK</text>' +
+       '<path d="M 40,55 L 140,28 L 240,52" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+       '<circle cx="40" cy="55" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="140" cy="28" r="10" fill="var(--red)" stroke="var(--red)" stroke-width="2"/>' +
+       '<text x="140" y="44" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="var(--red)" text-anchor="middle" letter-spacing="0.1em">DOLMA LA</text>' +
+       '<circle cx="240" cy="52" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="72" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DIRAPUK</text>' +
+       '<text x="240" y="72" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ZUTHULPHUK</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--red)" text-anchor="middle" letter-spacing="0.1em" font-weight="700">22 KM &middot; 14 H &middot; HIGHEST POINT</text>' +
+       '</svg>',
+    9: '<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 9 route: Zuthulphuk to Darchen completing Parikrama">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 9</text>' +
+       '<text x="56" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Parikrama complete</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">4,575 M</text>' +
+       '<path d="M 40,40 Q 140,42 240,45" fill="none" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="40" cy="40" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="45" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ZUTHULPHUK</text>' +
+       '<text x="240" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DARCHEN</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">TREK 14 KM &middot; 5H &middot; CIRCUIT CLOSE</text>' +
+       '</svg>',
+    10:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 10 route: Darchen to Lhasa, drive plus flight, descending altitude">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 10</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Darchen &middot; Lhasa</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">3,656 M</text>' +
+       '<line x1="40" y1="38" x2="140" y2="42" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<line x1="140" y1="42" x2="240" y2="46" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="38" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="140" cy="42" r="4" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">DARCHEN</text>' +
+       '<text x="140" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">ALI</text>' +
+       '<text x="240" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">DRIVE + FLIGHT &middot; DESCENT</text>' +
+       '</svg>',
+    11:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 11 route: Lhasa to Kathmandu by flight">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 11</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Lhasa &middot; Kathmandu</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">1,380 M</text>' +
+       '<line x1="40" y1="46" x2="240" y2="60" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="46" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">LXA</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="140" y="35" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">FLIGHT &middot; 1h 30m</text>' +
+       '<text x="140" y="75" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--green)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">&minus;2,276 M &middot; BREATHING EASIER</text>' +
+       '</svg>',
+    12:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 12: Kathmandu buffer rest day">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--muted)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 12</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; buffer</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">STATIC &middot; 1,380 M</text>' +
+       '<circle cx="140" cy="55" r="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<use href="#icon-bed-line" x="118" y="48" width="14" height="14" color="var(--muted)"/>' +
+       '<use href="#icon-bowl-line" x="148" y="48" width="14" height="14" color="var(--muted)"/>' +
+       '<text x="140" y="82" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="middle" letter-spacing="0.08em">REST &middot; DEBRIEF &middot; LAST MARKET</text>' +
+       '</svg>',
+    13:'<svg class="day-mini" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day 13 route: Kathmandu to Mumbai by flight, return home">' +
+       '<rect x="6" y="6" width="44" height="18" rx="2" fill="var(--ink)"/>' +
+       '<text x="28" y="19" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="var(--bg)" text-anchor="middle" letter-spacing="0.1em">DAY 13</text>' +
+       '<text x="62" y="19" font-family="Inter Tight, sans-serif" font-size="11" fill="var(--ink)" font-weight="600">Kathmandu &middot; Mumbai</text>' +
+       '<text x="274" y="19" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" text-anchor="end" letter-spacing="0.1em">HOME</text>' +
+       '<line x1="40" y1="60" x2="240" y2="68" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+       '<circle cx="40" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<circle cx="240" cy="68" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>' +
+       '<text x="40" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">KTM</text>' +
+       '<text x="240" y="83" font-family="JetBrains Mono, monospace" font-size="8" fill="var(--muted)" text-anchor="middle" letter-spacing="0.05em">BOM</text>' +
+       '<text x="140" y="50" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--green)" text-anchor="middle" letter-spacing="0.08em" font-weight="600">FLIGHT RA-201 &middot; 2h 50m</text>' +
+       '</svg>'
+  };
+  function dayMiniMapHtml(dayNum) {
+    var svg = DAY_MINI_MAPS[dayNum];
+    if (!svg) return "";
+    return '<div class="day-mini-wrapper" aria-label="Day ' + dayNum + ' route map">' + svg + '</div>';
+  }
+
   /* v3.9 §0.13.6 · per-day difficulty mapping */
   var DAY_DIFFICULTY = {
     1: {level:2, sev:"easy",     label:"EASY"},
@@ -4834,6 +5025,8 @@
     html += dashHtml(d);
     html += '<div class="day-loc">' + escapeHtml(d.location) + '</div>';
     html += '<div class="day-headline">' + escapeHtml(d.headline) + '</div>';
+    /* v3.10 §0.14.4 · day-level mini-map */
+    html += dayMiniMapHtml(d.day);
 
     // First-class fields cluster.
     html += '<div class="first-class">';
