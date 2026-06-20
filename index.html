@@ -1114,13 +1114,13 @@
       <span class="label">Return</span>
       <span class="value">19 Jul 2026 · Sun</span>
     </div>
-    <div class="hero-row warn">
-      <span class="label">Next action</span>
-      <span class="value">Book doctor consult</span>
+    <div class="hero-row">
+      <span class="label">Preparation milestone</span>
+      <span class="value" id="prep-milestone">Permits in transit</span>
     </div>
     <div class="hero-row">
-      <span class="label">Live forecast for Day 1</span>
-      <span class="value" id="live-forecast-countdown">opens soon</span>
+      <span class="label">Weather forecast</span>
+      <span class="value" id="live-forecast-countdown">Becomes more accurate closer to departure</span>
     </div>
   </div>
 
@@ -2437,11 +2437,21 @@
     var diff = Math.ceil((depart - nowMid) / (1000*60*60*24));
     if (diff < 0) diff = 0;
     document.getElementById("days-to-go").textContent = diff;
+    // Preparation milestone: phase-aware trip-level status.
+    var milestoneEl = document.getElementById("prep-milestone");
+    if (milestoneEl) {
+      var milestone = "Departure imminent";
+      if (diff >= 15) milestone = "Permits in transit";
+      else if (diff >= 7) milestone = "Medical and insurance checks";
+      else if (diff >= 3) milestone = "Final packing window";
+      milestoneEl.textContent = milestone;
+    }
+    // Forecast freshness label.
     var lf = document.getElementById("live-forecast-countdown");
-    if (diff <= 16) lf.textContent = "live now";
-    else {
-      var openIn = diff - 16;
-      lf.textContent = "opens in " + openIn + " day" + (openIn === 1 ? "" : "s");
+    if (diff <= 16) {
+      lf.textContent = "Live forecast available for the first days";
+    } else {
+      lf.textContent = "Becomes more accurate closer to departure";
     }
   }
   function renderHeroDuring(todayIdx) {
