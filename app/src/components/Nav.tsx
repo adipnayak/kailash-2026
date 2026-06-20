@@ -1,14 +1,18 @@
 /**
  * Nav: 4-tab strip (Overview, Itinerary, Prepare, Reference).
  * Persistence via useTabPersist (localStorage key kailash_tab).
+ * aliimam-real: @aliimam/icons used left of each tab label.
+ *
+ * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 import type { Tab } from '../hooks/useJourneyState';
+import { LayoutGrid, CalendarDays, ListChecks, BookOpen } from '@aliimam/icons';
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'itinerary', label: 'Itinerary' },
-  { id: 'prepare', label: 'Prepare' },
-  { id: 'reference', label: 'Reference' },
+const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  { id: 'overview',  label: 'Overview',   icon: <LayoutGrid  size={14} /> },
+  { id: 'itinerary', label: 'Itinerary',  icon: <CalendarDays size={14} /> },
+  { id: 'prepare',   label: 'Prepare',    icon: <ListChecks  size={14} /> },
+  { id: 'reference', label: 'Reference',  icon: <BookOpen    size={14} /> },
 ];
 
 export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
@@ -27,12 +31,13 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
               onClick={() => onTab(t.id)}
               aria-pressed={active}
               className={
-                'border-b-2 px-3 py-3 font-mono text-sm uppercase tracking-wider transition-colors ' +
+                'flex items-center gap-1.5 border-b-2 px-3 py-3 font-mono text-sm uppercase tracking-wider transition-colors ' +
                 (active
-                  ? 'border-ink text-ink'
-                  : 'border-transparent text-muted hover:text-ink')
+                  ? 'border-primary text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground')
               }
             >
+              {t.icon}
               {t.label}
             </button>
           );

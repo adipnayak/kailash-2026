@@ -41,22 +41,22 @@ export function AliimamFooter({
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1 space-y-3">
-            <span className="flex items-center gap-2 font-medium text-sm text-ink">
+            <span className="flex items-center gap-2 font-medium text-sm text-foreground">
               <Mountain className="size-4" />
               Kailash 2026
             </span>
-            <p className="text-muted text-xs max-w-xs">
+            <p className="text-muted-foreground text-xs max-w-xs">
               A sacred pilgrimage to Mount Kailash and Lake Manasarovar across the Tibetan Plateau.
             </p>
           </div>
 
           <div className="space-y-3 text-sm">
-            <span className="block font-medium text-ink">Navigation</span>
+            <span className="block font-medium text-foreground">Navigation</span>
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-muted hover:text-ink block duration-150 transition-colors"
+                className="text-muted-foreground hover:text-foreground block duration-150 transition-colors"
               >
                 {link.label}
               </a>
@@ -64,16 +64,16 @@ export function AliimamFooter({
           </div>
 
           <div className="space-y-3 text-sm">
-            <span className="block font-medium text-ink">Journey</span>
-            <span className="flex items-center gap-2 text-muted text-xs">
+            <span className="block font-medium text-foreground">Journey</span>
+            <span className="flex items-center gap-2 text-muted-foreground text-xs">
               <Globe className="size-3.5" />
               Tibet Autonomous Region
             </span>
-            <span className="flex items-center gap-2 text-muted text-xs">
+            <span className="flex items-center gap-2 text-muted-foreground text-xs">
               <Clock className="size-3.5" />
               Sep-Oct 2026
             </span>
-            <span className="flex items-center gap-2 text-muted text-xs">
+            <span className="flex items-center gap-2 text-muted-foreground text-xs">
               <Mountain className="size-3.5" />
               5,630 m peak
             </span>
@@ -81,10 +81,10 @@ export function AliimamFooter({
         </div>
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-border">
-          <span className="text-xs text-muted">
+          <span className="text-xs text-muted-foreground">
             &copy; {year} {attribution}
           </span>
-          <span className="text-xs text-muted">
+          <span className="text-xs text-muted-foreground">
             Built with aliimam blocks
           </span>
         </div>

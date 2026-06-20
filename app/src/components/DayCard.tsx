@@ -10,6 +10,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AliimamFeature } from './aliimam/AliimamFeature';
 import {
   ChevronDown,
   Mountain,
@@ -107,10 +108,10 @@ interface ChipProps {
 function Chip({ icon, label, value, dominant, red }: ChipProps) {
   const base = 'flex items-center gap-1.5 rounded px-2 py-1 font-mono text-xs border';
   const color = red
-    ? 'bg-red/10 border-red/30 text-red'
+    ? 'bg-destructive/10 border-destructive/30 text-destructive'
     : dominant
-    ? 'bg-ink text-card border-ink'
-    : 'bg-bg border-border text-muted';
+    ? 'bg-primary text-primary-foreground border-primary'
+    : 'bg-background border-border text-muted-foreground';
   return (
     <span className={base + ' ' + color}>
       {icon}
@@ -121,9 +122,9 @@ function Chip({ icon, label, value, dominant, red }: ChipProps) {
 }
 
 function ConnIcon({ status }: { status: TripDay['conn_status'] }) {
-  if (status === 'offline') return <WifiOff size={12} className="text-red" />;
-  if (status === 'intermittent') return <Wifi size={12} className="text-accent" />;
-  return <Wifi size={12} className="text-green" />;
+  if (status === 'offline') return <WifiOff size={12} className="text-destructive" />;
+  if (status === 'intermittent') return <Wifi size={12} className="text-sacred" />;
+  return <Wifi size={12} className="text-emerald" />;
 }
 
 // ---------------------------------------------------------------------------
@@ -132,7 +133,7 @@ function ConnIcon({ status }: { status: TripDay['conn_status'] }) {
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <h4 className="font-mono text-[10px] uppercase tracking-widest text-muted mb-2 mt-5 first:mt-0 border-b border-border pb-1">
+    <h4 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2 mt-5 first:mt-0 border-b border-border pb-1">
       {label}
     </h4>
   );
@@ -149,38 +150,38 @@ function WeatherBlock({ day }: { day: TripDay }) {
       <SectionHeader label="Weather" />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5">
         <div className="flex items-center gap-1.5">
-          <Thermometer size={12} className="text-accent shrink-0" />
-          <span className="font-mono text-[11px] text-muted">HIGH</span>
-          <span className="font-mono text-[11px] text-ink font-medium">{w.temp_high} C</span>
+          <Thermometer size={12} className="text-sacred shrink-0" />
+          <span className="font-mono text-[11px] text-muted-foreground">HIGH</span>
+          <span className="font-mono text-[11px] text-foreground font-medium">{w.temp_high} C</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Thermometer size={12} className="text-green shrink-0" />
-          <span className="font-mono text-[11px] text-muted">LOW</span>
-          <span className="font-mono text-[11px] text-ink font-medium">{w.temp_low} C</span>
+          <Thermometer size={12} className="text-emerald shrink-0" />
+          <span className="font-mono text-[11px] text-muted-foreground">LOW</span>
+          <span className="font-mono text-[11px] text-foreground font-medium">{w.temp_low} C</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Snowflake size={12} className="text-muted shrink-0" />
-          <span className="font-mono text-[11px] text-muted">FEELS</span>
-          <span className="font-mono text-[11px] text-ink font-medium">{w.feels_like} C</span>
+          <Snowflake size={12} className="text-muted-foreground shrink-0" />
+          <span className="font-mono text-[11px] text-muted-foreground">FEELS</span>
+          <span className="font-mono text-[11px] text-foreground font-medium">{w.feels_like} C</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <CloudRain size={12} className="text-green shrink-0" />
-          <span className="font-mono text-[11px] text-muted">RAIN</span>
-          <span className="font-mono text-[11px] text-ink font-medium">{w.rain_pct}%</span>
+          <CloudRain size={12} className="text-emerald shrink-0" />
+          <span className="font-mono text-[11px] text-muted-foreground">RAIN</span>
+          <span className="font-mono text-[11px] text-foreground font-medium">{w.rain_pct}%</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <WindFilled size={12} className="text-muted shrink-0" />
-          <span className="font-mono text-[11px] text-muted">WIND</span>
-          <span className="font-mono text-[11px] text-ink font-medium">{w.wind_kmh} km/h</span>
-          <span className="font-mono text-[10px] text-muted">({w.wind_label})</span>
+          <WindFilled size={12} className="text-muted-foreground shrink-0" />
+          <span className="font-mono text-[11px] text-muted-foreground">WIND</span>
+          <span className="font-mono text-[11px] text-foreground font-medium">{w.wind_kmh} km/h</span>
+          <span className="font-mono text-[10px] text-muted-foreground">({w.wind_label})</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Sun size={12} className="text-accent shrink-0" />
-          <span className="font-mono text-[11px] text-muted">UV</span>
-          <span className="font-mono text-[11px] text-ink font-medium">{w.uv}</span>
+          <Sun size={12} className="text-sacred shrink-0" />
+          <span className="font-mono text-[11px] text-muted-foreground">UV</span>
+          <span className="font-mono text-[11px] text-foreground font-medium">{w.uv}</span>
         </div>
       </div>
-      <p className="mt-1.5 font-mono text-[10px] text-muted">SOURCE: {w.source.toUpperCase()}</p>
+      <p className="mt-1.5 font-mono text-[10px] text-muted-foreground">SOURCE: {w.source.toUpperCase()}</p>
     </div>
   );
 }
@@ -197,8 +198,8 @@ function TimelineBlock({ day }: { day: TripDay }) {
       <ol className="relative ml-1 border-l border-border pl-5 space-y-3">
         {events.map((ev, i) => {
           const isHighlight = day.day_type === 'critical' && i === Math.floor(events.length / 2);
-          const dotClass = isHighlight ? 'bg-red' : 'bg-border';
-          const textClass = isHighlight ? 'text-red font-semibold' : 'text-ink';
+          const dotClass = isHighlight ? 'bg-destructive' : 'bg-border';
+          const textClass = isHighlight ? 'text-destructive font-semibold' : 'text-foreground';
           return (
             <li key={i} className="relative">
               <span
@@ -207,7 +208,7 @@ function TimelineBlock({ day }: { day: TripDay }) {
                 }
               />
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="font-mono text-[10px] text-muted shrink-0 w-[52px]">{ev.time}</span>
+                <span className="font-mono text-[10px] text-muted-foreground shrink-0 w-[52px]">{ev.time}</span>
                 <span className={'text-xs ' + textClass}>{ev.event}</span>
               </div>
             </li>
@@ -225,11 +226,11 @@ function TimelineBlock({ day }: { day: TripDay }) {
 function WearBlock({ day }: { day: TripDay }) {
   const w = day.what_to_wear;
   const rows: Array<{ label: string; value: string; icon: React.ReactNode }> = [
-    { label: 'BOTTOM', value: w.bottom, icon: <Ruler size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'TOP', value: w.top, icon: <Shirt size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'FEET', value: w.feet, icon: <MapPin size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'HANDS', value: w.hands, icon: <Snowflake size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'HEAD / FACE', value: w.head_face, icon: <HardHat size={11} className="text-muted shrink-0 mt-0.5" /> },
+    { label: 'BOTTOM', value: w.bottom, icon: <Ruler size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'TOP', value: w.top, icon: <Shirt size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'FEET', value: w.feet, icon: <MapPin size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'HANDS', value: w.hands, icon: <Snowflake size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'HEAD / FACE', value: w.head_face, icon: <HardHat size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
   ];
   return (
     <div>
@@ -239,9 +240,9 @@ function WearBlock({ day }: { day: TripDay }) {
           <div key={r.label} className="grid grid-cols-[80px_1fr] gap-x-3 items-start">
             <div className="flex items-center gap-1">
               {r.icon}
-              <span className="font-mono text-[10px] text-muted uppercase">{r.label}</span>
+              <span className="font-mono text-[10px] text-muted-foreground uppercase">{r.label}</span>
             </div>
-            <span className="text-xs text-ink">{r.value}</span>
+            <span className="text-xs text-foreground">{r.value}</span>
           </div>
         ))}
       </div>
@@ -269,10 +270,10 @@ function FoodBlock({ day }: { day: TripDay }) {
         {rows.map((r) => (
           <div key={r.label} className="grid grid-cols-[80px_1fr] gap-x-3 items-start">
             <div className="flex items-center gap-1">
-              <Utensils size={11} className="text-muted shrink-0 mt-0.5" />
-              <span className="font-mono text-[10px] text-muted uppercase">{r.label}</span>
+              <Utensils size={11} className="text-muted-foreground shrink-0 mt-0.5" />
+              <span className="font-mono text-[10px] text-muted-foreground uppercase">{r.label}</span>
             </div>
-            <span className="text-xs text-ink">{r.value}</span>
+            <span className="text-xs text-foreground">{r.value}</span>
           </div>
         ))}
       </div>
@@ -287,10 +288,10 @@ function FoodBlock({ day }: { day: TripDay }) {
 function BathroomBlock({ day }: { day: TripDay }) {
   const b = day.bathroom;
   const rows: Array<{ label: string; value: string; icon: React.ReactNode }> = [
-    { label: 'TYPE', value: b.type, icon: <Toilet size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'WATER', value: b.water, icon: <GlassWater size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'SHOWER', value: b.shower, icon: <ShowerHead size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'NOTES', value: b.notes, icon: <Eye size={11} className="text-muted shrink-0 mt-0.5" /> },
+    { label: 'TYPE', value: b.type, icon: <Toilet size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'WATER', value: b.water, icon: <GlassWater size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'SHOWER', value: b.shower, icon: <ShowerHead size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'NOTES', value: b.notes, icon: <Eye size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
   ];
   return (
     <div>
@@ -300,9 +301,9 @@ function BathroomBlock({ day }: { day: TripDay }) {
           <div key={r.label} className="grid grid-cols-[80px_1fr] gap-x-3 items-start">
             <div className="flex items-center gap-1">
               {r.icon}
-              <span className="font-mono text-[10px] text-muted uppercase">{r.label}</span>
+              <span className="font-mono text-[10px] text-muted-foreground uppercase">{r.label}</span>
             </div>
-            <span className="text-xs text-ink">{r.value}</span>
+            <span className="text-xs text-foreground">{r.value}</span>
           </div>
         ))}
       </div>
@@ -317,12 +318,12 @@ function BathroomBlock({ day }: { day: TripDay }) {
 function TimingBlock({ day }: { day: TripDay }) {
   const t = day.timing;
   const rows: Array<{ label: string; value: string; icon: React.ReactNode }> = [
-    { label: 'WAKE', value: t.wake, icon: <AlarmClock size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'WALK H', value: String(t.walk_h), icon: <Clock size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'TREK H', value: String(t.active_trek_h), icon: <Mountain size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'REST H', value: String(t.rest_h), icon: <Bed size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'SLEEP H', value: String(t.sleep_target_h), icon: <Bed size={11} className="text-muted shrink-0 mt-0.5" /> },
-    { label: 'NOTES', value: t.notes, icon: <Eye size={11} className="text-muted shrink-0 mt-0.5" /> },
+    { label: 'WAKE', value: t.wake, icon: <AlarmClock size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'WALK H', value: String(t.walk_h), icon: <Clock size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'TREK H', value: String(t.active_trek_h), icon: <Mountain size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'REST H', value: String(t.rest_h), icon: <Bed size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'SLEEP H', value: String(t.sleep_target_h), icon: <Bed size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
+    { label: 'NOTES', value: t.notes, icon: <Eye size={11} className="text-muted-foreground shrink-0 mt-0.5" /> },
   ];
   return (
     <div>
@@ -332,9 +333,9 @@ function TimingBlock({ day }: { day: TripDay }) {
           <div key={r.label} className="grid grid-cols-[80px_1fr] gap-x-3 items-start">
             <div className="flex items-center gap-1">
               {r.icon}
-              <span className="font-mono text-[10px] text-muted uppercase">{r.label}</span>
+              <span className="font-mono text-[10px] text-muted-foreground uppercase">{r.label}</span>
             </div>
-            <span className="text-xs text-ink">{r.value}</span>
+            <span className="text-xs text-foreground">{r.value}</span>
           </div>
         ))}
       </div>
@@ -348,19 +349,19 @@ function TimingBlock({ day }: { day: TripDay }) {
 
 function carryIcon(item: string): React.ReactNode {
   const s = item.toLowerCase();
-  if (s.includes('glass') || s.includes('sunglass') || s.includes('eye')) return <Eye size={11} className="text-accent shrink-0 mt-0.5" />;
-  if (s.includes('passport') || s.includes('cash') || s.includes('card') || s.includes('wallet')) return <Backpack size={11} className="text-muted shrink-0 mt-0.5" />;
-  if (s.includes('phone') || s.includes('mobile') || s.includes('power bank') || s.includes('charger')) return <Phone size={11} className="text-muted shrink-0 mt-0.5" />;
-  if (s.includes('ibuprofen') || s.includes('ors') || s.includes('med') || s.includes('pill') || s.includes('diamox') || s.includes('glucose')) return <Pill size={11} className="text-red shrink-0 mt-0.5" />;
-  if (s.includes('water') || s.includes('hydrat') || s.includes('bladder') || s.includes('bottle')) return <DropFilled size={11} className="text-green shrink-0 mt-0.5" />;
-  if (s.includes('hand warmer') || s.includes('glove') || s.includes('liner')) return <Snowflake size={11} className="text-muted shrink-0 mt-0.5" />;
-  if (s.includes('headlamp') || s.includes('battery') || s.includes('batteries')) return <Battery size={11} className="text-accent shrink-0 mt-0.5" />;
-  if (s.includes('hat') || s.includes('beanie') || s.includes('cap') || s.includes('mask') || s.includes('buff')) return <HardHat size={11} className="text-muted shrink-0 mt-0.5" />;
-  if (s.includes('snack') || s.includes('protein bar') || s.includes('food') || s.includes('lunch')) return <Utensils size={11} className="text-muted shrink-0 mt-0.5" />;
-  if (s.includes('towel') || s.includes('soap') || s.includes('wet wipe')) return <ShowerHead size={11} className="text-muted shrink-0 mt-0.5" />;
-  if (s.includes('ritual') || s.includes('holy') || s.includes('puja') || s.includes('notebook') || s.includes('sankalpa')) return <CandleFilled size={11} className="text-accent shrink-0 mt-0.5" />;
-  if (s.includes('pack liner') || s.includes('zip-lock') || s.includes('bag')) return <Backpack size={11} className="text-muted shrink-0 mt-0.5" />;
-  return <CircleCheck size={11} className="text-muted shrink-0 mt-0.5" />;
+  if (s.includes('glass') || s.includes('sunglass') || s.includes('eye')) return <Eye size={11} className="text-sacred shrink-0 mt-0.5" />;
+  if (s.includes('passport') || s.includes('cash') || s.includes('card') || s.includes('wallet')) return <Backpack size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
+  if (s.includes('phone') || s.includes('mobile') || s.includes('power bank') || s.includes('charger')) return <Phone size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
+  if (s.includes('ibuprofen') || s.includes('ors') || s.includes('med') || s.includes('pill') || s.includes('diamox') || s.includes('glucose')) return <Pill size={11} className="text-destructive shrink-0 mt-0.5" />;
+  if (s.includes('water') || s.includes('hydrat') || s.includes('bladder') || s.includes('bottle')) return <DropFilled size={11} className="text-emerald shrink-0 mt-0.5" />;
+  if (s.includes('hand warmer') || s.includes('glove') || s.includes('liner')) return <Snowflake size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
+  if (s.includes('headlamp') || s.includes('battery') || s.includes('batteries')) return <Battery size={11} className="text-sacred shrink-0 mt-0.5" />;
+  if (s.includes('hat') || s.includes('beanie') || s.includes('cap') || s.includes('mask') || s.includes('buff')) return <HardHat size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
+  if (s.includes('snack') || s.includes('protein bar') || s.includes('food') || s.includes('lunch')) return <Utensils size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
+  if (s.includes('towel') || s.includes('soap') || s.includes('wet wipe')) return <ShowerHead size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
+  if (s.includes('ritual') || s.includes('holy') || s.includes('puja') || s.includes('notebook') || s.includes('sankalpa')) return <CandleFilled size={11} className="text-sacred shrink-0 mt-0.5" />;
+  if (s.includes('pack liner') || s.includes('zip-lock') || s.includes('bag')) return <Backpack size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
+  return <CircleCheck size={11} className="text-muted-foreground shrink-0 mt-0.5" />;
 }
 
 // ---------------------------------------------------------------------------
@@ -376,7 +377,7 @@ function CarryBlock({ day }: { day: TripDay }) {
         {items.map((item, i) => (
           <li key={i} className="flex items-start gap-2">
             {carryIcon(item)}
-            <span className="text-xs text-ink">{item}</span>
+            <span className="text-xs text-foreground">{item}</span>
           </li>
         ))}
       </ul>
@@ -391,16 +392,23 @@ function CarryBlock({ day }: { day: TripDay }) {
 function SpiritualBlock({ day }: { day: TripDay }) {
   if (!day.spiritual_focus) return null;
   const sf = day.spiritual_focus;
+  // AliimamFeature in single-card mode: one card, no CTA, stripped-down headings.
   return (
-    <div>
-      <SectionHeader label="Spiritual Focus" />
-      <div className="border-l-2 border-accent/60 pl-3 py-1 rounded-r bg-accent/5">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-accent mb-1 flex items-center gap-1">
-          <CandleFilled size={10} className="shrink-0" />
-          {sf.title}
-        </p>
-        <p className="text-xs text-ink leading-relaxed whitespace-pre-line">{sf.body}</p>
-      </div>
+    <div className="-mx-4">
+      <AliimamFeature
+        eyebrow="Spiritual Focus"
+        title={sf.title}
+        body={sf.body}
+        cards={[
+          {
+            icon: <CandleFilled size={16} className="text-sacred" />,
+            title: sf.title,
+            body: sf.body,
+          },
+        ]}
+        ctaLabel=""
+        ctaHref=""
+      />
     </div>
   );
 }
@@ -413,14 +421,14 @@ function FooterStrip({ day }: { day: TripDay }) {
   return (
     <div className="mt-5 pt-3 border-t border-border flex flex-wrap gap-4">
       <div className="flex items-center gap-1.5">
-        <Bed size={12} className="text-muted shrink-0" />
-        <span className="font-mono text-[10px] text-muted uppercase mr-1">STAY</span>
-        <span className="font-mono text-[11px] text-ink font-medium">{day.stay}</span>
+        <Bed size={12} className="text-muted-foreground shrink-0" />
+        <span className="font-mono text-[10px] text-muted-foreground uppercase mr-1">STAY</span>
+        <span className="font-mono text-[11px] text-foreground font-medium">{day.stay}</span>
       </div>
       <div className="flex items-center gap-1.5">
-        <ShowerHead size={12} className="text-muted shrink-0" />
-        <span className="font-mono text-[10px] text-muted uppercase mr-1">BATHING</span>
-        <span className="font-mono text-[11px] text-ink">{day.bathing}</span>
+        <ShowerHead size={12} className="text-muted-foreground shrink-0" />
+        <span className="font-mono text-[10px] text-muted-foreground uppercase mr-1">BATHING</span>
+        <span className="font-mono text-[11px] text-foreground">{day.bathing}</span>
       </div>
     </div>
   );
@@ -559,10 +567,10 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
   );
 
   // Card border / background rules
-  const cardBg = isClimb ? 'bg-red/5' : 'bg-card';
+  const cardBg = isClimb ? 'bg-destructive/5' : 'bg-card';
   const cardBorderWidth = isClimb ? 'border-2' : 'border';
-  const cardBorderColor = isClimb ? 'border-red' : isToday ? 'border-ink' : 'border-border';
-  const cardRing = isToday && !isClimb ? 'ring-1 ring-ink' : '';
+  const cardBorderColor = isClimb ? 'border-destructive' : isToday ? 'border-primary' : 'border-border';
+  const cardRing = isToday && !isClimb ? 'ring-1 ring-primary' : '';
 
   // Completed badge for Day 8 after the phase
   const showCompleted = isClimb && phase === 'after';
@@ -572,19 +580,19 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
 
   // Badge color mapping
   function badgeColor(badge: string): string {
-    if (badge === 'CRITICAL DAY') return 'bg-red/10 border-red/30 text-red';
-    if (badge === 'SNAN AND PUJA') return 'bg-accent/10 border-accent/30 text-accent';
-    if (badge === 'RECOVERY') return 'bg-green/10 border-green/30 text-green';
-    return 'bg-border/30 border-border text-muted';
+    if (badge === 'CRITICAL DAY') return 'bg-destructive/10 border-destructive/30 text-destructive';
+    if (badge === 'SNAN AND PUJA') return 'bg-sacred/10 border-sacred/30 text-sacred';
+    if (badge === 'RECOVERY') return 'bg-emerald/10 border-emerald/30 text-emerald';
+    return 'bg-border/30 border-border text-muted-foreground';
   }
 
   return (
     <>
       {/* Day 8 critical warn banner ABOVE the card */}
       {isClimb && (
-        <div className="mb-2 rounded border-2 border-red bg-red/10 px-4 py-2 flex items-start gap-2">
-          <TriangleAlert size={14} className="text-red shrink-0 mt-0.5" />
-          <p className="font-mono text-xs text-red font-medium">
+        <div className="mb-2 rounded border-2 border-destructive bg-destructive/10 px-4 py-2 flex items-start gap-2">
+          <TriangleAlert size={14} className="text-destructive shrink-0 mt-0.5" />
+          <p className="font-mono text-xs text-destructive font-medium">
             22 km on foot. 5,630 m pass. 04:00 wake. No bailout after the pass.
           </p>
         </div>
@@ -606,7 +614,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
       >
         {/* Climb rule header (double-height collapsed state) */}
         {isClimb && (
-          <div className="bg-red px-4 py-2 font-mono text-[11px] font-medium text-card tracking-widest uppercase text-center">
+          <div className="bg-destructive px-4 py-2 font-mono text-[11px] font-medium text-destructive-foreground tracking-widest uppercase text-center">
             {'=== DOLMA LA PASS ==='}
           </div>
         )}
@@ -614,7 +622,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
         {/* Rest badge */}
         {isRest && (
           <div className="px-4 pt-3 pb-0 flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded bg-green/10 border border-green/30 px-2 py-0.5 font-mono text-[10px] text-green uppercase tracking-wide">
+            <span className="inline-flex items-center gap-1 rounded bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
               <Bed size={10} /> Rest day
             </span>
           </div>
@@ -623,7 +631,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
         {/* Completed badge */}
         {showCompleted && (
           <div className="px-4 pt-2 pb-0">
-            <span className="inline-flex items-center gap-1 rounded bg-green/10 border border-green/30 px-2 py-0.5 font-mono text-[10px] text-green uppercase tracking-wide">
+            <span className="inline-flex items-center gap-1 rounded bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
               <CircleCheck size={10} /> Completed
             </span>
           </div>
@@ -635,27 +643,27 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
             <div className="flex-1 min-w-0">
               {/* Sacred label dominant for pilgrimage */}
               {isPilgrimage && day.sacred_label && (
-                <p className="font-mono text-[10px] uppercase tracking-widest text-accent mb-0.5 flex items-center gap-1">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-sacred mb-0.5 flex items-center gap-1">
                   <Heart size={10} className="shrink-0" />
                   SACRED · {day.sacred_label}
                 </p>
               )}
               {/* Climb sacred label */}
               {isClimb && day.sacred_label && (
-                <p className="font-mono text-[10px] uppercase tracking-widest text-red mb-0.5">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-destructive mb-0.5">
                   {day.sacred_label}
                 </p>
               )}
               <h3
                 className={[
                   'font-sans font-medium leading-snug',
-                  isClimb ? 'text-red text-lg' : 'text-ink text-base',
+                  isClimb ? 'text-destructive text-lg' : 'text-foreground text-base',
                 ].join(' ')}
               >
-                <span className="text-muted font-mono text-xs mr-2">D{day.day}</span>
+                <span className="text-muted-foreground font-mono text-xs mr-2">D{day.day}</span>
                 {day.location}
               </h3>
-              <p className="mt-0.5 text-xs text-muted font-mono">
+              <p className="mt-0.5 text-xs text-muted-foreground font-mono">
                 {day.weekday} {day.date}
               </p>
             </div>
@@ -673,10 +681,10 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
           </div>
 
           {/* Subtitle (description line) */}
-          <p className="mt-2 text-sm text-ink leading-snug">
+          <p className="mt-2 text-sm text-foreground leading-snug">
             {day.subtitle}
             {pattern === 'combo' && (
-              <span className="ml-2 font-mono text-[10px] bg-accent/10 text-accent border border-accent/20 rounded px-1.5 py-0.5 uppercase tracking-wide">
+              <span className="ml-2 font-mono text-[10px] bg-sacred/10 text-sacred border border-sacred/20 rounded px-1.5 py-0.5 uppercase tracking-wide">
                 LONG DAY
               </span>
             )}
@@ -696,7 +704,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
 
         {/* Collapse banner for D8 pre-phase (note about auto-expand) */}
         {showClimbBanner && (
-          <p className="px-4 pb-1 mt-2 font-mono text-[10px] text-red">
+          <p className="px-4 pb-1 mt-2 font-mono text-[10px] text-destructive">
             Auto-expands T-3 before Dolma La.
           </p>
         )}
@@ -707,7 +715,7 @@ export function DayCard({ day, isToday }: { day: TripDay; isToday: boolean }) {
             type="button"
             onClick={toggle}
             aria-expanded={expanded}
-            className="flex items-center gap-1.5 text-xs text-muted hover:text-ink transition-colors font-sans"
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-sans"
           >
             <motion.span
               animate={{ rotate: expanded ? 180 : 0 }}
