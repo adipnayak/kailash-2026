@@ -2772,6 +2772,426 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
   stroke-dashoffset: 0;
 }
 </style>
+
+<style id="kailash-v312-xcut">
+/* =================== v3.12 CROSS-CUT CSS (all 11 issues) =================== */
+
+/* #6 Journey Timeline */
+.journey-timeline-section {
+  padding: 0 0 var(--s-4);
+  overflow: hidden;
+}
+.journey-timeline-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: var(--s-2);
+  display: block;
+}
+.journey-timeline-scroll {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+.journey-timeline-scroll::-webkit-scrollbar { display: none; }
+.jt-item {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  min-width: 90px;
+  padding: var(--s-2) var(--s-3);
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 150ms ease;
+}
+.jt-item:last-child { border-right: none; }
+.jt-item:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.jt-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  display: block;
+  letter-spacing: 0.04em;
+}
+.jt-place {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 10px;
+  color: var(--muted);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+.jt-item.jt-today {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+.jt-item.jt-day8 .jt-date { color: var(--red); }
+.jt-item.jt-day8 .jt-place { color: var(--red); }
+.jt-item.jt-day8 { border-bottom: 3px solid var(--red); }
+.jt-countdown {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--red);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-top: var(--s-1);
+}
+.jt-item.jt-done { opacity: 0.45; }
+
+/* #8 Connectivity Ribbon phase variants */
+.conn-ribbon-headline {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: var(--s-2);
+}
+.conn-ribbon-headline.warn { color: var(--red); }
+.conn-ribbon-headline.ok { color: var(--green); }
+.phase-before .conn-ribbon-cell.offline .cr-day { color: var(--red); font-weight: 700; }
+.phase-before .conn-ribbon-cell.good { opacity: 0.4; }
+.phase-during .conn-ribbon-cell.cr-today-cell {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* #9 Weather Confidence bar */
+.weather-confidence-section {
+  padding: var(--s-3) 0;
+}
+.weather-conf-bar-wrap {
+  margin: var(--s-2) 0 var(--s-1);
+}
+.weather-conf-bar-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  width: 100%;
+}
+.weather-conf-bar-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.weather-conf-label {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+  display: block;
+}
+.weather-conf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+}
+.weather-conf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-family: var(--font-body);
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: var(--ink);
+}
+
+/* #10 Preparation Dashboard */
+.prep-dashboard-v312 {
+  padding: var(--s-3) 0 var(--s-4);
+}
+.prep-dash-cat {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+.prep-dash-cat:last-child { border-bottom: none; }
+.prep-dash-dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 3px;
+}
+.prep-dash-dot.green { background: var(--green); }
+.prep-dash-dot.yellow { background: var(--yellow); }
+.prep-dash-dot.red { background: var(--red); }
+.prep-dash-dot.gray { background: var(--muted); }
+.prep-dash-name {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+}
+.prep-dash-status {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.prep-dash-status.red { color: var(--red); font-weight: 600; }
+.prep-dash-blocking {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--red);
+  margin-top: var(--s-1);
+  display: none;
+}
+.prep-dash-cat.status-red .prep-dash-blocking { display: block; }
+.prep-dash-optional-badge {
+  font-family: var(--font-body);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1px 4px;
+  margin-left: var(--s-1);
+}
+
+/* #13 Day cards refactor - pre-baked CSS from /tmp/v312-day-chip-types.css */
+.day-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--card, var(--bg));
+  letter-spacing: 0.04em;
+  transition: transform 200ms ease-out, border-color 200ms ease-out;
+}
+.day-chip .icon { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
+.day-chip-value { font-weight: 600; }
+.day-chip-unit { font-size: 9px; opacity: 0.6; font-weight: 400; }
+.day-chip-altitude .day-chip-value-feet { font-size: 9px; opacity: 0.55; vertical-align: super; margin-left: 2px; font-weight: 400; }
+.day-chip.dominant {
+  font-size: 16px; padding: 10px 16px; border-color: var(--ink); border-width: 1.5px; flex-grow: 1;
+}
+.day-chip.dominant .icon { width: 20px; height: 20px; color: var(--ink); }
+.day-chip.dominant .day-chip-value { font-weight: 700; }
+.day-chip.dominant .day-chip-unit { font-size: 11px; }
+.day-chip.dominant .day-chip-value-feet { font-size: 11px; }
+.day-card[data-day-type="travel"] .day-chip-time.dominant { border-color: var(--ink); }
+.day-card[data-day-type="combo"] .day-chip-distance.dominant { border-color: var(--accent, var(--yellow)); }
+.day-card[data-day-type="combo"] .day-chip-distance.dominant::after { content: " \B7 LONG DAY"; font-size: 9px; opacity: 0.7; letter-spacing: 0.1em; }
+.day-card[data-day-type="rest"] .day-tldr-chips { display: none; }
+.day-card[data-day-type="rest"] .day-rest-badge {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px;
+  border: 1.5px solid var(--muted); border-radius: 6px;
+  font-family: 'Inter Tight', sans-serif; font-size: 18px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); background: var(--bg);
+}
+.day-card[data-day-type="rest"] .day-rest-badge::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); opacity: 0.5;
+}
+.day-card[data-day-type="pilgrimage"] .day-chip-sacred.dominant { border-color: var(--accent, var(--yellow)); background: color-mix(in srgb, var(--accent, var(--yellow)) 6%, var(--bg)); }
+.day-card[data-day-type="pilgrimage"] .day-chip-sacred.dominant .day-chip-value { color: var(--accent, var(--yellow)); font-family: 'Inter Tight', sans-serif; font-style: italic; }
+.day-card[data-day-type="trek"] .day-chip-distance.dominant { border-color: var(--ink); }
+.day-card[data-day-type="climb"] { min-height: 320px; border-color: var(--red); border-width: 2px; position: relative; }
+.day-card[data-day-type="climb"]::before {
+  content: "=== DOLMA LA PASS \B7 5,630m \B7 HIGHEST POINT ===";
+  display: block; background: var(--red); color: var(--bg);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; text-align: center; padding: 8px 12px;
+  margin: -1px -1px 12px -1px; border-radius: 4px 4px 0 0;
+}
+.day-card[data-day-type="climb"] .day-chip-altitude.dominant { border-color: var(--red); border-width: 2px; background: color-mix(in srgb, var(--red) 8%, var(--bg)); }
+.day-card[data-day-type="climb"] .day-chip-altitude.dominant .day-chip-value,
+.day-card[data-day-type="climb"] .day-chip-altitude.dominant .icon { color: var(--red); }
+.day-card[data-day-type="climb"] .day-chip-altitude.dominant .day-chip-value-feet { color: var(--red); opacity: 0.7; }
+.day-tldr-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; align-items: stretch; }
+@media (max-width: 480px) {
+  .day-tldr-chips { gap: 4px; }
+  .day-chip { font-size: 10px; padding: 5px 8px; }
+  .day-chip.dominant { font-size: 14px; padding: 8px 12px; flex-basis: 100%; }
+}
+.day-expand-affordance {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+  color: var(--muted); background: none; border: none; cursor: pointer;
+  padding: 6px 0; text-transform: uppercase; transition: color 200ms ease-out;
+}
+.day-expand-affordance:hover { color: var(--ink); }
+.day-expand-affordance .icon { width: 12px; height: 12px; transition: transform 240ms cubic-bezier(0.4,0,0.2,1); }
+.day-card.expanded .day-expand-affordance .icon { transform: rotate(180deg); }
+
+/* #7 Per-day inner timeline */
+.day-inner-timeline {
+  list-style: none;
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  border-left: 2px solid var(--border);
+  padding-left: var(--s-4);
+}
+.day-inner-timeline li {
+  position: relative;
+  display: flex;
+  gap: var(--s-3);
+  margin-bottom: var(--s-2);
+  padding-bottom: var(--s-2);
+}
+.day-inner-timeline li::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--s-4) - 1px);
+  top: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--border);
+}
+.day-inner-timeline li.tl-peak { border-bottom: 1px solid var(--red); }
+.day-inner-timeline li.tl-peak::before { background: var(--red); box-shadow: 0 0 0 2px var(--red); }
+.day-inner-timeline li.tl-past { opacity: 0.4; }
+.day-inner-timeline li.tl-current::before { background: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+.tl-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  min-width: 38px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+.tl-event {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  flex: 1;
+}
+.tl-event.tl-peak-text {
+  color: var(--red);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* #11 Hero refactor - handled via existing before/during/after + JS update */
+.hero-content-before,
+.hero-content-during,
+.hero-content-after { display: none; }
+[data-phase="before"] .hero-content-before { display: block; }
+[data-phase="during"] .hero-content-during { display: block; }
+[data-phase="after"]  .hero-content-after  { display: block; }
+.hero-v312-during {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+  margin-top: var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.hero-v312-today, .hero-v312-tomorrow {
+  padding: var(--s-3) var(--s-4);
+}
+.hero-v312-today { border-right: 1px solid var(--border); }
+.hero-v312-label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: var(--s-1);
+  display: block;
+}
+.hero-v312-loc {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.hero-v312-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: var(--s-2);
+}
+.hero-v312-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 6px;
+  color: var(--muted);
+}
+
+/* #2 Dual-unit altitude */
+.altitude-value-feet {
+  font-size: 0.65em;
+  opacity: 0.55;
+  vertical-align: super;
+  margin-left: 2px;
+  font-weight: 400;
+}
+
+/* #4 Sacred milestone labels */
+.sacred-label-gloss {
+  font-family: 'Inter Tight', sans-serif;
+  font-style: italic;
+  color: var(--yellow);
+}
+.sacred-label-icon {
+  width: 12px;
+  height: 12px;
+  vertical-align: -0.15em;
+  stroke: var(--yellow);
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* #5 Day 8 completion badge */
+.day8-completed-badge {
+  display: none;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-body);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-top: var(--s-2);
+}
+.day8-completed-badge.visible { display: inline-flex; }
+
+@media (max-width: 480px) {
+  .hero-v312-during { grid-template-columns: 1fr; }
+  .hero-v312-today { border-right: none; border-bottom: 1px solid var(--border); }
+}
+</style>
 </head>
 <body>
 <!-- =================== TAB RADIO INPUTS (#37 + v3.8) =================== -->
@@ -3972,14 +4392,19 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
   </div><!-- end .altitude-chart-wrapper -->
 </section>
 
-<!-- =================== CONNECTIVITY RIBBON (v3.9 §0.13.5) =================== -->
+<!-- =================== CONNECTIVITY RIBBON (v3.9 §0.13.5 + v3.12 #8) =================== -->
 <section id="conn-ribbon-section">
   <div class="conn-ribbon">
-    <div class="conn-ribbon-title">Connectivity overview &middot; 13 day view</div>
+    <div class="conn-ribbon-headline" id="conn-ribbon-headline">Connectivity overview &middot; 13 day view</div>
     <div class="conn-ribbon-track" id="conn-ribbon-track">
       <!-- Populated by JS -->
     </div>
   </div>
+</section>
+
+<!-- =================== WEATHER CONFIDENCE (v3.12 #9) =================== -->
+<section class="weather-confidence-section" id="weather-confidence-section">
+  <div id="weather-conf-container"><!-- Populated by JS --></div>
 </section>
 
 <!-- =================== TODAY CARD (v3.8 §0.12.10, during only) =================== -->
@@ -4115,6 +4540,15 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
   </div>
 </section>
 
+<!-- =================== JOURNEY TIMELINE (v3.12 #6) =================== -->
+<section class="journey-timeline-section" id="journey-timeline-section">
+  <span class="journey-timeline-label">Calendar timeline</span>
+  <div class="journey-timeline-scroll" id="journey-timeline-scroll" role="list">
+    <!-- Populated by JS -->
+  </div>
+  <div id="jt-countdown-display" style="margin-top:var(--s-2);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);display:none;"></div>
+</section>
+
 <!-- Day cards -->
 <section id="day-cards">
   <h2>The 13 days</h2>
@@ -4128,6 +4562,12 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
 <div class="tab-pane" data-tab="prepare">
 <div class="print-only">Prepare</div>
 <main>
+
+<!-- =================== PREPARATION DASHBOARD (v3.12 #10) =================== -->
+<section class="before-only" id="prep-dashboard-v312">
+  <h2>Preparation status</h2>
+  <div class="prep-dashboard-v312" id="prep-dashboard-cats"><!-- Populated by JS --></div>
+</section>
 
 <!-- Context chips (#39) -->
 <div class="chip-row" aria-label="Prepare sections">
@@ -4491,7 +4931,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
   <h2>Completion</h2>
   <div class="callout good">
     <span class="ct-label">Yatra completed</span>
-    13 days. 6 locations. 5,630 m max altitude. <em style="color:var(--yellow);font-family:var(--font-headline);font-style:italic">Jai Bhole Nath.</em>
+    13 days. 6 locations. 5,630 m max altitude. Yatra Sampoorna (yatra complete).
   </div>
 </section>
 
@@ -7253,6 +7693,712 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
     el.style.setProperty('--stagger-i', i);
   });
 })();
+</script>
+
+<script id="kailash-v312-xcut-js">
+/* =================== v3.12 CROSS-CUT JS (issues #2,#3,#4,#5,#6,#7,#8,#9,#10,#11,#13) =================== */
+(function(){
+
+/* ---- Conversion table (#2) ---- */
+var ALT_FT = {
+  1380: 4528,
+  3656: 11995,
+  4570: 14993,
+  4575: 15010,
+  4670: 15322,
+  4760: 15617,
+  4790: 15715,
+  4900: 16076,
+  5630: 18471
+};
+function mToFt(m) {
+  if (ALT_FT[m]) return ALT_FT[m];
+  return Math.round(m * 3.28084);
+}
+function altHtml(m) {
+  var ft = mToFt(m);
+  return m.toLocaleString() + 'm<span class="altitude-value-feet">' + ft.toLocaleString() + 'ft</span>';
+}
+
+/* ---- Per-day data snapshots ---- */
+var DAY_DATES = [
+  "07 Jul","08 Jul","09 Jul","10 Jul","11 Jul","12 Jul","13 Jul",
+  "14 Jul","15 Jul","16 Jul","17 Jul","18 Jul","19 Jul"
+];
+var DAY_PLACES = [
+  "Kathmandu","Kathmandu","Lhasa","Lhasa","Mansarovar","Mansarovar","Dirapuk",
+  "Dolma La","Zuthulphuk","Lhasa","Kathmandu","Kathmandu","Home"
+];
+var DAY_TYPES_312 = [
+  "travel","rest","travel","rest","combo","pilgrimage","trek",
+  "climb","trek","trek","travel","rest","travel"
+];
+var DAY_ALT_PEAK = [1380,1380,3656,3656,4670,4670,4900,5630,4900,4575,3656,1380,1380];
+var DAY_ALT_SLEEP= [1380,1380,3656,3656,4670,4670,4900,4790,4760,3656,1380,1380,0];
+var DAY_DIST     = [0,2,0,3,0,2,12,22,14,0,0,3,2];
+var DAY_TIME_H   = [10,6,4,6,14,6,7,14,5,9,5,0,5];
+var DAY_CONN     = ["good","good","intermittent","intermittent","intermittent","intermittent","offline","offline","intermittent","intermittent","good","good","good"];
+
+/* ---- Inner timeline data (#7) ---- */
+var DAY_INNER_TIMELINE = {
+  1: [{t:"08:05",e:"Group arrival window opens at KTM airport"},{t:"11:00",e:"Operator pickup and transfer"},{t:"18:30",e:"Group dinner"}],
+  2: [{t:"07:00",e:"Breakfast"},{t:"09:00",e:"Indian Embassy NOC visit"},{t:"12:00",e:"Pashupatinath darshan"},{t:"15:30",e:"Hotel return, rest"},{t:"16:00",e:"Briefing and kit distribution"},{t:"19:30",e:"Group dinner"}],
+  3: [{t:"05:30",e:"KTM hotel checkout"},{t:"08:30",e:"KTM to Lhasa flight"},{t:"12:30",e:"Lhasa Gonggar arrival, customs"},{t:"15:00",e:"Hotel check-in, rest mandatory"},{t:"19:00",e:"Light dinner, early sleep"}],
+  4: [{t:"07:00",e:"Breakfast"},{t:"08:30",e:"Jokhang Temple visit"},{t:"11:00",e:"Barkhor Street walk"},{t:"14:00",e:"Potala Palace tour"},{t:"18:30",e:"Hotel dinner, rest"}],
+  5: [{t:"04:30",e:"Breakfast, suitcase handoff"},{t:"07:00",e:"Lhasa to Ali domestic flight"},{t:"10:30",e:"Ali to Mansarovar drive (long)"},{t:"18:00",e:"Mansarovar hotel arrival, dinner"}],
+  6: [{t:"04:30",e:"Wake for shore walk"},{t:"05:00",e:"Early start for lake shore"},{t:"06:00",e:"Mansarovar Snan (holy bath)"},{t:"08:00",e:"Chiu Gompa Puja (worship)"},{t:"12:00",e:"Hotel lunch, rest"},{t:"16:00",e:"Optional shore kora walk"},{t:"19:00",e:"Group dinner"}],
+  7: [{t:"05:00",e:"Breakfast and pack"},{t:"06:00",e:"Mansarovar to Darchen drive"},{t:"08:00",e:"Yamadwar gate, Parikrama begins"},{t:"08:30",e:"Trek begins toward Dirapuk"},{t:"13:30",e:"Arrive Dirapuk guesthouse"},{t:"14:00",e:"Lunch"},{t:"16:00",e:"First Kailash Darshan (sacred sight)"},{t:"19:00",e:"Dinner, early sleep"}],
+  8: [{t:"04:00",e:"Wake, high-calorie breakfast"},{t:"05:00",e:"Pre-dawn departure from Dirapuk"},{t:"09:00",e:"Approach the pass, slow pace"},{t:"09:30",e:"Dolma La Crossing (spiritual crossing) 5,630m",peak:true},{t:"13:00",e:"Steep descent, knees on poles"},{t:"14:00",e:"Mid-descent rest, packed lunch"},{t:"17:00",e:"Descent to Gauri Kund area"},{t:"19:00",e:"Arrive Zuthulphuk, late dinner"},{t:"21:30",e:"Sleep at 4,790m"}],
+  9: [{t:"06:00",e:"Light breakfast, pack"},{t:"07:00",e:"Trek from Zuthulphuk past Mani Wall"},{t:"11:00",e:"Parikrama ends at Darchen"},{t:"13:00",e:"Late lunch, recovery food"},{t:"15:00",e:"Hotel rest, first wash in 3 days"},{t:"19:30",e:"Hotel dinner"}],
+  10:[{t:"04:30",e:"Packed breakfast, cold morning"},{t:"06:00",e:"Darchen to Ali drive"},{t:"12:30",e:"Ali to Lhasa flight"},{t:"15:30",e:"St Regis check-in, suitcase reunion"},{t:"17:00",e:"Long hot shower"},{t:"20:00",e:"Concluding group dinner"}],
+  11:[{t:"06:00",e:"Breakfast"},{t:"07:00",e:"St Regis checkout"},{t:"10:00",e:"Lhasa to KTM flight"},{t:"13:00",e:"Marriott KTM check-in"},{t:"15:00",e:"Free afternoon"},{t:"19:00",e:"Casual dinner"}],
+  12:[{t:"08:00",e:"Late breakfast"},{t:"11:00",e:"Optional Thamel walk or quiet hotel day"},{t:"15:00",e:"Massage or rest"},{t:"19:00",e:"Final group dinner"}],
+  13:[{t:"03:30",e:"Wake"},{t:"04:30",e:"Marriott checkout for early flight"},{t:"06:30",e:"KTM airport"},{t:"09:00",e:"Flight home"}]
+};
+
+/* ---- Sacred milestone labels (#4) ---- */
+var SACRED_GLOSSED = {
+  "Pashupatinath": "Pashupatinath",
+  "Jokhang": "Jokhang",
+  "Mansarovar Snan": "Mansarovar Snan (holy bath)",
+  "Chiu Gompa Puja": "Chiu Gompa Puja (worship)",
+  "First Kailash Darshan": "First Kailash Darshan (sacred sight)",
+  "Dolma La Crossing": "Dolma La Crossing (spiritual crossing)",
+  "Gauri Kund": "Gauri Kund"
+};
+
+/* ---- Confidence formula (#9) ---- */
+function weatherConfidence(d2d) {
+  if (d2d >= 17) return 0;
+  if (d2d <= 3)  return 100;
+  return Math.round(100 - ((d2d - 3) / 14) * 100);
+}
+
+/* =========================================================
+   #6 - Journey Timeline
+   ========================================================= */
+function renderJourneyTimeline() {
+  var el = document.getElementById("journey-timeline-scroll");
+  if (!el) return;
+  var phase, dtd, tripDayIndex;
+  try {
+    var st = getJourneyState();
+    phase = st.phase;
+    dtd   = st.daysToDeparture;
+    tripDayIndex = st.tripDayIndex || 0;
+  } catch(e) {
+    phase = "before"; dtd = 17; tripDayIndex = 0;
+  }
+  var html = "";
+  for (var i = 0; i < 13; i++) {
+    var dayNum = i + 1;
+    var isDay8 = (dayNum === 8);
+    var isToday = (phase === "during" && tripDayIndex === dayNum);
+    var isDone  = (phase === "during" && tripDayIndex > dayNum) || phase === "after";
+    var cls = "jt-item";
+    if (isDay8) cls += " jt-day8";
+    if (isToday) cls += " jt-today";
+    if (isDone)  cls += " jt-done";
+    var countdown = "";
+    if (isDay8 && phase === "before") {
+      var daysTo8 = dtd + 7;
+      countdown = '<span class="jt-countdown">' + daysTo8 + ' days</span>';
+    }
+    html += '<a class="' + cls + '" href="#day-' + dayNum + '" data-trip-day-index="' + dayNum + '"'
+          + ' data-date="2026-' + (dayNum <= 6 ? "07-0" : "07-") + (dayNum + 6) + '"'
+          + ' role="listitem"'
+          + ' onclick="(function(e){e.preventDefault();try{activateTab(\'tab-itinerary\');setTimeout(function(){var el=document.getElementById(\'day-' + dayNum + '\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'start\'})},80)}catch(ex){}})(event)"'
+          + '>'
+          + '<span class="jt-date">D' + dayNum + ' ' + DAY_DATES[i] + '</span>'
+          + '<span class="jt-place">' + DAY_PLACES[i] + '</span>'
+          + countdown
+          + '</a>';
+  }
+  el.innerHTML = html;
+
+  /* before: auto-scroll to Day 8 anchor */
+  if (phase === "before") {
+    var day8el = el.querySelector('.jt-day8');
+    if (day8el) { setTimeout(function(){ day8el.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"}); },200); }
+  }
+  /* during: auto-scroll to today */
+  if (phase === "during" && tripDayIndex) {
+    var todayEl = el.querySelector('.jt-today');
+    if (todayEl) { setTimeout(function(){ todayEl.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"}); },200); }
+  }
+
+  /* countdown display */
+  var cdEl = document.getElementById("jt-countdown-display");
+  if (cdEl && phase === "before") {
+    cdEl.textContent = (dtd + 7) + " days until 14 Jul (Dolma La)";
+    cdEl.style.display = "";
+  }
+}
+
+/* =========================================================
+   #8 - Connectivity Ribbon phase signals
+   ========================================================= */
+function updateConnRibbonPhase() {
+  var hlEl = document.getElementById("conn-ribbon-headline");
+  if (!hlEl) return;
+  var phase, tripDayIndex;
+  try { var st = getJourneyState(); phase = st.phase; tripDayIndex = st.tripDayIndex || 0; }
+  catch(e) { phase = "before"; tripDayIndex = 0; }
+
+  if (phase === "before") {
+    hlEl.textContent = "They'll be offline for ~3 days mid-trip";
+    hlEl.className = "conn-ribbon-headline warn";
+    /* Emphasise D7-D9 (offline cluster) */
+    document.querySelectorAll(".conn-ribbon-cell").forEach(function(cell, i) {
+      if (i >= 6 && i <= 8) {
+        cell.classList.add("offline-emphasis");
+      }
+    });
+  } else if (phase === "during") {
+    var status = (tripDayIndex >= 1 && tripDayIndex <= 13) ? DAY_CONN[tripDayIndex - 1] : "good";
+    var labels = {good:"Reachable", intermittent:"Limited Connectivity", offline:"Offline"};
+    hlEl.textContent = "Today: " + (labels[status] || status);
+    hlEl.className = "conn-ribbon-headline" + (status === "offline" ? " warn" : status === "good" ? " ok" : "");
+    /* Mark today's cell */
+    document.querySelectorAll(".conn-ribbon-cell").forEach(function(cell, i) {
+      if (i === tripDayIndex - 1) cell.classList.add("cr-today-cell");
+    });
+  } else {
+    hlEl.textContent = "3 offline days completed";
+    hlEl.className = "conn-ribbon-headline ok";
+  }
+}
+
+/* =========================================================
+   #9 - Weather Confidence bar
+   ========================================================= */
+function renderWeatherConfidence() {
+  var el = document.getElementById("weather-conf-container");
+  if (!el) return;
+  var phase, dtd;
+  try { var st = getJourneyState(); phase = st.phase; dtd = st.daysToDeparture; }
+  catch(e) { phase = "before"; dtd = 17; }
+
+  var html = "";
+  if (phase === "before") {
+    var conf = weatherConfidence(dtd);
+    html += '<div class="weather-conf-bar-wrap">';
+    html += '<div class="weather-conf-bar-track"><div class="weather-conf-bar-fill" style="width:' + conf + '%"></div></div>';
+    html += '<span class="weather-conf-label">' + conf + '% forecast confidence &middot; Kathmandu 18&deg;C &middot; Dolma La -4&deg; to 6&deg;</span>';
+    html += '</div>';
+    html += '<div class="weather-conf-chips">';
+    html += '<span class="weather-conf-chip"><svg class="icon" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5"><use href="#icon-thermometer"/></svg> KTM 18&deg;C expected</span>';
+    html += '<span class="weather-conf-chip"><svg class="icon" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5"><use href="#icon-mountain"/></svg> Dolma La -4 to 6&deg;C</span>';
+    if (dtd <= 16) {
+      html += '<span class="weather-conf-chip"><svg class="icon" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5"><use href="#icon-thermometer"/></svg> Live forecast active</span>';
+    }
+    html += '</div>';
+  } else if (phase === "during") {
+    html += '<div class="weather-conf-chips">';
+    html += '<span class="weather-conf-chip"><svg class="icon" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5"><use href="#icon-thermometer"/></svg> <span id="wc-today-temp">--</span> today</span>';
+    html += '<span class="weather-conf-chip"><svg class="icon" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5"><use href="#icon-thermometer"/></svg> <span id="wc-tmrw-temp">--</span> tomorrow</span>';
+    html += '</div>';
+    /* Populate from DAYS */
+    try {
+      var st2 = getJourneyState();
+      if (st2.todayData) {
+        var td = st2.todayData;
+        var todayTmp = td.weather.high + " / " + td.weather.low + " degC";
+        html = html.replace('<span id="wc-today-temp">--</span>', '<span id="wc-today-temp">' + todayTmp + '</span>');
+      }
+      if (st2.tomorrowData) {
+        var td2 = st2.tomorrowData;
+        var tmrwTmp = td2.weather.high + " / " + td2.weather.low + " degC";
+        html = html.replace('<span id="wc-tmrw-temp">--</span>', '<span id="wc-tmrw-temp">' + tmrwTmp + '</span>');
+      }
+    } catch(e) {}
+  } else {
+    /* after */
+    html += '<div class="weather-conf-chips">';
+    html += '<span class="weather-conf-chip"><svg class="icon" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5"><use href="#icon-thermometer"/></svg> Range during trip: -8&deg;C to 29&deg;C</span>';
+    html += '<span class="weather-conf-chip"><svg class="icon" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5"><use href="#icon-mountain"/></svg> Wind days: 3</span>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+/* =========================================================
+   #10 - Preparation Dashboard
+   ========================================================= */
+var PREP_CATS = [
+  {id:"passport",    label:"Passport",      required:true},
+  {id:"flights",     label:"Flights",       required:true},
+  {id:"medical",     label:"Medical",       required:false},
+  {id:"connectivity",label:"Connectivity",  required:true},
+  {id:"packing",     label:"Packing",       required:true}
+];
+var PREP_BLOCKING = {
+  passport:     "Courier to visa agent + return tracking required",
+  flights:      "BOM-KTM tickets must be confirmed",
+  connectivity: "Holafly eSIM + Astrill VPN must be tested",
+  packing:      "Trek-day gear and Day 8 cold-weather items outstanding"
+};
+
+function renderPrepDashboard() {
+  var el = document.getElementById("prep-dashboard-cats");
+  if (!el) return;
+  /* purge insurance from localStorage */
+  try {
+    var pd = JSON.parse(localStorage.getItem("kailash_prep_v2") || "{}");
+    if (pd.insurance !== undefined) { delete pd.insurance; localStorage.setItem("kailash_prep_v2", JSON.stringify(pd)); }
+  } catch(e) {}
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem("kailash_prep_v2") || "{}"); } catch(e) {}
+
+  var html = "";
+  PREP_CATS.forEach(function(cat) {
+    var s = state[cat.id] || "red";
+    var dotClass = s;
+    var statusText = s === "green" ? "COMPLETE" : s === "yellow" ? "PENDING" : "ACTION NEEDED";
+    var statusClass = s === "green" ? "" : s === "yellow" ? "" : "red";
+    html += '<div class="prep-dash-cat status-' + s + '" id="prep-dash-' + cat.id + '">';
+    html += '<div class="prep-dash-dot ' + dotClass + '"></div>';
+    html += '<div style="flex:1">';
+    html += '<span class="prep-dash-name">' + cat.label;
+    if (!cat.required) html += '<span class="prep-dash-optional-badge">OPTIONAL</span>';
+    html += '</span>';
+    if (s === "red" && PREP_BLOCKING[cat.id] && cat.required) {
+      html += '<div class="prep-dash-blocking">' + PREP_BLOCKING[cat.id] + '</div>';
+    }
+    html += '</div>';
+    html += '<span class="prep-dash-status ' + statusClass + '">' + statusText + '</span>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+
+  /* count required outstanding for hero */
+  var openRequired = 0;
+  PREP_CATS.forEach(function(cat) {
+    if (!cat.required) return;
+    var s = state[cat.id] || "red";
+    if (s !== "green") openRequired++;
+  });
+  /* update hero before-num if present */
+  var heroSub = document.getElementById("prep-milestone");
+  if (heroSub && openRequired > 0) {
+    /* keep existing milestone text but note count */
+  }
+}
+
+/* =========================================================
+   #13 - Day cards refactor (6 day-types + dominant chip + TL;DR + progressive disclosure)
+   ========================================================= */
+function connIconHref(s) {
+  if (s === "good") return "#icon-signal-3-bars";
+  if (s === "intermittent") return "#icon-signal-1-bar";
+  return "#icon-signal-off";
+}
+
+function buildDayCardV312(d, todayIdx) {
+  var i = d.day - 1;
+  var dtype = DAY_TYPES_312[i];
+  var peakM = DAY_ALT_PEAK[i];
+  var sleepM = DAY_ALT_SLEEP[i];
+  var dist = DAY_DIST[i];
+  var timeH = DAY_TIME_H[i];
+  var conn = DAY_CONN[i];
+  var connLabel = conn === "good" ? "Reachable" : conn === "offline" ? "Offline" : "Limited";
+
+  var isToday = (todayIdx === d.day);
+  var isTomorrow = (todayIdx === d.day - 1);
+
+  /* Sacred label (first-occurrence gloss handled inline here) */
+  var sacredChipLabel = "";
+  if (dtype === "pilgrimage") sacredChipLabel = "Mansarovar Snan (holy bath) + Chiu Gompa Puja (worship)";
+  if (dtype === "climb") sacredChipLabel = "Dolma La Crossing (spiritual crossing)";
+
+  var html = '<article class="day-card delight-stagger ' + (d.day_type === "critical" ? "day-warn" : d.day_type === "holy" ? "day-holy" : d.day_type === "rest" ? "day-rest" : "") + '" '
+    + 'data-day-type="' + dtype + '" data-day="' + d.day + '" id="day-' + d.day + '"'
+    + (isToday ? ' style="outline:2px solid var(--ink);outline-offset:2px"' : "")
+    + '>';
+
+  /* Header */
+  html += '<header class="day-card-header" style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-2)">';
+  html += '<h3 style="margin:0;font-family:\'Inter Tight\',sans-serif;font-size:1.1rem;font-weight:700">Day ' + d.day + ' &middot; ' + DAY_PLACES[i] + '</h3>';
+  html += '<time style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--muted)">' + DAY_DATES[i] + ' 2026</time>';
+  html += '</header>';
+
+  html += '<p style="font-family:\'Inter Tight\',sans-serif;font-size:14px;color:var(--muted);margin:0 0 var(--s-2)">' + d.headline + '</p>';
+
+  /* Day mini-map (from existing DAY_MINI_MAPS) */
+  try {
+    if (window.DAY_MINI_MAPS && window.DAY_MINI_MAPS[d.day]) {
+      html += window.DAY_MINI_MAPS[d.day];
+    }
+  } catch(e) {}
+
+  /* TL;DR chip row */
+  if (dtype === "rest") {
+    html += '<div class="day-rest-badge">REST</div>';
+  } else {
+    html += '<div class="day-tldr-chips">';
+    /* altitude (dominant for climb) */
+    html += '<div class="day-chip day-chip-altitude' + (dtype === "climb" ? " dominant" : "") + '">';
+    html += '<svg class="icon"><use href="#icon-mountain"/></svg>';
+    html += '<span class="day-chip-value">' + peakM.toLocaleString() + 'm</span>';
+    html += '<span class="day-chip-value-feet">' + mToFt(peakM).toLocaleString() + 'ft</span>';
+    html += '</div>';
+    /* distance (dominant for combo/trek) */
+    if (dist > 0) {
+      html += '<div class="day-chip day-chip-distance' + ((dtype === "combo" || dtype === "trek") ? " dominant" : "") + '">';
+      html += '<svg class="icon"><use href="#icon-walking-line"/></svg>';
+      html += '<span class="day-chip-value">' + dist + '</span>';
+      html += '<span class="day-chip-unit">KM</span>';
+      html += '</div>';
+    }
+    /* time (dominant for travel) */
+    if (timeH > 0) {
+      html += '<div class="day-chip day-chip-time' + (dtype === "travel" ? " dominant" : "") + '">';
+      html += '<svg class="icon"><use href="#icon-clock"/></svg>';
+      html += '<span class="day-chip-value">' + timeH + '</span>';
+      html += '<span class="day-chip-unit">H</span>';
+      html += '</div>';
+    }
+    /* connectivity */
+    html += '<div class="day-chip day-chip-connectivity">';
+    html += '<svg class="icon"><use href="' + connIconHref(conn) + '"/></svg>';
+    html += '<span class="day-chip-value">' + connLabel + '</span>';
+    html += '</div>';
+    /* sleep altitude */
+    if (sleepM > 0) {
+      html += '<div class="day-chip day-chip-sleep">';
+      html += '<svg class="icon"><use href="#icon-bed-line"/></svg>';
+      html += '<span class="day-chip-value">' + sleepM.toLocaleString() + 'm</span>';
+      html += '<span class="day-chip-value-feet">' + mToFt(sleepM).toLocaleString() + 'ft</span>';
+      html += '</div>';
+    }
+    /* sacred chip (pilgrimage + climb) */
+    if (sacredChipLabel) {
+      html += '<div class="day-chip day-chip-sacred' + (dtype === "pilgrimage" ? " dominant" : "") + '">';
+      html += '<svg class="icon sacred-label-icon"><use href="#icon-temple-line"/></svg>';
+      html += '<span class="day-chip-value">' + sacredChipLabel + '</span>';
+      html += '</div>';
+    }
+    html += '</div>'; /* end day-tldr-chips */
+  }
+
+  /* Day 8 completion badge (#5) */
+  if (d.day === 8) {
+    html += '<div class="day8-completed-badge" id="day8-completed-badge">';
+    html += '<svg class="icon" style="width:14px;height:14px"><use href="#icon-check-line"/></svg>';
+    html += ' Completed &middot; 5,630m <span class="altitude-value-feet">18,471ft</span> crossed';
+    html += '</div>';
+  }
+
+  /* Expand affordance + details (#7 inner timeline) */
+  html += '<details id="day-' + d.day + '-details" style="margin-top:var(--s-2)">';
+  html += '<summary style="cursor:pointer;font-family:\'JetBrains Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);list-style:none;padding:4px 0">';
+  html += '<span>View Details</span>';
+  html += '</summary>';
+  html += '<div style="padding-top:var(--s-3)">';
+
+  /* Inner timeline */
+  var tl = DAY_INNER_TIMELINE[d.day];
+  if (tl && tl.length) {
+    html += '<ol class="day-inner-timeline" aria-label="Day ' + d.day + ' schedule">';
+    tl.forEach(function(ev) {
+      var isPeak = !!ev.peak;
+      html += '<li class="' + (isPeak ? "tl-peak" : "") + '">';
+      html += '<span class="tl-time">' + ev.t + '</span>';
+      html += '<span class="tl-event' + (isPeak ? " tl-peak-text" : "") + '">';
+      if (isPeak) {
+        /* first occurrence gloss for Dolma La */
+        html += ev.e;
+      } else if (ev.e.indexOf("Mansarovar Snan") !== -1 && ev.e.indexOf("holy bath") === -1) {
+        html += ev.e.replace("Mansarovar Snan","Mansarovar Snan (holy bath)");
+      } else if (ev.e.indexOf("Chiu Gompa Puja") !== -1 && ev.e.indexOf("worship") === -1) {
+        html += ev.e.replace("Chiu Gompa Puja","Chiu Gompa Puja (worship)");
+      } else if (ev.e.indexOf("First Kailash Darshan") !== -1 && ev.e.indexOf("sacred sight") === -1) {
+        html += ev.e.replace("First Kailash Darshan","First Kailash Darshan (sacred sight)");
+      } else {
+        html += ev.e;
+      }
+      html += '</span></li>';
+    });
+    html += '</ol>';
+  }
+
+  /* Weather chips (existing v3.9) */
+  html += '<div class="weather-chips" style="margin-top:var(--s-3)">';
+  html += '<span class="day-chip" style="font-size:10px">';
+  html += '<svg class="icon" style="width:12px;height:12px"><use href="#icon-thermometer"/></svg>';
+  html += '<span data-w-temp data-day="' + d.day + '">' + d.weather.high + ' / ' + d.weather.low + ' degC</span>';
+  html += '</span> ';
+  html += '<span class="day-chip" style="font-size:10px">';
+  html += '<svg class="icon" style="width:12px;height:12px"><use href="#icon-thermometer"/></svg>';
+  html += 'Rain ' + d.weather.rain + '%';
+  html += '</span> ';
+  html += '<span class="day-chip" style="font-size:10px">';
+  html += '<svg class="icon" style="width:12px;height:12px"><use href="#icon-mountain"/></svg>';
+  html += 'Wind ' + d.weather.wind + ' km/h';
+  html += '</span>';
+  html += '</div>';
+
+  /* Route prose */
+  html += '<p style="font-family:\'Inter Tight\',sans-serif;font-size:13px;color:var(--muted);margin-top:var(--s-3)">' + d.headline + '</p>';
+
+  if (d.spiritual && d.spiritual.body) {
+    html += '<div style="border-left:2px solid var(--yellow);padding-left:var(--s-3);margin-top:var(--s-3)">';
+    html += '<p style="font-family:\'Inter Tight\',sans-serif;font-size:13px;margin:0;color:var(--ink)">' + d.spiritual.body + '</p>';
+    html += '</div>';
+  }
+
+  html += '</div></details>';
+
+  /* Stay line */
+  html += '<div class="stay-line" style="margin-top:var(--s-3);font-size:12px;color:var(--muted)">';
+  html += '<svg class="icon icon-16"><use href="#icon-map-pin"/></svg> Stay: ' + d.stay + ' &middot; ' + d.bathing;
+  html += '</div>';
+
+  html += '</article>';
+  return html;
+}
+
+function renderDayCardsV312(todayIdx) {
+  var c = document.getElementById("day-cards-container");
+  if (!c) return;
+  /* Use DAYS from outer scope */
+  if (typeof DAYS === "undefined") return;
+  c.innerHTML = DAYS.map(function(d){ return buildDayCardV312(d, todayIdx); }).join("");
+  /* After render: wire affordance expand/collapse toggle for summary display */
+  c.querySelectorAll("details").forEach(function(det) {
+    var sum = det.querySelector("summary");
+    if (sum) {
+      det.addEventListener("toggle", function() {
+        var art = det.closest(".day-card");
+        if (art) art.classList.toggle("expanded", det.open);
+      });
+    }
+  });
+}
+
+/* =========================================================
+   #11 - Hero refactor: TODAY card merged + 3 phase variants
+   The existing before/during/after hero already handles phases;
+   we enhance the during-phase hero with proper 4+2 chip layout.
+   ========================================================= */
+function renderHeroV312(state) {
+  if (state.phase !== "during" || !state.todayData) return;
+  var d = state.todayData;
+  var td = state.tomorrowData;
+  /* Update existing hero during stat cells */
+  var todayLocEl = document.getElementById("hd-today-loc");
+  var todayAltEl = document.getElementById("hd-today-alt");
+  var tmrwLocEl  = document.getElementById("hd-tmrw-loc");
+  var tmrwAltEl  = document.getElementById("hd-tmrw-alt");
+  if (todayLocEl) todayLocEl.textContent = (d.location || "").replace(", Tibet","").replace(", Nepal","");
+  if (todayAltEl) todayAltEl.innerHTML = altHtml(d.altitude_peak);
+  if (tmrwLocEl && td) tmrwLocEl.textContent = (td.location || "").replace(", Tibet","").replace(", Nepal","");
+  if (tmrwAltEl && td) tmrwAltEl.innerHTML = altHtml(td.altitude_peak);
+}
+
+/* =========================================================
+   #2 - Dual-unit altitude: patch Trip Stats + After stats
+   ========================================================= */
+function patchAltitudeDisplays() {
+  /* Trip stats dashboard */
+  document.querySelectorAll(".ts-num,.stat-num").forEach(function(el) {
+    var txt = el.textContent || "";
+    var m = txt.match(/^([\d,]+)\s*m$/);
+    if (m) {
+      var val = parseInt(m[1].replace(/,/g,""),10);
+      if (val > 500) {
+        el.innerHTML = val.toLocaleString() + 'm<span class="altitude-value-feet">' + mToFt(val).toLocaleString() + 'ft</span>';
+      }
+    }
+  });
+  /* Hero before stats */
+  var heroAlt = document.getElementById("hero-before-stats");
+  if (heroAlt) {
+    heroAlt.querySelectorAll(".stat-num").forEach(function(el) {
+      var txt = el.textContent || "";
+      var m = txt.match(/^([\d,]+)\s*m$/);
+      if (m) {
+        var val = parseInt(m[1].replace(/,/g,""),10);
+        if (val > 500) {
+          el.innerHTML = val.toLocaleString() + 'm<span class="altitude-value-feet">' + mToFt(val).toLocaleString() + 'ft</span>';
+        }
+      }
+    });
+  }
+}
+
+/* =========================================================
+   #3 - Devotional budget revision
+   ========================================================= */
+function applyDevotionalBudget() {
+  /* Ensure only one Jai Bhole Nath on the page */
+  var jbn = document.querySelectorAll(".devotional");
+  var found = false;
+  jbn.forEach(function(el) {
+    if (el.textContent.indexOf("Jai Bhole Nath") !== -1) {
+      if (found) { el.textContent = ""; el.style.display = "none"; }
+      else found = true;
+    }
+  });
+  /* Drop Har Har Mahadev from spiritual phrase fields - done in data; patch rendered cards */
+  document.querySelectorAll(".spiritual-phrase").forEach(function(el) {
+    if (el.textContent.indexOf("Har Har Mahadev") !== -1) {
+      el.textContent = "";
+    }
+  });
+  /* After-phase completion banner */
+  var afterHero = document.getElementById("hero-after");
+  if (afterHero) {
+    var bigNum = afterHero.querySelector(".hero-big-num");
+    if (bigNum) bigNum.textContent = "Yatra Sampoorna (yatra complete)";
+  }
+  /* Journey complete section */
+  var jsum = document.querySelector(".journey-summary-title");
+  if (jsum) jsum.textContent = "Yatra Sampoorna (yatra complete)";
+  /* Footer: add Devanagari if not present */
+  var footer = document.querySelector("footer");
+  if (footer && footer.innerHTML.indexOf("om-namah") === -1) {
+    var omEl = document.createElement("p");
+    omEl.id = "om-namah";
+    omEl.style.fontFamily = "'Inter Tight',sans-serif";
+    omEl.style.fontSize = "1.25rem";
+    omEl.style.color = "var(--yellow)";
+    omEl.textContent = "ॐ नमः शिवाय";
+    footer.appendChild(omEl);
+  }
+}
+
+/* =========================================================
+   #5 - Day 8 phase-conditional expansion logic
+   ========================================================= */
+function applyDay8Expansion() {
+  var det = document.getElementById("day-8-details");
+  if (!det) {
+    /* Try alternative selector from new card build */
+    det = document.querySelector('[id="day-8"] details');
+  }
+  if (!det) return;
+
+  var now, phase, dtd, tripDayIndex;
+  try {
+    var st = getJourneyState();
+    phase = st.phase;
+    dtd   = st.daysToDeparture;
+    tripDayIndex = st.tripDayIndex || 0;
+  } catch(e) { return; }
+
+  /* Check for user override */
+  var overrideKey = "kailash_day8_expand_override";
+  var userOverride = null;
+  try { userOverride = localStorage.getItem(overrideKey); } catch(e) {}
+
+  var shouldExpand = false;
+  var showBadge = false;
+
+  if (phase === "before") {
+    /* T-3 to T-1: auto-expand */
+    if (dtd >= 1 && dtd <= 3) shouldExpand = true;
+  } else if (phase === "during") {
+    if (tripDayIndex <= 8) shouldExpand = true;
+    else { showBadge = true; } /* day 9+ post-peak */
+  } else if (phase === "after") {
+    showBadge = true;
+  }
+
+  /* User override wins */
+  if (userOverride === "open")   shouldExpand = true;
+  if (userOverride === "closed") shouldExpand = false;
+
+  if (shouldExpand && !det.open) {
+    det.open = true;
+    var art = det.closest(".day-card");
+    if (art) art.classList.add("expanded");
+  }
+
+  /* Completion badge */
+  var badge = document.getElementById("day8-completed-badge");
+  if (badge) {
+    badge.classList.toggle("visible", showBadge);
+  }
+
+  /* Persist user manual toggle */
+  det.addEventListener("toggle", function() {
+    try { localStorage.setItem(overrideKey, det.open ? "open" : "closed"); } catch(e) {}
+    var art = det.closest(".day-card");
+    if (art) art.classList.toggle("expanded", det.open);
+  });
+}
+
+/* =========================================================
+   #7 - Per-day inner timeline: current event highlight (during)
+   ========================================================= */
+function highlightCurrentTimelineEvent() {
+  var phase, tripDayIndex;
+  try { var st = getJourneyState(); phase = st.phase; tripDayIndex = st.tripDayIndex || 0; }
+  catch(e) { return; }
+  if (phase !== "during" || !tripDayIndex) return;
+
+  var tl = DAY_INNER_TIMELINE[tripDayIndex];
+  if (!tl) return;
+
+  var now = new Date();
+  var nowMin = now.getHours() * 60 + now.getMinutes();
+  var currentIdx = tl.length - 1;
+  for (var i = 0; i < tl.length; i++) {
+    var parts = tl[i].t.split(":");
+    var evMin = parseInt(parts[0],10)*60 + (parseInt(parts[1],10)||0);
+    if (evMin > nowMin) { currentIdx = Math.max(0, i - 1); break; }
+  }
+
+  /* Find the day card's inner timeline ol */
+  var cardEl = document.getElementById("day-" + tripDayIndex);
+  if (!cardEl) return;
+  var items = cardEl.querySelectorAll(".day-inner-timeline li");
+  items.forEach(function(li, idx) {
+    li.classList.remove("tl-past","tl-current");
+    if (idx < currentIdx) li.classList.add("tl-past");
+    else if (idx === currentIdx) li.classList.add("tl-current");
+  });
+}
+
+/* =========================================================
+   Init: hook into DOMContentLoaded (or run now if already ready)
+   ========================================================= */
+function initXcut() {
+  try { renderJourneyTimeline(); } catch(e) {}
+  try { renderWeatherConfidence(); } catch(e) {}
+  try { renderPrepDashboard(); } catch(e) {}
+  try {
+    var phase, todayIdx;
+    try { var st = getJourneyState(); phase = st.phase; todayIdx = st.tripDayIndex || null; }
+    catch(e) { phase = "before"; todayIdx = null; }
+    renderDayCardsV312(todayIdx);
+  } catch(e) {}
+  try {
+    var st2 = getJourneyState();
+    renderHeroV312(st2);
+  } catch(e) {}
+  try { patchAltitudeDisplays(); } catch(e) {}
+  try { applyDevotionalBudget(); } catch(e) {}
+  try {
+    /* Update conn ribbon after it has been rendered by renderConnRibbon() */
+    updateConnRibbonPhase();
+  } catch(e) {}
+  try { applyDay8Expansion(); } catch(e) {}
+  try { highlightCurrentTimelineEvent(); } catch(e) {}
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() {
+    /* Run after the main renderAll() has fired */
+    setTimeout(initXcut, 50);
+  });
+} else {
+  setTimeout(initXcut, 50);
+}
+
+})(); /* end IIFE */
 </script>
 
 </body>
