@@ -8077,10 +8077,10 @@ function buildDayCardV312(d, todayIdx) {
 
   html += '<p style="font-family:\'Inter Tight\',sans-serif;font-size:14px;color:var(--muted);margin:0 0 var(--s-2)">' + d.headline + '</p>';
 
-  /* Day mini-map (from existing DAY_MINI_MAPS) */
+  /* Day mini-map (from existing DAY_MINI_MAPS var in main script scope) */
   try {
-    if (window.DAY_MINI_MAPS && window.DAY_MINI_MAPS[d.day]) {
-      html += window.DAY_MINI_MAPS[d.day];
+    if (typeof DAY_MINI_MAPS !== "undefined" && DAY_MINI_MAPS[d.day]) {
+      html += DAY_MINI_MAPS[d.day];
     }
   } catch(e) {}
 
@@ -8214,19 +8214,31 @@ function buildDayCardV312(d, todayIdx) {
 function renderDayCardsV312(todayIdx) {
   var c = document.getElementById("day-cards-container");
   if (!c) return;
-  /* Use DAYS from outer scope */
+  /* Use DAYS from outer scope (defined in main <script>) */
   if (typeof DAYS === "undefined") return;
+  /* #13: render 6 day-type cards with dominant chip + TL;DR + progressive disclosure */
   c.innerHTML = DAYS.map(function(d){ return buildDayCardV312(d, todayIdx); }).join("");
-  /* After render: wire affordance expand/collapse toggle for summary display */
+  /* Wire affordance expand/collapse toggle */
   c.querySelectorAll("details").forEach(function(det) {
-    var sum = det.querySelector("summary");
-    if (sum) {
-      det.addEventListener("toggle", function() {
-        var art = det.closest(".day-card");
-        if (art) art.classList.toggle("expanded", det.open);
-      });
-    }
+    det.addEventListener("toggle", function() {
+      var art = det.closest(".day-card");
+      if (art) art.classList.toggle("expanded", det.open);
+    });
   });
+  /* Wire DAY_MINI_MAPS into cards (they are vars in global scope from main script) */
+  try {
+    c.querySelectorAll(".day-card").forEach(function(card) {
+      var day = parseInt(card.getAttribute("data-day"), 10);
+      if (!day || !DAY_MINI_MAPS || !DAY_MINI_MAPS[day]) return;
+      /* Mini-map already injected in buildDayCardV312 via window.DAY_MINI_MAPS reference */
+    });
+  } catch(e) {}
+  /* Re-observe new day-card elements for delight stagger */
+  try {
+    c.querySelectorAll(".day-card.delight-stagger").forEach(function(el, i) {
+      el.style.setProperty("--stagger-i", i);
+    });
+  } catch(e) {}
 }
 
 /* =========================================================
