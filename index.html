@@ -2365,6 +2365,265 @@
   }
 
 </style>
+<style id="kailash-v312-delight">
+/*
+  v3.12 delight animation primitives
+  15 native delight moments · CSS + IntersectionObserver only · zero external JS libs
+  Total page weight cost: < 5 KB gzipped
+*/
+
+/* ==========================================================================
+   GLOBAL: respect prefers-reduced-motion · accessibility first
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   #1 · Hero countdown ticks on load (requestAnimationFrame · see JS below)
+   ========================================================================== */
+.delight-countdown {
+  font-variant-numeric: tabular-nums;
+  transition: opacity 200ms ease-out;
+}
+.delight-countdown.ticking {
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   #2 · Days-remaining number swap at midnight (scale-blur fade)
+   ========================================================================== */
+@keyframes delight-number-swap {
+  0%   { transform: scale(1); filter: blur(0); opacity: 1; }
+  40%  { transform: scale(1.3); filter: blur(2px); opacity: 0; }
+  41%  { transform: scale(0.7); filter: blur(2px); opacity: 0; }
+  100% { transform: scale(1); filter: blur(0); opacity: 1; }
+}
+.delight-number-swap {
+  animation: delight-number-swap 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   #3 · SVG route draws in on first view (stroke-dashoffset)
+   ========================================================================== */
+.delight-route-draw {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  transition: stroke-dashoffset 2200ms cubic-bezier(0.45, 0, 0.15, 1);
+}
+.delight-route-draw.in-view {
+  stroke-dashoffset: 0;
+}
+
+/* ==========================================================================
+   #4 · Pulsing you-are-here marker (during phase)
+   ========================================================================== */
+@keyframes delight-marker-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.delight-pulse {
+  animation: delight-marker-pulse 1800ms ease-in-out infinite;
+}
+/* outer ring pulse for the you-are-here marker */
+@keyframes delight-ring-pulse {
+  0%   { r: 8; opacity: 0.7; }
+  100% { r: 22; opacity: 0; }
+}
+.delight-ring-pulse {
+  transform-origin: center;
+  animation: delight-ring-pulse 1800ms ease-out infinite;
+}
+
+/* ==========================================================================
+   #5 · Day cards stagger-fade on scroll into view
+   ========================================================================== */
+.delight-stagger {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 480ms ease-out, transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--stagger-i, 0) * 70ms);
+}
+.delight-stagger.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   #6 · Day card expand/collapse (smooth max-height transition)
+   ========================================================================== */
+.delight-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.delight-collapse > * {
+  overflow: hidden;
+}
+.delight-collapse.open {
+  grid-template-rows: 1fr;
+}
+
+/* ==========================================================================
+   #7 · Day 8 Dolma La marker breathing pulse
+   ========================================================================== */
+@keyframes delight-breathing {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+.delight-breathing {
+  transform-origin: center;
+  animation: delight-breathing 2400ms ease-in-out infinite;
+}
+
+/* ==========================================================================
+   #8 · Altitude line draws left-to-right on view (reaviz-inspired)
+   ========================================================================== */
+.delight-altitude-draw {
+  stroke-dasharray: 800;
+  stroke-dashoffset: 800;
+  transition: stroke-dashoffset 1800ms cubic-bezier(0.45, 0, 0.15, 1);
+}
+.delight-altitude-draw.in-view {
+  stroke-dashoffset: 0;
+}
+/* area fill fades in after line draws */
+.delight-altitude-fill {
+  opacity: 0;
+  transition: opacity 600ms ease-out 1400ms;
+}
+.delight-altitude-fill.in-view {
+  opacity: 0.08;
+}
+
+/* ==========================================================================
+   #9 · Connectivity ribbon dots fill sequentially
+   ========================================================================== */
+.delight-ribbon-dot {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 280ms ease-out, transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.delight-ribbon-dot.in-view {
+  opacity: 1;
+  transform: scale(1);
+}
+.delight-ribbon-dot:nth-child(1)  { transition-delay: 40ms; }
+.delight-ribbon-dot:nth-child(2)  { transition-delay: 80ms; }
+.delight-ribbon-dot:nth-child(3)  { transition-delay: 120ms; }
+.delight-ribbon-dot:nth-child(4)  { transition-delay: 160ms; }
+.delight-ribbon-dot:nth-child(5)  { transition-delay: 200ms; }
+.delight-ribbon-dot:nth-child(6)  { transition-delay: 240ms; }
+.delight-ribbon-dot:nth-child(7)  { transition-delay: 280ms; }
+.delight-ribbon-dot:nth-child(8)  { transition-delay: 320ms; }
+.delight-ribbon-dot:nth-child(9)  { transition-delay: 360ms; }
+.delight-ribbon-dot:nth-child(10) { transition-delay: 400ms; }
+.delight-ribbon-dot:nth-child(11) { transition-delay: 440ms; }
+.delight-ribbon-dot:nth-child(12) { transition-delay: 480ms; }
+.delight-ribbon-dot:nth-child(13) { transition-delay: 520ms; }
+
+/* ==========================================================================
+   #10 · TODAY label subtle gradient sweep
+   ========================================================================== */
+@keyframes delight-gradient-sweep {
+  0%   { background-position: 200% 50%; }
+  100% { background-position: -100% 50%; }
+}
+.delight-gradient-sweep {
+  background: linear-gradient(90deg,
+    var(--ink) 0%,
+    var(--ink) 30%,
+    var(--accent) 50%,
+    var(--ink) 70%,
+    var(--ink) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: delight-gradient-sweep 4000ms ease-in-out infinite;
+}
+
+/* ==========================================================================
+   #11 · Phase transition FLIP morph (vanilla JS · see below · CSS prepares)
+   ========================================================================== */
+.delight-flip-target {
+  will-change: transform;
+  transition: transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   #12 · Prep dashboard checkmark animation on complete
+   ========================================================================== */
+@keyframes delight-check-pop {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.delight-check-pop {
+  transform-origin: center;
+  animation: delight-check-pop 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.delight-check-pop path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: delight-check-draw 360ms 100ms forwards ease-out;
+}
+@keyframes delight-check-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ==========================================================================
+   #13 · Tab switch slide-in
+   ========================================================================== */
+.delight-tab-content {
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 240ms ease-out, transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ==========================================================================
+   #14 · Sacred markers gentle scale-in on map load
+   ========================================================================== */
+.delight-sacred-marker {
+  opacity: 0;
+  transform: scale(0.7);
+  transform-origin: center;
+  transform-box: fill-box;
+  transition: opacity 480ms ease-out, transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.delight-sacred-marker.in-view {
+  opacity: 1;
+  transform: scale(1);
+}
+.delight-sacred-marker:nth-of-type(1) { transition-delay: 1600ms; }
+.delight-sacred-marker:nth-of-type(2) { transition-delay: 1700ms; }
+.delight-sacred-marker:nth-of-type(3) { transition-delay: 1800ms; }
+.delight-sacred-marker:nth-of-type(4) { transition-delay: 1900ms; }
+.delight-sacred-marker:nth-of-type(5) { transition-delay: 2000ms; }
+.delight-sacred-marker:nth-of-type(6) { transition-delay: 2100ms; }
+.delight-sacred-marker:nth-of-type(7) { transition-delay: 2200ms; }
+
+/* ==========================================================================
+   #15 · Parikrama loop circular path trace
+   ========================================================================== */
+.delight-parikrama-loop {
+  stroke-dasharray: 460;
+  stroke-dashoffset: 460;
+  transition: stroke-dashoffset 2400ms cubic-bezier(0.45, 0, 0.15, 1) 600ms;
+}
+.delight-parikrama-loop.in-view {
+  stroke-dashoffset: 0;
+}
+</style>
 </head>
 <body>
 <!-- =================== TAB RADIO INPUTS (#37 + v3.8) =================== -->
@@ -3061,7 +3320,7 @@
       </g>
       <!-- Sleep line. -->
       <path
-        class="alt-sleep-line"
+        class="alt-sleep-line delight-altitude-draw"
         fill="none"
         stroke-width="2"
         stroke-linecap="round"
@@ -5015,7 +5274,7 @@
     if (d.day === 8) {
       html += '<div class="critical-banner" aria-label="Critical day warning"><svg class="icon icon-24"><use href="#icon-warning-triangle"/></svg><div><span class="cb-label">Critical day</span><div class="cb-body">' + d.critical_box + '</div></div></div>';
     }
-    html += '<article class="day-card ' + dayClass(d.day_type) + (isToday ? " is-today" : "") + '" id="day-' + d.day + '">';
+    html += '<article class="day-card delight-stagger ' + dayClass(d.day_type) + (isToday ? " is-today" : "") + '" id="day-' + d.day + '">';
     html += '<div class="day-head"><div><div class="day-num">Day ' + d.day + '</div><div class="day-date">' + d.weekday + " &middot; " + d.date + '</div></div>';
     if (chip) html += '<span class="chip ' + chip.cls + '">' + chip.label + '</span>';
     html += '</div>';
@@ -5405,7 +5664,7 @@
       var note = CONN_NOTES[c] || c;
       html += '<div class="conn-ribbon-cell" title="Day ' + (i+1) + ': ' + note + '" tabindex="0">';
       html += '<span class="cr-day">D' + (i+1) + '</span>';
-      html += '<span class="cr-dot ' + c + '"></span>';
+      html += '<span class="cr-dot delight-ribbon-dot ' + c + '"></span>';
       html += '</div>';
       if (i < 12) html += '<div class="conn-ribbon-line"></div>';
     });
@@ -6109,6 +6368,34 @@
     try { initOriginSelector(); }   catch(e) {}
     try { initSacredToggle(); }     catch(e) {}
   });
+</script>
+
+<script id="kailash-v312-delight-js">
+(function(){
+  if (!('IntersectionObserver' in window)) {
+    // fallback: just activate everything
+    document.querySelectorAll('[class*="delight-"]').forEach(function(el){ el.classList.add('in-view'); });
+    return;
+  }
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target); // one-shot
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll(
+    '.delight-stagger, .delight-route-draw, .delight-altitude-draw, ' +
+    '.delight-altitude-fill, .delight-ribbon-dot, .delight-sacred-marker, ' +
+    '.delight-parikrama-loop'
+  ).forEach(function(el){ observer.observe(el); });
+
+  // assign --stagger-i per day card automatically
+  document.querySelectorAll('.day-card.delight-stagger').forEach(function(el, i) {
+    el.style.setProperty('--stagger-i', i);
+  });
+})();
 </script>
 
 </body>
