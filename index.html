@@ -28,7 +28,7 @@
     var DEPART = "2026-07-07";
     var RETURN_DATE = "2026-07-19";
     var qs = new URLSearchParams(window.location.search);
-    var overrideDate = qs.get("date");
+    var overrideDate = qs.get("simulate-date") || qs.get("date");
     var today = overrideDate ? new Date(overrideDate + "T00:00:00") : new Date();
     var dStr = today.getFullYear() + "-" + String(today.getMonth()+1).padStart(2,"0") + "-" + String(today.getDate()).padStart(2,"0");
     var phase = "before";
@@ -5389,7 +5389,7 @@ input[type="radio"]:checked ~ .delight-tab-content[data-tab-active] {
 
   function getReferenceDate() {
     var qs = new URLSearchParams(window.location.search);
-    var override = qs.get("date");
+    var override = qs.get("simulate-date") || qs.get("date");
     if (override) return new Date(override + "T00:00:00");
     return new Date();
   }
