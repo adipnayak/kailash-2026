@@ -193,65 +193,26 @@ function BeforeBento({ state }: { state: JourneyState }) {
       <BentoGridItem
         colSpan={2}
         rowSpan={2}
-        className="flex flex-col gap-3 justify-between"
+        className="flex flex-col items-start justify-center gap-4"
       >
-        {/* Cohort line */}
-        <p className="font-sans text-xs text-muted-foreground">
-          This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE,
-          Mauritius, and the United States.
+        {/* Big countdown · ONLY thing in the Hero card (with JBN) */}
+        <div className="flex items-baseline gap-3">
+          <span
+            ref={countdownRef}
+            className="font-sans text-7xl md:text-8xl font-medium text-foreground leading-none tabular-nums"
+            aria-live="polite"
+          >
+            {state.daysToDeparture}
+          </span>
+          <span className="font-sans text-2xl md:text-3xl font-medium text-muted-foreground">
+            days to Kailash
+          </span>
+        </div>
+
+        {/* JAI BHOLE NATH · x1 total, ochre sacred token */}
+        <p className="font-mono text-sm md:text-base text-sacred uppercase tracking-widest">
+          {JAI_BHOLE_NATH}
         </p>
-
-        {/* DEPART / RETURN row */}
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
-            <PlaneTakeoff size={13} className="text-muted-foreground" />
-            <span className="font-semibold">DEPART</span>
-            <span className="text-muted-foreground">07 Jul 2026</span>
-          </span>
-          <span className="text-border font-mono text-xs">|</span>
-          <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
-            <PlaneLanding size={13} className="text-muted-foreground" />
-            <span className="font-semibold">RETURN</span>
-            <span className="text-muted-foreground">19 Jul 2026</span>
-          </span>
-        </div>
-
-        {/* TZ toggle */}
-        <TzToggle />
-
-        {/* Big countdown */}
-        <div>
-          <div className="flex items-baseline gap-3">
-            <span
-              ref={countdownRef}
-              className="font-sans text-7xl font-medium text-foreground leading-none tabular-nums"
-              aria-live="polite"
-            >
-              {state.daysToDeparture}
-            </span>
-            <span className="font-sans text-2xl font-medium text-muted-foreground">
-              days to Kailash
-            </span>
-          </div>
-
-          {/* JAI BHOLE NATH - x1 total, ochre sacred token */}
-          <p className="font-mono text-sm text-sacred uppercase tracking-widest mt-2">
-            {JAI_BHOLE_NATH}
-          </p>
-        </div>
-
-        {/* Route + peak strip */}
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded-none px-3 py-2 bg-background">
-          {(['KTM', 'LHASA', 'MANSAROVAR', 'KAILASH', 'KTM'] as const).map((stop, i, arr) => (
-            <span key={i} className="flex items-center gap-x-1">
-              <span className="text-foreground font-medium">{stop}</span>
-              {i < arr.length - 1 && <span className="text-border">{'>'}</span>}
-            </span>
-          ))}
-          <span className="ml-auto text-sacred font-medium whitespace-nowrap">
-            Peak: Dolma La 5,630m / {mToFt(5630).toLocaleString('en-US')}ft Day 8
-          </span>
-        </div>
       </BentoGridItem>
 
       {/* ------------------------------------------------------------------ */}
@@ -630,10 +591,33 @@ export function Hero({ phase }: { phase: JourneyState }) {
       className="border-b border-border bg-background px-4 py-6 md:px-6 md:py-8"
     >
       <div className="mx-auto max-w-6xl">
-        {/* Eyebrow */}
-        <div className="flex items-center gap-2 text-muted-foreground font-mono text-xs uppercase tracking-widest mb-4">
-          <Mountain size={14} />
-          <span>Kailash Mansarovar Yatra 2026</span>
+        {/* Page header: title + cohort + DEPART/RETURN on left, TZ toggle on right */}
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2 text-foreground font-sans text-xl md:text-2xl font-medium">
+              <Mountain size={18} />
+              <span>Kailash Mansarovar Yatra 2026</span>
+            </div>
+            <p className="font-sans text-sm text-muted-foreground max-w-2xl">
+              This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
+                <PlaneTakeoff size={13} className="text-muted-foreground" />
+                <span className="font-semibold">DEPART</span>
+                <span className="text-muted-foreground">07 Jul 2026</span>
+              </span>
+              <span className="text-border font-mono text-xs">|</span>
+              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
+                <PlaneLanding size={13} className="text-muted-foreground" />
+                <span className="font-semibold">RETURN</span>
+                <span className="text-muted-foreground">19 Jul 2026</span>
+              </span>
+            </div>
+          </div>
+          <div className="md:pt-1">
+            <TzToggle />
+          </div>
         </div>
 
         {/* Phase variants */}
