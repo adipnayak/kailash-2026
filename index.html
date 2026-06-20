@@ -202,6 +202,7 @@
     margin: 0 0 var(--s-6);
     line-height: 1.5;
   }
+  .tz-wrap { margin: 0 0 2rem; }
   .tz-bar {
     display: inline-flex;
     align-items: center;
@@ -213,9 +214,9 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 0.375rem 0.625rem;
-    margin: 0 0 2rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
   }
   .tz-bar select {
     -webkit-appearance: none;
@@ -233,6 +234,49 @@
   }
   .tz-bar select::-ms-expand { display: none; }
   .tz-bar .icon { color: var(--muted); margin-left: -1.1rem; pointer-events: none; }
+
+  /* Local / Trip time pill toggle. */
+  .tz-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+    margin-left: 0.75rem;
+  }
+  .tz-mode button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+    transition: color 150ms, border-color 150ms, background 150ms;
+  }
+  .tz-mode button:first-child { border-radius: 4px 0 0 4px; border-right: none; }
+  .tz-mode button:last-child  { border-radius: 0 4px 4px 0; }
+  .tz-mode button.active {
+    color: var(--ink);
+    border-color: var(--border-s);
+    background: transparent;
+    font-weight: 600;
+  }
+  .tz-mode button:hover:not(.active) { color: var(--ink); border-color: var(--border-s); }
+  .tz-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
 
   /* Hero panel (flat, no background). */
   .hero-panel {
@@ -1110,18 +1154,26 @@
   <p class="devotional">Jai Bhole Nath</p>
   <p class="country-mix">This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.</p>
 
-  <div class="tz-bar">
-    <span>Showing in</span>
-    <select id="tz-select" aria-label="Timezone selector">
-      <option value="local">Visitor local</option>
-      <option value="Asia/Kolkata">Asia/Kolkata · IST</option>
-      <option value="Asia/Kathmandu">Asia/Kathmandu · NPT</option>
-      <option value="Asia/Shanghai">Asia/Shanghai · CST</option>
-      <option value="Asia/Dubai">Asia/Dubai · GST</option>
-      <option value="America/New_York">America/New_York · ET</option>
-      <option value="Indian/Mauritius">Indian/Mauritius · MUT</option>
-    </select>
-    <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg>
+  <div class="tz-wrap">
+    <span class="tz-label" id="tz-indicator">Times shown in your local time</span>
+    <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+      <div class="tz-bar">
+        <select id="tz-select" aria-label="Timezone selector">
+          <option value="local">Your local time</option>
+          <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+          <option value="Asia/Kathmandu">Asia/Kathmandu (NPT)</option>
+          <option value="Asia/Shanghai">Asia/Shanghai (CST)</option>
+          <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+          <option value="America/New_York">America/New_York (ET)</option>
+          <option value="Indian/Mauritius">Indian/Mauritius (MUT)</option>
+        </select>
+        <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg>
+      </div>
+      <div class="tz-mode" role="group" aria-label="Time display mode">
+        <button type="button" id="tz-mode-local" class="active" aria-pressed="true">Local time</button>
+        <button type="button" id="tz-mode-trip" aria-pressed="false">Trip time</button>
+      </div>
+    </div>
   </div>
 
   <!-- Before-phase hero. -->
@@ -1978,16 +2030,73 @@
     return phase;
   }
 
-  /* =================== TIMEZONE PREF =================== */
+  /* =================== TIMEZONE PREF + MODE TOGGLE =================== */
+  // Trip timezone per day group.
+  var TRIP_TZ_ZONES = {
+    // Days 1-2 and 11-13: Kathmandu.
+    before: "Asia/Kathmandu",
+    after: "Asia/Kathmandu",
+    day: function(idx) {
+      if (!idx) return "Asia/Kolkata";
+      if (idx <= 2 || idx >= 11) return "Asia/Kathmandu";
+      return "Asia/Shanghai"; // Days 3-10 Tibet.
+    }
+  };
+
+  function getTripTz(todayIdx, phase) {
+    if (phase === "before") return "Asia/Kolkata";
+    if (phase === "after") return "Asia/Kathmandu";
+    return TRIP_TZ_ZONES.day(todayIdx);
+  }
+
+  function updateTzIndicator(mode, tripTzName) {
+    var el = document.getElementById("tz-indicator");
+    if (!el) return;
+    if (mode === "trip") {
+      el.textContent = "Times shown in trip time (" + (tripTzName || "trip") + ")";
+    } else {
+      el.textContent = "Times shown in your local time";
+    }
+  }
+
   function setupTimezone() {
     var sel = document.getElementById("tz-select");
-    var stored = localStorage.getItem("kailash_tz_pref") || "local";
-    sel.value = stored;
+    var btnLocal = document.getElementById("tz-mode-local");
+    var btnTrip  = document.getElementById("tz-mode-trip");
+
+    var storedPref = localStorage.getItem("kailash_tz_pref") || "local";
+    var storedMode = localStorage.getItem("kailash_tz_mode") || "local";
+
+    sel.value = storedPref;
+
+    function setMode(mode) {
+      storedMode = mode;
+      localStorage.setItem("kailash_tz_mode", mode);
+      if (btnLocal) { btnLocal.classList.toggle("active", mode === "local"); btnLocal.setAttribute("aria-pressed", String(mode === "local")); }
+      if (btnTrip)  { btnTrip.classList.toggle("active", mode === "trip");   btnTrip.setAttribute("aria-pressed", String(mode === "trip")); }
+      // Show/hide the dropdown based on mode.
+      if (sel && sel.parentElement) sel.parentElement.style.display = (mode === "trip") ? "none" : "";
+      renderAll();
+    }
+
+    // Restore mode from storage.
+    setMode(storedMode);
+
+    if (btnLocal) btnLocal.addEventListener("click", function(){ setMode("local"); });
+    if (btnTrip)  btnTrip.addEventListener("click",  function(){ setMode("trip"); });
+
     sel.addEventListener("change", function(){
       localStorage.setItem("kailash_tz_pref", sel.value);
-      // Re-render phase + day index using selected zone.
       renderAll();
     });
+  }
+
+  function getActiveTz(todayIdx, phase) {
+    var mode = localStorage.getItem("kailash_tz_mode") || "local";
+    if (mode === "trip") {
+      return getTripTz(todayIdx, phase);
+    }
+    return localStorage.getItem("kailash_tz_pref") || "local";
   }
 
   /* =================== PER-DAY DATA =================== */
@@ -2866,6 +2975,9 @@
     var now = getReferenceDate();
     var phase = applyPhase();
     var todayIdx = phase === "during" ? dayIndexDuring(now) : null;
+    var mode = localStorage.getItem("kailash_tz_mode") || "local";
+    var tripTzName = getTripTz(todayIdx, phase);
+    updateTzIndicator(mode, tripTzName);
     renderHeroBefore(now);
     renderHeroDuring(todayIdx);
     renderTodayPanel(todayIdx);
