@@ -4348,9 +4348,17 @@
     var isAfter = state.phase === "after";
     var isDuring = state.phase === "during";
     var title = isAfter ? "What mattered most" : "What matters today";
-    var savedKey = "kailash_wmt_state";
+    var savedKey = "kailash_completed_prep";
     var savedState = {};
     try { savedState = JSON.parse(localStorage.getItem(savedKey) || "{}"); } catch(e) {}
+    /* Migrate from legacy key if present. */
+    try {
+      var legacy = localStorage.getItem("kailash_wmt_state");
+      if (legacy && !localStorage.getItem(savedKey)) {
+        localStorage.setItem(savedKey, legacy);
+        savedState = JSON.parse(legacy || "{}");
+      }
+    } catch(e) {}
     var html = '<div class="wmt-header"><span>' + title + '</span></div>';
     items.forEach(function(item, idx) {
       var id = "wmt-" + idx;
