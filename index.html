@@ -710,6 +710,75 @@
     margin: 0.5rem 0 1.25rem;
   }
 
+  /* v3.9 §0.13.10 · emergency readiness grid */
+  .emergency-grid {
+    border-top: 1px solid var(--border);
+    margin: 0.75rem 0 1.5rem;
+  }
+  .emergency-row {
+    display: grid;
+    grid-template-columns: 12px 1.2fr 2fr 22px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (max-width: 480px) {
+    .emergency-row { grid-template-columns: 12px 1fr 22px; }
+    .emergency-row .emergency-note { grid-column: 2 / 4; font-size: 0.75rem; }
+  }
+  .emergency-status {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--green); display: inline-block;
+  }
+  .emergency-status.warn { background: var(--yellow); }
+  .emergency-status.bad  { background: var(--red); }
+  .emergency-cap {
+    font-family: var(--font-headline);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .emergency-note {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .emergency-icon { width: 20px; height: 20px; color: var(--muted); }
+
+  /* v3.9 §0.13.11 · operator vs yatri icon table */
+  .op-bring-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 2rem;
+    margin: 0.75rem 0 1.25rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.875rem;
+  }
+  @media (max-width: 520px) { .op-bring-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
+  .op-bring-col h4 {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+  }
+  .op-bring-list { list-style: none; margin: 0; padding: 0; }
+  .op-bring-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.4rem 0;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--ink);
+    border-bottom: 1px solid var(--border);
+  }
+  .op-bring-list li:last-child { border-bottom: none; }
+  .op-bring-list li .icon { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
+
   .day-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
   .day-num {
     font-family: var(--font-body);
@@ -2871,27 +2940,26 @@
 <!-- Operator vs you-bring -->
 <section class="before-only" id="prep-operator">
   <h2>What the operator covers, what you bring</h2>
-  <div class="op-buy">
-    <div class="op-col">
-      <h4>Operator covers</h4>
-      <ul>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Hotels</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Meals</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Permits</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Domestic flights</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Porters</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Oxygen support</li>
+  <!-- v3.9 §0.13.11 · Operator vs Yatri icon table -->
+  <div class="op-bring-grid" aria-label="What is included versus what you bring">
+    <div class="op-bring-col">
+      <h4>Included</h4>
+      <ul class="op-bring-list">
+        <li><svg class="icon"><use href="#icon-bed-line"/></svg>Hotels</li>
+        <li><svg class="icon"><use href="#icon-bowl-line"/></svg>Meals</li>
+        <li><svg class="icon"><use href="#icon-bus-line"/></svg>Transport</li>
+        <li><svg class="icon"><use href="#icon-backpack-line"/></svg>Porters</li>
+        <li><svg class="icon"><use href="#icon-oxygen-line"/></svg>Oxygen</li>
       </ul>
     </div>
-    <div class="op-col">
-      <h4>You bring</h4>
-      <ul>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Clothing</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Boots</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Insurance</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Connectivity (eSIM + VPN)</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Medication</li>
-        <li><svg class="icon icon-16"><use href="#icon-check"/></svg> Sun protection</li>
+    <div class="op-bring-col">
+      <h4>Bring yourself</h4>
+      <ul class="op-bring-list">
+        <li><svg class="icon"><use href="#icon-boot-line"/></svg>Boots</li>
+        <li><svg class="icon"><use href="#icon-sunglasses-line"/></svg>Sunglasses</li>
+        <li><svg class="icon"><use href="#icon-pill-line"/></svg>Medication</li>
+        <li><svg class="icon"><use href="#icon-signal-3-bars"/></svg>Connectivity</li>
+        <li><svg class="icon"><use href="#icon-shield-line"/></svg>Insurance</li>
       </ul>
     </div>
   </div>
@@ -3455,6 +3523,40 @@
 
 <!-- Emergency protocol (open by default in during phase, collapsed otherwise per #42) -->
 <section id="ref-emergency">
+  <h2>Emergency</h2>
+  <!-- v3.9 §0.13.10 · Emergency readiness graphic (status grid) -->
+  <div class="emergency-grid" aria-label="Emergency readiness status">
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Oxygen Support</span>
+      <span class="emergency-note">Sherpa team carries cylinders</span>
+      <svg class="icon emergency-icon"><use href="#icon-oxygen-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Medical Team</span>
+      <span class="emergency-note">Operator-coordinated</span>
+      <svg class="icon emergency-icon"><use href="#icon-medical-cross-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Porters</span>
+      <span class="emergency-note">Days 7 to 10 Parikrama</span>
+      <svg class="icon emergency-icon"><use href="#icon-backpack-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status good" aria-hidden="true"></span>
+      <span class="emergency-cap">Satellite Coordination</span>
+      <span class="emergency-note">Emergency sat phone</span>
+      <svg class="icon emergency-icon"><use href="#icon-satellite-line"/></svg>
+    </div>
+    <div class="emergency-row">
+      <span class="emergency-status warn" aria-hidden="true"></span>
+      <span class="emergency-cap">Connectivity</span>
+      <span class="emergency-note">Limited during Parikrama</span>
+      <svg class="icon emergency-icon"><use href="#icon-signal-1-bar"/></svg>
+    </div>
+  </div>
   <details class="disclosure" id="emergency-details" data-section-key="ref-emergency">
     <summary>Emergency protocol for family</summary>
     <div class="disc-body">
