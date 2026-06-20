@@ -779,6 +779,107 @@
   .op-bring-list li:last-child { border-bottom: none; }
   .op-bring-list li .icon { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
 
+  /* v3.10 §0.14.2 · Master Journey Map */
+  #master-journey-section {
+    margin: 0.75rem 0 1.5rem;
+  }
+  .mjm-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+  .mjm-ctrl-lab {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .mjm-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .mjm-select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.4rem 1.85rem 0.4rem 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .mjm-select-wrap .icon {
+    position: absolute;
+    right: 0.4rem;
+    pointer-events: none;
+    color: var(--muted);
+  }
+  .mjm-mode {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mjm-mode button {
+    background: transparent;
+    border: none;
+    padding: 0.45rem 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    line-height: 1.1;
+  }
+  .mjm-mode button:last-child { border-right: none; }
+  .mjm-mode button.active {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .mjm-wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+  #master-journey-map {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+  }
+  #master-journey-map .stop {
+    cursor: pointer;
+  }
+  #master-journey-map .stop:focus { outline: none; }
+  #master-journey-map .stop:focus circle { stroke: var(--accent); stroke-width: 2.5; }
+  #master-journey-map .stop:hover circle { stroke-width: 2.5; }
+  /* Origin highlight states. */
+  #master-journey-map .origin-ray.origin-active {
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-dasharray: 0;
+  }
+  #master-journey-map .origin.origin-active circle {
+    stroke-width: 2.5;
+    fill: var(--ink);
+  }
+  #master-journey-map.sacred-mode .sacred-markers {
+    display: block !important;
+  }
+
   .day-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.25rem; flex-wrap: wrap; }
   .day-num {
     font-family: var(--font-body);
@@ -2663,6 +2764,195 @@
 <section class="before-only" id="countdown-section">
   <div class="countdown-stack" id="countdown-stack">
     <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- =================== MASTER JOURNEY MAP (v3.10 §0.14.2) =================== -->
+<section id="master-journey-section" aria-label="Master journey map">
+  <div class="mjm-controls">
+    <div class="mjm-origin">
+      <label for="mjm-origin-select" class="mjm-ctrl-lab">Travelling from</label>
+      <div class="mjm-select-wrap">
+        <select id="mjm-origin-select" aria-label="Origin selector">
+          <option value="auto">Auto-detect</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="uae">UAE</option>
+          <option value="mauritius">Mauritius</option>
+          <option value="us">US East</option>
+          <option value="all">Show all origins</option>
+        </select>
+        <svg class="icon icon-16"><use href="#icon-chevron-down"/></svg>
+      </div>
+    </div>
+    <div class="mjm-mode" role="group" aria-label="Map mode">
+      <button type="button" id="mjm-mode-logistics" class="active" aria-pressed="true">Logistics</button>
+      <button type="button" id="mjm-mode-pilgrimage" aria-pressed="false">Pilgrimage</button>
+    </div>
+  </div>
+  <div class="mjm-wrap">
+<svg id="master-journey-map" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Master Journey Map showing the Kailash route from origin to Tibet">
+  <title>Kailash Mansarovar Yatra &middot; route map</title>
+
+  <!-- ===== BACKGROUND COUNTRY OUTLINES (schematic, not topographic) ===== -->
+  <g class="map-geography" stroke="var(--border)" stroke-width="1" fill="none">
+    <path d="M 220,470 Q 280,440 340,455 Q 400,420 460,440 Q 520,460 580,440 Q 640,450 700,460 Q 760,470 800,475"
+          fill="var(--card)" fill-opacity="0.3" />
+    <path d="M 380,380 Q 420,360 460,370 Q 500,355 540,365"
+          stroke="var(--border)" stroke-dasharray="4,3" />
+    <path d="M 100,300 Q 200,280 300,295 Q 450,285 600,300 Q 700,310 780,305 L 780,355 Q 700,360 600,350 Q 450,340 300,355 Q 200,360 100,350 Z"
+          fill="var(--card)" fill-opacity="0.35" />
+    <text x="640" y="450" font-family="Inter Tight, sans-serif" font-size="9" fill="var(--muted)" letter-spacing="0.15em">INDIA</text>
+    <text x="460" y="395" font-family="Inter Tight, sans-serif" font-size="9" fill="var(--muted)" letter-spacing="0.15em">NEPAL</text>
+    <text x="380" y="290" font-family="Inter Tight, sans-serif" font-size="9" fill="var(--muted)" letter-spacing="0.15em">TIBET</text>
+  </g>
+
+  <!-- ===== ORIGIN CONVERGENCE RAYS ===== -->
+  <g class="origin-rays">
+    <line class="origin-ray origin-ray-mumbai" x1="125" y1="440" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+    <line class="origin-ray origin-ray-uae" x1="55" y1="380" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+    <line class="origin-ray origin-ray-mauritius" x1="55" y1="455" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+    <line class="origin-ray origin-ray-us" x1="55" y1="310" x2="480" y2="380"
+          stroke="var(--muted)" stroke-width="1" stroke-dasharray="3,3" />
+  </g>
+
+  <!-- ===== ORIGINS PANEL ===== -->
+  <g class="origins" font-family="JetBrains Mono, monospace">
+    <g class="origin origin-mumbai" data-origin="mumbai">
+      <circle cx="125" cy="440" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="138" y="444" font-size="11" fill="var(--ink)">MUMBAI</text>
+      <title>Mumbai &middot; IST (Asia/Kolkata)</title>
+    </g>
+    <g class="origin origin-uae" data-origin="uae">
+      <circle cx="55" cy="380" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="68" y="384" font-size="11" fill="var(--ink)">DUBAI</text>
+      <title>UAE &middot; Asia/Dubai</title>
+    </g>
+    <g class="origin origin-mauritius" data-origin="mauritius">
+      <circle cx="55" cy="455" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="68" y="459" font-size="11" fill="var(--ink)">PORT LOUIS</text>
+      <title>Mauritius &middot; Indian/Mauritius</title>
+    </g>
+    <g class="origin origin-us" data-origin="us">
+      <circle cx="55" cy="310" r="5" fill="var(--card)" stroke="var(--ink)" stroke-width="1.5" />
+      <text x="68" y="314" font-size="11" fill="var(--ink)">NEW YORK</text>
+      <title>US East &middot; America/New_York</title>
+    </g>
+  </g>
+
+  <!-- ===== PRIMARY ROUTE LINE ===== -->
+  <g class="route-line" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 480,380 Q 540,340 620,330" stroke-dasharray="6,4" />
+    <path d="M 620,330 Q 420,310 250,300" stroke-dasharray="6,4" />
+    <path d="M 250,300 L 200,320" />
+    <path d="M 200,320 Q 170,295 165,260" />
+    <path d="M 165,260 Q 150,242 145,225" />
+    <path d="M 145,225 Q 145,260 175,278" />
+    <path d="M 175,278 Q 195,295 215,305" />
+    <path d="M 215,305 Q 400,318 620,330" stroke-dasharray="6,4" />
+    <path d="M 620,330 Q 540,355 480,380" stroke-dasharray="6,4" />
+  </g>
+
+  <!-- ===== TRIP STOPS ===== -->
+  <g class="trip-stops" font-family="JetBrains Mono, monospace">
+
+    <g class="stop stop-kathmandu" data-day-id="day-1" role="button" tabindex="0">
+      <circle cx="480" cy="380" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="495" y="384" font-size="12" fill="var(--ink)" font-weight="600">Kathmandu</text>
+      <text x="495" y="397" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D1 &middot; D2 &middot; D11 &middot; D12 &middot; D13 &middot; 1,380 M</text>
+      <title>Kathmandu &middot; 1,380 m &middot; Days 1, 2, 11, 12, 13 &middot; Arrival and return</title>
+    </g>
+
+    <g class="stop stop-lhasa" data-day-id="day-3" role="button" tabindex="0">
+      <circle cx="620" cy="330" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="635" y="334" font-size="12" fill="var(--ink)" font-weight="600">Lhasa</text>
+      <text x="635" y="347" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D3 &middot; D4 &middot; D10 &middot; 3,656 M</text>
+      <title>Lhasa &middot; 3,656 m &middot; Days 3, 4, 10 &middot; Tibet entry and exit</title>
+    </g>
+
+    <g class="stop stop-mansarovar" data-day-id="day-5" role="button" tabindex="0">
+      <circle cx="200" cy="320" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="100" y="324" font-size="12" fill="var(--ink)" font-weight="600" text-anchor="end">Mansarovar</text>
+      <text x="100" y="337" font-size="9" fill="var(--muted)" letter-spacing="0.1em" text-anchor="end">D5 &middot; D6 &middot; 4,570 M</text>
+      <title>Mansarovar &middot; 4,570 m &middot; Days 5, 6 &middot; Holy lake</title>
+    </g>
+
+    <g class="stop stop-dirapuk" data-day-id="day-7" role="button" tabindex="0">
+      <circle cx="165" cy="260" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="80" y="264" font-size="12" fill="var(--ink)" font-weight="600" text-anchor="end">Dirapuk</text>
+      <text x="80" y="277" font-size="9" fill="var(--muted)" letter-spacing="0.1em" text-anchor="end">D7 &middot; 4,900 M</text>
+      <title>Dirapuk &middot; 4,900 m &middot; Day 7 &middot; Pre-Parikrama camp</title>
+    </g>
+
+    <g class="stop stop-dolma-la critical" data-day-id="day-8" role="button" tabindex="0">
+      <circle cx="145" cy="225" r="10" fill="var(--red)" stroke="var(--red)" stroke-width="2" />
+      <text x="60" y="223" font-size="13" fill="var(--red)" font-weight="700" text-anchor="end">Dolma La</text>
+      <text x="60" y="236" font-size="10" fill="var(--red)" letter-spacing="0.1em" font-weight="600" text-anchor="end">D8 &middot; 5,630 M</text>
+      <title>Dolma La Pass &middot; 5,630 m &middot; Day 8 &middot; The highest point &middot; critical day</title>
+    </g>
+
+    <g class="stop stop-zuthulphuk" data-day-id="day-9" role="button" tabindex="0">
+      <circle cx="175" cy="278" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="180" y="295" font-size="12" fill="var(--ink)" font-weight="600">Zuthulphuk</text>
+      <text x="180" y="308" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D8 night &middot; 4,790 M</text>
+      <title>Zuthulphuk &middot; 4,790 m &middot; Day 8 night &middot; Day 9 morning &middot; Parikrama camp</title>
+    </g>
+
+    <g class="stop stop-darchen" data-day-id="day-9" role="button" tabindex="0">
+      <circle cx="215" cy="305" r="8" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+      <text x="225" y="320" font-size="12" fill="var(--ink)" font-weight="600">Darchen</text>
+      <text x="225" y="333" font-size="9" fill="var(--muted)" letter-spacing="0.1em">D9 &middot; 4,575 M</text>
+      <title>Darchen &middot; 4,575 m &middot; Day 9 &middot; Parikrama trailhead</title>
+    </g>
+  </g>
+
+  <!-- ===== SACRED MARKERS (hidden by default) ===== -->
+  <g class="sacred-markers" font-family="JetBrains Mono, monospace" style="display:none;">
+    <g class="sacred-marker">
+      <use href="#icon-temple-line" x="475" y="395" width="14" height="14" color="var(--accent)" />
+      <title>Pashupatinath &middot; sacred Shiva temple &middot; Day 2 darshan</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-temple-line" x="615" y="345" width="14" height="14" color="var(--accent)" />
+      <title>Jokhang Temple &middot; Day 4 &middot; most sacred temple in Tibetan Buddhism</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-lake-ripple-line" x="190" y="332" width="16" height="14" color="var(--accent)" />
+      <title>Mansarovar holy bath &middot; Day 6 &middot; the lake of the mind</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-temple-line" x="220" y="335" width="14" height="14" color="var(--accent)" />
+      <title>Chiu Gompa &middot; Day 6 &middot; monastery overlooking Mansarovar</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-mountain" x="155" y="248" width="14" height="14" color="var(--accent)" />
+      <title>Mount Kailash &middot; viewpoint Day 7 &middot; the sacred mountain</title>
+    </g>
+    <g class="sacred-marker">
+      <circle cx="145" cy="225" r="16" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2,3" />
+      <title>Dolma La &middot; spiritual crossing &middot; death and rebirth in pilgrim tradition</title>
+    </g>
+    <g class="sacred-marker">
+      <use href="#icon-lake-ripple-line" x="155" y="245" width="13" height="11" color="var(--accent)" />
+      <title>Gauri Kund &middot; Day 8 descent &middot; sacred glacial lake</title>
+    </g>
+  </g>
+
+  <!-- ===== LEGEND ===== -->
+  <g class="map-legend" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)" letter-spacing="0.05em">
+    <text x="640" y="20" font-weight="600" font-size="10" letter-spacing="0.1em" fill="var(--ink)">LEGEND</text>
+    <line x1="640" y1="32" x2="660" y2="32" stroke="var(--ink)" stroke-width="2" />
+    <text x="666" y="35">DRIVE OR FOOT</text>
+    <line x1="640" y1="45" x2="660" y2="45" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6,4" />
+    <text x="666" y="48">FLIGHT</text>
+    <circle cx="650" cy="60" r="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="2" />
+    <text x="666" y="63">STOP</text>
+    <circle cx="650" cy="75" r="6" fill="var(--red)" />
+    <text x="666" y="78">PEAK &middot; DOLMA LA</text>
+  </g>
+</svg>
   </div>
 </section>
 
@@ -5492,6 +5782,112 @@
     });
   }
 
+  /* =================== MASTER JOURNEY MAP (v3.10 §0.14.2) ===================
+   * Click any stop → switch to Itinerary tab + smooth-scroll to day card.
+   * Keyboard: Enter/Space on focused stop triggers the same action.
+   */
+  function initMasterJourneyMap() {
+    var svg = document.getElementById("master-journey-map");
+    if (!svg) return;
+    var stops = svg.querySelectorAll(".stop");
+    stops.forEach(function(stop) {
+      var dayId = stop.getAttribute("data-day-id");
+      if (!dayId) return;
+      function go() {
+        try {
+          activateTab("tab-itinerary");
+          setTimeout(function() {
+            var el = document.getElementById(dayId);
+            if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+          }, 60);
+        } catch(e) {}
+      }
+      stop.addEventListener("click", go);
+      stop.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          go();
+        }
+      });
+    });
+  }
+
+  /* =================== ORIGIN AUTO-DETECT + MANUAL OVERRIDE (v3.10 §0.14.3) ===================
+   * Timezone mapping → origin id. localStorage override wins over auto-detect.
+   */
+  function detectOriginFromTz(tz) {
+    if (!tz) return "all";
+    if (tz === "Asia/Kolkata" || tz === "Asia/Calcutta") return "mumbai";
+    if (tz === "Asia/Dubai"   || tz === "Asia/Abu_Dhabi") return "uae";
+    if (tz === "Indian/Mauritius") return "mauritius";
+    if (tz.indexOf("America/") === 0) return "us";
+    return "all";
+  }
+  function applyOriginToMap(origin) {
+    var svg = document.getElementById("master-journey-map");
+    if (!svg) return;
+    /* Reset all */
+    svg.querySelectorAll(".origin-ray").forEach(function(r){ r.classList.remove("origin-active"); });
+    svg.querySelectorAll(".origin").forEach(function(o){ o.classList.remove("origin-active"); });
+    if (origin && origin !== "all") {
+      var ray = svg.querySelector(".origin-ray-" + origin);
+      var ori = svg.querySelector(".origin-" + origin);
+      if (ray) ray.classList.add("origin-active");
+      if (ori) ori.classList.add("origin-active");
+    }
+  }
+  function initOriginSelector() {
+    var sel = document.getElementById("mjm-origin-select");
+    if (!sel) return;
+    var saved = null;
+    try { saved = localStorage.getItem("kailash_origin"); } catch(e) {}
+    var resolved;
+    if (saved && saved !== "auto") {
+      resolved = saved;
+      sel.value = saved;
+    } else {
+      sel.value = "auto";
+      try {
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        resolved = detectOriginFromTz(tz);
+      } catch(e) { resolved = "all"; }
+    }
+    applyOriginToMap(resolved);
+    sel.addEventListener("change", function() {
+      var v = sel.value;
+      try { localStorage.setItem("kailash_origin", v); } catch(e) {}
+      if (v === "auto") {
+        var tz2;
+        try { tz2 = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) { tz2 = ""; }
+        applyOriginToMap(detectOriginFromTz(tz2));
+      } else {
+        applyOriginToMap(v);
+      }
+    });
+  }
+
+  /* =================== SACRED JOURNEY TOGGLE (v3.10 §0.14.6) =================== */
+  function initSacredToggle() {
+    var btnLog = document.getElementById("mjm-mode-logistics");
+    var btnPil = document.getElementById("mjm-mode-pilgrimage");
+    var svg    = document.getElementById("master-journey-map");
+    if (!btnLog || !btnPil || !svg) return;
+    var saved = null;
+    try { saved = localStorage.getItem("kailash_map_mode"); } catch(e) {}
+    function setMode(mode) {
+      var pilgrim = (mode === "pilgrimage");
+      svg.classList.toggle("sacred-mode", pilgrim);
+      btnLog.classList.toggle("active", !pilgrim);
+      btnPil.classList.toggle("active",  pilgrim);
+      btnLog.setAttribute("aria-pressed", !pilgrim);
+      btnPil.setAttribute("aria-pressed",  pilgrim);
+      try { localStorage.setItem("kailash_map_mode", mode); } catch(e) {}
+    }
+    setMode(saved === "pilgrimage" ? "pilgrimage" : "logistics");
+    btnLog.addEventListener("click", function(){ setMode("logistics"); });
+    btnPil.addEventListener("click", function(){ setMode("pilgrimage"); });
+  }
+
   document.addEventListener("DOMContentLoaded", function(){
     /* Tab init FIRST so any downstream error does not leave the page blank. */
     try { initTabs(); } catch(e) { /* fallback handled by inline checked attribute on tab-overview */ }
@@ -5512,6 +5908,10 @@
       initEmergencyDisclosure(phase);
       initSectionDefaults(phase);
     } catch(e) {}
+    /* v3.10 master journey map + origin auto-detect + sacred mode toggle. */
+    try { initMasterJourneyMap(); } catch(e) {}
+    try { initOriginSelector(); }   catch(e) {}
+    try { initSacredToggle(); }     catch(e) {}
   });
 </script>
 
