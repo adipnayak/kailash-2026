@@ -5,18 +5,96 @@
  *
  * Anti-AI typography: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  * Devotional budget: JAI_BHOLE_NATH x1, YATRA_SAMPOORNA x1 (single import each).
+ *
+ * v4 rescue: restored subtitle, cohort line, DEPART/RETURN dates row, tz toggle.
  */
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { Mountain, MapPin, Radio, TriangleAlert, Clock } from '@aliimam/icons';
+import { Mountain, MapPin, Radio, TriangleAlert, Clock, PlaneTakeoff, PlaneLanding } from '@aliimam/icons';
 import type { JourneyState } from '../lib/journey-state';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
+import { getStoredTzMode, setStoredTzMode, type TzMode } from '../lib/timezone';
 
 gsap.registerPlugin(useGSAP);
+
+// ---------------------------------------------------------------------------
+// Shared Hero header: subtitle + cohort line + DEPART/RETURN row + TZ toggle
+// Phase-stable: renders in all 3 phases.
+// ---------------------------------------------------------------------------
+function HeroHeader() {
+  const [tzMode, setTzMode] = useState<TzMode>(() => getStoredTzMode());
+
+  function toggleTz(mode: TzMode) {
+    setTzMode(mode);
+    setStoredTzMode(mode);
+  }
+
+  return (
+    <div className="mb-5 space-y-2">
+      {/* Subtitle */}
+      <p className="font-sans text-base font-medium text-ink">
+        A pilgrimage to the abode of Lord Shiva
+      </p>
+
+      {/* Cohort line */}
+      <p className="font-sans text-sm text-muted">
+        This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.
+      </p>
+
+      {/* DEPART / RETURN date row */}
+      <div className="flex flex-wrap items-center gap-3 pt-1">
+        <span className="inline-flex items-center gap-1.5 font-mono text-xs text-ink">
+          <PlaneTakeoff size={13} className="text-muted" />
+          <span className="font-semibold">DEPART</span>
+          <span className="text-muted">07 Jul 2026 - Tue</span>
+        </span>
+        <span className="text-border font-mono text-xs">|</span>
+        <span className="inline-flex items-center gap-1.5 font-mono text-xs text-ink">
+          <PlaneLanding size={13} className="text-muted" />
+          <span className="font-semibold">RETURN</span>
+          <span className="text-muted">19 Jul 2026 - Sun</span>
+        </span>
+      </div>
+
+      {/* TZ toggle */}
+      <div className="flex items-center gap-2 pt-1">
+        <span className="font-mono text-xs text-muted">Times shown in your local time</span>
+        <div
+          className="inline-flex rounded border border-border overflow-hidden"
+          role="group"
+          aria-label="Timezone mode"
+        >
+          <button
+            onClick={() => toggleTz('local')}
+            className={
+              'px-2.5 py-1 font-mono text-xs transition-colors ' +
+              (tzMode === 'local'
+                ? 'bg-ink text-bg'
+                : 'bg-card text-muted hover:text-ink')
+            }
+          >
+            Local
+          </button>
+          <button
+            onClick={() => toggleTz('trip')}
+            className={
+              'px-2.5 py-1 font-mono text-xs border-l border-border transition-colors ' +
+              (tzMode === 'trip'
+                ? 'bg-ink text-bg'
+                : 'bg-card text-muted hover:text-ink')
+            }
+          >
+            Trip time
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Prep list: 4 REQUIRED items only (Medical = OPTIONAL excluded, Insurance REMOVED)
@@ -307,10 +385,13 @@ export function Hero({ phase }: { phase: JourneyState }) {
     >
       <div className="mx-auto max-w-2xl">
         {/* Eyebrow */}
-        <div className="flex items-center gap-2 text-muted font-mono text-xs uppercase tracking-widest mb-5">
+        <div className="flex items-center gap-2 text-muted font-mono text-xs uppercase tracking-widest mb-3">
           <Mountain size={14} />
           <span>Kailash Mansarovar Yatra 2026</span>
         </div>
+
+        {/* Subtitle + cohort + dates + tz toggle: phase-stable */}
+        <HeroHeader />
 
         {/* Phase variants with AnimatePresence */}
         <AnimatePresence mode="wait">
