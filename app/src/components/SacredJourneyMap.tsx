@@ -94,6 +94,24 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
           showLabels
           animationDuration={2}
           loop
+          /*
+           * Zoom to South Asia + Tibet + Middle East so all 7 Tibetan-plateau
+           * stops are individually readable + Mumbai/Dubai/Mauritius in frame.
+           * NY arc extends in from the left edge as a visual cue.
+           *
+           * Base projection: 800x400 (lng -180..180 maps to x 0..800, lat 90..-90 to y 0..400).
+           * Region: lng 40..100 (60 wide), lat -25..35 (60 tall).
+           * x = (lng+180)*800/360 -> 489..622 (133 wide)
+           * y = (90-lat)*400/180 -> 122..256 (134 tall)
+           */
+          /*
+           * Zoom to South Asia + Middle East · all 7 Tibetan-plateau stops
+           * visible with usable spacing, Mumbai/Dubai/Mauritius origins also
+           * in frame. NY arc extends in from the left edge as a visual cue.
+           * Lng range: -10..130 (140 wide), lat range: -25..50 (75 tall).
+           * Base 800x400 projection: x=(lng+180)*800/360, y=(90-lat)*400/180.
+           */
+          viewBox={{ x: 378, y: 89, width: 311, height: 167 }}
         />
       </div>
     </section>

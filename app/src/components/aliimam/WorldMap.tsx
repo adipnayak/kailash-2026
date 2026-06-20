@@ -27,6 +27,11 @@ export interface WorldMapProps {
   showLabels?: boolean;
   animationDuration?: number;
   loop?: boolean;
+  /**
+   * Optional crop region in the underlying 800x400 world projection.
+   * Defaults to the full world view. Use to zoom into a subregion.
+   */
+  viewBox?: { x: number; y: number; width: number; height: number };
 }
 
 // ---------------------------------------------------------------------------
@@ -59,7 +64,33 @@ export function WorldMap({
   showLabels = true,
   animationDuration = 2,
   loop = true,
+  viewBox,
 }: WorldMapProps) {
+  const vb = viewBox ?? { x: 0, y: 0, width: 800, height: 400 };
+  const viewBoxStr = `${vb.x} ${vb.y} ${vb.width} ${vb.height}`;
+  const aspect = vb.width / vb.height;
+  // foreignObject + dot sizes are in SVG user units, so they scale with viewBox.
+  // Shrink them proportionally when zooming in so screen-rendered size stays readable.
+  const labelScale = vb.width / 800;
+  const labelWidth = 100 * labelScale;
+  const labelHeight = 30 * labelScale;
+  const labelOffsetY = 35 * labelScale;
+  const dotR = 3 * labelScale;
+  const dotPulseRMax = 12 * labelScale;
+  // font-size inside foreignObject is CSS px that scale with the SVG itself, so
+  // shrink it inversely to keep ~9px on screen at any zoom.
+  const labelFontPx = 9 * labelScale;
+  const arcStroke = Math.max(0.5, labelScale * 2);
+  const imgStyle: React.CSSProperties = viewBox
+    ? {
+        position: 'absolute',
+        width: `${(800 / vb.width) * 100}%`,
+        height: `${(400 / vb.height) * 100}%`,
+        left: `${-(vb.x / vb.width) * 100}%`,
+        top: `${-(vb.y / vb.height) * 100}%`,
+        maxWidth: 'none',
+      }
+    : {};
   const svgRef = useRef<SVGSVGElement>(null);
   const [hoveredLocation, setHoveredLocation] = useState<string | null>(null);
 
@@ -82,11 +113,19 @@ export function WorldMap({
   const fullCycleDuration = totalAnimationTime + pauseTime;
 
   return (
-    <div className="w-full aspect-[2/1] relative overflow-hidden bg-background">
+    <div
+      className="w-full relative overflow-hidden bg-background"
+      style={{ aspectRatio: `${aspect}` }}
+    >
       {/* Dotted base map */}
       <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
-        className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none object-cover"
+        className={
+          viewBox
+            ? '[mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none'
+            : 'h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none object-cover'
+        }
+        style={imgStyle}
         alt=""
         draggable={false}
       />
@@ -94,7 +133,7 @@ export function WorldMap({
       {/* Arc overlay */}
       <svg
         ref={svgRef}
-        viewBox="0 0 800 400"
+        viewBox={viewBoxStr}
         className="w-full h-full absolute inset-0 pointer-events-auto select-none"
         preserveAspectRatio="xMidYMid meet"
       >
@@ -126,7 +165,7 @@ export function WorldMap({
                 d={pathD}
                 fill="none"
                 stroke={arcColor}
-                strokeWidth="1"
+                strokeWidth={arcStroke}
                 initial={{ pathLength: 0 }}
                 animate={
                   loop
@@ -152,7 +191,7 @@ export function WorldMap({
 
               {loop && (
                 <motion.circle
-                  r="4"
+                  r={dotR * 1.3}
                   fill={arcColor}
                   initial={{ offsetDistance: '0%', opacity: 0 }}
                   animate={{
@@ -197,21 +236,21 @@ export function WorldMap({
                   <circle
                     cx={startPoint.x}
                     cy={startPoint.y}
-                    r="3"
+                    r={dotR}
                     fill={arcColor}
                     filter="url(#wm-glow)"
                   />
                   <circle
                     cx={startPoint.x}
                     cy={startPoint.y}
-                    r="3"
+                    r={dotR}
                     fill={arcColor}
                     opacity="0.5"
                   >
                     <animate
                       attributeName="r"
-                      from="3"
-                      to="12"
+                      from={dotR}
+                      to={dotPulseRMax}
                       dur="2s"
                       begin="0s"
                       repeatCount="indefinite"
@@ -235,16 +274,16 @@ export function WorldMap({
                     className="pointer-events-none"
                   >
                     <foreignObject
-                      x={startPoint.x - 50}
-                      y={startPoint.y - 35}
-                      width="100"
-                      height="30"
+                      x={startPoint.x - labelWidth / 2}
+                      y={startPoint.y - labelOffsetY}
+                      width={labelWidth}
+                      height={labelHeight}
                     >
                       <div className="flex items-center justify-center h-full">
                         <span
                           style={{
                             fontFamily: "'Geist Mono', ui-monospace, monospace",
-                            fontSize: '9px',
+                            fontSize: `${labelFontPx}px`,
                             letterSpacing: '0.07em',
                             textTransform: 'uppercase',
                             color: 'var(--foreground)',
@@ -277,21 +316,21 @@ export function WorldMap({
                   <circle
                     cx={endPoint.x}
                     cy={endPoint.y}
-                    r="3"
+                    r={dotR}
                     fill={arcColor}
                     filter="url(#wm-glow)"
                   />
                   <circle
                     cx={endPoint.x}
                     cy={endPoint.y}
-                    r="3"
+                    r={dotR}
                     fill={arcColor}
                     opacity="0.5"
                   >
                     <animate
                       attributeName="r"
-                      from="3"
-                      to="12"
+                      from={dotR}
+                      to={dotPulseRMax}
                       dur="2s"
                       begin="0.5s"
                       repeatCount="indefinite"
