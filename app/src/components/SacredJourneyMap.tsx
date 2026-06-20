@@ -179,9 +179,9 @@ export function SacredJourneyMap({ phase, onScrollToDay, onSwitchTab }: Props) {
           hoverPaint={HOVER_PAINT}
           styleUrl="https://tiles.openfreemap.org/styles/positron"
           initialView={{
-            longitude: 82,
-            latitude: 28,
-            zoom: 3.4,
+            longitude: 55,
+            latitude: 22,
+            zoom: 2.1,
           }}
           curvature={0.18}
           className="w-full h-full"
