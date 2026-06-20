@@ -1,12 +1,10 @@
 # v4 build and deploy workflow.
 #
-# IMPORTANT: deploy step is DISABLED below.
-# The current live site is the root index.html (v3.12 single-file build).
-# This workflow only verifies that the /app Vite build succeeds.
-#
-# TODO: enable deploy step once v4 is feature-parity with v3.12.
-# When enabling: also switch vite.config.ts base to '/' if v4 becomes the root,
-# and remove or rename the root index.html.
+# Live: deploy step is ENABLED. The /app Vite build is published to GitHub Pages.
+# Pages source switched from legacy/main to workflow on 2026-06-21.
+# The root index.html (v3.12 single-file build) is no longer served but kept in
+# the repo as historical reference under git history.
+# vite.config.ts base stays as '/kailash-2026/' (matches the repo Pages URL).
 
 name: Deploy v4 to GitHub Pages
 
@@ -51,14 +49,12 @@ jobs:
         with:
           path: app/dist
 
-  # TODO: enable deploy step once v4 is feature-parity with v3.12.
-  # For now PR builds verify but do not deploy, so the live v3.12 site is preserved.
-  # deploy:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   environment:
-  #     name: github-pages
-  #     url: ${{ steps.deployment.outputs.page_url }}
-  #   steps:
-  #     - id: deployment
-  #       uses: actions/deploy-pages@v4
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
