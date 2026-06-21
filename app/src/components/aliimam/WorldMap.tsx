@@ -224,6 +224,11 @@ export function WorldMap({
   const labelFontPx = 9 * labelScale;
   const arcStroke = Math.max(0.5, labelScale * 2);
 
+  // Base map dots magnify with the viewBox crop. At deep zoom they become
+  // huge circles that overwhelm the arcs. Fade the layer in proportion to
+  // zoom so it stays a subtle backdrop instead of competing for attention.
+  const baseMapOpacity = Math.min(1, vb.width / 250);
+
   const imgStyle: React.CSSProperties = {
     position: 'absolute',
     width: `${(800 / vb.width) * 100}%`,
@@ -231,6 +236,8 @@ export function WorldMap({
     left: `${-(vb.x / vb.width) * 100}%`,
     top: `${-(vb.y / vb.height) * 100}%`,
     maxWidth: 'none',
+    opacity: baseMapOpacity,
+    transition: 'opacity 200ms linear',
   };
 
   const svgRef = useRef<SVGSVGElement>(null);

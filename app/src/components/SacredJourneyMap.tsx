@@ -40,8 +40,14 @@ const DOLMA_COLOR = 'var(--destructive)';
 // Muted gray for return
 const RETURN_COLOR = 'oklch(0.556 0 0)';
 
-const VB_WIDE  = { x: 200, y: 75,  width: 490, height: 196 };
-const VB_TIGHT = { x: 575, y: 122, width: 55,  height: 22  };
+// Three zoom levels (aspect held at 2.5 for all so container height stays
+// stable across tweens):
+//   WIDE      · lng -90..130, lat -32..56     · all 4 origins visible
+//   MED       · lng 67..105, lat 23..38       · KTM, Lhasa, Mansarovar, Darchen all spaced out
+//   PARIKRAMA · lng 78.75..85.5, lat 28.7..31.4 · zoom into Darchen loop, parikrama cluster fills frame
+const VB_WIDE      = { x: 200, y: 75,  width: 490, height: 196 };
+const VB_MED       = { x: 549, y: 115, width: 85,  height: 34  };
+const VB_PARIKRAMA = { x: 575, y: 130, width: 15,  height: 6   };
 
 const DOTS: MapDot[] = [
   // 4 origin arcs converging on Kathmandu
@@ -78,20 +84,26 @@ const DOTS: MapDot[] = [
 // accumulate across stages until cycle reset (WorldMap handles this).
 
 const STAGES: Stage[] = [
-  // 1. Wide view · 4 origin arcs converge on Kathmandu
-  { viewBox: VB_WIDE,  arcIndices: [0, 1, 2, 3], holdMs: 4500 },
-  // 2. Zoom into Tibet route region
-  { viewBox: VB_TIGHT, arcIndices: [4],          tweenMs: 1800, holdMs: 2200 },
-  // 3. Lhasa -> Mansarovar
-  { viewBox: VB_TIGHT, arcIndices: [5],          holdMs: 2200 },
-  // 4. Mansarovar -> Darchen (parikrama gateway)
-  { viewBox: VB_TIGHT, arcIndices: [6],          holdMs: 2200 },
-  // 5. Parikrama loop (4 segments)
-  { viewBox: VB_TIGHT, arcIndices: [7, 8, 9, 10], holdMs: 3500 },
-  // 6. Return Lhasa -> Kathmandu
-  { viewBox: VB_TIGHT, arcIndices: [11],         holdMs: 2200 },
-  // 7. Zoom back to wide world view, final pause before loop
-  { viewBox: VB_WIDE,  arcIndices: [],           tweenMs: 1800, holdMs: 2500 },
+  // 1. Wide · 4 origin arcs converge on Kathmandu
+  { viewBox: VB_WIDE,      arcIndices: [0, 1, 2, 3], holdMs: 4500 },
+  // 2. MED zoom · KTM -> Lhasa
+  { viewBox: VB_MED,       arcIndices: [4],          tweenMs: 1800, holdMs: 2500 },
+  // 3. MED · Lhasa -> Mansarovar
+  { viewBox: VB_MED,       arcIndices: [5],          holdMs: 2500 },
+  // 4. MED · Mansarovar -> Darchen (parikrama gateway)
+  { viewBox: VB_MED,       arcIndices: [6],          holdMs: 2200 },
+  // 5. PARIKRAMA zoom · Darchen -> Dirapuk (one arc per stage so the loop is followable)
+  { viewBox: VB_PARIKRAMA, arcIndices: [7],          tweenMs: 1500, holdMs: 1800 },
+  // 6. PARIKRAMA · Dirapuk -> Dolma La (red, high pass)
+  { viewBox: VB_PARIKRAMA, arcIndices: [8],          holdMs: 1800 },
+  // 7. PARIKRAMA · Dolma La -> Zuthulphuk (red, descent)
+  { viewBox: VB_PARIKRAMA, arcIndices: [9],          holdMs: 1800 },
+  // 8. PARIKRAMA · Zuthulphuk -> Darchen (loop closes)
+  { viewBox: VB_PARIKRAMA, arcIndices: [10],         holdMs: 1800 },
+  // 9. MED · Return Lhasa -> Kathmandu
+  { viewBox: VB_MED,       arcIndices: [11],         tweenMs: 1500, holdMs: 2500 },
+  // 10. WIDE · final pause before loop
+  { viewBox: VB_WIDE,      arcIndices: [],           tweenMs: 1800, holdMs: 2500 },
 ];
 
 // ---------------------------------------------------------------------------
@@ -128,6 +140,7 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
           dotColor="oklch(0.556 0 0 / 0.25)"
           showLabels
           stages={STAGES}
+          arcDrawMs={1800}
         />
       </div>
     </section>
