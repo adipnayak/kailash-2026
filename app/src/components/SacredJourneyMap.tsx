@@ -7,7 +7,7 @@
  * Anti-AI rule: zero em-dashes, en-dashes, smart quotes, emojis.
  */
 
-import { WorldMap, type MapDot, type ViewBoxKeyframe } from './aliimam/WorldMap';
+import { WorldMap, type MapDot, type Stage } from './aliimam/WorldMap';
 import type { JourneyState } from '../lib/journey-state';
 
 // ---------------------------------------------------------------------------
@@ -40,23 +40,8 @@ const DOLMA_COLOR = 'var(--destructive)';
 // Muted gray for return
 const RETURN_COLOR = 'oklch(0.556 0 0)';
 
-// ---------------------------------------------------------------------------
-// Zoom cycle
-// ---------------------------------------------------------------------------
-//
-// Base 800x400 world projection: x=(lng+180)*800/360, y=(90-lat)*400/180.
-// Aspect held at 2.5 across both frames so container height stays stable
-// during the tween.
-//
-// WIDE  · lng -90..130, lat -32..56. All 4 origins visible (NY -74, Dubai,
-//         Mumbai, Mauritius -20) plus the Tibet route.
-// TIGHT · lng 79..104, lat 25..35. Parikrama + Kathmandu + Lhasa only;
-//         Mumbai/Dubai/Mauritius/NY clipped out.
-
-const ZOOM_KEYFRAMES: ViewBoxKeyframe[] = [
-  { viewBox: { x: 200, y: 75, width: 490, height: 196 }, holdMs: 3500, tweenMs: 1800 },
-  { viewBox: { x: 575, y: 122, width: 55, height: 22 },   holdMs: 4000, tweenMs: 2200 },
-];
+const VB_WIDE  = { x: 200, y: 75,  width: 490, height: 196 };
+const VB_TIGHT = { x: 575, y: 122, width: 55,  height: 22  };
 
 const DOTS: MapDot[] = [
   // 4 origin arcs converging on Kathmandu
@@ -75,6 +60,38 @@ const DOTS: MapDot[] = [
   { start: STOPS.zuthulphuk, end: STOPS.darchen,     color: ROUTE_COLOR  },
   // Return
   { start: STOPS.lhasa,      end: STOPS.kathmandu,   color: RETURN_COLOR },
+];
+
+// ---------------------------------------------------------------------------
+// Narrative stages · matches the actual trip progression
+// ---------------------------------------------------------------------------
+//
+// Arc indices reference the DOTS array above:
+//   0..3  : origins (Mumbai, Dubai, Port Louis, NY) -> Kathmandu
+//   4     : Kathmandu -> Lhasa
+//   5     : Lhasa -> Mansarovar
+//   6     : Mansarovar -> Darchen
+//   7..10 : parikrama (Darchen -> Dirapuk -> Dolma La -> Zuthulphuk -> Darchen)
+//   11    : return Lhasa -> Kathmandu
+//
+// Each stage holds for holdMs (during which its arcs draw + pause). Arcs
+// accumulate across stages until cycle reset (WorldMap handles this).
+
+const STAGES: Stage[] = [
+  // 1. Wide view · 4 origin arcs converge on Kathmandu
+  { viewBox: VB_WIDE,  arcIndices: [0, 1, 2, 3], holdMs: 4500 },
+  // 2. Zoom into Tibet route region
+  { viewBox: VB_TIGHT, arcIndices: [4],          tweenMs: 1800, holdMs: 2200 },
+  // 3. Lhasa -> Mansarovar
+  { viewBox: VB_TIGHT, arcIndices: [5],          holdMs: 2200 },
+  // 4. Mansarovar -> Darchen (parikrama gateway)
+  { viewBox: VB_TIGHT, arcIndices: [6],          holdMs: 2200 },
+  // 5. Parikrama loop (4 segments)
+  { viewBox: VB_TIGHT, arcIndices: [7, 8, 9, 10], holdMs: 3500 },
+  // 6. Return Lhasa -> Kathmandu
+  { viewBox: VB_TIGHT, arcIndices: [11],         holdMs: 2200 },
+  // 7. Zoom back to wide world view, final pause before loop
+  { viewBox: VB_WIDE,  arcIndices: [],           tweenMs: 1800, holdMs: 2500 },
 ];
 
 // ---------------------------------------------------------------------------
@@ -110,9 +127,7 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
           lineColor={ORIGIN_COLOR}
           dotColor="oklch(0.556 0 0 / 0.25)"
           showLabels
-          animationDuration={2}
-          loop
-          viewBoxKeyframes={ZOOM_KEYFRAMES}
+          stages={STAGES}
         />
       </div>
     </section>
