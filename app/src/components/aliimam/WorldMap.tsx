@@ -20,9 +20,19 @@ import DottedMap from 'dotted-map';
 // Types
 // ---------------------------------------------------------------------------
 
+export type LabelPosition = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
+
+export interface MapEndpoint {
+  lat: number;
+  lng: number;
+  label?: string;
+  /** Position of the label relative to the dot. Default 'n' (above). */
+  labelPosition?: LabelPosition;
+}
+
 export interface MapDot {
-  start: { lat: number; lng: number; label?: string };
-  end: { lat: number; lng: number; label?: string };
+  start: MapEndpoint;
+  end: MapEndpoint;
   color?: string;
 }
 
@@ -231,10 +241,10 @@ export function WorldMap({
   const labelScale = vb.width / 800;
   const labelWidth = 100 * labelScale;
   const labelHeight = 30 * labelScale;
-  const labelOffsetY = 35 * labelScale;
   const dotR = 3 * labelScale;
   const dotPulseRMax = 12 * labelScale;
-  const labelFontPx = 9 * labelScale;
+  // Bumped from 9 to 12 so labels stay readable at deep zoom.
+  const labelFontPx = 12 * labelScale;
   // Stroke + dot + label sizes scale linearly with viewBox so the screen
   // size stays ~constant at any zoom (labelScale * magnification = const).
   // The previous Math.max(0.5, ...) floor blew strokes up to ~66 px wide at
@@ -278,10 +288,18 @@ export function WorldMap({
   );
 
   // Deduped endpoint locations -- one dot + one label per unique lat,lng.
+  // First labelPosition encountered for a coord wins.
   const uniquePoints = useMemo(() => {
     const byKey = new Map<
       string,
-      { key: string; x: number; y: number; label?: string; color: string }
+      {
+        key: string;
+        x: number;
+        y: number;
+        label?: string;
+        labelPosition?: LabelPosition;
+        color: string;
+      }
     >();
     for (const d of dots) {
       const color = d.color ?? lineColor;
@@ -289,12 +307,50 @@ export function WorldMap({
         const k = pointKey(ep.lat, ep.lng);
         if (!byKey.has(k)) {
           const p = projectPoint(ep.lat, ep.lng);
-          byKey.set(k, { key: k, x: p.x, y: p.y, label: ep.label, color });
+          byKey.set(k, {
+            key: k,
+            x: p.x,
+            y: p.y,
+            label: ep.label,
+            labelPosition: ep.labelPosition,
+            color,
+          });
         }
       }
     }
     return Array.from(byKey.values());
   }, [dots, lineColor]);
+
+  // Resolve labelPosition -> foreignObject {x, y} offset relative to the dot.
+  // Default 'n' (above) keeps backward-compat with prior renders.
+  const labelGap = dotR + 1 * labelScale;
+  function labelXY(p: { x: number; y: number; labelPosition?: LabelPosition }) {
+    const pos = p.labelPosition ?? 'n';
+    let lx = p.x - labelWidth / 2;
+    let ly = p.y - labelHeight - labelGap;
+    if (pos === 's') {
+      ly = p.y + labelGap;
+    } else if (pos === 'e') {
+      lx = p.x + labelGap;
+      ly = p.y - labelHeight / 2;
+    } else if (pos === 'w') {
+      lx = p.x - labelWidth - labelGap;
+      ly = p.y - labelHeight / 2;
+    } else if (pos === 'ne') {
+      lx = p.x + labelGap;
+      ly = p.y - labelHeight - labelGap;
+    } else if (pos === 'nw') {
+      lx = p.x - labelWidth - labelGap;
+      ly = p.y - labelHeight - labelGap;
+    } else if (pos === 'se') {
+      lx = p.x + labelGap;
+      ly = p.y + labelGap;
+    } else if (pos === 'sw') {
+      lx = p.x - labelWidth - labelGap;
+      ly = p.y + labelGap;
+    }
+    return { x: lx, y: ly };
+  }
 
   // For each unique point, the set of arc indices that touch it. A point is
   // visible iff any of those arcs is currently active.
@@ -438,8 +494,8 @@ export function WorldMap({
 
               {showLabels && p.label && (
                 <foreignObject
-                  x={p.x - labelWidth / 2}
-                  y={p.y - labelOffsetY}
+                  x={labelXY(p).x}
+                  y={labelXY(p).y}
                   width={labelWidth}
                   height={labelHeight}
                   className="pointer-events-none"
