@@ -7,6 +7,7 @@
  */
 import type { Tab } from '../hooks/useJourneyState';
 import { LayoutGrid, CalendarDays, ListChecks, BookOpen } from '@aliimam/icons';
+import { ThemeToggle } from './ThemeToggle';
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'overview',  label: 'Overview',   icon: <LayoutGrid  size={14} /> },
@@ -21,7 +22,7 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
       data-section="nav"
       className="sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur px-6"
     >
-      <div className="mx-auto flex max-w-6xl gap-1">
+      <div className="mx-auto flex max-w-6xl items-center gap-1">
         {TABS.map((t) => {
           const active = tab === t.id;
           return (
@@ -42,6 +43,9 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
             </button>
           );
         })}
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
       </div>
     </nav>
   );
