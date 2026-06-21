@@ -48,6 +48,8 @@ import {
 import type { TripDay } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
+import { DayMiniMap } from './aliimam/DayMiniMap';
+import { getDayRoute } from '../lib/day-routes';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -226,6 +228,7 @@ function isGear(item: string): boolean {
 
 function CompressedView({
   day,
+  index = 0,
   onToggle,
 }: {
   day: TripDay;
@@ -236,6 +239,7 @@ function CompressedView({
   const isCritical = day.day === 8;
   // Show up to 4-5 timeline items as highlights
   const highlights = (day.timeline || []).slice(0, 5);
+  const route = getDayRoute(index);
 
   return (
     <button
@@ -269,6 +273,19 @@ function CompressedView({
           {day.weekday} {day.date}
         </p>
       </div>
+
+      {/* Row 2b: Mini-map (start -> end arc for this day) */}
+      {route && (
+        <div className="mb-2">
+          <DayMiniMap
+            start={route.start}
+            end={route.end}
+            arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
+            width={240}
+            height={70}
+          />
+        </div>
+      )}
 
       {/* Row 3: Status chips */}
       <div className="flex flex-wrap gap-1.5 mb-3">
