@@ -243,12 +243,16 @@ export function WorldMap({
   const svgRef = useRef<SVGSVGElement>(null);
   const [hoveredLocation, setHoveredLocation] = useState<string | null>(null);
 
-  const map = useMemo(() => new DottedMap({ height: 100, grid: 'diagonal' }), []);
+  // height=300 gives ~3x the dot count of the default 100. Visually that
+  // turns the chunky discrete circles you'd see when zoomed into a region
+  // into a fine textured pattern. Combined with the zoom-driven opacity
+  // fade above, the base map stays subtle at all zoom levels.
+  const map = useMemo(() => new DottedMap({ height: 300, grid: 'diagonal' }), []);
 
   const svgMap = useMemo(
     () =>
       map.getSVG({
-        radius: 0.22,
+        radius: 0.15,
         color: dotColor,
         shape: 'circle',
         backgroundColor: 'transparent',
