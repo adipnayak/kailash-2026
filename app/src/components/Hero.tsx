@@ -12,7 +12,7 @@
  * Devotional budget: JAI_BHOLE_NATH x1, YATRA_SAMPOORNA x1 (single import each).
  */
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -27,66 +27,17 @@ import {
   Radio,
   TriangleAlert,
   Clock,
-  PlaneTakeoff,
-  PlaneLanding,
   Footprints,
 } from '@aliimam/icons';
 import type { JourneyState } from '../lib/journey-state';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
-import { getStoredTzMode, setStoredTzMode, type TzMode } from '../lib/timezone';
 import { BentoGrid, BentoGridItem } from './aliimam/Bento';
 
 gsap.registerPlugin(useGSAP);
 
 // ---------------------------------------------------------------------------
 // TZ toggle: shared across phases
-// ---------------------------------------------------------------------------
-function TzToggle() {
-  const [tzMode, setTzMode] = useState<TzMode>(() => getStoredTzMode());
-
-  function toggle(mode: TzMode) {
-    setTzMode(mode);
-    setStoredTzMode(mode);
-  }
-
-  return (
-    <div className="flex items-center gap-2">
-      <span className="font-mono text-xs text-muted-foreground">
-        {tzMode === 'local' ? 'Your local time' : 'Trip time (NPT/CST)'}
-      </span>
-      <div
-        className="inline-flex rounded-none border border-border overflow-hidden"
-        role="group"
-        aria-label="Timezone mode"
-      >
-        <button
-          onClick={() => toggle('local')}
-          className={
-            'px-2.5 py-1 font-mono text-xs transition-colors ' +
-            (tzMode === 'local'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground hover:text-foreground')
-          }
-        >
-          Local
-        </button>
-        <button
-          onClick={() => toggle('trip')}
-          className={
-            'px-2.5 py-1 font-mono text-xs border-l border-border transition-colors ' +
-            (tzMode === 'trip'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground hover:text-foreground')
-          }
-        >
-          Trip time
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ---------------------------------------------------------------------------
 // Prep list constants
 // ---------------------------------------------------------------------------
@@ -407,8 +358,6 @@ function DuringBento({ state }: { state: JourneyState }) {
           </div>
         )}
 
-        <TzToggle />
-
         <div className="flex flex-wrap items-center gap-3">
           <span className="font-mono text-xs text-muted-foreground">
             <span className="text-foreground font-semibold">{daysRemaining}</span> days remaining
@@ -614,35 +563,6 @@ export function Hero({ phase }: { phase: JourneyState }) {
       className="border-b border-border bg-background px-4 py-6 md:px-6 md:py-8"
     >
       <div className="mx-auto max-w-6xl">
-        {/* Page header: title + cohort + DEPART/RETURN on left, TZ toggle on right */}
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-foreground font-sans text-xl md:text-2xl font-medium">
-              <Mountain size={18} />
-              <span>Kailash Mansarovar Yatra 2026</span>
-            </div>
-            <p className="font-sans text-sm text-muted-foreground max-w-2xl">
-              This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
-                <PlaneTakeoff size={13} className="text-muted-foreground" />
-                <span className="font-semibold">DEPART</span>
-                <span className="text-muted-foreground">07 Jul 2026</span>
-              </span>
-              <span className="text-border font-mono text-xs">|</span>
-              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
-                <PlaneLanding size={13} className="text-muted-foreground" />
-                <span className="font-semibold">RETURN</span>
-                <span className="text-muted-foreground">19 Jul 2026</span>
-              </span>
-            </div>
-          </div>
-          <div className="md:pt-1">
-            <TzToggle />
-          </div>
-        </div>
-
         {/* Phase variants */}
         <AnimatePresence mode="wait">
           {phase.phase === 'before' && (

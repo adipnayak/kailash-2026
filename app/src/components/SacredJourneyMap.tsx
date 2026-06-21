@@ -7,6 +7,7 @@
  * Anti-AI rule: zero em-dashes, en-dashes, smart quotes, emojis.
  */
 
+import { Mountain, PlaneTakeoff, PlaneLanding } from '@aliimam/icons';
 import { WorldMap, type MapDot, type Stage } from './aliimam/WorldMap';
 import type { JourneyState } from '../lib/journey-state';
 
@@ -128,13 +129,27 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
       className="border-b border-border bg-background px-4 py-8 md:px-6 md:py-12"
     >
       <div className="mx-auto max-w-6xl">
-        <header className="mb-6 md:mb-8">
-          <h2 className="font-sans text-2xl md:text-3xl font-medium text-foreground">
-            Sacred Journey Map
+        <header className="mb-6 md:mb-8 flex flex-col gap-3">
+          <h2 className="font-sans text-xl md:text-2xl font-medium text-foreground flex items-center gap-2">
+            <Mountain size={18} />
+            Kailash Mansarovar Yatra 2026
           </h2>
-          <p className="mt-2 font-sans text-sm md:text-base text-muted-foreground">
-            23 yatris converging from 4 origins: Mumbai, Dubai, Port Louis, New York -- onward to Kathmandu, Lhasa, Mansarovar, Kailash.
+          <p className="font-sans text-sm text-muted-foreground max-w-2xl">
+            This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.
           </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
+              <PlaneTakeoff size={13} className="text-muted-foreground" />
+              <span className="font-semibold">DEPART</span>
+              <span className="text-muted-foreground">07 Jul 2026</span>
+            </span>
+            <span className="text-border font-mono text-xs">|</span>
+            <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
+              <PlaneLanding size={13} className="text-muted-foreground" />
+              <span className="font-semibold">RETURN</span>
+              <span className="text-muted-foreground">19 Jul 2026</span>
+            </span>
+          </div>
         </header>
         <WorldMap
           dots={DOTS}
