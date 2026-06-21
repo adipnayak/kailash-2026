@@ -40,12 +40,21 @@ function shortLocation(loc: string): string {
 
 // ---- chart data ----------------------------------------------------------
 
-const chartData = DAYS.map((d) => ({
-  day: 'D' + d.day,
-  location: d.location,
-  walking: d.altitude_peak,
-  sleeping: d.altitude_sleep,
-}));
+// D0 (departure) + D14 (return) sit at the average sea-level altitude of
+// the four origin cities: Mumbai ~14 m, Dubai ~5 m, Port Louis ~5 m,
+// New York ~10 m -> avg 8.5, round to 9 m / 30 ft.
+const ORIGIN_AVG_ALT = 9;
+
+const chartData = [
+  { day: 'D0', location: 'Origins (avg)', walking: ORIGIN_AVG_ALT, sleeping: ORIGIN_AVG_ALT },
+  ...DAYS.map((d) => ({
+    day: 'D' + d.day,
+    location: d.location,
+    walking: d.altitude_peak,
+    sleeping: d.altitude_sleep,
+  })),
+  { day: 'D14', location: 'Origins (return)', walking: ORIGIN_AVG_ALT, sleeping: ORIGIN_AVG_ALT },
+];
 
 // ---- acclim ReferenceArea bands (D4, D6, D12) ---------------------------
 
@@ -119,8 +128,8 @@ function DolmaMarker({ containerRef, mode, dolmaRef }: DolmaMarkerProps) {
       const plotW = width - ML - MR;
       const plotH = height - MT - MB;
 
-      // D8 is index 7 out of 12 intervals (D1..D13 = 13 points = 12 intervals)
-      const xFraction = 7 / 12;
+      // D8 is index 8 out of 14 intervals (D0..D14 = 15 points = 14 intervals)
+      const xFraction = 8 / 14;
       const cx = ML + xFraction * plotW;
 
       const dolmaAlt = mode === 'walking' ? DOLMA_ALT_PEAK : DOLMA_ALT_SLEEP;
@@ -197,16 +206,34 @@ function makeTooltipContent(mode: AltMode) {
   }) {
     if (!active || !payload || !payload.length || !label) return null;
     const dayNum = parseInt(label.replace('D', ''), 10);
-    if (!dayNum || dayNum < 1 || dayNum > 13) return null;
-    const d = DAYS[dayNum - 1];
-    const alt = mode === 'walking' ? d.altitude_peak : d.altitude_sleep;
+    if (isNaN(dayNum) || dayNum < 0 || dayNum > 14) return null;
+
+    // D0 + D14 are synthetic origin/home points, not in DAYS.
+    const isOrigin = dayNum === 0 || dayNum === 14;
+    const alt = isOrigin
+      ? ORIGIN_AVG_ALT
+      : mode === 'walking'
+      ? DAYS[dayNum - 1].altitude_peak
+      : DAYS[dayNum - 1].altitude_sleep;
+    const heading = isOrigin
+      ? dayNum === 0
+        ? 'D0 - Origins (avg)'
+        : 'D14 - Origins (return)'
+      : 'D' + dayNum + ' - ' + shortLocation(DAYS[dayNum - 1].location);
+
     const prevAlt =
-      dayNum > 1
+      dayNum === 0
+        ? alt
+        : dayNum === 1
+        ? ORIGIN_AVG_ALT
+        : dayNum === 14
         ? mode === 'walking'
-          ? DAYS[dayNum - 2].altitude_peak
-          : DAYS[dayNum - 2].altitude_sleep
-        : alt;
-    const gained = dayNum > 1 ? alt - prevAlt : 0;
+          ? DAYS[12].altitude_peak
+          : DAYS[12].altitude_sleep
+        : mode === 'walking'
+        ? DAYS[dayNum - 2].altitude_peak
+        : DAYS[dayNum - 2].altitude_sleep;
+    const gained = dayNum > 0 ? alt - prevAlt : 0;
     const gainedStr =
       gained > 0
         ? '+' + gained.toLocaleString('en-US') + ' m'
@@ -216,11 +243,9 @@ function makeTooltipContent(mode: AltMode) {
 
     return (
       <div className="bg-card border border-border px-3 py-2 text-xs shadow-sm min-w-[160px]">
-        <div className="font-sans font-medium text-foreground text-sm mb-1">
-          D{d.day} - {shortLocation(d.location)}
-        </div>
+        <div className="font-sans font-medium text-foreground text-sm mb-1">{heading}</div>
         <div className="font-mono text-muted-foreground">{altLabel(alt)}</div>
-        {dayNum > 1 && (
+        {dayNum > 0 && (
           <div className="font-mono text-muted-foreground mt-0.5">Gain: {gainedStr}</div>
         )}
       </div>
@@ -287,7 +312,7 @@ export function AltitudeChart() {
           <div>
             <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>
             <p className="mt-1 text-sm text-muted-foreground font-mono">
-              13-day elevation across the Kailash Mansarovar yatra
+              Origin departure to home return across the Kailash Mansarovar yatra
             </p>
           </div>
           <SegmentedControl mode={mode} onChange={handleModeChange} />
@@ -315,8 +340,11 @@ export function AltitudeChart() {
         {/* Day location labels below chart */}
         <div
           className="mt-2 grid font-mono text-[10px] text-muted-foreground"
-          style={{ gridTemplateColumns: 'repeat(13, 1fr)' }}
+          style={{ gridTemplateColumns: 'repeat(15, 1fr)' }}
         >
+          <div className="text-center truncate px-0.5" title="Departure from origin cities">
+            Origins
+          </div>
           {DAYS.map((d) => (
             <div
               key={d.day}
@@ -326,6 +354,9 @@ export function AltitudeChart() {
               {shortLocation(d.location)}
             </div>
           ))}
+          <div className="text-center truncate px-0.5" title="Return to origin cities (avg sea level)">
+            Return
+          </div>
         </div>
 
         {/* Legend row */}
