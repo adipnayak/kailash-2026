@@ -1,10 +1,13 @@
 /**
  * ItineraryDayMap. Real cartographic per-day map (Leaflet + CartoDB).
  *
- * Renders every named trip stop as a small dot and the current day's
- * route as a thick highlighted line so the user sees the actual
- * geography (start point, end point, what gets traversed). Replaces the
- * abstract DayMiniMap dotted-map representation.
+ * Renders the day's route with mode-aware styling:
+ *   drive / walk  -> solid line snapped to real road geometry via OSRM
+ *                    (https://router.project-osrm.org). Falls back to a
+ *                    straight line when OSRM has no data (e.g. very
+ *                    remote Tibet trails).
+ *   flight        -> dashed straight line ('4 6' dash array)
+ *   trek          -> dotted dashed line ('1 5' dash array)
  *
  * Theme-aware: swaps Positron (light) / Dark Matter (dark) tiles when
  * the document's `.dark` class changes. CartoDB tile servers work
@@ -19,25 +22,22 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import type { TransportMode } from '../lib/day-stops';
+import { getRoadGeometry } from '../lib/road-routing';
 
 export interface MapPoint {
   lat: number;
   lng: number;
   label?: string;
+  /** Mode used to reach the NEXT point. Last point's value is ignored. */
+  modeNext?: TransportMode;
 }
 
 interface ItineraryDayMapProps {
   start: MapPoint;
   end?: MapPoint;
-  /**
-   * Ordered intra-day stops. When provided, replaces start/end with a
-   * multi-segment polyline through every stop in order. Each stop gets
-   * a numbered dot + label tooltip.
-   */
   waypoints?: MapPoint[];
-  /** All other trip stops to dot in the background. */
   contextStops?: MapPoint[];
-  /** Highlight colour for this day's route (CSS color string). */
   arcColor?: string;
   height?: number;
 }
@@ -56,6 +56,12 @@ function getCssVar(name: string, fallback: string): string {
   if (typeof document === 'undefined') return fallback;
   const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   return v || fallback;
+}
+
+function dashForMode(mode?: TransportMode): string | undefined {
+  if (mode === 'flight') return '4 6';
+  if (mode === 'trek') return '1 5';
+  return undefined; // drive / walk -> solid
 }
 
 export function ItineraryDayMap({
@@ -85,7 +91,7 @@ export function ItineraryDayMap({
     });
 
     tileRef.current = L.tileLayer(tileUrlForCurrentTheme(), {
-      maxZoom: 10,
+      maxZoom: 18,
       minZoom: 2,
       crossOrigin: true,
     }).addTo(map);
@@ -105,23 +111,48 @@ export function ItineraryDayMap({
     const accent = arcColor ?? getCssVar('--sacred', '#a87b3a');
     const bgColor = getCssVar('--background', '#fff');
 
-    // Build an ordered list of points to render. Waypoints override the
-    // start/end pair when provided.
+    // Build an ordered list of points to render. Waypoints override
+    // start/end when provided.
     const points: MapPoint[] = waypoints?.length
       ? waypoints
       : end
       ? [start, end]
       : [start];
 
-    // Polyline through every consecutive pair.
-    if (points.length >= 2) {
-      L.polyline(
-        points.map((p) => [p.lat, p.lng] as [number, number]),
-        { color: accent, weight: 3, opacity: 0.95 },
+    // Drop one polyline per leg with mode-appropriate dash. Drive/walk
+    // legs kick off an async OSRM fetch; when the geometry resolves we
+    // replace the straight line with the real road polyline.
+    const layers: L.Polyline[] = [];
+    for (let i = 0; i < points.length - 1; i++) {
+      const a = points[i];
+      const b = points[i + 1];
+      const mode = a.modeNext;
+      const dash = dashForMode(mode);
+      const line = L.polyline(
+        [
+          [a.lat, a.lng],
+          [b.lat, b.lng],
+        ],
+        {
+          color: accent,
+          weight: 3,
+          opacity: 0.95,
+          dashArray: dash,
+        },
       ).addTo(map);
+      layers.push(line);
+
+      if (mode === 'drive' || mode === 'walk') {
+        getRoadGeometry({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng }).then(
+          (coords) => {
+            if (!coords || !mapRef.current) return;
+            line.setLatLngs(coords);
+          },
+        );
+      }
     }
 
-    // Dot per point.
+    // Dots
     points.forEach((p) => {
       const marker = L.circleMarker([p.lat, p.lng], {
         radius: 5,
@@ -141,10 +172,10 @@ export function ItineraryDayMap({
           [Math.min(...lats), Math.min(...lngs)],
           [Math.max(...lats), Math.max(...lngs)],
         ],
-        { padding: [24, 24], maxZoom: 12 },
+        { padding: [16, 16], maxZoom: 14 },
       );
     } else {
-      map.setView([start.lat, start.lng], 7);
+      map.setView([start.lat, start.lng], 9);
     }
 
     mapRef.current = map;
@@ -162,6 +193,7 @@ export function ItineraryDayMap({
 
     return () => {
       observer.disconnect();
+      layers.forEach((l) => l.remove());
       map.remove();
       mapRef.current = null;
       tileRef.current = null;

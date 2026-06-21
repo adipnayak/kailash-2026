@@ -50,7 +50,7 @@ import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
 import { lazy, Suspense } from 'react';
 import { getDayRoute, ALL_TRIP_STOPS } from '../lib/day-routes';
-import { getDayStops, haversineKm, fmtKm } from '../lib/day-stops';
+import { getDayStops, haversineKm, fmtKm, modeLabel } from '../lib/day-stops';
 
 // Lazy-load the Leaflet-based real map so its ~150 KB chunk only loads
 // when the user actually opens the Itinerary tab + scrolls past a day.
@@ -307,7 +307,7 @@ function CompressedView({
               height={160}
             />
           </Suspense>
-          {/* Per-leg distances when intra-day stops are defined. */}
+          {/* Per-leg distances + transport mode when intra-day stops are defined. */}
           {(() => {
             const stops = getDayStops(day.day);
             if (!stops || stops.length < 2) return null;
@@ -320,6 +320,8 @@ function CompressedView({
                     <span className="text-foreground">{s.label}</span>
                     {' · '}
                     {fmtKm(haversineKm(stops[i], s))}
+                    {' · '}
+                    {modeLabel(stops[i].modeNext)}
                   </li>
                 ))}
               </ul>
@@ -683,6 +685,8 @@ function ExpandedMap({ day }: { day: TripDay }) {
               <span className="text-foreground">{s.label}</span>
               {' · '}
               {fmtKm(haversineKm(stops[i], s))}
+              {' · '}
+              {modeLabel(stops[i].modeNext)}
             </li>
           ))}
         </ul>
