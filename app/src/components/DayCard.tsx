@@ -50,6 +50,8 @@ import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
 import { DayMiniMap } from './aliimam/DayMiniMap';
 import { getDayRoute } from '../lib/day-routes';
+import { getDayAstro } from '../lib/astro';
+import { MoonPhase } from './MoonPhase';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -633,6 +635,38 @@ function WeatherChips({ day }: { day: TripDay }) {
 }
 
 // ---------------------------------------------------------------------------
+// B4b. SKY -- sunrise / sunset / moon phase
+// ---------------------------------------------------------------------------
+
+function SkyChips({ day }: { day: TripDay }) {
+  const route = getDayRoute(day.day - 1);
+  if (!route) return null;
+  const { lat, lng } = route.start;
+  const astro = getDayAstro(day.date, lat, lng);
+  return (
+    <div className="px-4 py-3 border-b border-border">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+        Sky
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
+          <Sun size={11} className="shrink-0 text-sacred" />
+          Sunrise {astro.sunrise}
+        </span>
+        <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
+          <Sun size={11} className="shrink-0 text-muted-foreground" />
+          Sunset {astro.sunset}
+        </span>
+        <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
+          <MoonPhase phase={astro.moonPhase} size={12} />
+          {astro.moonPhaseLabel}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // B5. EXPOSURE CONDITIONS
 // ---------------------------------------------------------------------------
 
@@ -950,6 +984,7 @@ function ExpandedView({ day, onToggle }: { day: TripDay; index?: number; onToggl
       <SummaryStrip day={day} />
       <VisualTimeline day={day} />
       <WeatherChips day={day} />
+      <SkyChips day={day} />
       <ExposureConditions day={day} />
       <MealsChips day={day} />
       <FacilitiesBadges day={day} />
