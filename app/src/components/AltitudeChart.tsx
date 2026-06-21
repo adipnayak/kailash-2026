@@ -77,18 +77,22 @@ function SegmentedControl({
       role="group"
       aria-label="Altitude series"
       className="inline-flex rounded-none border border-border overflow-hidden font-mono text-xs"
+      style={{ WebkitTapHighlightColor: 'transparent' }}
     >
-      {(['walking', 'sleeping'] as AltMode[]).map((m) => (
+      {(['walking', 'sleeping'] as AltMode[]).map((m, i) => (
         <button
           key={m}
           type="button"
           onClick={() => onChange(m)}
           className={[
             'px-4 py-1.5 transition-colors duration-150 cursor-pointer',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
+            i > 0 ? 'border-l border-border' : '',
             mode === m
               ? 'bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground hover:bg-border hover:text-foreground',
           ].join(' ')}
+          style={{ WebkitTapHighlightColor: 'transparent' }}
           aria-pressed={mode === m}
         >
           <span className="flex items-center gap-1">
