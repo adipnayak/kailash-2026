@@ -2,8 +2,9 @@
  * AltitudeChart.
  * recharts-based area chart via aliimam ChartArea.
  * Walking (altitude_peak) and Sleeping (altitude_sleep) series.
- * Y-axis shows metres only. Full width, no overlays, no location labels,
- * no Dolma La pulse marker, no acclimatization band annotations.
+ * Y-axis shows metres only. Full width, no location labels row.
+ * Dolma La 5,630m vertical reference line at D8 (label inline, no pulse circle).
+ * ACCLIM / REST / BUFFER markers at D4 / D6 / D12 via referenceAreas.
  * Segmented control toggles Walking / Sleeping. localStorage key: kailash_altitude_mode.
  *
  * Anti-AI rules: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
@@ -49,6 +50,16 @@ const chartData = [
     sleeping: d.altitude_sleep,
   })),
   { day: 'D14', location: 'Origins (return)', walking: ORIGIN_AVG_ALT, sleeping: ORIGIN_AVG_ALT },
+];
+
+// ---- acclim markers ------------------------------------------------------
+// ACCLIM (D4), REST (D6), BUFFER (D12) -- single-day labels rendered as
+// vertical reference areas with no fill, just the label.
+
+const ACCL_BANDS = [
+  { x1: 'D4', x2: 'D4', label: 'ACCLIM' },
+  { x1: 'D6', x2: 'D6', label: 'REST' },
+  { x1: 'D12', x2: 'D12', label: 'BUFFER' },
 ];
 
 // ---- SegmentedControl ---------------------------------------------------
@@ -195,6 +206,8 @@ export function AltitudeChart() {
           domain={[0, 6000]}
           ticks={Y_TICKS}
           tickFormatter={(v) => altLabel(v)}
+          referenceAreas={ACCL_BANDS}
+          referencePoint={{ x: 'D8', color: 'var(--destructive)', label: 'Dolma La 5,630m' }}
           tooltipContent={(props) => <TooltipContent {...(props as Parameters<typeof TooltipContent>[0])} />}
         />
       </div>
