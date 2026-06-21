@@ -146,7 +146,7 @@ const CATEGORIES: Category[] = [
       {
         id: 'conn-vpn',
         label: 'VPN installed and tested (Astrill recommended)',
-        blocking: 'GFW blocks WhatsApp and most messaging in Tibet without a VPN. Install and test before you leave India.',
+        blocking: 'WhatsApp and most messaging apps are blocked in Tibet without a VPN app. Install and test before you leave India.',
         defaultStatus: 'action-needed',
       },
       {
@@ -164,7 +164,7 @@ const CATEGORIES: Category[] = [
       {
         id: 'conn-family-msg',
         label: 'Pre-written offline message sent to family (Days 7-9 blackout)',
-        blocking: 'Write and send the offline message before Day 7. No civilian connectivity for 3 days during Parikrama.',
+        blocking: 'Write and send the offline message before Day 7. No phone or WiFi for 3 days during Parikrama.',
         defaultStatus: 'pending',
       },
     ],

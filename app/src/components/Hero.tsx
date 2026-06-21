@@ -144,25 +144,24 @@ function BeforeBento({ state }: { state: JourneyState }) {
       {/* ------------------------------------------------------------------ */}
       <BentoGridItem
         colSpan={2}
-        rowSpan={2}
-        className="flex flex-col items-start justify-center gap-4"
+        className="flex flex-col items-start justify-center gap-2"
       >
         {/* Big countdown · ONLY thing in the Hero card (with JBN) */}
-        <div className="flex items-baseline gap-3">
+        <div className="flex items-baseline gap-2">
           <span
             ref={countdownRef}
-            className="font-sans text-7xl md:text-8xl font-medium text-foreground leading-none tabular-nums"
+            className="font-sans text-5xl md:text-6xl font-medium text-foreground leading-none tabular-nums"
             aria-live="polite"
           >
             {state.daysToDeparture}
           </span>
-          <span className="font-sans text-2xl md:text-3xl font-medium text-muted-foreground">
+          <span className="font-sans text-lg md:text-xl font-medium text-muted-foreground">
             days to Kailash
           </span>
         </div>
 
         {/* JAI BHOLE NATH · x1 total, ochre sacred token */}
-        <p className="font-mono text-sm md:text-base text-sacred uppercase tracking-widest">
+        <p className="font-mono text-xs md:text-sm text-sacred uppercase tracking-widest">
           {JAI_BHOLE_NATH}
         </p>
       </BentoGridItem>
