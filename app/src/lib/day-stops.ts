@@ -36,14 +36,21 @@ const JOKHANG: Omit<DayStop, 'modeNext'> = { lat: 29.6531, lng: 91.1313, label: 
 const BARKHOR: Omit<DayStop, 'modeNext'> = { lat: 29.6537, lng: 91.1318, label: 'Barkhor Street' };
 const POTALA: Omit<DayStop, 'modeNext'> = { lat: 29.6573, lng: 91.1166, label: 'Potala Palace' };
 const NGQ_AIRPORT: Omit<DayStop, 'modeNext'> = { lat: 32.1006, lng: 80.0531, label: 'Ali Airport (NGQ)' };
-const MANSAROVAR_HOTEL: Omit<DayStop, 'modeNext'> = { lat: 30.7100, lng: 81.4750, label: 'Mansarovar Hotel' };
-const LAKE_SHORE: Omit<DayStop, 'modeNext'> = { lat: 30.6450, lng: 81.4670, label: 'Lake Manasarovar' };
-const CHIU_GOMPA: Omit<DayStop, 'modeNext'> = { lat: 30.7180, lng: 81.4870, label: 'Chiu Gompa' };
-const YAMADWAR: Omit<DayStop, 'modeNext'> = { lat: 31.0000, lng: 81.3000, label: 'Yamadwar (Darchen)' };
-const DIRAPUK: Omit<DayStop, 'modeNext'> = { lat: 31.1500, lng: 81.2000, label: 'Dirapuk camp' };
-const DOLMA_LA: Omit<DayStop, 'modeNext'> = { lat: 31.2000, lng: 81.3000, label: 'Dolma La pass' };
-const ZUTHULPHUK: Omit<DayStop, 'modeNext'> = { lat: 31.0500, lng: 81.4500, label: 'Zuthulphuk camp' };
-const DARCHEN: Omit<DayStop, 'modeNext'> = { lat: 31.0000, lng: 81.3000, label: 'Darchen' };
+// Chiu village area on the NW shore of Lake Manasarovar; this is where
+// pilgrim hotels actually sit. Earlier 30.71 placement was 6 km too far
+// north of the lake.
+const MANSAROVAR_HOTEL: Omit<DayStop, 'modeNext'> = { lat: 30.665, lng: 81.453, label: 'Mansarovar Hotel' };
+const LAKE_SHORE: Omit<DayStop, 'modeNext'> = { lat: 30.638, lng: 81.450, label: 'Lake Manasarovar' };
+const CHIU_GOMPA: Omit<DayStop, 'modeNext'> = { lat: 30.670, lng: 81.450, label: 'Chiu Gompa' };
+// Parikrama coords tightened to the actual Kailash kora geography:
+// Darchen / Tarboche (Yamadwar) at the south, Dirapuk Gompa on the
+// north face, Dolma La pass between Dirapuk and Zuthulphuk on the east,
+// Zuthulphuk on the south-east leg back to Darchen.
+const YAMADWAR: Omit<DayStop, 'modeNext'> = { lat: 31.013, lng: 81.318, label: 'Yamadwar (Darchen)' };
+const DIRAPUK: Omit<DayStop, 'modeNext'> = { lat: 31.117, lng: 81.290, label: 'Dirapuk camp' };
+const DOLMA_LA: Omit<DayStop, 'modeNext'> = { lat: 31.108, lng: 81.336, label: 'Dolma La pass' };
+const ZUTHULPHUK: Omit<DayStop, 'modeNext'> = { lat: 31.027, lng: 81.378, label: 'Zuthulphuk camp' };
+const DARCHEN: Omit<DayStop, 'modeNext'> = { lat: 31.013, lng: 81.318, label: 'Darchen' };
 
 function withMode(p: Omit<DayStop, 'modeNext'>, m?: TransportMode): DayStop {
   return { ...p, modeNext: m };

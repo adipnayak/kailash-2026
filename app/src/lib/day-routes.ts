@@ -9,16 +9,19 @@ interface Coord {
   label?: string;
 }
 
+// Coords tightened to OSM-grade locations for the SJM context dots.
+// Parikrama camp coords now match the actual Kailash kora geography
+// (see day-stops.ts for the same set).
 const COORDS: Record<string, Coord> = {
   bom:        { lat: 19.0760, lng: 72.8777, label: 'Mumbai'      },
   ktm:        { lat: 27.7172, lng: 85.3240, label: 'Kathmandu'   },
   lhasa:      { lat: 29.6500, lng: 91.1000, label: 'Lhasa'       },
   ali:        { lat: 32.5000, lng: 80.0500, label: 'Ali'         },
-  mansarovar: { lat: 30.6500, lng: 81.4500, label: 'Mansarovar'  },
-  darchen:    { lat: 31.0000, lng: 81.3000, label: 'Darchen'     },
-  dirapuk:    { lat: 31.1500, lng: 81.2000, label: 'Dirapuk'     },
-  dolmaLa:    { lat: 31.2000, lng: 81.3000, label: 'Dolma La'    },
-  zuthulphuk: { lat: 31.0500, lng: 81.4500, label: 'Zuthulphuk'  },
+  mansarovar: { lat: 30.665,  lng: 81.453,  label: 'Mansarovar'  },
+  darchen:    { lat: 31.013,  lng: 81.318,  label: 'Darchen'     },
+  dirapuk:    { lat: 31.117,  lng: 81.290,  label: 'Dirapuk'     },
+  dolmaLa:    { lat: 31.108,  lng: 81.336,  label: 'Dolma La'    },
+  zuthulphuk: { lat: 31.027,  lng: 81.378,  label: 'Zuthulphuk'  },
 };
 
 interface DayRoute {
