@@ -331,7 +331,7 @@ export function WeatherConfidence() {
       data-section="weather-confidence"
       className="border-b border-border bg-card px-6 py-8"
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <h2 className="font-sans text-2xl font-medium text-foreground">Weather</h2>
 
         {/* ---------------------------------------------------------------- */}

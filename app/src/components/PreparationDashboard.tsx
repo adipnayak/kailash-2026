@@ -548,7 +548,7 @@ export function PreparationDashboard() {
       data-section="preparation-dashboard"
       className="border-b border-border bg-background px-6 py-8"
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div ref={headerRef}>
           <div className="flex flex-wrap items-end justify-between gap-4">

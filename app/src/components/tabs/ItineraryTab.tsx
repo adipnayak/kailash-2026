@@ -18,19 +18,14 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
       <JourneyTimeline phase={phase} />
       <ConnectivityRibbon />
       <section className="bg-background px-6 py-8">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <h2 className="font-sans text-2xl font-medium text-foreground mb-6 flex items-center gap-2">
             <CalendarDays size={20} className="text-muted-foreground" />
             Day by Day
           </h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+          <div className="space-y-6">
             {DAYS.map((d) => (
-              <div
-                key={d.day}
-                className={d.day === 8 ? 'md:col-span-2' : ''}
-              >
-                <DayCard day={d} isToday={phase.tripDayIndex === d.day} />
-              </div>
+              <DayCard key={d.day} day={d} isToday={phase.tripDayIndex === d.day} />
             ))}
           </div>
         </div>

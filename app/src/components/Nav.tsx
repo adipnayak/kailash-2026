@@ -21,7 +21,7 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
       data-section="nav"
       className="sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur px-6"
     >
-      <div className="mx-auto flex max-w-5xl gap-1">
+      <div className="mx-auto flex max-w-6xl gap-1">
         {TABS.map((t) => {
           const active = tab === t.id;
           return (
