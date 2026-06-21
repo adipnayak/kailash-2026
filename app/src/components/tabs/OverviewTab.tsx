@@ -1,7 +1,8 @@
 /**
  * OverviewTab.
- * Phase-aware overview: SacredJourneyMap + AltitudeChart + TripHighlights (ShineBorder).
+ * Phase-aware overview: Hero (bento + header strip) + SacredJourneyMap + AltitudeChart + TripHighlights.
  *
+ * v4 nav-top: Hero moved into Overview tab so the 4-tab nav sits at the page top.
  * v4 dedup pass: Trip-at-a-glance / Prepare-for-the-yatra / What-matters-today
  * sections removed (duplicates of bento Hero stats / Prepare tab / stale).
  * aliimam-real: highlight section uses ShineBorder block.
@@ -9,6 +10,7 @@
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 import type { JourneyState } from '../../lib/journey-state';
+import { Hero } from '../Hero';
 import { SacredJourneyMap } from '../SacredJourneyMap';
 import { AltitudeChart } from '../AltitudeChart';
 import { ShineBorder } from '../aliimam/ShineBorder';
@@ -44,9 +46,9 @@ function Highlight({ icon, value, unit, dual, label }: HighlightProps) {
 }
 
 export function OverviewTab({ phase }: { phase: JourneyState }) {
-  void phase;
   return (
     <div data-tab="overview">
+      <Hero phase={phase} />
       <SacredJourneyMap phase={phase} />
       <AltitudeChart />
 
