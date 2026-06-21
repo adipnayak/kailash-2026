@@ -118,9 +118,9 @@ function ConnIcon({ status }: { status: TripDay['conn_status'] }) {
 }
 
 function connLabel(status: TripDay['conn_status']): string {
-  if (status === 'offline') return 'Offline';
-  if (status === 'intermittent') return 'Limited';
-  return 'Good Signal';
+  if (status === 'offline') return 'No signal';
+  if (status === 'intermittent') return 'Phone only';
+  return 'WiFi & phone';
 }
 
 // ---------------------------------------------------------------------------

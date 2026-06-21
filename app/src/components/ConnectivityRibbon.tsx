@@ -19,9 +19,9 @@ import { useJourneyState } from '../hooks/useJourneyState';
 // Per-status style tokens (Tailwind v4 / Maurten CSS vars only)
 // ---------------------------------------------------------------------------
 const STATUS_DOT: Record<ConnStatus, { bg: string; border: string; label: string }> = {
-  good:         { bg: 'bg-emerald',   border: 'border-emerald',   label: 'Reachable'    },
-  intermittent: { bg: 'bg-sacred',  border: 'border-sacred',  label: 'Limited'      },
-  offline:      { bg: 'bg-destructive',     border: 'border-destructive',     label: 'Offline'      },
+  good:         { bg: 'bg-emerald',   border: 'border-emerald',   label: 'WiFi & phone' },
+  intermittent: { bg: 'bg-sacred',  border: 'border-sacred',  label: 'Phone only'   },
+  offline:      { bg: 'bg-destructive',     border: 'border-destructive',     label: 'No signal'    },
 };
 
 // ---------------------------------------------------------------------------
@@ -177,9 +177,9 @@ export function ConnectivityRibbon() {
           <div className="flex items-center gap-3">
             {(
               [
-                ['good', 'Reachable'],
-                ['intermittent', 'Limited'],
-                ['offline', 'Offline'],
+                ['good', 'WiFi & phone'],
+                ['intermittent', 'Phone only'],
+                ['offline', 'No signal'],
               ] as [ConnStatus, string][]
             ).map(([status, label]) => (
               <span key={status} className="flex items-center gap-1">
@@ -191,7 +191,7 @@ export function ConnectivityRibbon() {
 
           {/* GFW callout: visible when any day has GFW note */}
           <span className="font-sans text-xs text-muted-foreground">
-            D3-D10: GFW in Tibet. VPN required for WhatsApp.
+            D3-D10: some apps blocked in Tibet. VPN app needed for WhatsApp.
           </span>
 
           {/* Sherpa sat-phone note: shown in before + during offline phase */}
