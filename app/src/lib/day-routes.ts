@@ -48,6 +48,9 @@ export interface ResolvedDayRoute {
   end?: Coord;
 }
 
+/** Every named trip stop, deduped, for map context dots. */
+export const ALL_TRIP_STOPS: Coord[] = Object.values(COORDS);
+
 /**
  * Returns start/end coords for a 0-based day index (0 = Day 1).
  * Returns null for out-of-range indices.
