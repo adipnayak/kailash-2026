@@ -16,10 +16,13 @@ import { DAYS } from '../../lib/trip-data';
 import { CalendarDays, Clock, Mountain } from '@aliimam/icons';
 
 export function ItineraryTab({ phase }: { phase: JourneyState }) {
-  // Controlled expansion state. Day 1 starts open so a fresh tab visit
-  // shows the first card's content. The sticky DayNav adds the clicked
-  // day to this set and smooth-scrolls the page to it.
-  const [expandedDays, setExpandedDays] = useState<Set<number>>(() => new Set([1]));
+  // Controlled expansion state. Every card starts open so a fresh tab
+  // visit reads as the full trip. The sticky DayNav still adds the
+  // clicked day to this set (no-op when already open) and smooth-scrolls
+  // the page to it; tapping a card header collapses just that one.
+  const [expandedDays, setExpandedDays] = useState<Set<number>>(
+    () => new Set(DAYS.map((d) => d.day)),
+  );
 
   const toggleDay = useCallback((dayNum: number) => {
     setExpandedDays((prev) => {
