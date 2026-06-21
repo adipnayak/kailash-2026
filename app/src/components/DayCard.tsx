@@ -52,6 +52,7 @@ import { DayMiniMap } from './aliimam/DayMiniMap';
 import { getDayRoute } from '../lib/day-routes';
 import { getDayAstro } from '../lib/astro';
 import { MoonPhase } from './MoonPhase';
+import { useLiveWeather } from '../lib/weather';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -531,20 +532,30 @@ function VisualTimeline({ day }: { day: TripDay }) {
             isCritical &&
             (ev.event.toLowerCase().includes('dolma la') ||
               ev.event.toLowerCase().includes('pass'));
+          // The row's vertical slot. Last row collapses to dot height only;
+          // every other row's height = dot (10px) + connector bar height,
+          // so bars touch the next dot without gaps.
           const barHeight = isLast ? 0 : Math.max(24, ev.durationMin * pxPerMin);
+          const rowHeight = 10 + barHeight;
 
           return (
-            <li key={i} className="relative flex items-start gap-0">
+            <li
+              key={i}
+              className="relative flex items-stretch gap-0"
+              style={{ minHeight: rowHeight + 'px' }}
+            >
               {/* Time column */}
-              <span className="font-mono text-[10px] text-muted-foreground w-[52px] shrink-0 pt-1 text-right pr-3 leading-none">
+              <span className="font-mono text-[10px] text-muted-foreground w-[52px] shrink-0 pt-0 text-right pr-3 leading-none">
                 {timePart}
               </span>
 
-              {/* Dot + connector bar -- the spine. */}
-              <div className="relative flex flex-col items-center mr-3 self-stretch">
+              {/* Dot + connector bar -- spine. flex-1 on the bar makes it
+                  fill exactly the column's leftover space, so adjacent
+                  rows touch with no gap. */}
+              <div className="relative flex flex-col items-center mr-3 shrink-0">
                 <div
                   className={cn(
-                    'w-2.5 h-2.5 rounded-none border z-10 mt-1 shrink-0',
+                    'w-2.5 h-2.5 rounded-none border z-10 shrink-0',
                     isHighlight
                       ? 'bg-destructive border-destructive'
                       : 'bg-foreground border-foreground',
@@ -553,10 +564,9 @@ function VisualTimeline({ day }: { day: TripDay }) {
                 {!isLast && (
                   <div
                     className={cn(
-                      'w-0.5 flex-shrink-0',
+                      'w-0.5 flex-1',
                       isHighlight ? 'bg-destructive' : 'bg-foreground',
                     )}
-                    style={{ height: barHeight + 'px' }}
                   />
                 )}
               </div>
@@ -564,11 +574,9 @@ function VisualTimeline({ day }: { day: TripDay }) {
               {/* Event content */}
               <div
                 className={cn(
-                  'flex-1 pt-0.5',
-                  isLast ? 'pb-0' : '',
+                  'flex-1 pt-0',
                   isHighlight ? 'text-destructive' : 'text-foreground',
                 )}
-                style={!isLast ? { minHeight: barHeight + 10 + 'px' } : undefined}
               >
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <TimelineIcon event={ev.event} />
@@ -602,7 +610,23 @@ function VisualTimeline({ day }: { day: TripDay }) {
 // ---------------------------------------------------------------------------
 
 function WeatherChips({ day }: { day: TripDay }) {
-  const w = day.weather;
+  const route = getDayRoute(day.day - 1);
+  const live = useLiveWeather(
+    day.date,
+    route?.start.lat ?? 0,
+    route?.start.lng ?? 0,
+  );
+  // Live forecast wins when available (within Open-Meteo's 16-day window);
+  // otherwise fall back to the day's climatology block from trip-data.
+  const w = live
+    ? {
+        temp_high: live.temp_high,
+        rain_pct: live.rain_pct,
+        wind_kmh: live.wind_kmh,
+        uv: live.uv,
+        source: 'live forecast',
+      }
+    : day.weather;
   const chips: Array<{ icon: React.ReactNode; value: string }> = [
     { icon: <Thermometer size={11} className="shrink-0 text-muted-foreground" />, value: w.temp_high + 'C' },
     { icon: <CloudRain size={11} className="shrink-0 text-muted-foreground" />, value: w.rain_pct + '%' },
