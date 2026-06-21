@@ -37,9 +37,14 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
                   ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground')
               }
+              title={t.label}
             >
               {t.icon}
-              {t.label}
+              {active ? (
+                <span>{t.label}</span>
+              ) : (
+                <span className="sr-only">{t.label}</span>
+              )}
             </button>
           );
         })}
