@@ -29,6 +29,7 @@ import {
   Clock,
   PlaneTakeoff,
   PlaneLanding,
+  Footprints,
 } from '@aliimam/icons';
 import type { JourneyState } from '../lib/journey-state';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
@@ -331,6 +332,28 @@ function BeforeBento({ state }: { state: JourneyState }) {
           label="BORDER CROSSINGS"
           sublabel="Nepal to China and back"
           icon={<Globe size={20} />}
+        />
+      </BentoGridItem>
+
+      {/* Stat 7: Yatra length */}
+      <BentoGridItem>
+        <StatTile
+          value="13"
+          unit="days"
+          label="YATRA LENGTH"
+          sublabel="Mumbai to Mumbai door to door"
+          icon={<Clock size={20} />}
+        />
+      </BentoGridItem>
+
+      {/* Stat 8: Parikrama circuit */}
+      <BentoGridItem>
+        <StatTile
+          value="52"
+          unit="km"
+          label="PARIKRAMA CIRCUIT"
+          sublabel="Darchen loop - Days 7, 8, 9"
+          icon={<Footprints size={20} />}
         />
       </BentoGridItem>
     </BentoGrid>
