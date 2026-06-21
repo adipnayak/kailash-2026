@@ -184,7 +184,7 @@ function deriveExposure(day: TripDay): ExposureConditions {
 
   let rainLabel = 'Dry';
   if (w.rain_pct > 50) rainLabel = 'Wet';
-  else if (w.rain_pct >= 25) rainLabel = 'Showers';
+  else if (w.rain_pct >= 25) rainLabel = 'Light rain';
 
   let windLabel = 'Calm';
   if (w.wind_kmh > 30) windLabel = 'Strong Wind';
@@ -196,7 +196,7 @@ function deriveExposure(day: TripDay): ExposureConditions {
 
   const recommended: string[] = [];
   if (tempLabel === 'Cool' || tempLabel === 'Cold') recommended.push('Warm Layers');
-  if (rainLabel === 'Wet' || rainLabel === 'Showers') recommended.push('Rain Protection');
+  if (rainLabel === 'Wet' || rainLabel === 'Light rain') recommended.push('Rain Protection');
   if (uvLabel === 'High UV') recommended.push('Sun Protection');
   if (uvLabel === 'Moderate UV') recommended.push('Sun Protection');
   if (windLabel === 'Strong Wind') recommended.push('Wind Protection');
@@ -492,7 +492,6 @@ function VisualTimeline({ day }: { day: TripDay }) {
   const events = day.timeline || [];
   if (events.length === 0) return null;
 
-  // Parse minutes from "HH:MM" (use first time if range like "08:30-13:30")
   function parseMinutes(timeStr: string): number | null {
     const part = timeStr.split('-')[0].trim();
     const m = part.match(/^(\d{1,2}):(\d{2})$/);
@@ -500,18 +499,23 @@ function VisualTimeline({ day }: { day: TripDay }) {
     return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
   }
 
-  // Compute durations: from start to next event start
+  // Duration of each node = gap until next event start. Last node has 0.
   const parsedEvents = events.map((ev, i) => {
     const startMin = parseMinutes(ev.time);
     const nextStartMin = i < events.length - 1 ? parseMinutes(events[i + 1].time) : null;
     const durationMin =
       startMin !== null && nextStartMin !== null && nextStartMin > startMin
         ? nextStartMin - startMin
-        : null;
-    const isShortStop = durationMin !== null && durationMin <= 30;
-    return { ...ev, startMin, durationMin, isShortStop };
+        : 0;
+    return { ...ev, startMin, durationMin };
   });
 
+  // Pick pxPerMin so the longest segment caps around 220 px on screen.
+  // Each segment height is duration * pxPerMin, with a 24 px floor so even
+  // sub-30 min steps still render a visible connector. The line is one
+  // continuous spine: bar fills the gap between this dot and the next.
+  const maxDur = parsedEvents.reduce((m, e) => Math.max(m, e.durationMin), 0);
+  const pxPerMin = maxDur > 0 ? Math.min(0.8, 220 / maxDur) : 0.5;
   const isCritical = day.day === 8;
 
   return (
@@ -519,82 +523,76 @@ function VisualTimeline({ day }: { day: TripDay }) {
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
         Timeline
       </p>
-      <div className="relative">
-        {/* Vertical rail */}
-        <div className="absolute left-[52px] top-0 bottom-0 w-px bg-border" />
+      <ol className="space-y-0">
+        {parsedEvents.map((ev, i) => {
+          const timePart = ev.time.split('-')[0].trim();
+          const isLast = i === parsedEvents.length - 1;
+          const isHighlight =
+            isCritical &&
+            (ev.event.toLowerCase().includes('dolma la') ||
+              ev.event.toLowerCase().includes('pass'));
+          const barHeight = isLast ? 0 : Math.max(24, ev.durationMin * pxPerMin);
 
-        <ol className="space-y-0">
-          {parsedEvents.map((ev, i) => {
-            const timePart = ev.time.split('-')[0].trim();
-            const isLast = i === parsedEvents.length - 1;
-            const isHighlight = isCritical && (ev.event.toLowerCase().includes('dolma la') || ev.event.toLowerCase().includes('pass'));
-            const hasDuration = ev.durationMin !== null && ev.durationMin > 30;
+          return (
+            <li key={i} className="relative flex items-start gap-0">
+              {/* Time column */}
+              <span className="font-mono text-[10px] text-muted-foreground w-[52px] shrink-0 pt-1 text-right pr-3 leading-none">
+                {timePart}
+              </span>
 
-            return (
-              <li key={i} className="relative flex items-start gap-0">
-                {/* Time column */}
-                <span className="font-mono text-[10px] text-muted-foreground w-[52px] shrink-0 pt-1 text-right pr-3 leading-none">
-                  {timePart}
-                </span>
-
-                {/* Dot + rail */}
-                <div className="relative flex flex-col items-center mr-3">
-                  {/* Dot */}
-                  <div
-                    className={cn(
-                      'w-2.5 h-2.5 rounded-none border z-10 mt-1 shrink-0',
-                      isHighlight
-                        ? 'bg-destructive border-destructive'
-                        : hasDuration
-                        ? 'bg-foreground border-foreground'
-                        : 'bg-background border-border',
-                    )}
-                  />
-                  {/* Duration bar (colored vertical segment) */}
-                  {hasDuration && !isLast && (
-                    <div
-                      className={cn(
-                        'w-0.5 mt-0',
-                        isHighlight ? 'bg-destructive' : 'bg-foreground',
-                      )}
-                      style={{
-                        height: Math.max(20, Math.min(60, (ev.durationMin || 30) / 2)) + 'px',
-                      }}
-                    />
-                  )}
-                </div>
-
-                {/* Event content */}
+              {/* Dot + connector bar -- the spine. */}
+              <div className="relative flex flex-col items-center mr-3 self-stretch">
                 <div
                   className={cn(
-                    'flex-1 pb-3 pt-0.5',
-                    isHighlight ? 'text-destructive' : 'text-foreground',
+                    'w-2.5 h-2.5 rounded-none border z-10 mt-1 shrink-0',
+                    isHighlight
+                      ? 'bg-destructive border-destructive'
+                      : 'bg-foreground border-foreground',
                   )}
-                >
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <TimelineIcon event={ev.event} />
-                    <span
-                      className={cn(
-                        'text-[12px] leading-snug',
-                        isHighlight ? 'font-semibold text-destructive' : 'text-foreground',
-                      )}
-                    >
-                      {ev.event}
-                    </span>
-                  </div>
-                  {hasDuration && ev.durationMin && (
-                    <p className="font-mono text-[10px] text-muted-foreground mt-0.5">
-                      {ev.durationMin >= 60
-                        ? Math.round(ev.durationMin / 60 * 10) / 10 + 'h'
-                        : ev.durationMin + 'min'}
-                    </p>
-                  )}
+                />
+                {!isLast && (
+                  <div
+                    className={cn(
+                      'w-0.5 flex-shrink-0',
+                      isHighlight ? 'bg-destructive' : 'bg-foreground',
+                    )}
+                    style={{ height: barHeight + 'px' }}
+                  />
+                )}
+              </div>
+
+              {/* Event content */}
+              <div
+                className={cn(
+                  'flex-1 pt-0.5',
+                  isLast ? 'pb-0' : '',
+                  isHighlight ? 'text-destructive' : 'text-foreground',
+                )}
+                style={!isLast ? { minHeight: barHeight + 10 + 'px' } : undefined}
+              >
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <TimelineIcon event={ev.event} />
+                  <span
+                    className={cn(
+                      'text-[12px] leading-snug',
+                      isHighlight ? 'font-semibold text-destructive' : 'text-foreground',
+                    )}
+                  >
+                    {ev.event}
+                  </span>
                 </div>
-              </li>
-            );
-          })}
-        </ol>
-      </div>
+                {!isLast && ev.durationMin > 0 && (
+                  <p className="font-mono text-[10px] text-muted-foreground mt-0.5">
+                    {ev.durationMin >= 60
+                      ? Math.round((ev.durationMin / 60) * 10) / 10 + 'h'
+                      : ev.durationMin + 'min'}
+                  </p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
@@ -659,7 +657,7 @@ function SkyChips({ day }: { day: TripDay }) {
         </span>
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
           <MoonPhase phase={astro.moonPhase} size={12} />
-          {astro.moonPhaseLabel}
+          Moon &middot; {astro.moonPhaseLabel}
         </span>
       </div>
     </div>
