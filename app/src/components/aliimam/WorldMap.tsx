@@ -57,6 +57,8 @@ export interface WorldMapProps {
   loopGapMs?: number;
   /** Per-arc draw duration when activated (ms). */
   arcDrawMs?: number;
+  /** Run the stages once and stop instead of looping. */
+  playOnce?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -108,6 +110,7 @@ export function WorldMap({
   stages,
   loopGapMs = 1500,
   arcDrawMs = 1400,
+  playOnce = false,
 }: WorldMapProps) {
   const initialVb = stages?.[0]?.viewBox ?? viewBox ?? FULL_VB;
   const [vb, setVb] = useState<ViewBox>(initialVb);
@@ -203,6 +206,9 @@ export function WorldMap({
         }
         if (cancelled) return;
 
+        // playOnce stops after a single full pass; otherwise loop.
+        if (playOnce) return;
+
         // Pause before replay
         await sleep(loopGapMs);
       }
@@ -215,7 +221,7 @@ export function WorldMap({
       cancelAnimationFrame(rafId);
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [stages, loopGapMs]);
+  }, [stages, loopGapMs, playOnce]);
 
   const viewBoxStr = `${vb.x} ${vb.y} ${vb.width} ${vb.height}`;
   const aspect = vb.width / vb.height;

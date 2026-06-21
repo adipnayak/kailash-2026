@@ -184,12 +184,12 @@ export function AltitudeChart() {
   return (
     <section
       data-section="altitude-chart"
-      className="border-b border-border bg-background py-12"
+      className="border-b border-border bg-background px-4 py-12 md:px-6"
     >
-      {/* Header + chart share the same px-4 md:px-6 wrapper so the y-axis
-          tick labels and the D14 right edge line up with header text and
-          the Sleeping CTA respectively. */}
-      <div className="px-4 md:px-6">
+      {/* Match the Hero bento layout exactly: padding on section, max-w-6xl
+          wrapper has no internal padding so chart edges align with bento
+          edges at the same viewport gutters. */}
+      <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>

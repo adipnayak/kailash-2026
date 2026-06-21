@@ -47,7 +47,7 @@ const RETURN_COLOR = 'oklch(0.556 0 0)';
 //   PARIKRAMA · lng 78.75..85.5, lat 28.7..31.4 · zoom into Darchen loop, parikrama cluster fills frame
 const VB_WIDE      = { x: 200, y: 75,  width: 490, height: 196 };
 const VB_MED       = { x: 549, y: 115, width: 85,  height: 34  };
-const VB_PARIKRAMA = { x: 578, y: 130, width: 6,   height: 2.4 };
+const VB_PARIKRAMA = { x: 579.5, y: 130.5, width: 3, height: 1.2 };
 
 const DOTS: MapDot[] = [
   // 4 origin arcs converging on Kathmandu
@@ -141,6 +141,7 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
           showLabels
           stages={STAGES}
           arcDrawMs={1800}
+          playOnce
         />
       </div>
     </section>

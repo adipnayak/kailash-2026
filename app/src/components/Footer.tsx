@@ -9,8 +9,8 @@ import { Mountain } from '@aliimam/icons';
 
 export function Footer() {
   return (
-    <footer className="py-12 border-t border-border">
-      <div className="px-4 md:px-6 space-y-6">
+    <footer className="border-t border-border px-4 py-12 md:px-6">
+      <div className="mx-auto max-w-6xl space-y-6">
         <span className="flex items-center gap-2 font-medium text-sm text-foreground">
           <Mountain className="size-4" />
           Kailash Mansarovar Yatra 2026
