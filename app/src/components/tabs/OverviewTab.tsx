@@ -48,8 +48,8 @@ function Highlight({ icon, value, unit, dual, label }: HighlightProps) {
 export function OverviewTab({ phase }: { phase: JourneyState }) {
   return (
     <div data-tab="overview">
-      <Hero phase={phase} />
       <SacredJourneyMap phase={phase} />
+      <Hero phase={phase} />
       <AltitudeChart />
 
       {/* Trip Highlights · ShineBorder wrapping 4 headline stats */}
