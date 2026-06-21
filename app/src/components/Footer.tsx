@@ -10,7 +10,7 @@ import { Mountain } from '@aliimam/icons';
 export function Footer() {
   return (
     <footer className="border-t border-border px-4 py-12 md:px-6">
-      <div className="mx-auto max-w-6xl space-y-6">
+      <div className="mx-auto max-w-6xl space-y-3">
         <span className="flex items-center gap-2 font-medium text-sm text-foreground">
           <Mountain className="size-4" />
           Kailash Mansarovar Yatra 2026
@@ -20,7 +20,7 @@ export function Footer() {
           A sacred pilgrimage to Mount Kailash and Lake Manasarovar across the Tibetan Plateau.
         </p>
 
-        <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+        <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>
             Mount Kailash, at the western edge of the Tibetan plateau, is one of the few mountains in the world considered sacred across four religions. In Hinduism it is the abode of Lord Shiva. In Buddhism it is the dwelling of Demchok, embodiment of supreme bliss. In Jainism it is where Rishabhadeva attained liberation. In Bon it is the seat of the spiritual hierarchy of the cosmos.
           </p>
