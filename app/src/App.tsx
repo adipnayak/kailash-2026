@@ -1,10 +1,29 @@
+import { lazy, Suspense } from 'react';
 import { useJourneyState, useTabPersist } from './hooks/useJourneyState';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { OverviewTab } from './components/tabs/OverviewTab';
-import { ItineraryTab } from './components/tabs/ItineraryTab';
-import { PrepareTab } from './components/tabs/PrepareTab';
-import { ReferenceTab } from './components/tabs/ReferenceTab';
+
+// Lazy-load the non-default tabs. Each becomes its own chunk so the initial
+// page load doesn't pay for JourneyTimeline / DayCard / WeatherConfidence /
+// PreparationDashboard / reference content until the user clicks the tab.
+const ItineraryTab = lazy(() =>
+  import('./components/tabs/ItineraryTab').then((m) => ({ default: m.ItineraryTab })),
+);
+const PrepareTab = lazy(() =>
+  import('./components/tabs/PrepareTab').then((m) => ({ default: m.PrepareTab })),
+);
+const ReferenceTab = lazy(() =>
+  import('./components/tabs/ReferenceTab').then((m) => ({ default: m.ReferenceTab })),
+);
+
+function TabFallback() {
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-12 md:px-6 font-mono text-xs text-muted-foreground">
+      Loading...
+    </div>
+  );
+}
 
 export default function App() {
   const phase = useJourneyState();
@@ -15,9 +34,13 @@ export default function App() {
       <Nav tab={tab} onTab={setTab} />
       <main>
         {tab === 'overview' && <OverviewTab phase={phase} />}
-        {tab === 'itinerary' && <ItineraryTab phase={phase} />}
-        {tab === 'prepare' && <PrepareTab phase={phase} />}
-        {tab === 'reference' && <ReferenceTab />}
+        {tab !== 'overview' && (
+          <Suspense fallback={<TabFallback />}>
+            {tab === 'itinerary' && <ItineraryTab phase={phase} />}
+            {tab === 'prepare' && <PrepareTab phase={phase} />}
+            {tab === 'reference' && <ReferenceTab />}
+          </Suspense>
+        )}
       </main>
       <Footer />
     </div>
