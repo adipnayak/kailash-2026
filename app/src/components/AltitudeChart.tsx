@@ -2,9 +2,10 @@
  * AltitudeChart.
  * recharts-based area chart via aliimam ChartArea.
  * Walking (altitude_peak) and Sleeping (altitude_sleep) series.
- * Y-axis shows metres only. Full width, no location labels row.
- * Dolma La 5,630m vertical reference line at D8 (label inline, no pulse circle).
- * ACCLIM / REST / BUFFER markers at D4 / D6 / D12 via referenceAreas.
+ * Linear (non-curved) line so peaks stay sharp. Edge-to-edge: chart bleeds
+ * past the section's horizontal padding while header stays padded.
+ * Y-axis metres only. Dolma La 5,630m red dotted line at D8.
+ * ACCLIM / REST / BUFFER markers at D4 / D6 / D12 as light grey dotted lines.
  * Segmented control toggles Walking / Sleeping. localStorage key: kailash_altitude_mode.
  *
  * Anti-AI rules: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
@@ -53,13 +54,13 @@ const chartData = [
 ];
 
 // ---- acclim markers ------------------------------------------------------
-// ACCLIM (D4), REST (D6), BUFFER (D12) -- single-day labels rendered as
-// vertical reference areas with no fill, just the label.
+// ACCLIM (D4), REST (D6), BUFFER (D12) rendered as light grey dotted
+// vertical reference lines.
 
-const ACCL_BANDS = [
-  { x1: 'D4', x2: 'D4', label: 'ACCLIM' },
-  { x1: 'D6', x2: 'D6', label: 'REST' },
-  { x1: 'D12', x2: 'D12', label: 'BUFFER' },
+const ACCL_LINES = [
+  { x: 'D4',  label: 'ACCLIM' },
+  { x: 'D6',  label: 'REST'   },
+  { x: 'D12', label: 'BUFFER' },
 ];
 
 // ---- SegmentedControl ---------------------------------------------------
@@ -183,10 +184,10 @@ export function AltitudeChart() {
   return (
     <section
       data-section="altitude-chart"
-      className="border-b border-border bg-background px-4 py-12 md:px-6"
+      className="border-b border-border bg-background py-12"
     >
-      {/* Header row */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+      {/* Header row · stays padded so it lines up with sibling sections */}
+      <div className="px-4 md:px-6 mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>
           <p className="mt-1 text-sm text-muted-foreground font-mono">
@@ -196,7 +197,7 @@ export function AltitudeChart() {
         <SegmentedControl mode={mode} onChange={handleModeChange} />
       </div>
 
-      {/* Chart -- full width */}
+      {/* Chart -- bleeds edge-to-edge of viewport (no horizontal padding) */}
       <div className="relative w-full" style={{ height: 340 }}>
         <ChartArea
           data={chartData}
@@ -206,7 +207,8 @@ export function AltitudeChart() {
           domain={[0, 6000]}
           ticks={Y_TICKS}
           tickFormatter={(v) => altLabel(v)}
-          referenceAreas={ACCL_BANDS}
+          curveType="linear"
+          referenceLines={ACCL_LINES}
           referencePoint={{ x: 'D8', color: 'var(--destructive)', label: 'Dolma La 5,630m' }}
           tooltipContent={(props) => <TooltipContent {...(props as Parameters<typeof TooltipContent>[0])} />}
         />
