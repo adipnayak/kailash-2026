@@ -48,8 +48,14 @@ import {
 import type { TripDay } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
-import { DayMiniMap } from './aliimam/DayMiniMap';
-import { getDayRoute } from '../lib/day-routes';
+import { lazy, Suspense } from 'react';
+import { getDayRoute, ALL_TRIP_STOPS } from '../lib/day-routes';
+
+// Lazy-load the Leaflet-based real map so its ~150 KB chunk only loads
+// when the user actually opens the Itinerary tab + scrolls past a day.
+const ItineraryDayMap = lazy(() =>
+  import('./ItineraryDayMap').then((m) => ({ default: m.ItineraryDayMap })),
+);
 import { getDayAstro } from '../lib/astro';
 import { MoonPhase } from './MoonPhase';
 import { useLiveWeather } from '../lib/weather';
@@ -238,11 +244,12 @@ function CompressedView({
   index?: number;
   onToggle: () => void;
 }) {
+  void index;
   const badge = getDayTypeBadge(day);
   const isCritical = day.day === 8;
   // Show up to 4-5 timeline items as highlights
   const highlights = (day.timeline || []).slice(0, 5);
-  const route = getDayRoute(index);
+  const route = getDayRoute(day.day - 1);
 
   return (
     <button
@@ -277,16 +284,27 @@ function CompressedView({
         </p>
       </div>
 
-      {/* Row 2b: Mini-map (start -> end arc for this day) */}
+      {/* Row 2b: Real cartographic map · this day's route highlighted,
+          all other trip stops dotted as context. */}
       {route && (
-        <div className="mb-2">
-          <DayMiniMap
-            start={route.start}
-            end={route.end}
-            arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
-            width={240}
-            height={70}
-          />
+        <div className="mb-2" onClick={(e) => e.stopPropagation()}>
+          <Suspense
+            fallback={
+              <div
+                className="w-full bg-muted border border-border"
+                style={{ height: 160 }}
+                aria-hidden
+              />
+            }
+          >
+            <ItineraryDayMap
+              start={route.start}
+              end={route.end}
+              contextStops={ALL_TRIP_STOPS}
+              arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
+              height={160}
+            />
+          </Suspense>
         </div>
       )}
 
@@ -601,6 +619,39 @@ function VisualTimeline({ day }: { day: TripDay }) {
           );
         })}
       </ol>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// B3b. EXPANDED MAP -- same real-cartography map as the compressed view,
+// shown again at the top of the expanded card so the day's geography
+// stays visible while the user reads the details below.
+// ---------------------------------------------------------------------------
+
+function ExpandedMap({ day }: { day: TripDay }) {
+  const route = getDayRoute(day.day - 1);
+  if (!route) return null;
+  const isCritical = day.day === 8;
+  return (
+    <div className="px-4 py-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
+      <Suspense
+        fallback={
+          <div
+            className="w-full bg-muted border border-border"
+            style={{ height: 180 }}
+            aria-hidden
+          />
+        }
+      >
+        <ItineraryDayMap
+          start={route.start}
+          end={route.end}
+          contextStops={ALL_TRIP_STOPS}
+          arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
+          height={180}
+        />
+      </Suspense>
     </div>
   );
 }
@@ -1003,6 +1054,7 @@ function ExpandedView({ day, onToggle }: { day: TripDay; index?: number; onToggl
         <ChevronUp size={14} />
       </button>
       <DayHeader day={day} />
+      <ExpandedMap day={day} />
       <SummaryStrip day={day} />
       <VisualTimeline day={day} />
       <WeatherChips day={day} />
