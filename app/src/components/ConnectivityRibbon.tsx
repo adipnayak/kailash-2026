@@ -104,9 +104,8 @@ export function ConnectivityRibbon() {
             const isOfflineCluster = d.conn_status === 'offline';
             const isBeforePhaseRedHighlight = phase === 'before' && isOfflineCluster;
 
-            // Visual dimming: in before-phase, green/intermittent dots are muted
-            const dimmed = phase === 'before' && !isOfflineCluster;
-            // In after-phase: everything is at same opacity (static look-back)
+            // No dimming -- every day at the same level so Reachable / Limited
+            // / Offline read at the same weight.
 
             const { bg, border } = STATUS_DOT[d.conn_status];
 
@@ -131,7 +130,7 @@ export function ConnectivityRibbon() {
                     : isBeforePhaseRedHighlight
                     ? `${border} bg-card`
                     : `border-border bg-card`,
-                  dimmed ? 'opacity-35' : 'opacity-100',
+                  'opacity-100',
                 ].join(' ')}
                 title={`D${d.day}: ${d.conn_label}`}
                 aria-label={`Day ${d.day}: ${d.conn_label}`}
