@@ -21,14 +21,16 @@ const ORIGINS = {
   us:        { lat: 40.7128, lng: -74.0060, label: 'New York'  },
 } as const;
 
+// labelPosition radiates the 4 parikrama stops + Mansarovar outward from
+// their physical cluster so they don't stack at parikrama-tight zoom.
 const STOPS = {
-  kathmandu:  { lat: 27.7172, lng: 85.3240, label: 'Kathmandu',  day: 1  },
-  lhasa:      { lat: 29.6500, lng: 91.1000, label: 'Lhasa',      day: 3  },
-  mansarovar: { lat: 30.6500, lng: 81.4500, label: 'Mansarovar', day: 5  },
-  darchen:    { lat: 31.0000, lng: 81.3000, label: 'Darchen',    day: 7  },
-  dirapuk:    { lat: 31.1500, lng: 81.2000, label: 'Dirapuk',    day: 7  },
-  dolmaLa:    { lat: 31.2000, lng: 81.3000, label: 'Dolma La',   day: 8  },
-  zuthulphuk: { lat: 31.0500, lng: 81.4500, label: 'Zuthulphuk', day: 8  },
+  kathmandu:  { lat: 27.7172, lng: 85.3240, label: 'Kathmandu',  day: 1, labelPosition: 's' as const  },
+  lhasa:      { lat: 29.6500, lng: 91.1000, label: 'Lhasa',      day: 3, labelPosition: 'e' as const  },
+  mansarovar: { lat: 30.6500, lng: 81.4500, label: 'Mansarovar', day: 5, labelPosition: 's' as const  },
+  darchen:    { lat: 31.0000, lng: 81.3000, label: 'Darchen',    day: 7, labelPosition: 'sw' as const },
+  dirapuk:    { lat: 31.1500, lng: 81.2000, label: 'Dirapuk',    day: 7, labelPosition: 'nw' as const },
+  dolmaLa:    { lat: 31.2000, lng: 81.3000, label: 'Dolma La',   day: 8, labelPosition: 'n' as const  },
+  zuthulphuk: { lat: 31.0500, lng: 81.4500, label: 'Zuthulphuk', day: 8, labelPosition: 'se' as const },
 } as const;
 
 // Sacred ochre for origin convergence arcs
