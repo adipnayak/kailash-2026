@@ -7,7 +7,7 @@
  * Anti-AI rule: zero em-dashes, en-dashes, smart quotes, emojis.
  */
 
-import { WorldMap, type MapDot } from './aliimam/WorldMap';
+import { WorldMap, type MapDot, type ViewBoxKeyframe } from './aliimam/WorldMap';
 import type { JourneyState } from '../lib/journey-state';
 
 // ---------------------------------------------------------------------------
@@ -39,6 +39,24 @@ const ROUTE_COLOR = 'var(--foreground)';
 const DOLMA_COLOR = 'var(--destructive)';
 // Muted gray for return
 const RETURN_COLOR = 'oklch(0.556 0 0)';
+
+// ---------------------------------------------------------------------------
+// Zoom cycle
+// ---------------------------------------------------------------------------
+//
+// Base 800x400 world projection: x=(lng+180)*800/360, y=(90-lat)*400/180.
+// Aspect held at 2.5 across both frames so container height stays stable
+// during the tween.
+//
+// WIDE  · lng -90..130, lat -32..56. All 4 origins visible (NY -74, Dubai,
+//         Mumbai, Mauritius -20) plus the Tibet route.
+// TIGHT · lng 79..104, lat 25..35. Parikrama + Kathmandu + Lhasa only;
+//         Mumbai/Dubai/Mauritius/NY clipped out.
+
+const ZOOM_KEYFRAMES: ViewBoxKeyframe[] = [
+  { viewBox: { x: 200, y: 75, width: 490, height: 196 }, holdMs: 3500, tweenMs: 1800 },
+  { viewBox: { x: 575, y: 122, width: 55, height: 22 },   holdMs: 4000, tweenMs: 2200 },
+];
 
 const DOTS: MapDot[] = [
   // 4 origin arcs converging on Kathmandu
@@ -94,24 +112,7 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
           showLabels
           animationDuration={2}
           loop
-          /*
-           * Zoom to South Asia + Tibet + Middle East so all 7 Tibetan-plateau
-           * stops are individually readable + Mumbai/Dubai/Mauritius in frame.
-           * NY arc extends in from the left edge as a visual cue.
-           *
-           * Base projection: 800x400 (lng -180..180 maps to x 0..800, lat 90..-90 to y 0..400).
-           * Region: lng 40..100 (60 wide), lat -25..35 (60 tall).
-           * x = (lng+180)*800/360 -> 489..622 (133 wide)
-           * y = (90-lat)*400/180 -> 122..256 (134 tall)
-           */
-          /*
-           * Zoom to South Asia + Middle East · all 7 Tibetan-plateau stops
-           * visible with usable spacing, Mumbai/Dubai/Mauritius origins also
-           * in frame. NY arc extends in from the left edge as a visual cue.
-           * Lng range: -10..130 (140 wide), lat range: -25..50 (75 tall).
-           * Base 800x400 projection: x=(lng+180)*800/360, y=(90-lat)*400/180.
-           */
-          viewBox={{ x: 378, y: 89, width: 311, height: 167 }}
+          viewBoxKeyframes={ZOOM_KEYFRAMES}
         />
       </div>
     </section>
