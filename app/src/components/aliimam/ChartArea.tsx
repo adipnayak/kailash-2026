@@ -69,6 +69,12 @@ export interface ChartAreaProps {
   referenceLines?: ChartRefLine[];
   curveType?: ChartCurveType;
   margin?: { top?: number; right?: number; bottom?: number; left?: number };
+  /** Override YAxis tick rendering (e.g. to left-align labels). */
+  yAxisTick?: React.ReactElement | ((props: unknown) => React.ReactElement);
+  /** Width reserved for the YAxis. Default 80; set 0 with a custom yAxisTick that renders outside the axis. */
+  yAxisWidth?: number;
+  /** Hide the vertical YAxis axis line (still renders ticks). */
+  hideYAxisLine?: boolean;
   tooltipContent?: (props: TooltipProps<number, string>) => React.ReactNode;
   className?: string;
 }
@@ -91,6 +97,9 @@ export function ChartArea({
   referenceLines,
   curveType = 'monotone',
   margin,
+  yAxisTick,
+  yAxisWidth,
+  hideYAxisLine = false,
   tooltipContent,
   className,
 }: ChartAreaProps) {
@@ -138,17 +147,19 @@ export function ChartArea({
 
           <YAxis
             stroke="var(--border)"
-            tick={{
-              fontSize: 10,
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-              fill: 'var(--muted-foreground)',
-            }}
+            tick={
+              yAxisTick ?? {
+                fontSize: 10,
+                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fill: 'var(--muted-foreground)',
+              }
+            }
             tickLine={false}
-            axisLine={{ stroke: 'var(--border)' }}
+            axisLine={hideYAxisLine ? false : { stroke: 'var(--border)' }}
             domain={domain}
             ticks={ticks}
             tickFormatter={tickFormatter}
-            width={yLabel ? 110 : 80}
+            width={yAxisWidth ?? (yLabel ? 110 : 80)}
             label={
               yLabel
                 ? {

@@ -186,33 +186,59 @@ export function AltitudeChart() {
       data-section="altitude-chart"
       className="border-b border-border bg-background py-12"
     >
-      {/* Header row · stays padded so it lines up with sibling sections */}
-      <div className="px-4 md:px-6 mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>
-          <p className="mt-1 text-sm text-muted-foreground font-mono">
-            Origin departure to home return across the Kailash Mansarovar yatra
-          </p>
+      {/* Header + chart share the same px-4 md:px-6 wrapper so the y-axis
+          tick labels and the D14 right edge line up with header text and
+          the Sleeping CTA respectively. */}
+      <div className="px-4 md:px-6">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>
+            <p className="mt-1 text-sm text-muted-foreground font-mono">
+              Origin departure to home return across the Kailash Mansarovar yatra
+            </p>
+          </div>
+          <SegmentedControl mode={mode} onChange={handleModeChange} />
         </div>
-        <SegmentedControl mode={mode} onChange={handleModeChange} />
-      </div>
 
-      {/* Chart -- bleeds edge-to-edge of viewport (no horizontal padding) */}
-      <div className="relative w-full" style={{ height: 340 }}>
-        <ChartArea
-          data={chartData}
-          series={series}
-          xKey="day"
-          height={340}
-          domain={[0, 6000]}
-          ticks={Y_TICKS}
-          tickFormatter={(v) => altLabel(v)}
-          curveType="linear"
-          referenceLines={ACCL_LINES}
-          referencePoint={{ x: 'D8', color: 'var(--destructive)', label: 'Dolma La 5,630m' }}
-          tooltipContent={(props) => <TooltipContent {...(props as Parameters<typeof TooltipContent>[0])} />}
-        />
+        <div className="relative w-full" style={{ height: 340 }}>
+          <ChartArea
+            data={chartData}
+            series={series}
+            xKey="day"
+            height={340}
+            domain={[0, 6000]}
+            ticks={Y_TICKS}
+            tickFormatter={(v) => altLabel(v)}
+            curveType="linear"
+            yAxisTick={<YAxisTick />}
+            yAxisWidth={56}
+            hideYAxisLine
+            margin={{ top: 16, right: 8, bottom: 16, left: 0 }}
+            referenceLines={ACCL_LINES}
+            referencePoint={{ x: 'D8', color: 'var(--destructive)', label: 'Dolma La 5,630m' }}
+            tooltipContent={(props) => <TooltipContent {...(props as Parameters<typeof TooltipContent>[0])} />}
+          />
+        </div>
       </div>
     </section>
+  );
+}
+
+// ---- Custom YAxis tick · left-aligned at chart wrapper left edge --------
+
+function YAxisTick(props: unknown) {
+  const { y, payload } = props as { y: number; payload: { value: number } };
+  return (
+    <text
+      x={0}
+      y={y}
+      dy={4}
+      fontSize={10}
+      fontFamily="'JetBrains Mono', ui-monospace, monospace"
+      fill="var(--muted-foreground)"
+      textAnchor="start"
+    >
+      {altLabel(payload.value)}
+    </text>
   );
 }
