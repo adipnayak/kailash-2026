@@ -74,7 +74,14 @@ function createCurvedPath(
   end: { x: number; y: number }
 ): string {
   const midX = (start.x + end.x) / 2;
-  const midY = Math.min(start.y, end.y) - 50;
+  // Arc height scales with the distance between points so a 0.4-unit
+  // parikrama segment doesn't shoot 50 units above the frame the way a
+  // continent-spanning origin arc legitimately should.
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const arcHeight = Math.min(50, dist * 0.5);
+  const midY = Math.min(start.y, end.y) - arcHeight;
   return `M ${start.x} ${start.y} Q ${midX} ${midY} ${end.x} ${end.y}`;
 }
 
@@ -222,7 +229,11 @@ export function WorldMap({
   const dotR = 3 * labelScale;
   const dotPulseRMax = 12 * labelScale;
   const labelFontPx = 9 * labelScale;
-  const arcStroke = Math.max(0.5, labelScale * 2);
+  // Stroke + dot + label sizes scale linearly with viewBox so the screen
+  // size stays ~constant at any zoom (labelScale * magnification = const).
+  // The previous Math.max(0.5, ...) floor blew strokes up to ~66 px wide at
+  // deep parikrama zoom.
+  const arcStroke = labelScale * 2;
 
   // Base map dots magnify with the viewBox crop. At deep zoom they become
   // huge circles that overwhelm the arcs. Fade the layer in proportion to
@@ -333,6 +344,14 @@ export function WorldMap({
           const pathD = createCurvedPath(startPoint, endPoint);
           const arcColor = dot.color ?? lineColor;
           const active = activeArcs.has(i);
+          // Fade arcs whose endpoints sit outside the current viewBox so a
+          // continent-spanning origin arc doesn't trail diagonally across a
+          // parikrama-tight frame.
+          const inView = (p: { x: number; y: number }) =>
+            p.x >= vb.x && p.x <= vb.x + vb.width &&
+            p.y >= vb.y && p.y <= vb.y + vb.height;
+          const arcInFrame = inView(startPoint) || inView(endPoint);
+          const arcOpacity = arcInFrame ? 1 : 0.08;
 
           return (
             <g key={`arc-${cycleKey}-${i}`}>
@@ -341,11 +360,11 @@ export function WorldMap({
                 fill="none"
                 stroke={arcColor}
                 strokeWidth={arcStroke}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: active ? 1 : 0 }}
+                initial={{ pathLength: 0, opacity: 1 }}
+                animate={{ pathLength: active ? 1 : 0, opacity: arcOpacity }}
                 transition={{ duration: arcDrawMs / 1000, ease: 'easeInOut' }}
               />
-              {active && (
+              {active && arcInFrame && (
                 <motion.circle
                   r={dotR * 1.3}
                   fill={arcColor}
