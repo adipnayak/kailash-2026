@@ -44,6 +44,17 @@ export interface ChartRefPoint {
   label?: string;
 }
 
+export interface ChartRefLine {
+  x: string | number;
+  color?: string;
+  label?: string;
+  labelPosition?: 'top' | 'insideTop' | 'insideTopRight' | 'insideTopLeft';
+  strokeDasharray?: string;
+  strokeWidth?: number;
+}
+
+export type ChartCurveType = 'linear' | 'monotone' | 'natural' | 'step' | 'stepBefore' | 'stepAfter';
+
 export interface ChartAreaProps {
   data: Array<Record<string, string | number>>;
   series: ChartSeries[];
@@ -55,6 +66,9 @@ export interface ChartAreaProps {
   tickFormatter?: (value: number) => string;
   referenceAreas?: ChartRefArea[];
   referencePoint?: ChartRefPoint;
+  referenceLines?: ChartRefLine[];
+  curveType?: ChartCurveType;
+  margin?: { top?: number; right?: number; bottom?: number; left?: number };
   tooltipContent?: (props: TooltipProps<number, string>) => React.ReactNode;
   className?: string;
 }
@@ -74,19 +88,20 @@ export function ChartArea({
   tickFormatter,
   referenceAreas,
   referencePoint,
+  referenceLines,
+  curveType = 'monotone',
+  margin,
   tooltipContent,
   className,
 }: ChartAreaProps) {
+  const m = { top: 16, right: 16, bottom: 16, left: 16, ...(margin ?? {}) };
   return (
     <div
       className={'w-full ' + (className ?? '')}
       style={{ height }}
     >
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          data={data}
-          margin={{ top: 16, right: 16, bottom: 16, left: 16 }}
-        >
+        <AreaChart data={data} margin={m}>
           <defs>
             {series.map((s) => (
               <linearGradient
@@ -191,10 +206,32 @@ export function ChartArea({
             />
           ))}
 
+          {referenceLines?.map((rl, i) => (
+            <ReferenceLine
+              key={'rline-' + i}
+              x={rl.x}
+              stroke={rl.color ?? 'var(--muted-foreground)'}
+              strokeDasharray={rl.strokeDasharray ?? '3 3'}
+              strokeWidth={rl.strokeWidth ?? 1}
+              strokeOpacity={0.5}
+              label={
+                rl.label
+                  ? {
+                      value: rl.label,
+                      position: rl.labelPosition ?? 'insideTop',
+                      fill: 'var(--muted-foreground)',
+                      fontSize: 9,
+                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    }
+                  : undefined
+              }
+            />
+          ))}
+
           {series.map((s) => (
             <Area
               key={s.key}
-              type="monotone"
+              type={curveType}
               dataKey={s.key}
               stroke={s.color}
               strokeWidth={2}
