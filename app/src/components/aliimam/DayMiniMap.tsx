@@ -35,7 +35,9 @@ function getMapSvg(): string {
   if (!_svgCache) {
     _svgCache = _mapInstance.getSVG({
       radius: 0.22,
-      color: 'oklch(0.556 0 0 / 0.25)',
+      // Theme-aware muted-foreground at 25 % opacity so the dot pattern
+      // flips between light and dark themes.
+      color: 'color-mix(in oklch, var(--muted-foreground) 25%, transparent)',
       shape: 'circle',
       backgroundColor: 'transparent',
     });

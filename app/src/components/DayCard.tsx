@@ -582,7 +582,7 @@ function VisualTimeline({ day }: { day: TripDay }) {
                   <TimelineIcon event={ev.event} />
                   <span
                     className={cn(
-                      'text-[12px] leading-snug',
+                      'text-xs leading-snug',
                       isHighlight ? 'font-semibold text-destructive' : 'text-foreground',
                     )}
                   >

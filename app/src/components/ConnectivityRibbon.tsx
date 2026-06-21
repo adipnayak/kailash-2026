@@ -140,7 +140,7 @@ export function ConnectivityRibbon() {
                   className={[
                     'h-2 w-2 rounded-full',
                     bg,
-                    isBeforePhaseRedHighlight ? 'ring-1 ring-red/50' : '',
+                    isBeforePhaseRedHighlight ? 'ring-1 ring-destructive/50' : '',
                   ].join(' ')}
                 />
 
