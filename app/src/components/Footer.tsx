@@ -13,7 +13,7 @@ export function Footer() {
       <div className="px-4 md:px-6 space-y-6">
         <span className="flex items-center gap-2 font-medium text-sm text-foreground">
           <Mountain className="size-4" />
-          Kailash 2026
+          Kailash Mansarovar Yatra 2026
         </span>
 
         <p className="text-muted-foreground text-sm">
