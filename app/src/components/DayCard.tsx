@@ -50,6 +50,7 @@ import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
 import { lazy, Suspense } from 'react';
 import { getDayRoute, ALL_TRIP_STOPS } from '../lib/day-routes';
+import { getDayStops, haversineKm, fmtKm } from '../lib/day-stops';
 
 // Lazy-load the Leaflet-based real map so its ~150 KB chunk only loads
 // when the user actually opens the Itinerary tab + scrolls past a day.
@@ -300,11 +301,30 @@ function CompressedView({
             <ItineraryDayMap
               start={route.start}
               end={route.end}
+              waypoints={getDayStops(day.day) ?? undefined}
               contextStops={ALL_TRIP_STOPS}
               arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
               height={160}
             />
           </Suspense>
+          {/* Per-leg distances when intra-day stops are defined. */}
+          {(() => {
+            const stops = getDayStops(day.day);
+            if (!stops || stops.length < 2) return null;
+            return (
+              <ul className="mt-1.5 flex flex-wrap gap-x-2 gap-y-0.5 font-mono text-[10px] text-muted-foreground">
+                {stops.slice(1).map((s, i) => (
+                  <li key={i}>
+                    <span className="text-foreground">{stops[i].label}</span>
+                    {' → '}
+                    <span className="text-foreground">{s.label}</span>
+                    {' · '}
+                    {fmtKm(haversineKm(stops[i], s))}
+                  </li>
+                ))}
+              </ul>
+            );
+          })()}
         </div>
       )}
 
@@ -633,6 +653,7 @@ function ExpandedMap({ day }: { day: TripDay }) {
   const route = getDayRoute(day.day - 1);
   if (!route) return null;
   const isCritical = day.day === 8;
+  const stops = getDayStops(day.day);
   return (
     <div className="px-4 py-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
       <Suspense
@@ -647,11 +668,25 @@ function ExpandedMap({ day }: { day: TripDay }) {
         <ItineraryDayMap
           start={route.start}
           end={route.end}
+          waypoints={stops ?? undefined}
           contextStops={ALL_TRIP_STOPS}
           arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
           height={180}
         />
       </Suspense>
+      {stops && stops.length >= 2 && (
+        <ul className="mt-2 space-y-0.5 font-mono text-[11px] text-muted-foreground">
+          {stops.slice(1).map((s, i) => (
+            <li key={i}>
+              <span className="text-foreground">{stops[i].label}</span>
+              {' → '}
+              <span className="text-foreground">{s.label}</span>
+              {' · '}
+              {fmtKm(haversineKm(stops[i], s))}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

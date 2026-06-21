@@ -29,6 +29,12 @@ export interface MapPoint {
 interface ItineraryDayMapProps {
   start: MapPoint;
   end?: MapPoint;
+  /**
+   * Ordered intra-day stops. When provided, replaces start/end with a
+   * multi-segment polyline through every stop in order. Each stop gets
+   * a numbered dot + label tooltip.
+   */
+  waypoints?: MapPoint[];
   /** All other trip stops to dot in the background. */
   contextStops?: MapPoint[];
   /** Highlight colour for this day's route (CSS color string). */
@@ -55,6 +61,7 @@ function getCssVar(name: string, fallback: string): string {
 export function ItineraryDayMap({
   start,
   end,
+  waypoints,
   contextStops = [],
   arcColor,
   height = 160,
@@ -98,41 +105,43 @@ export function ItineraryDayMap({
     const accent = arcColor ?? getCssVar('--sacred', '#a87b3a');
     const bgColor = getCssVar('--background', '#fff');
 
-    // Today's start dot
-    L.circleMarker([start.lat, start.lng], {
-      radius: 5,
-      fillColor: accent,
-      color: bgColor,
-      weight: 2,
-      fillOpacity: 1,
-    }).addTo(map);
+    // Build an ordered list of points to render. Waypoints override the
+    // start/end pair when provided.
+    const points: MapPoint[] = waypoints?.length
+      ? waypoints
+      : end
+      ? [start, end]
+      : [start];
 
-    // If a destination exists, draw the route line + end dot
-    if (end) {
+    // Polyline through every consecutive pair.
+    if (points.length >= 2) {
       L.polyline(
-        [
-          [start.lat, start.lng],
-          [end.lat, end.lng],
-        ],
+        points.map((p) => [p.lat, p.lng] as [number, number]),
         { color: accent, weight: 3, opacity: 0.95 },
       ).addTo(map);
-      L.circleMarker([end.lat, end.lng], {
+    }
+
+    // Dot per point.
+    points.forEach((p) => {
+      const marker = L.circleMarker([p.lat, p.lng], {
         radius: 5,
         fillColor: accent,
         color: bgColor,
         weight: 2,
         fillOpacity: 1,
       }).addTo(map);
-      const sLat = Math.min(start.lat, end.lat);
-      const nLat = Math.max(start.lat, end.lat);
-      const wLng = Math.min(start.lng, end.lng);
-      const eLng = Math.max(start.lng, end.lng);
+      if (p.label) marker.bindTooltip(p.label, { direction: 'top', offset: [0, -6] });
+    });
+
+    if (points.length >= 2) {
+      const lats = points.map((p) => p.lat);
+      const lngs = points.map((p) => p.lng);
       map.fitBounds(
         [
-          [sLat, wLng],
-          [nLat, eLng],
+          [Math.min(...lats), Math.min(...lngs)],
+          [Math.max(...lats), Math.max(...lngs)],
         ],
-        { padding: [24, 24], maxZoom: 9 },
+        { padding: [24, 24], maxZoom: 12 },
       );
     } else {
       map.setView([start.lat, start.lng], 7);
@@ -157,7 +166,7 @@ export function ItineraryDayMap({
       mapRef.current = null;
       tileRef.current = null;
     };
-  }, [start, end, contextStops, arcColor]);
+  }, [start, end, waypoints, contextStops, arcColor]);
 
   return (
     <div
