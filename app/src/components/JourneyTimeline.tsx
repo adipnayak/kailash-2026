@@ -16,7 +16,7 @@ export function JourneyTimeline({ phase }: { phase: JourneyState }) {
       data-section="journey-timeline"
       className="border-b border-border bg-card px-6 py-8"
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <h2 className="font-sans text-2xl font-medium text-foreground">Journey Timeline</h2>
         <ol className="mt-4 flex gap-2 overflow-x-auto pb-2">
           {DAYS.map((d) => {

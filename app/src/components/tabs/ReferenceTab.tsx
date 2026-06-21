@@ -143,7 +143,7 @@ function ArticleSection({ article }: { article: RefArticle }) {
       id={article.id}
       className="border-b border-border bg-background px-6 py-8 scroll-mt-16"
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <div className="flex items-center gap-3 mb-4">
           <span className="text-muted-foreground">{icon}</span>
           <h2 className="font-sans text-xl font-medium text-foreground">{article.title}</h2>
@@ -164,7 +164,7 @@ export function ReferenceTab() {
     <div data-tab="reference">
       {/* Header + table of contents */}
       <section className="border-b border-border bg-card px-6 py-8">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <h2 className="font-sans text-2xl font-medium text-foreground">Reference</h2>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
             Seven reference articles covering every operational and safety topic for the yatra.

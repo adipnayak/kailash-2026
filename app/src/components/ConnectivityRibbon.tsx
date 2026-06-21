@@ -87,7 +87,7 @@ export function ConnectivityRibbon() {
       data-section="connectivity-ribbon"
       className="border-b border-border bg-background px-6 py-8"
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         {/* Header row */}
         <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
           <h2 className="font-sans text-2xl font-medium text-foreground">Connectivity</h2>

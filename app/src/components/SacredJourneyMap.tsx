@@ -127,7 +127,7 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
       data-section="sacred-journey-map"
       className="border-b border-border bg-background px-4 py-8 md:px-6 md:py-12"
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <header className="mb-6 md:mb-8">
           <h2 className="font-sans text-2xl md:text-3xl font-medium text-foreground">
             Sacred Journey Map
