@@ -19,6 +19,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   Mountain: <Icon name="landscape" size={20} />,
   FileText: <Icon name="description" size={20} />,
   Heart: <Icon name="favorite" size={20} />,
+  HelpCircle: <Icon name="help" size={20} />,
 };
 
 function CalloutBlock({ block }: { block: Extract<RefBlock, { type: "callout" }> }) {
