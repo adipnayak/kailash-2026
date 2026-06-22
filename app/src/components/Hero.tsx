@@ -32,7 +32,7 @@ import {
 import { useEffect, useState } from 'react';
 import type { JourneyState } from '../lib/journey-state';
 import type { Tab } from '../hooks/useJourneyState';
-import { loadPrepStatus, isCategoryComplete } from '../lib/prep-data';
+import { loadPrepStatus, isCategoryComplete, overallPrepProgress } from '../lib/prep-data';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
 import { BentoGrid, BentoGridItem } from './aliimam/Bento';
@@ -58,7 +58,12 @@ const PREP_ITEMS: { id: string; label: string }[] = [
   { id: 'packing', label: 'Packing' },
 ];
 
-function usePrepProgress(): { completed: number; total: number; doneSet: Set<string> } {
+function usePrepProgress(): {
+  completed: number;
+  total: number;
+  doneSet: Set<string>;
+  itemPct: number;
+} {
   const total = PREP_ITEMS.length;
   const [tick, setTick] = useState(0);
 
@@ -75,7 +80,7 @@ function usePrepProgress(): { completed: number; total: number; doneSet: Set<str
     };
   }, []);
 
-  if (typeof window === 'undefined') return { completed: 0, total, doneSet: new Set() };
+  if (typeof window === 'undefined') return { completed: 0, total, doneSet: new Set(), itemPct: 0 };
 
   // tick is referenced so the effect actually re-runs this body when state
   // changes; the value itself is never read.
@@ -85,7 +90,11 @@ function usePrepProgress(): { completed: number; total: number; doneSet: Set<str
   const doneSet = new Set(
     PREP_ITEMS.filter((item) => isCategoryComplete(item.id, statusMap)).map((item) => item.id),
   );
-  return { completed: doneSet.size, total, doneSet };
+  // Item-level progress for the bar -- moves on every checkbox tap, not
+  // just when a full category completes. The "X of 4 things left" count
+  // stays category-based since the card has 4 category rows.
+  const { pct: itemPct } = overallPrepProgress(statusMap);
+  return { completed: doneSet.size, total, doneSet, itemPct };
 }
 
 // ---------------------------------------------------------------------------
@@ -138,8 +147,11 @@ function ConnIcon({ status }: { status: 'good' | 'intermittent' | 'offline' }) {
 function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) => void }) {
   const countdownRef = useRef<HTMLSpanElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  const { completed, total, doneSet } = usePrepProgress();
-  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const { completed, total, doneSet, itemPct } = usePrepProgress();
+  // Use item-level pct for the bar so any single tap on Prepare moves it
+  // (avoids the "5 items checked but bar still 0%" trap when no full
+  // category is done yet).
+  const pct = itemPct;
 
   useGSAP(() => {
     if (!countdownRef.current) return;
