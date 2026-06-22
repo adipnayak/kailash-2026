@@ -30,6 +30,7 @@ import {
   Footprints,
 } from '@aliimam/icons';
 import type { JourneyState } from '../lib/journey-state';
+import type { Tab } from '../hooks/useJourneyState';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
 import { BentoGrid, BentoGridItem } from './aliimam/Bento';
@@ -106,7 +107,7 @@ function ConnIcon({ status }: { status: 'good' | 'intermittent' | 'offline' }) {
 // ---------------------------------------------------------------------------
 // BEFORE phase: the main bento layout
 // ---------------------------------------------------------------------------
-function BeforeBento({ state }: { state: JourneyState }) {
+function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) => void }) {
   const countdownRef = useRef<HTMLSpanElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const { completed, total, doneSet } = usePrepProgress();
@@ -197,34 +198,53 @@ function BeforeBento({ state }: { state: JourneyState }) {
       {/* Row 3: Outstanding prep (2 cols) + Stat 3 + Stat 4                  */}
       {/* ------------------------------------------------------------------ */}
 
-      {/* Outstanding prep card */}
-      <BentoGridItem colSpan={2} className="flex flex-col gap-4">
-        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
-          {total - completed} of {total} things left
-        </p>
-        <ul ref={listRef} className="space-y-1 flex-1">
+      {/* Outstanding prep card -- tap to jump to Prepare tab */}
+      <BentoGridItem
+        colSpan={2}
+        className="flex flex-col gap-4"
+        onClick={() => onTab('prepare')}
+        ariaLabel={`Open Prepare tab. ${total - completed} of ${total} things left.`}
+      >
+        <div className="flex items-baseline justify-between">
+          <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
+            {total - completed} of {total} things left
+          </p>
+          <span className="font-mono text-xs text-sacred uppercase tracking-widest">
+            Tap to prep
+          </span>
+        </div>
+        <ul ref={listRef} className="space-y-2 flex-1">
           {PREP_ITEMS.map((item) => {
             const done = doneSet.has(item.id);
             return (
               <li
                 key={item.id}
                 className={
-                  'flex items-center gap-2 font-mono text-xs ' +
+                  'flex items-center gap-2 font-mono text-sm ' +
                   (done ? 'text-muted-foreground line-through' : 'text-foreground')
                 }
               >
                 <span
                   className={
-                    'inline-block w-2 h-2 rounded-full border flex-shrink-0 ' +
-                    (done ? 'bg-emerald border-emerald' : 'border-muted')
+                    'inline-flex items-center justify-center w-4 h-4 border-2 flex-shrink-0 ' +
+                    (done
+                      ? 'bg-emerald border-emerald text-background'
+                      : 'border-foreground bg-background')
                   }
-                />
+                  aria-hidden
+                >
+                  {done && (
+                    <svg viewBox="0 0 12 12" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="2,6 5,9 10,3" />
+                    </svg>
+                  )}
+                </span>
                 {item.label}
               </li>
             );
           })}
         </ul>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <div className="flex justify-between font-mono text-xs text-muted-foreground">
             <span>Preparation</span>
             <span>{pct}%</span>
@@ -555,7 +575,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
 // ---------------------------------------------------------------------------
 // Main Hero export
 // ---------------------------------------------------------------------------
-export function Hero({ phase }: { phase: JourneyState }) {
+export function Hero({ phase, onTab }: { phase: JourneyState; onTab: (t: Tab) => void }) {
   return (
     <section
       data-section="hero"
@@ -572,7 +592,7 @@ export function Hero({ phase }: { phase: JourneyState }) {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
             >
-              <BeforeBento state={phase} />
+              <BeforeBento state={phase} onTab={onTab} />
             </motion.div>
           )}
 

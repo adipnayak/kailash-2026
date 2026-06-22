@@ -11,6 +11,7 @@
  */
 import { lazy, Suspense } from 'react';
 import type { JourneyState } from '../../lib/journey-state';
+import type { Tab } from '../../hooks/useJourneyState';
 import { Hero } from '../Hero';
 
 const AltitudeChart = lazy(() =>
@@ -28,10 +29,10 @@ function ChartFallback() {
   );
 }
 
-export function OverviewTab({ phase }: { phase: JourneyState }) {
+export function OverviewTab({ phase, onTab }: { phase: JourneyState; onTab: (t: Tab) => void }) {
   return (
     <div data-tab="overview">
-      <Hero phase={phase} />
+      <Hero phase={phase} onTab={onTab} />
       <Suspense fallback={<ChartFallback />}>
         <AltitudeChart />
       </Suspense>
