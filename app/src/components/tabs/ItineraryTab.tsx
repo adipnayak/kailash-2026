@@ -9,8 +9,8 @@
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { Icon } from '../Icon';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import type { JourneyState } from '../../lib/journey-state';
 import { ConnectivityRibbon } from '../ConnectivityRibbon';
 import { DayCard } from '../DayCard';
@@ -18,6 +18,7 @@ import { DAYS } from '../../lib/trip-data';
 import { getDayRoute } from '../../lib/day-routes';
 import { getDayAstro } from '../../lib/astro';
 import { MoonPhase } from '../MoonPhase';
+import { KAILASH_FACTS } from '../../lib/kailash-facts';
 
 export function ItineraryTab({ phase }: { phase: JourneyState }) {
   // Controlled expansion state. Every card starts open so a fresh tab
@@ -189,15 +190,29 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
           </div>
 
           <div className="space-y-6">
-            {DAYS.map((d) => (
-              <div key={d.day} id={'day-' + d.day} className="scroll-mt-24">
-                <DayCard
-                  day={d}
-                  isToday={phase.tripDayIndex === d.day}
-                  expanded={expandedDays.has(d.day)}
-                  onToggle={() => toggleDay(d.day)}
-                />
-              </div>
+            {DAYS.map((d, i) => (
+              <Fragment key={d.day}>
+                <div id={'day-' + d.day} className="scroll-mt-24">
+                  <DayCard
+                    day={d}
+                    isToday={phase.tripDayIndex === d.day}
+                    expanded={expandedDays.has(d.day)}
+                    onToggle={() => toggleDay(d.day)}
+                  />
+                </div>
+                {i < DAYS.length - 1 && KAILASH_FACTS[i] && (
+                  <div
+                    className="border-l-4 border-sacred bg-card px-4 py-3 my-2"
+                    aria-label="Kailash fact"
+                  >
+                    <p className="font-mono uppercase tracking-widest text-sacred text-[10px]">FACT</p>
+                    <p className="mt-1 text-sm text-foreground leading-snug">{KAILASH_FACTS[i].body}</p>
+                    {KAILASH_FACTS[i].source && (
+                      <p className="mt-1 font-mono text-[10px] text-muted-foreground">{KAILASH_FACTS[i].source}</p>
+                    )}
+                  </div>
+                )}
+              </Fragment>
             ))}
           </div>
         </div>
