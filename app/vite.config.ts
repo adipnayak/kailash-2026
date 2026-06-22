@@ -8,4 +8,43 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: '/kailash-2026/',
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Split heavy third-party deps into their own chunks so they are
+        // cached independently from app code and from each other.
+        // framer-motion + @gsap/react + gsap -> animation-libs chunk
+        // leaflet -> map-libs chunk (already lazy but keep isolated)
+        // recharts + d3 -> chart-libs chunk (already lazy but keep isolated)
+        manualChunks(id) {
+          // @aliimam/icons: 8 MB source file that does not tree-shake
+          // (all ~800 icons bundled via a single export{} block, no /*#__PURE__*/
+          // annotations on forwardRef calls). Isolate it so it caches as a
+          // stable vendor chunk and never invalidates with app-code changes.
+          if (id.includes('node_modules/@aliimam/icons')) {
+            return 'icons-vendor'
+          }
+          if (id.includes('node_modules/gsap') || id.includes('node_modules/@gsap')) {
+            return 'animation-libs'
+          }
+          if (id.includes('node_modules/framer-motion')) {
+            return 'animation-libs'
+          }
+          if (id.includes('node_modules/leaflet')) {
+            return 'map-libs'
+          }
+          if (
+            id.includes('node_modules/recharts') ||
+            id.includes('node_modules/d3-') ||
+            id.includes('node_modules/victory-')
+          ) {
+            return 'chart-libs'
+          }
+          if (id.includes('node_modules/react') && !id.includes('node_modules/react-')) {
+            return 'react-core'
+          }
+        },
+      },
+    },
+  },
 })
