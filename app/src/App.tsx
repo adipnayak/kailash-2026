@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { useJourneyState, useTabPersist } from './hooks/useJourneyState';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
+import { BackToTop } from './components/BackToTop';
 import { OverviewTab } from './components/tabs/OverviewTab';
 
 // Lazy-load the non-default tabs. Each becomes its own chunk so the initial
@@ -46,6 +47,7 @@ export default function App() {
         )}
       </main>
       <Footer onTab={setTab} />
+      <BackToTop />
     </div>
   );
 }

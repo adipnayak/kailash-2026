@@ -6,6 +6,7 @@
  * Icons via Material Symbols Outlined.
  */
 
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Icon } from '../Icon';
 import type { RefArticle, RefBlock } from "../../lib/reference-data";
 import { REFERENCE_ARTICLES } from "../../lib/reference-data";
@@ -153,33 +154,108 @@ function ArticleSection({ article }: { article: RefArticle }) {
 }
 
 export function ReferenceTab() {
+  // Scrollspy: highlight the article currently in view. Same pattern as
+  // ItineraryTab's DayNav -- IntersectionObserver with a top-biased
+  // rootMargin so the active section is the one whose header just
+  // crossed below the sticky nav.
+  const [activeArticle, setActiveArticle] = useState<string | null>(REFERENCE_ARTICLES[0]?.id ?? null);
+  const navRef = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const visibility = new Map<string, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.getAttribute('id');
+          if (!id) continue;
+          visibility.set(id, entry.intersectionRatio);
+        }
+        let bestId: string | null = null;
+        let bestRatio = 0;
+        for (const [id, r] of visibility) {
+          if (r > bestRatio) {
+            bestRatio = r;
+            bestId = id;
+          }
+        }
+        if (bestId) setActiveArticle(bestId);
+      },
+      {
+        rootMargin: '-110px 0px -30% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      },
+    );
+    for (const a of REFERENCE_ARTICLES) {
+      const el = document.getElementById(a.id);
+      if (el) observer.observe(el);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  // Auto-scroll the active chip into view in the horizontal nav strip.
+  useEffect(() => {
+    if (!activeArticle || !navRef.current) return;
+    const chip = navRef.current.querySelector<HTMLElement>(
+      `[data-article="${activeArticle}"]`,
+    );
+    if (chip) {
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [activeArticle]);
+
+  const jumpTo = useCallback((id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   return (
     <div data-tab="reference">
-      {/* Header + table of contents */}
+      {/* Header */}
       <section className="border-b border-border bg-card px-6 py-8">
         <div className="mx-auto max-w-6xl">
           <h2 className="font-sans text-2xl font-medium text-foreground">Reference</h2>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-            Seven reference articles covering every operational and safety topic for the yatra.
+            Reference articles covering every operational and safety topic for the yatra.
             Jump directly to any section below.
           </p>
-          <nav className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
-            {REFERENCE_ARTICLES.map((article) => {
-              const icon = ICON_MAP[article.icon] ?? <Icon name="description" size={14} />;
-              return (
-                <a
-                  key={article.id}
-                  href={`#${article.id}`}
-                  className="inline-flex items-center gap-2 rounded-none border border-border bg-background px-4 py-2 text-xs font-medium text-foreground hover:bg-card transition-colors"
-                >
-                  <span className="text-muted-foreground">{icon}</span>
-                  {article.title}
-                </a>
-              );
-            })}
-          </nav>
         </div>
       </section>
+
+      {/* Sticky article-nav strip. Mirrors ItineraryTab DayNav -- solid
+          bg (no backdrop-blur) so iOS Safari sticky stays glued through
+          the address-bar collapse. Auto-highlights via IntersectionObserver. */}
+      <div className="sticky top-12 z-40 border-b border-border bg-background px-6 py-4">
+        <div className="mx-auto max-w-6xl">
+          <ol ref={navRef} className="flex gap-2 overflow-x-auto">
+            {REFERENCE_ARTICLES.map((article) => {
+              const icon = ICON_MAP[article.icon] ?? <Icon name="description" size={14} />;
+              const isActive = activeArticle === article.id;
+              return (
+                <li key={article.id} className="shrink-0">
+                  <button
+                    type="button"
+                    data-article={article.id}
+                    onClick={() => jumpTo(article.id)}
+                    aria-label={'Jump to ' + article.title}
+                    aria-current={isActive ? 'true' : undefined}
+                    className={
+                      'flex items-center gap-2 rounded-none border px-4 py-2 font-mono text-xs cursor-pointer transition-colors ' +
+                      (isActive
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-card text-muted-foreground hover:text-foreground')
+                    }
+                    title={article.title}
+                  >
+                    <span className={isActive ? 'text-primary-foreground' : 'text-muted-foreground'}>{icon}</span>
+                    <span>{article.title}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </div>
 
       {/* Articles */}
       {REFERENCE_ARTICLES.map((article) => (
