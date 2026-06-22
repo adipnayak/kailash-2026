@@ -13,7 +13,7 @@
  * Mobile-first 375px. rounded-none everywhere (sharp corners).
  */
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mountain,
@@ -57,6 +57,34 @@ import { getDayStops, haversineKm, fmtKm, modeLabel } from '../lib/day-stops';
 const ItineraryDayMap = lazy(() =>
   import('./ItineraryDayMap').then((m) => ({ default: m.ItineraryDayMap })),
 );
+
+// ---------------------------------------------------------------------------
+// useInView -- fires once when the element enters the viewport.
+// rootMargin: '200px' pre-loads the map just before the user reaches it.
+// ---------------------------------------------------------------------------
+function useInView(rootMargin = '200px 0px'): [React.RefObject<HTMLDivElement | null>, boolean] {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (inView) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  // rootMargin is a constant string -- safe to omit from deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return [ref, inView];
+}
 import { getDayAstro } from '../lib/astro';
 import { MoonPhase } from './MoonPhase';
 import { useLiveWeather } from '../lib/weather';
@@ -251,6 +279,9 @@ function CompressedView({
   // Show up to 4-5 timeline items as highlights
   const highlights = (day.timeline || []).slice(0, 5);
   const route = getDayRoute(day.day - 1);
+  // Defer each map until its wrapper scrolls near the viewport.
+  // Without this, all 13 maps mount simultaneously on first Itinerary view.
+  const [mapRef, mapInView] = useInView('200px 0px');
 
   return (
     <button
@@ -285,28 +316,37 @@ function CompressedView({
         </p>
       </div>
 
-      {/* Row 2b: Real cartographic map · this day's route highlighted,
-          all other trip stops dotted as context. */}
+      {/* Row 2b: Real cartographic map. Deferred until this wrapper enters
+          the viewport (200px rootMargin) so only 1-3 maps mount on first
+          Itinerary view instead of all 13 simultaneously. */}
       {route && (
-        <div className="mb-2 isolate relative z-0" onClick={(e) => e.stopPropagation()}>
-          <Suspense
-            fallback={
-              <div
-                className="w-full bg-muted border border-border"
-                style={{ height: 160 }}
-                aria-hidden
+        <div ref={mapRef} className="mb-2 isolate relative z-0" onClick={(e) => e.stopPropagation()}>
+          {mapInView ? (
+            <Suspense
+              fallback={
+                <div
+                  className="w-full bg-muted border border-border"
+                  style={{ height: 160 }}
+                  aria-hidden
+                />
+              }
+            >
+              <ItineraryDayMap
+                start={route.start}
+                end={route.end}
+                waypoints={getDayStops(day.day) ?? undefined}
+                contextStops={ALL_TRIP_STOPS}
+                arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
+                height={160}
               />
-            }
-          >
-            <ItineraryDayMap
-              start={route.start}
-              end={route.end}
-              waypoints={getDayStops(day.day) ?? undefined}
-              contextStops={ALL_TRIP_STOPS}
-              arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
-              height={160}
+            </Suspense>
+          ) : (
+            <div
+              className="w-full bg-muted border border-border"
+              style={{ height: 160 }}
+              aria-hidden
             />
-          </Suspense>
+          )}
           {/* Per-leg distances + transport mode for NAMED stops only.
               Intermediate route waypoints (parikrama trail bends) are kept
               out of the leg list so the card stays readable. Distances are
@@ -669,29 +709,41 @@ function VisualTimeline({ day }: { day: TripDay }) {
 
 function ExpandedMap({ day }: { day: TripDay }) {
   const route = getDayRoute(day.day - 1);
+  // Expanded maps also get IntersectionObserver deferral. When a day card
+  // is expanded (e.g. Day 8 auto-expands), the map still only mounts once
+  // the section scrolls within 200px of the viewport.
+  const [mapRef, mapInView] = useInView('200px 0px');
   if (!route) return null;
   const isCritical = day.day === 8;
   const stops = getDayStops(day.day);
   return (
-    <div className="px-4 py-4 border-b border-border isolate relative z-0" onClick={(e) => e.stopPropagation()}>
-      <Suspense
-        fallback={
-          <div
-            className="w-full bg-muted border border-border"
-            style={{ height: 180 }}
-            aria-hidden
+    <div ref={mapRef} className="px-4 py-4 border-b border-border isolate relative z-0" onClick={(e) => e.stopPropagation()}>
+      {mapInView ? (
+        <Suspense
+          fallback={
+            <div
+              className="w-full bg-muted border border-border"
+              style={{ height: 180 }}
+              aria-hidden
+            />
+          }
+        >
+          <ItineraryDayMap
+            start={route.start}
+            end={route.end}
+            waypoints={stops ?? undefined}
+            contextStops={ALL_TRIP_STOPS}
+            arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
+            height={180}
           />
-        }
-      >
-        <ItineraryDayMap
-          start={route.start}
-          end={route.end}
-          waypoints={stops ?? undefined}
-          contextStops={ALL_TRIP_STOPS}
-          arcColor={isCritical ? 'var(--destructive)' : 'var(--sacred)'}
-          height={180}
+        </Suspense>
+      ) : (
+        <div
+          className="w-full bg-muted border border-border"
+          style={{ height: 180 }}
+          aria-hidden
         />
-      </Suspense>
+      )}
       {stops && stops.length >= 2 && (
         <ul className="mt-2 space-y-0.5 font-mono text-[11px] text-muted-foreground">
           {stops.slice(1).map((s, i) => (
