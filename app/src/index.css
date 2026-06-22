@@ -180,3 +180,25 @@ body {
   [data-bento-cols-lg='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   [data-bento-cols-lg='4'] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+/* =============================================================
+ * Accordion slide animations (Radix UI accordion content).
+ * Uses --radix-accordion-content-height CSS variable set by Radix.
+ * Referenced by accordion.tsx via tailwindcss-animate utility classes.
+ *
+ * Anti-AI: no em-dashes, no smart quotes.
+ * ============================================================= */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@theme {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
