@@ -39,7 +39,10 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
               }
               title={t.label}
             >
-              {t.icon}
+              {/* Icon stays in text-foreground (full contrast) regardless
+                  of active state -- the underline + label color carry the
+                  active distinction, so muted icons just hide the tab. */}
+              <span className="text-foreground">{t.icon}</span>
               {active ? (
                 <span>{t.label}</span>
               ) : (
