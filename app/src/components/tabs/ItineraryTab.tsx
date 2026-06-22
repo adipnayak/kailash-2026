@@ -13,6 +13,9 @@ import type { JourneyState } from '../../lib/journey-state';
 import { ConnectivityRibbon } from '../ConnectivityRibbon';
 import { DayCard } from '../DayCard';
 import { DAYS } from '../../lib/trip-data';
+import { getDayRoute } from '../../lib/day-routes';
+import { getDayAstro } from '../../lib/astro';
+import { MoonPhase } from '../MoonPhase';
 import { CalendarDays, Clock, Mountain } from '@aliimam/icons';
 
 export function ItineraryTab({ phase }: { phase: JourneyState }) {
@@ -76,7 +79,7 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
                       aria-label={'Jump to Day ' + d.day}
                       aria-pressed={isOpen}
                       className={
-                        'flex items-center gap-1 rounded-none border px-4 py-2 font-mono text-xs cursor-pointer transition-colors ' +
+                        'flex flex-col items-center gap-0.5 rounded-none border px-3 py-2 font-mono cursor-pointer transition-colors ' +
                         (isOpen
                           ? 'border-primary bg-secondary text-foreground'
                           : isToday
@@ -87,14 +90,22 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
                       }
                       title={d.headline}
                     >
-                      {isToday ? (
-                        <Clock size={10} />
-                      ) : isDolmaLa ? (
-                        <Mountain size={10} />
-                      ) : (
-                        <CalendarDays size={10} />
-                      )}
-                      D{d.day}
+                      {/* Day label row */}
+                      <span className="flex items-center gap-1 text-xs">
+                        {isToday ? (
+                          <Clock size={10} />
+                        ) : isDolmaLa ? (
+                          <Mountain size={10} />
+                        ) : (
+                          <CalendarDays size={10} />
+                        )}
+                        D{d.day}
+                      </span>
+                      {/* Temp + moon row */}
+                      <span className="flex items-center gap-1 font-mono text-[10px] leading-none opacity-75">
+                        {d.weather.temp_low}-{d.weather.temp_high}C
+                        <MoonPhase phase={(() => { const route = getDayRoute(d.day - 1); const lat = route?.start.lat ?? 27.7; const lng = route?.start.lng ?? 85.3; return getDayAstro(d.date, lat, lng).moonPhase; })()} size={12} />
+                      </span>
                     </button>
                   </li>
                 );
