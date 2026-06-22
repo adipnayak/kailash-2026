@@ -20,7 +20,7 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
   return (
     <nav
       data-section="nav"
-      className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur px-6"
+      className="sticky top-0 z-50 border-b border-border bg-card px-6"
     >
       <div className="mx-auto flex max-w-6xl items-center gap-1">
         {TABS.map((t) => {

@@ -8,7 +8,7 @@
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { JourneyState } from '../../lib/journey-state';
 import { ConnectivityRibbon } from '../ConnectivityRibbon';
 import { DayCard } from '../DayCard';
@@ -26,6 +26,63 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(
     () => new Set(DAYS.map((d) => d.day)),
   );
+
+  // Scrollspy: as the user scrolls through the itinerary, the chip for the
+  // day section currently sitting at the top of the viewport becomes the
+  // active chip. We use IntersectionObserver with a top-biased rootMargin
+  // so the "active" day is the one whose header has just crossed below
+  // the sticky nav strip.
+  const [activeDay, setActiveDay] = useState<number | null>(null);
+  const dayNavRef = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const visibility = new Map<number, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.getAttribute('id');
+          if (!id) continue;
+          const dayNum = parseInt(id.replace('day-', ''), 10);
+          if (isNaN(dayNum)) continue;
+          visibility.set(dayNum, entry.intersectionRatio);
+        }
+        // Pick the day with the highest intersection ratio.
+        let bestDay: number | null = null;
+        let bestRatio = 0;
+        for (const [d, r] of visibility) {
+          if (r > bestRatio) {
+            bestRatio = r;
+            bestDay = d;
+          }
+        }
+        if (bestDay !== null) setActiveDay(bestDay);
+      },
+      {
+        // The "active zone" is roughly the band from just below the sticky
+        // nav (~110 px from the viewport top) down to the bottom 30 percent.
+        rootMargin: '-110px 0px -30% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      },
+    );
+    for (const d of DAYS) {
+      const el = document.getElementById('day-' + d.day);
+      if (el) observer.observe(el);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  // Auto-scroll the active chip into view in the horizontal day-nav strip
+  // so the user always sees their position. Skip when activeDay is null.
+  useEffect(() => {
+    if (activeDay === null || !dayNavRef.current) return;
+    const chip = dayNavRef.current.querySelector<HTMLElement>(
+      `[data-day="${activeDay}"]`,
+    );
+    if (chip) {
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [activeDay]);
 
   const toggleDay = useCallback((dayNum: number) => {
     setExpandedDays((prev) => {
@@ -64,23 +121,31 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
             Day by Day
           </h2>
 
-          {/* Sticky day-nav. top-12 sits under the main nav (47 px). */}
-          <div className="sticky top-12 z-40 -mx-6 mb-6 border-b border-border bg-background/95 px-6 py-4 backdrop-blur">
-            <ol className="flex gap-2 overflow-x-auto">
+          {/* Sticky day-nav. top-12 sits under the main nav (47 px).
+              Solid bg (no backdrop-blur) -- backdrop-filter on a
+              position:sticky element breaks on iOS Safari, the element
+              intermittently stops sticking as the address bar collapses. */}
+          <div className="sticky top-12 z-40 -mx-6 mb-6 border-b border-border bg-background px-6 py-4">
+            <ol ref={dayNavRef} className="flex gap-2 overflow-x-auto">
               {DAYS.map((d) => {
                 const isToday = phase.tripDayIndex === d.day;
                 const isDolmaLa = d.day === 8;
                 const isOpen = expandedDays.has(d.day);
+                const isActive = activeDay === d.day;
                 return (
                   <li key={d.day} className="shrink-0">
                     <button
                       type="button"
+                      data-day={d.day}
                       onClick={() => jumpToDay(d.day)}
                       aria-label={'Jump to Day ' + d.day}
                       aria-pressed={isOpen}
+                      aria-current={isActive ? 'true' : undefined}
                       className={
                         'flex flex-col items-center gap-0.5 rounded-none border px-3 py-2 font-mono cursor-pointer transition-colors ' +
-                        (isOpen
+                        (isActive
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : isOpen
                           ? 'border-primary bg-secondary text-foreground'
                           : isToday
                           ? 'border-primary bg-card text-foreground'
