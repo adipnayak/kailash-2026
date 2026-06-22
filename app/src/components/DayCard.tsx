@@ -288,7 +288,7 @@ function CompressedView({
       {/* Row 2b: Real cartographic map · this day's route highlighted,
           all other trip stops dotted as context. */}
       {route && (
-        <div className="mb-2" onClick={(e) => e.stopPropagation()}>
+        <div className="mb-2 isolate relative z-0" onClick={(e) => e.stopPropagation()}>
           <Suspense
             fallback={
               <div
@@ -657,7 +657,7 @@ function ExpandedMap({ day }: { day: TripDay }) {
   const isCritical = day.day === 8;
   const stops = getDayStops(day.day);
   return (
-    <div className="px-4 py-3 border-b border-border" onClick={(e) => e.stopPropagation()}>
+    <div className="px-4 py-3 border-b border-border isolate relative z-0" onClick={(e) => e.stopPropagation()}>
       <Suspense
         fallback={
           <div
