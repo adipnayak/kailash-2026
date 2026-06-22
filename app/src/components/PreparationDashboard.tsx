@@ -31,7 +31,16 @@ const CATEGORY_ICON: Record<string, string> = {
   medical: 'medical_services',
   connectivity: 'wifi',
   packing: 'hiking',
-  carry: 'luggage',
+  // Sub-categories split out of the original 'Things to Carry'.
+  clothing: 'checkroom',
+  footwear: 'directions_walk',
+  electronics: 'devices',
+  'health-kit': 'healing',
+  sun: 'wb_sunny',
+  'day-pack': 'backpack',
+  'docs-money': 'fact_check',
+  'personal-care': 'soap',
+  spiritual: 'self_improvement',
 };
 
 /* ------------------------------------------------------------------ */
