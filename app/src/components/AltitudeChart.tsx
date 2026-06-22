@@ -79,7 +79,7 @@ function SegmentedControl({
       className="inline-flex rounded-none border border-border overflow-hidden font-mono text-xs"
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
-      {(['walking', 'sleeping'] as AltMode[]).map((m, i) => (
+      {(['walking', 'sleeping'] as AltMode[]).map((m) => (
         <button
           key={m}
           type="button"
@@ -87,7 +87,6 @@ function SegmentedControl({
           className={[
             'px-4 py-2 transition-colors duration-150 cursor-pointer',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
-            i > 0 ? 'border-l border-border' : '',
             mode === m
               ? 'bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground hover:bg-border hover:text-foreground',
