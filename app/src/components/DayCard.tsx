@@ -13,38 +13,10 @@
  * Mobile-first 375px. rounded-none everywhere (sharp corners).
  */
 
+import { Icon } from './Icon';
+
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Mountain,
-  Clock,
-  Wifi,
-  WifiOff,
-  Bed,
-  CircleCheck,
-  Thermometer,
-  WindFilled,
-  Sun,
-  Utensils,
-  ShowerHead,
-  Toilet,
-  GlassWater,
-  AlarmClock,
-  Heart,
-  MapPin,
-  TriangleAlert,
-  CandleFilled,
-  CloudRain,
-  PlaneTakeoff,
-  PlaneLanding,
-  Bus,
-  Coffee,
-  Footprints,
-  Flame,
-  ChevronDown,
-  ChevronUp,
-  Check,
-} from '@aliimam/icons';
 import type { TripDay } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
@@ -140,9 +112,9 @@ function dayTypeBadgeCls(badge: DayBadgeType): string {
 // ---------------------------------------------------------------------------
 
 function ConnIcon({ status }: { status: TripDay['conn_status'] }) {
-  if (status === 'offline') return <WifiOff size={12} className="text-destructive" />;
-  if (status === 'intermittent') return <Wifi size={12} className="text-sacred" />;
-  return <Wifi size={12} className="text-emerald" />;
+  if (status === 'offline') return <Icon name="wifi_off" size={12} className="text-destructive" />;
+  if (status === 'intermittent') return <Icon name="wifi" size={12} className="text-sacred" />;
+  return <Icon name="wifi" size={12} className="text-emerald" />;
 }
 
 function connLabel(status: TripDay['conn_status']): string {
@@ -158,43 +130,43 @@ function connLabel(status: TripDay['conn_status']): string {
 function TimelineIcon({ event }: { event: string }) {
   const e = event.toLowerCase();
   if (e.includes('flight') || e.includes('airport') || e.includes('ktm to lhasa') || e.includes('lhasa to ktm') || e.includes('lhasa to ali') || e.includes('ali to lhasa') || e.includes('ktm airport') || e.includes('lhasa gonggar')) {
-    if (e.includes('arrival') || e.includes('landing') || e.includes('arrival')) return <PlaneLanding size={13} className="text-foreground" />;
-    return <PlaneTakeoff size={13} className="text-foreground" />;
+    if (e.includes('arrival') || e.includes('landing') || e.includes('arrival')) return <Icon name="flight_land" size={13} className="text-foreground" />;
+    return <Icon name="flight_takeoff" size={13} className="text-foreground" />;
   }
   if (e.includes('drive') || e.includes('transfer') || e.includes('bus') || e.includes('darchen') || e.includes('lhasa to darchen') || e.includes('ali to mansarovar') || e.includes('mansarovar to darchen')) {
-    return <Bus size={13} className="text-foreground" />;
+    return <Icon name="directions_bus" size={13} className="text-foreground" />;
   }
   if (e.includes('dinner') || e.includes('lunch') || e.includes('breakfast') || e.includes('meal')) {
-    return <Utensils size={13} className="text-foreground" />;
+    return <Icon name="restaurant" size={13} className="text-foreground" />;
   }
   if (e.includes('trek') || e.includes('parikrama') || e.includes('descen') || e.includes('yamadwar') || e.includes('dirapuk') || e.includes('zuthulphuk') || e.includes('mani wall') || e.includes('walk')) {
-    return <Footprints size={13} className="text-foreground" />;
+    return <Icon name="directions_walk" size={13} className="text-foreground" />;
   }
   if (e.includes('check-in') || e.includes('hotel') || e.includes('arrival') || e.includes('suitcase') || e.includes('checkout')) {
-    return <Bed size={13} className="text-foreground" />;
+    return <Icon name="hotel" size={13} className="text-foreground" />;
   }
   if (e.includes('puja') || e.includes('darshan') || e.includes('gompa') || e.includes('temple') || e.includes('snan') || e.includes('mandir') || e.includes('kora') || e.includes('dolma la')) {
-    return <Flame size={13} className="text-sacred" />;
+    return <Icon name="local_fire_department" size={13} className="text-sacred" />;
   }
   if (e.includes('coffee') || e.includes('tea')) {
-    return <Coffee size={13} className="text-foreground" />;
+    return <Icon name="local_cafe" size={13} className="text-foreground" />;
   }
   if (e.includes('pass') || e.includes('summit') || e.includes('dolma')) {
-    return <Mountain size={13} className="text-destructive" />;
+    return <Icon name="landscape" size={13} className="text-destructive" />;
   }
   if (e.includes('shower') || e.includes('wash') || e.includes('bath')) {
-    return <ShowerHead size={13} className="text-foreground" />;
+    return <Icon name="shower" size={13} className="text-foreground" />;
   }
   if (e.includes('wake') || e.includes('departure') || e.includes('pre-dawn')) {
-    return <AlarmClock size={13} className="text-foreground" />;
+    return <Icon name="alarm" size={13} className="text-foreground" />;
   }
   if (e.includes('rest') || e.includes('sleep') || e.includes('free')) {
-    return <Clock size={13} className="text-muted-foreground" />;
+    return <Icon name="schedule" size={13} className="text-muted-foreground" />;
   }
   if (e.includes('signal') || e.includes('connectivity') || e.includes('wifi')) {
-    return <Wifi size={13} className="text-foreground" />;
+    return <Icon name="wifi" size={13} className="text-foreground" />;
   }
-  return <MapPin size={13} className="text-muted-foreground" />;
+  return <Icon name="location_on" size={13} className="text-muted-foreground" />;
 }
 
 // ---------------------------------------------------------------------------
@@ -305,7 +277,7 @@ function CompressedView({
           </span>
           <span className={dayTypeBadgeCls(badge)}>{badge}</span>
         </div>
-        <ChevronDown size={16} className="text-muted-foreground shrink-0" />
+        <Icon name="keyboard_arrow_down" size={16} className="text-muted-foreground shrink-0" />
       </div>
 
       {/* Row 2: Location + date */}
@@ -390,7 +362,7 @@ function CompressedView({
       <div className="flex flex-wrap gap-2 mb-4">
         {/* Temperature */}
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-foreground">
-          <Thermometer size={10} className="shrink-0 text-muted-foreground" />
+          <Icon name="device_thermostat" size={10} className="shrink-0 text-muted-foreground" />
           {day.weather.temp_low}-{day.weather.temp_high}C
         </span>
         {/* Connectivity */}
@@ -407,7 +379,7 @@ function CompressedView({
               : 'border-border bg-muted text-foreground',
           )}
         >
-          <Mountain size={10} className="shrink-0 text-muted-foreground" />
+          <Icon name="landscape" size={10} className="shrink-0 text-muted-foreground" />
           {day.altitude_peak.toLocaleString('en-US')}m
         </span>
       </div>
@@ -462,7 +434,7 @@ function DayHeader({ day }: { day: TripDay; index?: number }) {
         </div>
         {isPilgrimage && day.sacred_label && (
           <span className="inline-flex items-center gap-1 font-mono text-[10px] text-sacred uppercase tracking-widest">
-            <Heart size={10} className="shrink-0" />
+            <Icon name="favorite" size={10} className="shrink-0" />
             SACRED
           </span>
         )}
@@ -477,7 +449,7 @@ function DayHeader({ day }: { day: TripDay; index?: number }) {
       {/* Day 8 critical warn */}
       {isCritical && (
         <div className="flex items-start gap-2 bg-destructive/5 border border-destructive px-4 py-2 mb-2">
-          <TriangleAlert size={13} className="text-destructive shrink-0 mt-0.5" />
+          <Icon name="warning" size={13} className="text-destructive shrink-0 mt-0.5" />
           <p className="font-mono text-[11px] text-destructive font-medium">
             22 km on foot. 5,630 m pass. 04:00 wake. No bailout after the pass.
           </p>
@@ -498,11 +470,11 @@ function DayHeader({ day }: { day: TripDay; index?: number }) {
               : 'border-border bg-muted text-foreground',
           )}
         >
-          <Mountain size={10} className={cn('shrink-0', isCritical ? 'text-destructive' : 'text-muted-foreground')} />
+          <Icon name="landscape" size={10} className={cn('shrink-0', isCritical ? 'text-destructive' : 'text-muted-foreground')} />
           {day.altitude_peak.toLocaleString('en-US')}m
         </span>
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-foreground">
-          <Bed size={10} className="shrink-0 text-muted-foreground" />
+          <Icon name="hotel" size={10} className="shrink-0 text-muted-foreground" />
           Sleep {day.altitude_sleep.toLocaleString('en-US')}m
         </span>
       </div>
@@ -520,7 +492,7 @@ function SummaryStrip({ day }: { day: TripDay }) {
 
   // Altitude
   chips.push({
-    icon: <Mountain size={12} className={cn('shrink-0', isCritical ? 'text-destructive' : 'text-muted-foreground')} />,
+    icon: <Icon name="landscape" size={12} className={cn('shrink-0', isCritical ? 'text-destructive' : 'text-muted-foreground')} />,
     value: isCritical
       ? fmtDual(day.altitude_peak)
       : day.altitude_peak.toLocaleString('en-US') + 'm',
@@ -531,12 +503,12 @@ function SummaryStrip({ day }: { day: TripDay }) {
   if (day.timing.walk_h > 0 || day.timing.active_trek_h > 0) {
     const walkH = day.timing.walk_h + day.timing.active_trek_h;
     const label = day.timing.active_trek_h > 0 ? walkH + 'h trek' : walkH + 'h walk';
-    chips.push({ icon: <Footprints size={12} className="shrink-0 text-muted-foreground" />, value: label });
+    chips.push({ icon: <Icon name="directions_walk" size={12} className="shrink-0 text-muted-foreground" />, value: label });
   }
 
   // Transit: only if significant rest but no trek (transit day)
   if (day.timing.rest_h >= 4 && day.timing.active_trek_h === 0 && day.timing.walk_h <= 1) {
-    chips.push({ icon: <Bus size={12} className="shrink-0 text-muted-foreground" />, value: day.timing.rest_h + 'h transit' });
+    chips.push({ icon: <Icon name="directions_bus" size={12} className="shrink-0 text-muted-foreground" />, value: day.timing.rest_h + 'h transit' });
   }
 
   // Connectivity
@@ -547,14 +519,14 @@ function SummaryStrip({ day }: { day: TripDay }) {
 
   // Temperature
   chips.push({
-    icon: <Thermometer size={12} className="shrink-0 text-muted-foreground" />,
+    icon: <Icon name="device_thermostat" size={12} className="shrink-0 text-muted-foreground" />,
     value: day.weather.temp_low + '-' + day.weather.temp_high + 'C',
   });
 
   // Stay
   if (day.stay) {
     chips.push({
-      icon: <Bed size={12} className="shrink-0 text-muted-foreground" />,
+      icon: <Icon name="hotel" size={12} className="shrink-0 text-muted-foreground" />,
       value: day.stay.split(' ').slice(0, 2).join(' '),
     });
   }
@@ -786,10 +758,10 @@ function WeatherChips({ day }: { day: TripDay }) {
       }
     : day.weather;
   const chips: Array<{ icon: React.ReactNode; value: string }> = [
-    { icon: <Thermometer size={11} className="shrink-0 text-muted-foreground" />, value: w.temp_high + 'C' },
-    { icon: <CloudRain size={11} className="shrink-0 text-muted-foreground" />, value: w.rain_pct + '%' },
-    { icon: <WindFilled size={11} className="shrink-0 text-muted-foreground" />, value: w.wind_kmh + ' km/h' },
-    { icon: <Sun size={11} className="shrink-0 text-muted-foreground" />, value: 'UV ' + w.uv },
+    { icon: <Icon name="device_thermostat" size={11} className="shrink-0 text-muted-foreground" />, value: w.temp_high + 'C' },
+    { icon: <Icon name="rainy" size={11} className="shrink-0 text-muted-foreground" />, value: w.rain_pct + '%' },
+    { icon: <Icon name="air" filled size={11} className="shrink-0 text-muted-foreground" />, value: w.wind_kmh + ' km/h' },
+    { icon: <Icon name="light_mode" size={11} className="shrink-0 text-muted-foreground" />, value: 'UV ' + w.uv },
   ];
   return (
     <div className="px-4 py-4 border-b border-border">
@@ -830,11 +802,11 @@ function SkyChips({ day }: { day: TripDay }) {
       </p>
       <div className="flex flex-wrap gap-2">
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
-          <Sun size={11} className="shrink-0 text-sacred" />
+          <Icon name="light_mode" size={11} className="shrink-0 text-sacred" />
           Sunrise {astro.sunrise}
         </span>
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
-          <Sun size={11} className="shrink-0 text-muted-foreground" />
+          <Icon name="light_mode" size={11} className="shrink-0 text-muted-foreground" />
           Sunset {astro.sunset}
         </span>
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
@@ -876,7 +848,7 @@ function ExposureConditions({ day }: { day: TripDay }) {
             key={rec}
             className="inline-flex items-center gap-1 rounded-none border border-emerald/30 bg-emerald/10 px-2 py-0.5 font-mono text-[11px] text-emerald"
           >
-            <Check size={10} className="shrink-0" />
+            <Icon name="check" size={10} className="shrink-0" />
             {rec}
           </span>
         ))}
@@ -892,9 +864,9 @@ function ExposureConditions({ day }: { day: TripDay }) {
 function MealsChips({ day }: { day: TripDay }) {
   const f = day.food;
   const meals: Array<{ icon: React.ReactNode; label: string; value: string }> = [
-    { icon: <Coffee size={11} className="shrink-0 text-muted-foreground" />, label: 'B', value: f.breakfast },
-    { icon: <Utensils size={11} className="shrink-0 text-muted-foreground" />, label: 'L', value: f.lunch },
-    { icon: <Utensils size={11} className="shrink-0 text-muted-foreground" />, label: 'D', value: f.dinner },
+    { icon: <Icon name="local_cafe" size={11} className="shrink-0 text-muted-foreground" />, label: 'B', value: f.breakfast },
+    { icon: <Icon name="restaurant" size={11} className="shrink-0 text-muted-foreground" />, label: 'L', value: f.lunch },
+    { icon: <Icon name="restaurant" size={11} className="shrink-0 text-muted-foreground" />, label: 'D', value: f.dinner },
   ];
 
   // Short meal name: first segment before period or comma
@@ -919,13 +891,13 @@ function MealsChips({ day }: { day: TripDay }) {
         ))}
         {f.daypack_snacks && f.daypack_snacks.toLowerCase() !== 'none' && f.daypack_snacks.toLowerCase() !== 'none needed.' && (
           <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
-            <MapPin size={11} className="shrink-0 text-muted-foreground" />
+            <Icon name="location_on" size={11} className="shrink-0 text-muted-foreground" />
             Snacks
           </span>
         )}
         {f.hydration && (
           <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
-            <GlassWater size={11} className="shrink-0 text-muted-foreground" />
+            <Icon name="local_drink" size={11} className="shrink-0 text-muted-foreground" />
             {f.hydration}
           </span>
         )}
@@ -949,22 +921,22 @@ function FacilitiesBadges({ day }: { day: TripDay }) {
 
   const badges: Array<{ icon: React.ReactNode; label: string; present: boolean }> = [
     {
-      icon: <ShowerHead size={11} className="shrink-0" />,
+      icon: <Icon name="shower" size={11} className="shrink-0" />,
       label: hasHotShower ? 'Hot Shower' : hasShower ? 'Shower' : 'No Shower',
       present: hasShower,
     },
     {
-      icon: <Toilet size={11} className="shrink-0" />,
+      icon: <Icon name="wc" size={11} className="shrink-0" />,
       label: isWestern ? 'Western Toilet' : 'Field / Pit',
       present: isWestern,
     },
     {
-      icon: <GlassWater size={11} className="shrink-0" />,
+      icon: <Icon name="local_drink" size={11} className="shrink-0" />,
       label: hasSafeWater ? 'Hot Water' : 'No Safe Water',
       present: hasSafeWater,
     },
     {
-      icon: <Wifi size={11} className="shrink-0" />,
+      icon: <Icon name="wifi" size={11} className="shrink-0" />,
       label: hasWifi ? connLabel(day.conn_status) + ' WiFi' : 'No Signal',
       present: hasWifi,
     },
@@ -1022,9 +994,9 @@ function OperationalDetails({ day }: { day: TripDay }) {
           Operational Details
         </span>
         {open ? (
-          <ChevronUp size={14} className="text-muted-foreground shrink-0" />
+          <Icon name="keyboard_arrow_up" size={14} className="text-muted-foreground shrink-0" />
         ) : (
-          <ChevronDown size={14} className="text-muted-foreground shrink-0" />
+          <Icon name="keyboard_arrow_down" size={14} className="text-muted-foreground shrink-0" />
         )}
       </button>
 
@@ -1054,7 +1026,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
                   <ul className="space-y-1">
                     {meds.map((m, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-foreground">
-                        <Check size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
+                        <Icon name="check" size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
                         {m}
                       </li>
                     ))}
@@ -1069,7 +1041,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
                   <ul className="space-y-1">
                     {gear.map((g, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-foreground">
-                        <Check size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
+                        <Icon name="check" size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
                         {g}
                       </li>
                     ))}
@@ -1084,7 +1056,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
                   <ul className="space-y-1">
                     {other.map((o, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-foreground">
-                        <Check size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
+                        <Icon name="check" size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
                         {o}
                       </li>
                     ))}
@@ -1115,7 +1087,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
               {day.spiritual_focus && (
                 <div className="border-l-2 border-sacred pl-4 bg-sacred/5 py-2 pr-2">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-sacred mb-1 flex items-center gap-1">
-                    <CandleFilled size={10} />
+                    <Icon name="local_fire_department" filled size={10} />
                     {day.spiritual_focus.title}
                   </p>
                   <p className="text-xs text-foreground leading-relaxed whitespace-pre-line">
@@ -1127,11 +1099,11 @@ function OperationalDetails({ day }: { day: TripDay }) {
               {/* Stay footer */}
               <div className="flex flex-wrap gap-4 pt-1 border-t border-border">
                 <span className="inline-flex items-center gap-2 font-mono text-[11px] text-foreground">
-                  <Bed size={11} className="text-muted-foreground shrink-0" />
+                  <Icon name="hotel" size={11} className="text-muted-foreground shrink-0" />
                   {day.stay}
                 </span>
                 <span className="inline-flex items-center gap-2 font-mono text-[11px] text-foreground">
-                  <ShowerHead size={11} className="text-muted-foreground shrink-0" />
+                  <Icon name="shower" size={11} className="text-muted-foreground shrink-0" />
                   {day.bathing}
                 </span>
               </div>
@@ -1158,7 +1130,7 @@ function ExpandedView({ day, onToggle }: { day: TripDay; index?: number; onToggl
         aria-label="Collapse day"
       >
         <span className="font-mono text-[10px] uppercase tracking-widest">Collapse</span>
-        <ChevronUp size={14} />
+        <Icon name="keyboard_arrow_up" size={14} />
       </button>
       <DayHeader day={day} />
       <ExpandedMap day={day} />
@@ -1182,7 +1154,7 @@ function CompletedBadge() {
   return (
     <div className="px-4 pt-4 pb-0">
       <span className="inline-flex items-center gap-1 rounded-none bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
-        <CircleCheck size={10} />
+        <Icon name="check_circle" size={10} />
         Completed · 5,630 m crossed
       </span>
     </div>

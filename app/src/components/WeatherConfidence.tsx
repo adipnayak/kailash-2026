@@ -10,8 +10,9 @@
  * Anti-AI rule: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 
+import { Icon } from './Icon';
+
 import { useState, useEffect, useRef } from 'react';
-import { Thermometer, WindFilled, DropFilled, Sun } from '@aliimam/icons';
 import { useJourneyState } from '../hooks/useJourneyState';
 import gsap from 'gsap';
 
@@ -176,17 +177,17 @@ function WeatherCard({ point, badge }: WeatherCardProps) {
       <p className="mt-1 text-xs text-muted-foreground">{weatherLabel(point.weathercode)}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Chip
-          icon={<Thermometer size={12} />}
+          icon={<Icon name="device_thermostat" size={12} />}
           label="Temp"
           value={`${point.tempMin} to ${point.tempMax} C`}
         />
         <Chip
-          icon={<WindFilled size={12} />}
+          icon={<Icon name="air" filled size={12} />}
           label="Wind"
           value={`${point.windspeed} km/h`}
         />
         <Chip
-          icon={<DropFilled size={12} />}
+          icon={<Icon name="water_drop" filled size={12} />}
           label="Rain"
           value={`${point.precipitation} mm`}
         />
@@ -207,7 +208,7 @@ function StaticRanges() {
           <span className="font-medium text-foreground text-sm">{loc.label}</span>
           <div className="mt-2 flex flex-wrap gap-2">
             <Chip
-              icon={<Thermometer size={12} />}
+              icon={<Icon name="device_thermostat" size={12} />}
               label="Expected"
               value={`${loc.staticRange.min} to ${loc.staticRange.max} C`}
             />
@@ -230,10 +231,10 @@ function AfterSummary() {
       </p>
       <p className="text-foreground">Range during trip: -5 C to 18 C</p>
       <div className="flex flex-wrap gap-4">
-        <Chip icon={<Thermometer size={14} />} label="Range"      value="-5 C to 18 C" />
-        <Chip icon={<WindFilled size={14} />}        label="Wind days"  value="2" />
-        <Chip icon={<DropFilled size={14} />}     label="Rain days"  value="0" />
-        <Chip icon={<Sun size={14} />}         label="Clear days" value="8 of 13" />
+        <Chip icon={<Icon name="device_thermostat" size={14} />} label="Range"      value="-5 C to 18 C" />
+        <Chip icon={<Icon name="air" filled size={14} />}        label="Wind days"  value="2" />
+        <Chip icon={<Icon name="water_drop" filled size={14} />}     label="Rain days"  value="0" />
+        <Chip icon={<Icon name="light_mode" size={14} />}         label="Clear days" value="8 of 13" />
       </div>
     </div>
   );

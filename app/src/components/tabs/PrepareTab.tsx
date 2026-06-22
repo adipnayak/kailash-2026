@@ -1,7 +1,7 @@
 /**
  * PrepareTab.
  * PreparationDashboard + WeatherConfidence + before-phase callouts.
- * aliimam-real: @aliimam/icons for category section headers.
+ * Icons via Material Symbols Outlined.
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */

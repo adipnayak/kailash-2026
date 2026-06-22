@@ -8,6 +8,8 @@
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
+
+import { Icon } from '../Icon';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { JourneyState } from '../../lib/journey-state';
 import { ConnectivityRibbon } from '../ConnectivityRibbon';
@@ -16,7 +18,6 @@ import { DAYS } from '../../lib/trip-data';
 import { getDayRoute } from '../../lib/day-routes';
 import { getDayAstro } from '../../lib/astro';
 import { MoonPhase } from '../MoonPhase';
-import { CalendarDays, Clock, Mountain } from '@aliimam/icons';
 
 export function ItineraryTab({ phase }: { phase: JourneyState }) {
   // Controlled expansion state. Every card starts open so a fresh tab
@@ -117,7 +118,7 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
       <section className="bg-background px-6 py-8">
         <div className="mx-auto max-w-6xl">
           <h2 className="font-sans text-2xl font-medium text-foreground mb-4 flex items-center gap-2">
-            <CalendarDays size={20} className="text-muted-foreground" />
+            <Icon name="calendar_month" size={20} className="text-muted-foreground" />
             Day by Day
           </h2>
 
@@ -158,11 +159,11 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
                       {/* Day label row */}
                       <span className="flex items-center gap-1 text-xs">
                         {isToday ? (
-                          <Clock size={10} />
+                          <Icon name="schedule" size={10} />
                         ) : isDolmaLa ? (
-                          <Mountain size={10} />
+                          <Icon name="landscape" size={10} />
                         ) : (
-                          <CalendarDays size={10} />
+                          <Icon name="calendar_month" size={10} />
                         )}
                         D{d.day}
                       </span>

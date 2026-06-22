@@ -12,23 +12,12 @@
  * Devotional budget: JAI_BHOLE_NATH x1, YATRA_SAMPOORNA x1 (single import each).
  */
 
+import { Icon } from './Icon';
+
 import { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import {
-  Mountain,
-  Ruler,
-  Snowflake,
-  Sun,
-  WifiOff,
-  Globe,
-  MapPin,
-  Radio,
-  TriangleAlert,
-  Clock,
-  Footprints,
-} from '@aliimam/icons';
 import { useEffect, useState } from 'react';
 import type { JourneyState } from '../lib/journey-state';
 import type { Tab } from '../hooks/useJourneyState';
@@ -135,10 +124,10 @@ function StatTile({ value, unit, dual, label, sublabel, icon }: StatTileProps) {
 // ---------------------------------------------------------------------------
 function ConnIcon({ status }: { status: 'good' | 'intermittent' | 'offline' }) {
   if (status === 'good')
-    return <Radio size={12} className="text-emerald" aria-label="Good connectivity" />;
+    return <Icon name="wifi_tethering" size={12} className="text-emerald" aria-label="Good connectivity" />;
   if (status === 'intermittent')
-    return <Radio size={12} className="text-sacred" aria-label="Intermittent connectivity" />;
-  return <TriangleAlert size={12} className="text-destructive" aria-label="No connectivity" />;
+    return <Icon name="wifi_tethering" size={12} className="text-sacred" aria-label="Intermittent connectivity" />;
+  return <Icon name="warning" size={12} className="text-destructive" aria-label="No connectivity" />;
 }
 
 // ---------------------------------------------------------------------------
@@ -217,7 +206,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           dual={'/ ' + mToFt(5630).toLocaleString('en-US') + ' ft'}
           label="HIGHEST ALTITUDE"
           sublabel="Dolma La pass - Day 8"
-          icon={<Mountain size={20} />}
+          icon={<Icon name="landscape" size={20} />}
         />
       </BentoGridItem>
 
@@ -230,7 +219,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           unit="km"
           label="LONGEST TREK DAY"
           sublabel="8 to 9 h - Day 8"
-          icon={<Ruler size={20} />}
+          icon={<Icon name="straighten" size={20} />}
         />
       </BentoGridItem>
 
@@ -310,7 +299,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           unit="C"
           label="COLDEST EXPECTED"
           sublabel="Pass overnight low"
-          icon={<Snowflake size={20} />}
+          icon={<Icon name="ac_unit" size={20} />}
         />
       </BentoGridItem>
 
@@ -321,7 +310,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           unit="C"
           label="WARMEST EXPECTED"
           sublabel="Kathmandu monsoon"
-          icon={<Sun size={20} />}
+          icon={<Icon name="light_mode" size={20} />}
         />
       </BentoGridItem>
 
@@ -336,7 +325,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           unit="days"
           label="OFFLINE"
           sublabel="Parikrama - Days 7, 8, 9"
-          icon={<WifiOff size={20} />}
+          icon={<Icon name="wifi_off" size={20} />}
         />
       </BentoGridItem>
 
@@ -346,7 +335,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           value="2"
           label="BORDER CROSSINGS"
           sublabel="Nepal to China and back"
-          icon={<Globe size={20} />}
+          icon={<Icon name="public" size={20} />}
         />
       </BentoGridItem>
 
@@ -357,7 +346,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           unit="days"
           label="YATRA LENGTH"
           sublabel="door to door"
-          icon={<Clock size={20} />}
+          icon={<Icon name="schedule" size={20} />}
         />
       </BentoGridItem>
 
@@ -368,7 +357,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           unit="km"
           label="PARIKRAMA CIRCUIT"
           sublabel="Darchen loop - Days 7, 8, 9"
-          icon={<Footprints size={20} />}
+          icon={<Icon name="directions_walk" size={20} />}
         />
       </BentoGridItem>
     </BentoGrid>
@@ -409,7 +398,7 @@ function DuringBento({ state }: { state: JourneyState }) {
         {today && (
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <MapPin size={13} className="text-muted-foreground" />
+              <Icon name="location_on" size={13} className="text-muted-foreground" />
               <span className="font-mono text-xs text-muted-foreground">
                 {today.altitude_peak.toLocaleString('en-US')}m /{' '}
                 {mToFt(today.altitude_peak).toLocaleString('en-US')}ft
@@ -442,7 +431,7 @@ function DuringBento({ state }: { state: JourneyState }) {
               <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
                 Tomorrow
               </span>
-              <Clock size={12} className="text-muted-foreground" />
+              <Icon name="schedule" size={12} className="text-muted-foreground" />
             </div>
             <p className="font-sans text-base font-medium text-foreground">{tomorrow.location}</p>
             <p className="font-mono text-xs text-muted-foreground">
@@ -464,7 +453,7 @@ function DuringBento({ state }: { state: JourneyState }) {
             dual={'/ ' + mToFt(today.altitude_peak).toLocaleString('en-US') + ' ft'}
             label="TODAY ALTITUDE"
             sublabel={today.location}
-            icon={<Mountain size={20} />}
+            icon={<Icon name="landscape" size={20} />}
           />
         )}
       </BentoGridItem>
@@ -492,7 +481,7 @@ function DuringBento({ state }: { state: JourneyState }) {
           dual={'/ ' + mToFt(5630).toLocaleString('en-US') + ' ft'}
           label="PEAK (Dolma La)"
           sublabel="Day 8 - Parikrama"
-          icon={<Mountain size={20} />}
+          icon={<Icon name="landscape" size={20} />}
         />
       </BentoGridItem>
 
@@ -502,7 +491,7 @@ function DuringBento({ state }: { state: JourneyState }) {
           unit="days"
           label="OFFLINE"
           sublabel="Parikrama - Days 7, 8, 9"
-          icon={<WifiOff size={20} />}
+          icon={<Icon name="wifi_off" size={20} />}
         />
       </BentoGridItem>
     </BentoGrid>
@@ -561,7 +550,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           dual={'/ ' + mToFt(5630).toLocaleString('en-US') + ' ft'}
           label="PEAK ALTITUDE"
           sublabel="Dolma La pass - Day 8"
-          icon={<Mountain size={20} />}
+          icon={<Icon name="landscape" size={20} />}
         />
       </BentoGridItem>
 
@@ -571,7 +560,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           unit="km"
           label="LONGEST TREK DAY"
           sublabel="Day 8 parikrama"
-          icon={<Ruler size={20} />}
+          icon={<Icon name="straighten" size={20} />}
         />
       </BentoGridItem>
 
@@ -581,7 +570,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           unit="days"
           label="YATRA COMPLETE"
           sublabel="All legs completed"
-          icon={<Globe size={20} />}
+          icon={<Icon name="public" size={20} />}
         />
       </BentoGridItem>
 
@@ -590,7 +579,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           value="2"
           label="BORDER CROSSINGS"
           sublabel="Nepal to China and back"
-          icon={<Globe size={20} />}
+          icon={<Icon name="public" size={20} />}
         />
       </BentoGridItem>
 
@@ -600,7 +589,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           unit="C"
           label="COLDEST REACHED"
           sublabel="Dolma La pass overnight"
-          icon={<Snowflake size={20} />}
+          icon={<Icon name="ac_unit" size={20} />}
         />
       </BentoGridItem>
 
@@ -610,7 +599,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           unit="days"
           label="OFFLINE SURVIVED"
           sublabel="Parikrama blackout"
-          icon={<WifiOff size={20} />}
+          icon={<Icon name="wifi_off" size={20} />}
         />
       </BentoGridItem>
     </BentoGrid>
