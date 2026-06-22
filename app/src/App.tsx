@@ -45,7 +45,7 @@ export default function App() {
           </Suspense>
         )}
       </main>
-      <Footer />
+      <Footer onTab={setTab} />
     </div>
   );
 }
