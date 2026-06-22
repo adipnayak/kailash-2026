@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://adipnayak.github.io/kailash-2026/sitemap.xml
