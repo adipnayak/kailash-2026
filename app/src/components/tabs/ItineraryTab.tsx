@@ -142,6 +142,7 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
                       aria-label={'Jump to Day ' + d.day}
                       aria-pressed={isOpen}
                       aria-current={isActive ? 'true' : undefined}
+                      style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'rgba(0,0,0,0.05)' }}
                       className={
                         'flex flex-col items-center gap-0.5 rounded-none border px-3 py-2 font-mono cursor-pointer transition-colors ' +
                         (isActive

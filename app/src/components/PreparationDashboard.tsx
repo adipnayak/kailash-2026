@@ -449,6 +449,7 @@ export function PreparationDashboard() {
                     onClick={() => jumpToCategory(cat.id)}
                     aria-label={'Jump to ' + cat.label}
                     aria-current={isActive ? 'true' : undefined}
+                    style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'rgba(0,0,0,0.05)' }}
                     className={
                       'flex items-center gap-2 rounded-none border px-4 py-2 font-mono text-xs cursor-pointer transition-colors ' +
                       (isActive
