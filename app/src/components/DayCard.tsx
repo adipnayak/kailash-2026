@@ -312,7 +312,7 @@ function CompressedView({
             const stops = getDayStops(day.day);
             if (!stops || stops.length < 2) return null;
             return (
-              <ul className="mt-1.5 flex flex-wrap gap-x-2 gap-y-0.5 font-mono text-[10px] text-muted-foreground">
+              <ul className="mt-2 flex flex-wrap gap-x-2 gap-y-0.5 font-mono text-[10px] text-muted-foreground">
                 {stops.slice(1).map((s, i) => (
                   <li key={i}>
                     <span className="text-foreground">{stops[i].label}</span>
@@ -331,7 +331,7 @@ function CompressedView({
       )}
 
       {/* Row 3: Status chips */}
-      <div className="flex flex-wrap gap-1.5 mb-3">
+      <div className="flex flex-wrap gap-2 mb-4">
         {/* Temperature */}
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-foreground">
           <Thermometer size={10} className="shrink-0 text-muted-foreground" />
@@ -385,7 +385,7 @@ function DayHeader({ day }: { day: TripDay; index?: number }) {
   const isPilgrimage = day.day_type === 'holy';
 
   return (
-    <div className="px-4 pt-4 pb-3 border-b border-border">
+    <div className="px-4 pt-4 pb-4 border-b border-border">
       {/* Day badge row */}
       <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
@@ -420,7 +420,7 @@ function DayHeader({ day }: { day: TripDay; index?: number }) {
 
       {/* Day 8 critical warn */}
       {isCritical && (
-        <div className="flex items-start gap-2 bg-destructive/5 border border-destructive px-3 py-2 mb-2">
+        <div className="flex items-start gap-2 bg-destructive/5 border border-destructive px-4 py-2 mb-2">
           <TriangleAlert size={13} className="text-destructive shrink-0 mt-0.5" />
           <p className="font-mono text-[11px] text-destructive font-medium">
             22 km on foot. 5,630 m pass. 04:00 wake. No bailout after the pass.
@@ -429,7 +429,7 @@ function DayHeader({ day }: { day: TripDay; index?: number }) {
       )}
 
       {/* Status badges row */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-foreground">
           <ConnIcon status={day.conn_status} />
           {connLabel(day.conn_status)}
@@ -504,13 +504,13 @@ function SummaryStrip({ day }: { day: TripDay }) {
   }
 
   return (
-    <div className="px-4 py-3 border-b border-border">
-      <div className="flex flex-wrap gap-1.5">
+    <div className="px-4 py-4 border-b border-border">
+      <div className="flex flex-wrap gap-2">
         {chips.map((chip, i) => (
           <span
             key={i}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-none border px-2 py-1 font-mono text-[11px]',
+              'inline-flex items-center gap-2 rounded-none border px-2 py-1 font-mono text-[11px]',
               chip.red
                 ? 'border-destructive bg-destructive/10 text-destructive'
                 : 'border-border bg-muted text-foreground',
@@ -561,7 +561,7 @@ function VisualTimeline({ day }: { day: TripDay }) {
 
   return (
     <div className="px-4 py-4 border-b border-border">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-4">
         Timeline
       </p>
       <ol className="space-y-0">
@@ -585,14 +585,14 @@ function VisualTimeline({ day }: { day: TripDay }) {
               style={{ minHeight: rowHeight + 'px' }}
             >
               {/* Time column */}
-              <span className="font-mono text-[10px] text-muted-foreground w-[52px] shrink-0 pt-0 text-right pr-3 leading-none">
+              <span className="font-mono text-[10px] text-muted-foreground w-[52px] shrink-0 pt-0 text-right pr-4 leading-none">
                 {timePart}
               </span>
 
               {/* Dot + connector bar -- spine. flex-1 on the bar makes it
                   fill exactly the column's leftover space, so adjacent
                   rows touch with no gap. */}
-              <div className="relative flex flex-col items-center mr-3 shrink-0">
+              <div className="relative flex flex-col items-center mr-4 shrink-0">
                 <div
                   className={cn(
                     'w-2.5 h-2.5 rounded-none border z-10 shrink-0',
@@ -618,7 +618,7 @@ function VisualTimeline({ day }: { day: TripDay }) {
                   isHighlight ? 'text-destructive' : 'text-foreground',
                 )}
               >
-                <div className="flex items-center gap-1.5 flex-wrap">
+                <div className="flex items-center gap-2 flex-wrap">
                   <TimelineIcon event={ev.event} />
                   <span
                     className={cn(
@@ -657,7 +657,7 @@ function ExpandedMap({ day }: { day: TripDay }) {
   const isCritical = day.day === 8;
   const stops = getDayStops(day.day);
   return (
-    <div className="px-4 py-3 border-b border-border isolate relative z-0" onClick={(e) => e.stopPropagation()}>
+    <div className="px-4 py-4 border-b border-border isolate relative z-0" onClick={(e) => e.stopPropagation()}>
       <Suspense
         fallback={
           <div
@@ -724,11 +724,11 @@ function WeatherChips({ day }: { day: TripDay }) {
     { icon: <Sun size={11} className="shrink-0 text-muted-foreground" />, value: 'UV ' + w.uv },
   ];
   return (
-    <div className="px-4 py-3 border-b border-border">
+    <div className="px-4 py-4 border-b border-border">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
         Weather
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {chips.map((chip, i) => (
           <span
             key={i}
@@ -756,11 +756,11 @@ function SkyChips({ day }: { day: TripDay }) {
   const { lat, lng } = route.start;
   const astro = getDayAstro(day.date, lat, lng);
   return (
-    <div className="px-4 py-3 border-b border-border">
+    <div className="px-4 py-4 border-b border-border">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
         Sky
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[11px] text-foreground">
           <Sun size={11} className="shrink-0 text-sacred" />
           Sunrise {astro.sunrise}
@@ -785,11 +785,11 @@ function SkyChips({ day }: { day: TripDay }) {
 function ExposureConditions({ day }: { day: TripDay }) {
   const exp = deriveExposure(day);
   return (
-    <div className="px-4 py-3 border-b border-border">
+    <div className="px-4 py-4 border-b border-border">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
         Conditions Today
       </p>
-      <div className="flex flex-wrap gap-1.5 mb-3">
+      <div className="flex flex-wrap gap-2 mb-4">
         {[exp.tempLabel, exp.rainLabel, exp.windLabel, exp.uvLabel].map((label) => (
           <span
             key={label}
@@ -799,10 +799,10 @@ function ExposureConditions({ day }: { day: TripDay }) {
           </span>
         ))}
       </div>
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
         Recommended
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {exp.recommended.map((rec) => (
           <span
             key={rec}
@@ -835,11 +835,11 @@ function MealsChips({ day }: { day: TripDay }) {
   }
 
   return (
-    <div className="px-4 py-3 border-b border-border">
+    <div className="px-4 py-4 border-b border-border">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
         Meals
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {meals.map((m) => (
           <span
             key={m.label}
@@ -903,11 +903,11 @@ function FacilitiesBadges({ day }: { day: TripDay }) {
   ];
 
   return (
-    <div className="px-4 py-3 border-b border-border">
+    <div className="px-4 py-4 border-b border-border">
       <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
         Facilities
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {badges.map((badge) => (
           <span
             key={badge.label}
@@ -943,7 +943,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
   const other = day.carry_critical.filter((item) => !isMed(item) && !isGear(item));
 
   return (
-    <div className="px-4 py-3 border-b border-border">
+    <div className="px-4 py-4 border-b border-border">
       <button
         type="button"
         className="w-full flex items-center justify-between gap-2 focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"
@@ -970,7 +970,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
             transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <div className="pt-3 space-y-4">
+            <div className="pt-4 space-y-4">
               {/* Hydration */}
               {f.hydration && (
                 <div>
@@ -985,7 +985,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
                   <p className="font-mono text-[10px] text-muted-foreground uppercase mb-1">Medical</p>
                   <ul className="space-y-1">
                     {meds.map((m, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-xs text-foreground">
+                      <li key={i} className="flex items-start gap-2 text-xs text-foreground">
                         <Check size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
                         {m}
                       </li>
@@ -1000,7 +1000,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
                   <p className="font-mono text-[10px] text-muted-foreground uppercase mb-1">Gear</p>
                   <ul className="space-y-1">
                     {gear.map((g, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-xs text-foreground">
+                      <li key={i} className="flex items-start gap-2 text-xs text-foreground">
                         <Check size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
                         {g}
                       </li>
@@ -1015,7 +1015,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
                   <p className="font-mono text-[10px] text-muted-foreground uppercase mb-1">Pack</p>
                   <ul className="space-y-1">
                     {other.map((o, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-xs text-foreground">
+                      <li key={i} className="flex items-start gap-2 text-xs text-foreground">
                         <Check size={10} className="mt-0.5 shrink-0 text-muted-foreground" />
                         {o}
                       </li>
@@ -1045,7 +1045,7 @@ function OperationalDetails({ day }: { day: TripDay }) {
 
               {/* Spiritual focus */}
               {day.spiritual_focus && (
-                <div className="border-l-2 border-sacred pl-3 bg-sacred/5 py-2 pr-2">
+                <div className="border-l-2 border-sacred pl-4 bg-sacred/5 py-2 pr-2">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-sacred mb-1 flex items-center gap-1">
                     <CandleFilled size={10} />
                     {day.spiritual_focus.title}
@@ -1057,12 +1057,12 @@ function OperationalDetails({ day }: { day: TripDay }) {
               )}
 
               {/* Stay footer */}
-              <div className="flex flex-wrap gap-3 pt-1 border-t border-border">
-                <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-foreground">
+              <div className="flex flex-wrap gap-4 pt-1 border-t border-border">
+                <span className="inline-flex items-center gap-2 font-mono text-[11px] text-foreground">
                   <Bed size={11} className="text-muted-foreground shrink-0" />
                   {day.stay}
                 </span>
-                <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-foreground">
+                <span className="inline-flex items-center gap-2 font-mono text-[11px] text-foreground">
                   <ShowerHead size={11} className="text-muted-foreground shrink-0" />
                   {day.bathing}
                 </span>
@@ -1112,7 +1112,7 @@ function ExpandedView({ day, onToggle }: { day: TripDay; index?: number; onToggl
 
 function CompletedBadge() {
   return (
-    <div className="px-4 pt-3 pb-0">
+    <div className="px-4 pt-4 pb-0">
       <span className="inline-flex items-center gap-1 rounded-none bg-emerald/10 border border-emerald/30 px-2 py-0.5 font-mono text-[10px] text-emerald uppercase tracking-wide">
         <CircleCheck size={10} />
         Completed · 5,630 m crossed

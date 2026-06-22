@@ -49,7 +49,7 @@ export function BentoGrid({
   return (
     <div
       className={cn(
-        'grid auto-rows-[minmax(140px,auto)] gap-3 sm:gap-4',
+        'grid auto-rows-[minmax(140px,auto)] gap-4 sm:gap-4',
         // md and lg responsive overrides applied via data attrs + CSS below
         className,
       )}
@@ -90,7 +90,7 @@ export function BentoGridItem({
   return (
     <div
       className={cn(
-        'rounded-none border border-border bg-card p-5 transition-colors hover:bg-muted/40',
+        'rounded-none border border-border bg-card p-4 transition-colors hover:bg-muted/40',
         className,
       )}
       style={itemStyle}

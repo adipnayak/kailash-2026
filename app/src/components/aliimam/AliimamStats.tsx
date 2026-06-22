@@ -42,7 +42,7 @@ export function AliimamStats({
             <div
               key={i}
               className={[
-                'space-y-3 px-6',
+                'space-y-2 px-6',
                 i > 0 && i < stats.length - 1 ? 'md:border-x md:px-12 border-border' : '',
               ]
                 .filter(Boolean)

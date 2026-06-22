@@ -129,7 +129,7 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
       className="border-b border-border bg-background px-4 py-8 md:px-6 md:py-12"
     >
       <div className="mx-auto max-w-6xl">
-        <header className="mb-6 md:mb-8 flex flex-col gap-3">
+        <header className="mb-6 md:mb-8 flex flex-col gap-4">
           <h2 className="font-sans text-xl md:text-2xl font-medium text-foreground flex items-center gap-2">
             <Mountain size={18} />
             Kailash Mansarovar Yatra 2026
@@ -137,14 +137,14 @@ export function SacredJourneyMap({ phase: _phase, onScrollToDay: _onScrollToDay,
           <p className="font-sans text-sm text-muted-foreground max-w-2xl">
             This is the 7 to 19 July 2026 batch. 23 yatris are joining from India, the UAE, Mauritius, and the United States.
           </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="inline-flex items-center gap-2 font-mono text-xs text-foreground">
               <PlaneTakeoff size={13} className="text-muted-foreground" />
               <span className="font-semibold">DEPART</span>
               <span className="text-muted-foreground">07 Jul 2026</span>
             </span>
             <span className="text-border font-mono text-xs">|</span>
-            <span className="inline-flex items-center gap-1.5 font-mono text-xs text-foreground">
+            <span className="inline-flex items-center gap-2 font-mono text-xs text-foreground">
               <PlaneLanding size={13} className="text-muted-foreground" />
               <span className="font-semibold">RETURN</span>
               <span className="text-muted-foreground">19 Jul 2026</span>

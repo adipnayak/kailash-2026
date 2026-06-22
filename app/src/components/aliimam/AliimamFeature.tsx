@@ -75,10 +75,10 @@ export function AliimamFeature({
             <Mountain className="size-5" />
             {eyebrow}
           </span>
-          <h2 className="mt-3 text-3xl font-medium text-pretty sm:text-4xl md:text-5xl text-foreground">
+          <h2 className="mt-4 text-3xl font-medium text-pretty sm:text-4xl md:text-5xl text-foreground">
             {title}
           </h2>
-          <p className="mt-3 text-base text-pretty sm:text-lg text-muted-foreground">
+          <p className="mt-4 text-base text-pretty sm:text-lg text-muted-foreground">
             {body}
           </p>
           {ctaLabel && (

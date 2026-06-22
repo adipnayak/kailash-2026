@@ -172,9 +172,9 @@ export function ConnectivityRibbon() {
         </ol>
 
         {/* Legend + callout row */}
-        <div className="mt-3 flex flex-wrap items-center gap-4">
+        <div className="mt-4 flex flex-wrap items-center gap-4">
           {/* Legend */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {(
               [
                 ['good', 'WiFi & phone'],
