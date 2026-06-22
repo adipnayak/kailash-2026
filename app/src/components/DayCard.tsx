@@ -596,75 +596,81 @@ function VisualTimeline({ day }: { day: TripDay }) {
         {parsedEvents.map((ev, i) => {
           const timePart = ev.time.split('-')[0].trim();
           const isLast = i === parsedEvents.length - 1;
+          const isFirst = i === 0;
           const isHighlight =
             isCritical &&
             (ev.event.toLowerCase().includes('dolma la') ||
               ev.event.toLowerCase().includes('pass'));
-          // The row's vertical slot. Last row collapses to dot height only;
-          // every other row's height = dot (10px) + connector bar height,
-          // so bars touch the next dot without gaps.
+          // Row's vertical slot. Each row reserves at least enough space
+          // for icon + text + duration + 12px top/bottom padding. The
+          // 1fr/auto/1fr grid below distributes any extra minHeight
+          // equally above and below the text row so the dot stays
+          // centred on the text line, and consecutive dots are spaced
+          // proportionally to event duration.
           const barHeight = isLast ? 0 : Math.max(24, ev.durationMin * pxPerMin);
-          const rowHeight = 10 + barHeight;
+          const rowHeight = Math.max(78, 10 + barHeight);
+          const durationText =
+            !isLast && ev.durationMin > 0
+              ? ev.durationMin >= 60
+                ? Math.round((ev.durationMin / 60) * 10) / 10 + 'h'
+                : ev.durationMin + 'min'
+              : null;
 
           return (
             <li
               key={i}
-              className="relative flex items-stretch gap-0"
+              className="relative grid grid-cols-[52px_24px_1fr] grid-rows-[1fr_auto_1fr] gap-0"
               style={{ minHeight: rowHeight + 'px' }}
             >
-              {/* Time column */}
-              <span className="font-mono text-[10px] text-muted-foreground w-[52px] shrink-0 pt-0 text-right pr-4 leading-none">
-                {timePart}
-              </span>
-
-              {/* Dot + connector bar -- spine. flex-1 on the bar makes it
-                  fill exactly the column's leftover space, so adjacent
-                  rows touch with no gap. */}
-              <div className="relative flex flex-col items-center mr-4 shrink-0">
-                <div
-                  className={cn(
-                    'w-2.5 h-2.5 rounded-none border z-10 shrink-0',
-                    isHighlight
-                      ? 'bg-destructive border-destructive'
-                      : 'bg-foreground border-foreground',
-                  )}
-                />
-                {!isLast && (
-                  <div
-                    className={cn(
-                      'w-0.5 flex-1',
-                      isHighlight ? 'bg-destructive' : 'bg-foreground',
-                    )}
-                  />
-                )}
-              </div>
-
-              {/* Event content -- vertical stack so every row reads the
-                  same: icon on top (aligned with the node dot to its
-                  left), event text below, duration below that. Earlier
-                  inline 'flex items-center flex-wrap' was inconsistent
-                  -- icon sat beside the text on short events, but
-                  wrapped to a solo first row on long events. */}
+              {/* Spine bar in col 2, spanning all three rows so it's
+                  continuous from li to li. First li hides its top half,
+                  last li hides its bottom half so the spine starts at
+                  the first dot and ends at the last. */}
               <div
                 className={cn(
-                  'flex-1 flex flex-col items-start gap-1 pt-0 leading-none',
-                  isHighlight ? 'text-destructive' : 'text-foreground',
+                  'col-start-2 row-start-1 row-end-4 justify-self-center w-0.5',
+                  isHighlight ? 'bg-destructive' : 'bg-foreground',
+                  isFirst && 'mt-[calc(50%-5px)]',
+                  isLast && 'mb-[calc(50%-5px)]',
+                  isFirst && isLast && 'hidden',
+                )}
+                aria-hidden
+              />
+
+              {/* Row 1: icon, anchored bottom of its row so it sits just
+                  above the text row. 12 px top padding per spec. */}
+              <div className="col-start-3 row-start-1 flex items-end pt-3 pr-2">
+                <TimelineIcon event={ev.event} />
+              </div>
+
+              {/* Row 2 (middle, auto height): time | dot | text -- all
+                  vertically centred so they read on the same line. */}
+              <span className="col-start-1 row-start-2 self-center text-right pr-4 font-mono text-[10px] text-muted-foreground leading-none">
+                {timePart}
+              </span>
+              <div
+                className={cn(
+                  'col-start-2 row-start-2 self-center justify-self-center w-2.5 h-2.5 rounded-none border z-10',
+                  isHighlight
+                    ? 'bg-destructive border-destructive'
+                    : 'bg-foreground border-foreground',
+                )}
+              />
+              <span
+                className={cn(
+                  'col-start-3 row-start-2 self-center text-xs leading-snug',
+                  isHighlight ? 'font-semibold text-destructive' : 'text-foreground',
                 )}
               >
-                <TimelineIcon event={ev.event} />
-                <span
-                  className={cn(
-                    'text-xs leading-snug',
-                    isHighlight ? 'font-semibold text-destructive' : 'text-foreground',
-                  )}
-                >
-                  {ev.event}
-                </span>
-                {!isLast && ev.durationMin > 0 && (
-                  <p className="font-mono text-[10px] text-muted-foreground">
-                    {ev.durationMin >= 60
-                      ? Math.round((ev.durationMin / 60) * 10) / 10 + 'h'
-                      : ev.durationMin + 'min'}
+                {ev.event}
+              </span>
+
+              {/* Row 3: duration, anchored top of its row so it sits just
+                  below the text row. 12 px bottom padding per spec. */}
+              <div className="col-start-3 row-start-3 flex items-start pb-3 pr-2">
+                {durationText && (
+                  <p className="font-mono text-[10px] text-muted-foreground leading-none mt-1">
+                    {durationText}
                   </p>
                 )}
               </div>
