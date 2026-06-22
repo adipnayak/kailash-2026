@@ -198,12 +198,17 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
       {/* Row 3: Outstanding prep (2 cols) + Stat 3 + Stat 4                  */}
       {/* ------------------------------------------------------------------ */}
 
-      {/* Outstanding prep card -- tap to jump to Prepare tab */}
+      {/* Outstanding prep card -- tap to jump to Prepare tab.
+          Diagonal stripe overlay marks this as the one interactive bento tile. */}
       <BentoGridItem
         colSpan={2}
         className="flex flex-col gap-4"
         onClick={() => onTab('prepare')}
         ariaLabel={`Open Prepare tab. ${total - completed} of ${total} things left.`}
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(45deg, transparent 0, transparent 8px, color-mix(in oklch, var(--muted-foreground) 10%, transparent) 8px, color-mix(in oklch, var(--muted-foreground) 10%, transparent) 9px)',
+        }}
       >
         <div className="flex items-baseline justify-between">
           <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
