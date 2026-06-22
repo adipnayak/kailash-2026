@@ -29,8 +29,10 @@ import {
   Clock,
   Footprints,
 } from '@aliimam/icons';
+import { useEffect, useState } from 'react';
 import type { JourneyState } from '../lib/journey-state';
 import type { Tab } from '../hooks/useJourneyState';
+import { loadPrepStatus, isCategoryComplete } from '../lib/prep-data';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
 import { BentoGrid, BentoGridItem } from './aliimam/Bento';
@@ -41,6 +43,13 @@ gsap.registerPlugin(useGSAP);
 // TZ toggle: shared across phases
 // ---------------------------------------------------------------------------
 // Prep list constants
+//
+// The Hero summary card surfaces the non-optional categories from the
+// Prepare tab. A row reads as "done" when EVERY item in its category
+// has been marked complete on the Prepare tab. We re-read the shared
+// status map on mount and whenever Prepare emits 'kailash-prep-updated'
+// (savePrepStatus dispatches that event), so the count stays in sync
+// without polling.
 // ---------------------------------------------------------------------------
 const PREP_ITEMS: { id: string; label: string }[] = [
   { id: 'passport', label: 'Passport' },
@@ -51,11 +60,30 @@ const PREP_ITEMS: { id: string; label: string }[] = [
 
 function usePrepProgress(): { completed: number; total: number; doneSet: Set<string> } {
   const total = PREP_ITEMS.length;
+  const [tick, setTick] = useState(0);
+
+  // Subscribe to same-tab + cross-tab prep updates so the card re-derives
+  // after any checkbox flip on the Prepare tab.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const bump = () => setTick((t) => t + 1);
+    window.addEventListener('kailash-prep-updated', bump);
+    window.addEventListener('storage', bump);
+    return () => {
+      window.removeEventListener('kailash-prep-updated', bump);
+      window.removeEventListener('storage', bump);
+    };
+  }, []);
+
   if (typeof window === 'undefined') return { completed: 0, total, doneSet: new Set() };
+
+  // tick is referenced so the effect actually re-runs this body when state
+  // changes; the value itself is never read.
+  void tick;
+
+  const statusMap = loadPrepStatus();
   const doneSet = new Set(
-    PREP_ITEMS.filter((item) => localStorage.getItem('prep_' + item.id) === 'true').map(
-      (item) => item.id,
-    ),
+    PREP_ITEMS.filter((item) => isCategoryComplete(item.id, statusMap)).map((item) => item.id),
   );
   return { completed: doneSet.size, total, doneSet };
 }
