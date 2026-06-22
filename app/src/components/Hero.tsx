@@ -170,13 +170,28 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
   return (
     <BentoGrid cols={{ base: 2, md: 3, lg: 4 }}>
       {/* ------------------------------------------------------------------ */}
-      {/* Hero card: 2 cols x 2 rows                                          */}
+      {/* Hero card: 2 cols x 2 rows. Tappable -- jumps to Itinerary. Same   */}
+      {/* diagonal-stripe affordance as the prep card so the user sees both   */}
+      {/* interactive bento tiles read identically.                            */}
       {/* ------------------------------------------------------------------ */}
       <BentoGridItem
         colSpan={2}
         className="flex flex-col items-start justify-center gap-2"
+        onClick={() => onTab('itinerary')}
+        ariaLabel={`Open Itinerary tab. ${state.daysToDeparture} days to Kailash.`}
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(45deg, transparent 0, transparent 4px, color-mix(in oklch, var(--muted-foreground) 8%, transparent) 4px, color-mix(in oklch, var(--muted-foreground) 8%, transparent) 5px)',
+        }}
       >
-        {/* Big countdown · ONLY thing in the Hero card (with JBN) */}
+        {/* TAP-FOR-ITINERARY pill in the top-right, matching the prep card. */}
+        <div className="flex w-full items-baseline justify-end">
+          <span className="font-mono text-xs text-sacred uppercase tracking-widest">
+            Tap for itinerary
+          </span>
+        </div>
+
+        {/* Big countdown */}
         <div className="flex items-baseline gap-2">
           <span
             ref={countdownRef}
