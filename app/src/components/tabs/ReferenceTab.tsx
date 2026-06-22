@@ -154,43 +154,35 @@ function ArticleSection({ article }: { article: RefArticle }) {
 }
 
 export function ReferenceTab() {
-  // Scrollspy: highlight the article currently in view. Same pattern as
-  // ItineraryTab's DayNav -- IntersectionObserver with a top-biased
-  // rootMargin so the active section is the one whose header just
-  // crossed below the sticky nav.
+  // Scrollspy: active = the LAST article whose top has crossed below
+  // the sticky nav (~130 px from viewport top). IntersectionObserver
+  // with intersectionRatio was unreliable here because the articles
+  // vary wildly in length (Medicines is huge, Customs is small) -- a
+  // short fully-visible article kept beating a long article that only
+  // had a slice in view. Plain scroll-position math is robust.
   const [activeArticle, setActiveArticle] = useState<string | null>(REFERENCE_ARTICLES[0]?.id ?? null);
   const navRef = useRef<HTMLOListElement>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const visibility = new Map<string, number>();
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const id = entry.target.getAttribute('id');
-          if (!id) continue;
-          visibility.set(id, entry.intersectionRatio);
+    const THRESHOLD = 130;
+    const onScroll = () => {
+      let current = REFERENCE_ARTICLES[0]?.id ?? null;
+      for (const a of REFERENCE_ARTICLES) {
+        const el = document.getElementById(a.id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= THRESHOLD) {
+          current = a.id;
+        } else {
+          break; // every following section is further down -- stop
         }
-        let bestId: string | null = null;
-        let bestRatio = 0;
-        for (const [id, r] of visibility) {
-          if (r > bestRatio) {
-            bestRatio = r;
-            bestId = id;
-          }
-        }
-        if (bestId) setActiveArticle(bestId);
-      },
-      {
-        rootMargin: '-110px 0px -30% 0px',
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-      },
-    );
-    for (const a of REFERENCE_ARTICLES) {
-      const el = document.getElementById(a.id);
-      if (el) observer.observe(el);
-    }
-    return () => observer.disconnect();
+      }
+      if (current) setActiveArticle(current);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Auto-scroll the active chip into view in the horizontal nav strip.
