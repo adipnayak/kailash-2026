@@ -22,7 +22,10 @@ interface MoonPhaseProps {
   size?: number;
 }
 
-const FG = 'var(--foreground)';
+// Inherit from the parent's text color so the moon flips automatically
+// when its container does -- e.g. on the active day chip in ItineraryTab,
+// which switches from text-foreground to text-primary-foreground.
+const FG = 'currentColor';
 const STROKE_W = 1;
 
 export function MoonPhase({ phase, size = 14 }: MoonPhaseProps) {
