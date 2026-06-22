@@ -22,7 +22,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CircleCheck, Clock, CircleAlert, CircleMinus } from '@aliimam/icons';
+import { Clock, CircleAlert, CircleMinus } from '@aliimam/icons';
 import { useJourneyState } from '../hooks/useJourneyState';
 import gsap from 'gsap';
 
@@ -275,15 +275,33 @@ function saveStatus(map: StatusMap): void {
 
 function StatusIcon({ status }: { status: ItemStatus }) {
   if (status === 'complete') {
-    return <CircleCheck size={16} className="text-emerald shrink-0" />;
+    return (
+      <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-emerald bg-emerald">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+          <path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
+    );
   }
   if (status === 'pending') {
-    return <Clock size={16} className="text-sacred shrink-0" />;
+    return (
+      <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-foreground bg-background">
+        <Clock size={9} className="text-sacred" />
+      </span>
+    );
   }
   if (status === 'action-needed') {
-    return <CircleAlert size={16} className="text-destructive shrink-0" />;
+    return (
+      <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-destructive bg-background">
+        <CircleAlert size={9} className="text-destructive" />
+      </span>
+    );
   }
-  return <CircleMinus size={16} className="text-muted-foreground shrink-0" />;
+  return (
+    <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-muted-foreground/40 bg-background">
+      <CircleMinus size={9} className="text-muted-foreground" />
+    </span>
+  );
 }
 
 function statusLabel(status: ItemStatus): string {
@@ -551,10 +569,17 @@ export function PreparationDashboard() {
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div ref={headerRef}>
+          {/* Explainer */}
+          <div className="mb-6">
+            <h2 className="font-sans text-2xl font-medium text-foreground">Your preparation checklist</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Tap each item as you complete it. Your readiness updates below.
+            </p>
+          </div>
+
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h2 className="font-sans text-2xl font-medium text-foreground">Preparation</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {daysToDeparture > 0
                   ? `${daysToDeparture} day${daysToDeparture === 1 ? '' : 's'} to departure`
                   : 'Departure day'}
