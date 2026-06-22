@@ -7,14 +7,11 @@
  * Categories: Passport, Flights, Medical (optional), Connectivity, Packing.
  * Insurance category removed as of v4 spec.
  *
- * Status icons:
- *   CheckCircle (green)  = COMPLETE
- *   Clock (yellow)       = PENDING
- *   AlertCircle (red)    = ACTION NEEDED
- *   Minus (gray)         = OPTIONAL (Medical only)
+ * Two states only: COMPLETE (green check) or ACTION NEEDED (red alert).
+ * Tap a row to toggle. Items stay in their declared order regardless of
+ * state -- no auto-sort -- so users can find what they were looking at.
  *
  * Before phase: red ACTION NEEDED rows expand with blocking copy.
- *   Green/yellow items are demoted (collapsed).
  * During / After: component returns null.
  *
  * Anti-AI rules: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
@@ -22,7 +19,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, CircleAlert, CircleMinus } from '@aliimam/icons';
+import { CircleAlert } from '@aliimam/icons';
 import { useJourneyState } from '../hooks/useJourneyState';
 import gsap from 'gsap';
 
@@ -30,7 +27,10 @@ import gsap from 'gsap';
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
 
-type ItemStatus = 'complete' | 'pending' | 'action-needed' | 'optional';
+// Two states only: every item is either done or it isn't. Tapping the
+// row toggles between them. Previous 4-state design (pending / optional)
+// added cognitive load without UX value.
+type ItemStatus = 'complete' | 'action-needed';
 
 interface CheckItem {
   id: string;
@@ -66,7 +66,7 @@ const CATEGORIES: Category[] = [
         id: 'passport-copy',
         label: 'Colour copy lodged with travel agent',
         blocking: 'Travel agent needs a colour scan for the Tibet group permit application.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'passport-china-visa',
@@ -78,7 +78,7 @@ const CATEGORIES: Category[] = [
         id: 'passport-noc',
         label: 'Indian Embassy NOC appointment confirmed (Day 2 in Kathmandu)',
         blocking: 'Embassy NOC visit is mandatory. Confirm with operator that you are on the list.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
     ],
   },
@@ -97,13 +97,13 @@ const CATEGORIES: Category[] = [
         id: 'flights-ktm-return',
         label: 'Return flight from Kathmandu booked (depart 19 Jul or later)',
         blocking: 'Return must depart no earlier than 19 Jul. Book with buffer for delays.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'flights-pnr-shared',
         label: 'PNR shared with operator and emergency contact',
         blocking: 'Operator and emergency contact both need your flight details.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
     ],
   },
@@ -116,7 +116,7 @@ const CATEGORIES: Category[] = [
         id: 'medical-diamox',
         label: 'Diamox prescription obtained from doctor',
         blocking: 'Consult your doctor for Acetazolamide 250 mg prescription. Start 2 to 3 days before departure.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'medical-insurance',
@@ -128,13 +128,13 @@ const CATEGORIES: Category[] = [
         id: 'medical-consult',
         label: 'Doctor cleared you for high-altitude trekking (5,630 m)',
         blocking: 'Get a fitness clearance from your GP, especially if you have cardiac or respiratory history.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'medical-kit',
         label: 'Personal med kit packed (Diamox, Paracetamol, ORS, blister patches)',
         blocking: 'Assemble your personal med kit at least 3 days before departure.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
     ],
   },
@@ -153,19 +153,19 @@ const CATEGORIES: Category[] = [
         id: 'conn-esim',
         label: 'China eSIM purchased and installed',
         blocking: 'Your India SIM will not work in Tibet. Purchase a China eSIM and confirm it activates on arrival.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'conn-offline-maps',
         label: 'Offline maps downloaded (Maps.me or Google Maps offline)',
         blocking: 'Download Tibet region offline maps before departure. No data connectivity during Parikrama (Days 7-9).',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'conn-family-msg',
         label: 'Pre-written offline message sent to family (Days 7-9 blackout)',
         blocking: 'Write and send the offline message before Day 7. No phone or WiFi for 3 days during Parikrama.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
     ],
   },
@@ -178,7 +178,7 @@ const CATEGORIES: Category[] = [
         id: 'packing-layers',
         label: 'Base, mid and hard-shell layers packed',
         blocking: 'Temperature at 5,630 m can drop below freezing. Three-layer system is mandatory.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'packing-boots',
@@ -190,19 +190,19 @@ const CATEGORIES: Category[] = [
         id: 'packing-poles',
         label: 'Trekking poles packed',
         blocking: 'Poles are essential at altitude. Pack adjustable collapsible poles.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'packing-headlamp',
         label: 'Headlamp with fresh batteries packed',
         blocking: 'Day 8 starts at 04:00. Headlamp is not optional.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
       {
         id: 'packing-sunprotection',
         label: 'SPF 50+ sunscreen and UV-blocking sunglasses packed',
         blocking: 'UV radiation at 5,630 m is extreme. Snow blindness is a real risk.',
-        defaultStatus: 'pending',
+        defaultStatus: 'action-needed',
       },
     ],
   },
@@ -250,11 +250,17 @@ function loadStatus(): StatusMap {
     for (const [k, v] of Object.entries(parsed)) {
       if (
         typeof v === 'string' &&
-        (v === 'complete' || v === 'pending' || v === 'action-needed' || v === 'optional')
+        (v === 'complete' || v === 'action-needed')
       ) {
         // Strip any insurance keys that might have slipped in
         if (!k.startsWith('insurance')) {
           out[k] = v as ItemStatus;
+        }
+      } else if (typeof v === 'string' && (v === 'pending' || v === 'optional')) {
+        // v3 had 4 states; migrate the dropped two to action-needed so
+        // returning users don't lose their progress.
+        if (!k.startsWith('insurance')) {
+          out[k] = 'action-needed';
         }
       }
     }
@@ -283,39 +289,20 @@ function StatusIcon({ status }: { status: ItemStatus }) {
       </span>
     );
   }
-  if (status === 'pending') {
-    return (
-      <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-foreground bg-background">
-        <Clock size={9} className="text-sacred" />
-      </span>
-    );
-  }
-  if (status === 'action-needed') {
-    return (
-      <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-destructive bg-background">
-        <CircleAlert size={9} className="text-destructive" />
-      </span>
-    );
-  }
   return (
-    <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-muted-foreground/40 bg-background">
-      <CircleMinus size={9} className="text-muted-foreground" />
+    <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-destructive bg-background">
+      <CircleAlert size={9} className="text-destructive" />
     </span>
   );
 }
 
 function statusLabel(status: ItemStatus): string {
-  if (status === 'complete') return 'Complete';
-  if (status === 'pending') return 'Pending';
-  if (status === 'action-needed') return 'Action needed';
-  return 'Optional';
+  return status === 'complete' ? 'Complete' : 'Action needed';
 }
 
 const CYCLE: Record<ItemStatus, ItemStatus> = {
-  'action-needed': 'pending',
-  pending: 'complete',
+  'action-needed': 'complete',
   complete: 'action-needed',
-  optional: 'complete',
 };
 
 interface ItemRowProps {
@@ -338,7 +325,7 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
         aria-label={`${item.label}: ${statusLabel(status)}. Click to change.`}
       >
         <span className="mt-0.5">
-          <StatusIcon status={isOptionalCategory ? (isComplete ? 'complete' : 'optional') : status} />
+          <StatusIcon status={status} />
         </span>
         <span className="flex-1 min-w-0">
           <span
@@ -365,7 +352,7 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
                   : 'bg-sacred/10 text-sacred',
           ].join(' ')}
         >
-          {isOptionalCategory && !isComplete ? 'optional' : statusLabel(status).toLowerCase()}
+          {statusLabel(status).toLowerCase()}
         </span>
       </button>
 
@@ -417,18 +404,9 @@ function CategoryCard({ category, statusMap, onCycle }: CategoryCardProps) {
   const hasBlocking = categoryHasBlocking(category, statusMap);
   const allDone = pct === 100;
 
-  // Sort: action-needed first, then pending, then complete
-  const sorted = [...category.items].sort((a, b) => {
-    const sa = statusMap[a.id] ?? a.defaultStatus;
-    const sb = statusMap[b.id] ?? b.defaultStatus;
-    const order: Record<ItemStatus, number> = {
-      'action-needed': 0,
-      pending: 1,
-      complete: 2,
-      optional: 3,
-    };
-    return order[sa] - order[sb];
-  });
+  // No sort -- items stay in their declared order so a tap doesn't make
+  // the row jump to the bottom of the list. Adip's call.
+  const sorted = category.items;
 
   return (
     <div
@@ -543,7 +521,7 @@ export function PreparationDashboard() {
   function handleCycle(itemId: string) {
     setStatusMap((prev) => {
       // Find default status for item
-      let defaultStatus: ItemStatus = 'pending';
+      let defaultStatus: ItemStatus = 'action-needed';
       for (const cat of CATEGORIES) {
         const found = cat.items.find((i) => i.id === itemId);
         if (found) {
