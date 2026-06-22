@@ -32,7 +32,7 @@ export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
               onClick={() => onTab(t.id)}
               aria-pressed={active}
               className={
-                'flex items-center gap-1.5 border-b-2 px-3 py-3 font-mono text-sm uppercase tracking-wider transition-colors ' +
+                'flex items-center gap-2 border-b-2 px-4 py-4 font-mono text-sm uppercase tracking-wider transition-colors ' +
                 (active
                   ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground')

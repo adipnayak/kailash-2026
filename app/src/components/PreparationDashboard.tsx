@@ -316,7 +316,7 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
       <button
         type="button"
         onClick={onCycle}
-        className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        className="flex w-full items-start gap-4 px-4 py-4 text-left transition-colors hover:bg-background focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
         aria-label={`${item.label}: ${statusLabel(status)}. Click to change.`}
       >
         <span className="mt-0.5">
@@ -337,7 +337,7 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
         </span>
         <span
           className={[
-            'shrink-0 rounded-none px-1.5 py-0.5 font-mono text-xs',
+            'shrink-0 rounded-none px-2 py-0.5 font-mono text-xs',
             isBlocking
               ? 'bg-destructive/10 text-destructive'
               : isComplete
@@ -361,7 +361,7 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
             transition={{ duration: 0.18, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <div className="flex gap-2 px-4 pb-3 pl-11">
+            <div className="flex gap-2 px-4 pb-4 pl-12">
               <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-destructive" />
               <p className="text-xs leading-relaxed text-destructive">{item.blocking}</p>
             </div>
@@ -419,21 +419,21 @@ function CategoryCard({ category, statusMap, onCycle }: CategoryCardProps) {
         hasBlocking ? 'border-destructive/40' : allDone ? 'border-emerald/40' : 'border-border',
       ].join(' ')}
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-border">
         <div className="flex items-center gap-2">
           <h3 className="font-sans text-sm font-semibold text-foreground">{category.label}</h3>
           {category.optional && (
-            <span className="rounded-none border border-muted/30 px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+            <span className="rounded-none border border-muted/30 px-2 py-0.5 font-mono text-xs text-muted-foreground">
               optional
             </span>
           )}
           {hasBlocking && (
-            <span className="rounded-none bg-destructive/10 px-1.5 py-0.5 font-mono text-xs text-destructive">
+            <span className="rounded-none bg-destructive/10 px-2 py-0.5 font-mono text-xs text-destructive">
               action needed
             </span>
           )}
           {allDone && !hasBlocking && (
-            <span className="rounded-none bg-emerald/10 px-1.5 py-0.5 font-mono text-xs text-emerald">
+            <span className="rounded-none bg-emerald/10 px-2 py-0.5 font-mono text-xs text-emerald">
               complete
             </span>
           )}
@@ -560,7 +560,7 @@ export function PreparationDashboard() {
                   : 'Departure day'}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {blocking > 0 && (
                 <span className="rounded-none bg-destructive/10 px-2 py-1 font-mono text-xs text-destructive">
                   {blocking} action{blocking === 1 ? '' : 's'} needed
@@ -581,7 +581,7 @@ export function PreparationDashboard() {
           </div>
 
           {blocking > 0 && (
-            <p className="mt-3 text-xs text-destructive">
+            <p className="mt-4 text-xs text-destructive">
               Items marked "action needed" are blocking your preparation. Tap each item to update its status.
             </p>
           )}

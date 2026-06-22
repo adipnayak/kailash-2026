@@ -40,7 +40,7 @@ export function AliimamFooter({
     <footer className="py-16 border-t border-border">
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          <div className="col-span-2 md:col-span-1 space-y-3">
+          <div className="col-span-2 md:col-span-1 space-y-2">
             <span className="flex items-center gap-2 font-medium text-sm text-foreground">
               <Mountain className="size-4" />
               Kailash 2026
@@ -50,7 +50,7 @@ export function AliimamFooter({
             </p>
           </div>
 
-          <div className="space-y-3 text-sm">
+          <div className="space-y-2 text-sm">
             <span className="block font-medium text-foreground">Navigation</span>
             {NAV_LINKS.map((link) => (
               <a
@@ -63,7 +63,7 @@ export function AliimamFooter({
             ))}
           </div>
 
-          <div className="space-y-3 text-sm">
+          <div className="space-y-2 text-sm">
             <span className="block font-medium text-foreground">Journey</span>
             <span className="flex items-center gap-2 text-muted-foreground text-xs">
               <Globe className="size-3.5" />

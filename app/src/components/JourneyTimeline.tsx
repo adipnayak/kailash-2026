@@ -26,7 +26,7 @@ export function JourneyTimeline({ phase }: { phase: JourneyState }) {
               <li
                 key={d.day}
                 className={
-                  'shrink-0 flex items-center gap-1 rounded-none border px-3 py-2 font-mono text-xs ' +
+                  'shrink-0 flex items-center gap-1 rounded-none border px-4 py-2 font-mono text-xs ' +
                   (isToday
                     ? 'border-primary text-foreground bg-secondary'
                     : isDolmaLa

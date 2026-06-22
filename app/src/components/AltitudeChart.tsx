@@ -85,7 +85,7 @@ function SegmentedControl({
           type="button"
           onClick={() => onChange(m)}
           className={[
-            'px-4 py-1.5 transition-colors duration-150 cursor-pointer',
+            'px-4 py-2 transition-colors duration-150 cursor-pointer',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
             i > 0 ? 'border-l border-border' : '',
             mode === m
@@ -150,7 +150,7 @@ function makeTooltipContent(mode: AltMode) {
         : '0 m';
 
     return (
-      <div className="bg-card border border-border px-3 py-2 text-xs shadow-sm min-w-[160px]">
+      <div className="bg-card border border-border px-4 py-2 text-xs shadow-sm min-w-[160px]">
         <div className="font-sans font-medium text-foreground text-sm mb-1">{heading}</div>
         <div className="font-mono text-muted-foreground">{altLabel(alt)}</div>
         {dayNum > 0 && (
@@ -194,7 +194,7 @@ export function AltitudeChart() {
           wrapper has no internal padding so chart edges align with bento
           edges at the same viewport gutters. */}
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>
             <p className="mt-1 text-sm text-muted-foreground font-mono">

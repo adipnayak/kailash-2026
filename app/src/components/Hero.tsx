@@ -73,7 +73,7 @@ interface StatTileProps {
 
 function StatTile({ value, unit, dual, label, sublabel, icon }: StatTileProps) {
   return (
-    <div className="flex flex-col gap-1.5 h-full">
+    <div className="flex flex-col gap-2 h-full">
       <div className="text-muted-foreground mb-1">{icon}</div>
       <div className="font-sans text-3xl font-bold text-foreground leading-none">
         {value}
@@ -198,7 +198,7 @@ function BeforeBento({ state }: { state: JourneyState }) {
       {/* ------------------------------------------------------------------ */}
 
       {/* Outstanding prep card */}
-      <BentoGridItem colSpan={2} className="flex flex-col gap-3">
+      <BentoGridItem colSpan={2} className="flex flex-col gap-4">
         <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
           {total - completed} of {total} things left
         </p>
@@ -321,12 +321,12 @@ function DuringBento({ state }: { state: JourneyState }) {
   return (
     <BentoGrid cols={{ base: 2, md: 3, lg: 4 }}>
       {/* Main card: day + location */}
-      <BentoGridItem colSpan={2} rowSpan={2} className="flex flex-col gap-3 justify-between">
+      <BentoGridItem colSpan={2} rowSpan={2} className="flex flex-col gap-4 justify-between">
         <div>
           <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-1">
             Kailash Mansarovar Yatra 2026
           </p>
-          <div className="flex items-baseline gap-3">
+          <div className="flex items-baseline gap-4">
             <span className="font-sans text-7xl font-medium text-foreground leading-none tabular-nums">
               {state.tripDayIndex}
             </span>
@@ -357,7 +357,7 @@ function DuringBento({ state }: { state: JourneyState }) {
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
           <span className="font-mono text-xs text-muted-foreground">
             <span className="text-foreground font-semibold">{daysRemaining}</span> days remaining
           </span>
@@ -372,7 +372,7 @@ function DuringBento({ state }: { state: JourneyState }) {
       {/* Tomorrow card */}
       <BentoGridItem>
         {tomorrow ? (
-          <div className="flex flex-col gap-1.5 h-full">
+          <div className="flex flex-col gap-2 h-full">
             <div className="flex items-center justify-between">
               <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
                 Tomorrow
@@ -459,7 +459,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
   return (
     <BentoGrid cols={{ base: 2, md: 3, lg: 4 }}>
       {/* Completion hero card */}
-      <BentoGridItem colSpan={2} rowSpan={2} className="flex flex-col gap-3 justify-between">
+      <BentoGridItem colSpan={2} rowSpan={2} className="flex flex-col gap-4 justify-between">
         <div>
           <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-2">
             Kailash Mansarovar Yatra 2026
@@ -473,7 +473,7 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded-none px-3 py-2 bg-background">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground border border-border rounded-none px-4 py-2 bg-background">
           {(['KTM', 'LHASA', 'KAILASH', 'KTM'] as const).map((stop, i, arr) => (
             <span key={i} className="flex items-center gap-x-1">
               <span className="text-foreground font-medium">{stop}</span>

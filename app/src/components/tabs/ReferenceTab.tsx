@@ -45,7 +45,7 @@ function CalloutBlock({ block }: { block: Extract<RefBlock, { type: "callout" }>
         : "text-muted-foreground";
 
   return (
-    <div className={`my-4 rounded-none border-l-4 ${borderColor} bg-card px-4 py-3`}>
+    <div className={`my-4 rounded-none border-l-4 ${borderColor} bg-card px-4 py-4`}>
       {block.title && (
         <p className={`mb-1 text-xs font-semibold uppercase tracking-wide ${labelColor}`}>
           {block.title}
@@ -59,7 +59,7 @@ function CalloutBlock({ block }: { block: Extract<RefBlock, { type: "callout" }>
 function BlockRenderer({ block }: { block: RefBlock }) {
   switch (block.type) {
     case "prose":
-      return <p className="my-3 text-sm text-foreground leading-relaxed">{block.body}</p>;
+      return <p className="my-4 text-sm text-foreground leading-relaxed">{block.body}</p>;
 
     case "heading":
       return (
@@ -77,7 +77,7 @@ function BlockRenderer({ block }: { block: RefBlock }) {
                 {block.headers.map((h, i) => (
                   <th
                     key={i}
-                    className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap"
+                    className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -93,7 +93,7 @@ function BlockRenderer({ block }: { block: RefBlock }) {
                   {row.map((cell, ci) => (
                     <td
                       key={ci}
-                      className="px-3 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed"
+                      className="px-4 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed"
                     >
                       {cell}
                     </td>
@@ -107,7 +107,7 @@ function BlockRenderer({ block }: { block: RefBlock }) {
 
     case "ordered-list":
       return (
-        <ol className="my-3 ml-5 list-decimal space-y-1">
+        <ol className="my-4 ml-4 list-decimal space-y-1">
           {block.items.map((item, i) => (
             <li key={i} className="text-sm text-foreground leading-relaxed">
               {item}
@@ -118,7 +118,7 @@ function BlockRenderer({ block }: { block: RefBlock }) {
 
     case "unordered-list":
       return (
-        <ul className="my-3 ml-5 list-disc space-y-1">
+        <ul className="my-4 ml-4 list-disc space-y-1">
           {block.items.map((item, i) => (
             <li key={i} className="text-sm text-foreground leading-relaxed">
               {item}
@@ -144,7 +144,7 @@ function ArticleSection({ article }: { article: RefArticle }) {
       className="border-b border-border bg-background px-6 py-8 scroll-mt-16"
     >
       <div className="mx-auto max-w-6xl">
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-4 mb-4">
           <span className="text-muted-foreground">{icon}</span>
           <h2 className="font-sans text-xl font-medium text-foreground">{article.title}</h2>
         </div>
@@ -170,14 +170,14 @@ export function ReferenceTab() {
             Seven reference articles covering every operational and safety topic for the yatra.
             Jump directly to any section below.
           </p>
-          <nav className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
+          <nav className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
             {REFERENCE_ARTICLES.map((article) => {
               const icon = ICON_MAP[article.icon] ?? <FileText size={14} />;
               return (
                 <a
                   key={article.id}
                   href={`#${article.id}`}
-                  className="inline-flex items-center gap-2 rounded-none border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-card transition-colors"
+                  className="inline-flex items-center gap-2 rounded-none border border-border bg-background px-4 py-2 text-xs font-medium text-foreground hover:bg-card transition-colors"
                 >
                   <span className="text-muted-foreground">{icon}</span>
                   {article.title}

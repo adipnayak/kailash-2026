@@ -62,7 +62,7 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
           </h2>
 
           {/* Sticky day-nav. top-12 sits under the main nav (47 px). */}
-          <div className="sticky top-12 z-40 -mx-6 mb-6 border-b border-border bg-background/95 px-6 py-3 backdrop-blur">
+          <div className="sticky top-12 z-40 -mx-6 mb-6 border-b border-border bg-background/95 px-6 py-4 backdrop-blur">
             <ol className="flex gap-2 overflow-x-auto">
               {DAYS.map((d) => {
                 const isToday = phase.tripDayIndex === d.day;
@@ -76,7 +76,7 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
                       aria-label={'Jump to Day ' + d.day}
                       aria-pressed={isOpen}
                       className={
-                        'flex items-center gap-1 rounded-none border px-3 py-1.5 font-mono text-xs cursor-pointer transition-colors ' +
+                        'flex items-center gap-1 rounded-none border px-4 py-2 font-mono text-xs cursor-pointer transition-colors ' +
                         (isOpen
                           ? 'border-primary bg-secondary text-foreground'
                           : isToday

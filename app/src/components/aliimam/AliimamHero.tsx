@@ -98,7 +98,7 @@ export function AliimamHero({
           <p className="w-full max-w-lg text-sm font-light md:text-xl text-muted-foreground">
             {subtitle}
           </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
             <a href={primaryHref}>
               <button className="h-12 cursor-pointer px-8 md:h-14 md:px-10 bg-primary text-primary-foreground font-medium text-sm rounded-none hover:opacity-80 transition-opacity">
                 {primaryLabel}

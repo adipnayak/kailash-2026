@@ -533,7 +533,7 @@ export function WorldMap({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-4 left-4 bg-background/90 text-foreground px-3 py-2 text-xs font-medium backdrop-blur-sm sm:hidden border border-border"
+            className="absolute bottom-4 left-4 bg-background/90 text-foreground px-4 py-2 text-xs font-medium backdrop-blur-sm sm:hidden border border-border"
             style={{ fontFamily: "'Geist Mono', ui-monospace, monospace" }}
           >
             {hoveredLocation}
