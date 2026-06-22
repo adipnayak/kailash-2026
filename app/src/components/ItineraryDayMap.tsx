@@ -31,6 +31,9 @@ export interface MapPoint {
   label?: string;
   /** Mode used to reach the NEXT point. Last point's value is ignored. */
   modeNext?: TransportMode;
+  /** Intermediate route waypoints render as small dots without tooltips
+      and don't break the leg labels in the day card. */
+  intermediate?: boolean;
 }
 
 interface ItineraryDayMapProps {
@@ -152,16 +155,17 @@ export function ItineraryDayMap({
       }
     }
 
-    // Dots
+    // Dots. Intermediate waypoints render as small ring-less marks so the
+    // named stops still read as the primary landmarks.
     points.forEach((p) => {
       const marker = L.circleMarker([p.lat, p.lng], {
-        radius: 5,
+        radius: p.intermediate ? 2 : 5,
         fillColor: accent,
         color: bgColor,
-        weight: 2,
-        fillOpacity: 1,
+        weight: p.intermediate ? 0 : 2,
+        fillOpacity: p.intermediate ? 0.85 : 1,
       }).addTo(map);
-      if (p.label) marker.bindTooltip(p.label, { direction: 'top', offset: [0, -6] });
+      if (p.label && !p.intermediate) marker.bindTooltip(p.label, { direction: 'top', offset: [0, -6] });
     });
 
     if (points.length >= 2) {
@@ -172,7 +176,7 @@ export function ItineraryDayMap({
           [Math.min(...lats), Math.min(...lngs)],
           [Math.max(...lats), Math.max(...lngs)],
         ],
-        { padding: [16, 16], maxZoom: 14 },
+        { padding: [16, 16], maxZoom: 15 },
       );
     } else {
       map.setView([start.lat, start.lng], 9);

@@ -20,6 +20,13 @@ export interface DayStop {
   label: string;
   /** Mode used to reach the NEXT stop. Ignored on the final stop. */
   modeNext?: TransportMode;
+  /**
+   * If true, this point is a route waypoint that bends the polyline through
+   * the actual trail/road geometry but isn't a named stop in the day card's
+   * leg list. Used for parikrama trek days where the trail follows valleys
+   * rather than going point-to-point.
+   */
+  intermediate?: boolean;
 }
 
 // ---- Place coordinates ---------------------------------------------------
@@ -46,8 +53,26 @@ const CHIU_GOMPA: Omit<DayStop, 'modeNext'> = { lat: 30.670, lng: 81.450, label:
 // Darchen / Tarboche (Yamadwar) at the south, Dirapuk Gompa on the
 // north face, Dolma La pass between Dirapuk and Zuthulphuk on the east,
 // Zuthulphuk on the south-east leg back to Darchen.
-const YAMADWAR: Omit<DayStop, 'modeNext'> = { lat: 31.013, lng: 81.318, label: 'Yamadwar (Darchen)' };
+// Yamadwar / Tarboche is the parikrama gate ~3.5 km N of Darchen town
+// (Darchen is at 31.013, 81.318; the gate sits up the Lha Chu valley).
+const YAMADWAR: Omit<DayStop, 'modeNext'> = { lat: 31.038, lng: 81.300, label: 'Yamadwar (Tarboche)' };
 const DIRAPUK: Omit<DayStop, 'modeNext'> = { lat: 31.117, lng: 81.290, label: 'Dirapuk camp' };
+
+// ---- Parikrama trail waypoints ------------------------------------------
+// Intermediate points that bend the trek polyline through the actual
+// valley/ridge geography. Sources: OSM Tibet hiking data + standard
+// kora landmark sequence (Tarboche -> Lha Chu valley -> Dirapuk; Dirapuk
+// -> Shiva Tsal -> Dolma La -> Gauri Kund -> Lham Chukir -> Zuthulphuk;
+// Zuthulphuk -> Zhong Chu valley -> Darchen).
+const TARBOCHE_FLAGPOLE: DayStop = { lat: 31.045, lng: 81.298, label: 'Tarboche flagpole', intermediate: true };
+const LHA_CHU_BEND: DayStop  = { lat: 31.075, lng: 81.292, label: 'Lha Chu river bend', intermediate: true };
+const N_FACE_VIEW: DayStop   = { lat: 31.095, lng: 81.291, label: 'North-face viewpoint', intermediate: true };
+const SHIVA_TSAL: DayStop    = { lat: 31.112, lng: 81.315, label: 'Shiva Tsal', intermediate: true };
+const FINAL_ASCENT: DayStop  = { lat: 31.110, lng: 81.328, label: 'Final ascent', intermediate: true };
+const GAURI_KUND: DayStop    = { lat: 31.100, lng: 81.345, label: 'Gauri Kund', intermediate: true };
+const LHAM_CHUKIR: DayStop   = { lat: 31.075, lng: 81.365, label: 'Lham Chukir valley', intermediate: true };
+const ZHONG_CHU_NARROWS: DayStop = { lat: 31.020, lng: 81.358, label: 'Zhong Chu narrows', intermediate: true };
+const VALLEY_MOUTH: DayStop  = { lat: 31.016, lng: 81.338, label: 'Zhong Chu valley mouth', intermediate: true };
 const DOLMA_LA: Omit<DayStop, 'modeNext'> = { lat: 31.108, lng: 81.336, label: 'Dolma La pass' };
 const ZUTHULPHUK: Omit<DayStop, 'modeNext'> = { lat: 31.027, lng: 81.378, label: 'Zuthulphuk camp' };
 const DARCHEN: Omit<DayStop, 'modeNext'> = { lat: 31.013, lng: 81.318, label: 'Darchen' };
@@ -103,22 +128,37 @@ const DAY_STOPS_TABLE: Record<number, DayStop[]> = {
     withMode(MANSAROVAR_HOTEL),
   ],
 
-  // Day 7 · Mansarovar -> Darchen by road, then Yamadwar to Dirapuk by foot.
+  // Day 7 · Mansarovar -> Darchen by road, Yamadwar gate then trek up the
+  // Lha Chu valley to Dirapuk camp on the north face. ~18 km of trek.
   7: [
     withMode(MANSAROVAR_HOTEL, 'drive'),
     withMode(YAMADWAR, 'trek'),
+    { ...TARBOCHE_FLAGPOLE, modeNext: 'trek' },
+    { ...LHA_CHU_BEND, modeNext: 'trek' },
+    { ...N_FACE_VIEW, modeNext: 'trek' },
     withMode(DIRAPUK),
   ],
 
-  // Day 8 · Dirapuk -> Dolma La pass -> Zuthulphuk. The crossing day.
+  // Day 8 · Dirapuk -> Dolma La pass (5,630 m) -> Zuthulphuk. ~22 km, the
+  // crossing day. Steep climb to Shiva Tsal then the pass, descend past
+  // Gauri Kund into the Lham Chukir valley.
   8: [
     withMode(DIRAPUK, 'trek'),
+    { ...SHIVA_TSAL, modeNext: 'trek' },
+    { ...FINAL_ASCENT, modeNext: 'trek' },
     withMode(DOLMA_LA, 'trek'),
+    { ...GAURI_KUND, modeNext: 'trek' },
+    { ...LHAM_CHUKIR, modeNext: 'trek' },
     withMode(ZUTHULPHUK),
   ],
 
-  // Day 9 · Zuthulphuk -> Darchen, parikrama closes.
-  9: [withMode(ZUTHULPHUK, 'trek'), withMode(DARCHEN)],
+  // Day 9 · Zuthulphuk -> Darchen along the Zhong Chu valley. ~14 km out.
+  9: [
+    withMode(ZUTHULPHUK, 'trek'),
+    { ...ZHONG_CHU_NARROWS, modeNext: 'trek' },
+    { ...VALLEY_MOUTH, modeNext: 'trek' },
+    withMode(DARCHEN),
+  ],
 
   // Day 10 · Darchen -> Ali by road -> Lhasa by flight.
   10: [
