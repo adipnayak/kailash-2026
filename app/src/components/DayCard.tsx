@@ -307,21 +307,37 @@ function CompressedView({
               height={160}
             />
           </Suspense>
-          {/* Per-leg distances + transport mode when intra-day stops are defined. */}
+          {/* Per-leg distances + transport mode for NAMED stops only.
+              Intermediate route waypoints (parikrama trail bends) are kept
+              out of the leg list so the card stays readable. Distances are
+              accumulated through the intermediate points so the km total
+              matches the actual path on the map. */}
           {(() => {
             const stops = getDayStops(day.day);
             if (!stops || stops.length < 2) return null;
+            type Leg = { from: typeof stops[number]; to: typeof stops[number]; km: number };
+            const legs: Leg[] = [];
+            let segStart = stops[0];
+            let acc = 0;
+            for (let i = 1; i < stops.length; i++) {
+              acc += haversineKm(stops[i - 1], stops[i]);
+              if (!stops[i].intermediate) {
+                legs.push({ from: segStart, to: stops[i], km: acc });
+                segStart = stops[i];
+                acc = 0;
+              }
+            }
             return (
               <ul className="mt-2 flex flex-wrap gap-x-2 gap-y-0.5 font-mono text-[10px] text-muted-foreground">
-                {stops.slice(1).map((s, i) => (
+                {legs.map((leg, i) => (
                   <li key={i}>
-                    <span className="text-foreground">{stops[i].label}</span>
+                    <span className="text-foreground">{leg.from.label}</span>
                     {' → '}
-                    <span className="text-foreground">{s.label}</span>
+                    <span className="text-foreground">{leg.to.label}</span>
                     {' · '}
-                    {fmtKm(haversineKm(stops[i], s))}
+                    {fmtKm(leg.km)}
                     {' · '}
-                    {modeLabel(stops[i].modeNext)}
+                    {modeLabel(leg.from.modeNext)}
                   </li>
                 ))}
               </ul>

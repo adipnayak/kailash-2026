@@ -1,31 +1,71 @@
 /**
- * MoonPhase. Tiny SVG icon of the moon at a given phase (0..1).
- * Renders the full disc + an inset shadow ellipse that scales by phase.
- * No emoji per design rule.
+ * MoonPhase. Tiny SVG icon snapped to one of 8 standard phases so the
+ * silhouette stays distinct at 10-14 px. The previous clip-path approach
+ * collapsed the terminator ellipse to a smudge at small sizes.
+ *
+ * Each preset draws the lit portion as an explicit two-arc path:
+ *   - Crescent: outer semicircle + inner semi-ellipse (opposite sweep) -> sliver
+ *   - Half:     outer semicircle + straight line back -> exact half disc
+ *   - Gibbous:  outer semicircle + inner semi-ellipse (same sweep) -> wide
+ *
+ * The lit side is the RIGHT side for waxing phases (1..3) and the LEFT
+ * side for waning phases (5..7). New (0) is an outlined empty disc; Full
+ * (4) is a solid disc.
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 
 interface MoonPhaseProps {
-  /** 0..1 -- 0=new, 0.25=first quarter, 0.5=full, 0.75=last quarter */
+  /** 0..1 fraction of the synodic cycle (0=new, 0.25=first quarter,
+      0.5=full, 0.75=last quarter). */
   phase: number;
   size?: number;
 }
 
+const FG = 'var(--foreground)';
+const STROKE_W = 1;
+
 export function MoonPhase({ phase, size = 14 }: MoonPhaseProps) {
-  // Map 0..1 phase -> illumination geometry. New (0) = fully dark, full (0.5) =
-  // fully lit. Waxing (0..0.5) lights the right; waning (0.5..1) lights the left.
+  // Snap continuous phase to 8 discrete buckets so the rendered shape
+  // matches the verbal label ("Last Quarter" etc).
+  const idx = ((Math.round(phase * 8) % 8) + 8) % 8;
+
   const r = size / 2;
-  const cx = r;
-  const cy = r;
-  const waxing = phase < 0.5;
-  // 0 at new and full (boundary), 1 at the quarter
-  const distance = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
-  // Width of the lit ellipse from centre -- 1 at quarter, 0 at new/full
-  const elliptCx = waxing ? cx - r * (1 - distance) : cx + r * (1 - distance);
-  const elliptRx = r * Math.abs(1 - 2 * distance);
-  // Lit half: right when waxing, left when waning. Filled rect masks half.
-  const litSide = waxing ? cx : 0;
+  const innerR = r - STROKE_W / 2;
+  const top = STROKE_W / 2;
+  const bottom = size - STROKE_W / 2;
+
+  // Width of the inner ellipse half for crescents (0.45) vs gibbous (0.45).
+  const lensRx = innerR * 0.45;
+
+  let litPath: string | null = null;
+  let fullDisc = false;
+
+  switch (idx) {
+    case 0: // new moon -- empty outlined disc
+      break;
+    case 1: // waxing crescent (right-lit, narrow)
+      litPath = `M ${r} ${top} A ${innerR} ${innerR} 0 0 1 ${r} ${bottom} A ${lensRx} ${innerR} 0 0 0 ${r} ${top} Z`;
+      break;
+    case 2: // first quarter -- exact right half
+      litPath = `M ${r} ${top} A ${innerR} ${innerR} 0 0 1 ${r} ${bottom} L ${r} ${top} Z`;
+      break;
+    case 3: // waxing gibbous (right-lit, wide)
+      litPath = `M ${r} ${top} A ${innerR} ${innerR} 0 0 1 ${r} ${bottom} A ${lensRx} ${innerR} 0 0 1 ${r} ${top} Z`;
+      break;
+    case 4: // full moon -- solid disc
+      fullDisc = true;
+      break;
+    case 5: // waning gibbous (left-lit, wide)
+      litPath = `M ${r} ${top} A ${innerR} ${innerR} 0 0 0 ${r} ${bottom} A ${lensRx} ${innerR} 0 0 0 ${r} ${top} Z`;
+      break;
+    case 6: // last quarter -- exact left half
+      litPath = `M ${r} ${top} A ${innerR} ${innerR} 0 0 0 ${r} ${bottom} L ${r} ${top} Z`;
+      break;
+    case 7: // waning crescent (left-lit, narrow)
+      litPath = `M ${r} ${top} A ${innerR} ${innerR} 0 0 0 ${r} ${bottom} A ${lensRx} ${innerR} 0 0 1 ${r} ${top} Z`;
+      break;
+  }
 
   return (
     <svg
@@ -35,33 +75,15 @@ export function MoonPhase({ phase, size = 14 }: MoonPhaseProps) {
       aria-hidden="true"
       style={{ display: 'inline-block', verticalAlign: 'middle' }}
     >
-      {/* Dark disc (background, the unlit moon) */}
-      <circle cx={cx} cy={cy} r={r} fill="var(--muted)" />
-      {/* Lit half */}
-      <defs>
-        <clipPath id={`moon-clip-${phase.toFixed(3)}`}>
-          <circle cx={cx} cy={cy} r={r} />
-        </clipPath>
-      </defs>
-      <g clipPath={`url(#moon-clip-${phase.toFixed(3)})`}>
-        {/* Lit semicircle (the always-lit half of the moon for this waxing/waning state) */}
-        <rect x={litSide} y={0} width={r} height={size} fill="var(--foreground)" />
-        {/* Terminator ellipse: subtracts (dark) from lit side when waxing < quarter,
-            adds (lit) to dark side when waxing > quarter, vice versa for waning. */}
-        <ellipse
-          cx={elliptCx}
-          cy={cy}
-          rx={elliptRx}
-          ry={r}
-          fill={
-            (waxing && phase < 0.25) || (!waxing && phase > 0.75)
-              ? 'var(--muted)'
-              : 'var(--foreground)'
-          }
-        />
-      </g>
-      {/* Outline */}
-      <circle cx={cx} cy={cy} r={r - 0.5} fill="none" stroke="var(--border)" strokeWidth={0.5} />
+      <circle
+        cx={r}
+        cy={r}
+        r={innerR}
+        fill={fullDisc ? FG : 'none'}
+        stroke={FG}
+        strokeWidth={STROKE_W}
+      />
+      {litPath && <path d={litPath} fill={FG} />}
     </svg>
   );
 }
