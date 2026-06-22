@@ -25,6 +25,7 @@ import { loadPrepStatus, isCategoryComplete, overallPrepProgress } from '../lib/
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
 import { mToFt } from '../lib/conversions';
 import { BentoGrid, BentoGridItem } from './aliimam/Bento';
+import { CityTracker } from './CityTracker';
 
 gsap.registerPlugin(useGSAP);
 
@@ -239,6 +240,11 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
       </BentoGridItem>
 
       {/* ------------------------------------------------------------------ */}
+      {/* City tracker: 2 cols x 2 rows. Between countdown and prep card.     */}
+      {/* ------------------------------------------------------------------ */}
+      <CityTracker onTab={onTab} />
+
+      {/* ------------------------------------------------------------------ */}
       {/* Row 3: Outstanding prep (2 cols) + Stat 3 + Stat 4                  */}
       {/* ------------------------------------------------------------------ */}
 
@@ -382,7 +388,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
 // ---------------------------------------------------------------------------
 // DURING phase: bento shell with live-trip content
 // ---------------------------------------------------------------------------
-function DuringBento({ state }: { state: JourneyState }) {
+function DuringBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) => void }) {
   const today = state.todayData;
   const tomorrow = state.tomorrowData;
   const daysRemaining = 13 - state.tripDayIndex;
@@ -437,6 +443,9 @@ function DuringBento({ state }: { state: JourneyState }) {
           </span>
         </div>
       </BentoGridItem>
+
+      {/* City tracker */}
+      <CityTracker onTab={onTab} />
 
       {/* Tomorrow card */}
       <BentoGridItem>
@@ -516,7 +525,7 @@ function DuringBento({ state }: { state: JourneyState }) {
 // ---------------------------------------------------------------------------
 // AFTER phase: bento shell with completion content
 // ---------------------------------------------------------------------------
-function AfterBento({ state: _state }: { state: JourneyState }) {
+function AfterBento({ state: _state, onTab }: { state: JourneyState; onTab: (t: Tab) => void }) {
   const returnDt = new Date('2026-07-19T00:00:00');
   const nowMid = new Date();
   nowMid.setHours(0, 0, 0, 0);
@@ -556,6 +565,9 @@ function AfterBento({ state: _state }: { state: JourneyState }) {
           13 days. 5,630m peak. Parikrama complete.
         </p>
       </BentoGridItem>
+
+      {/* City tracker */}
+      <CityTracker onTab={onTab} />
 
       {/* Final stats */}
       <BentoGridItem>
@@ -653,7 +665,7 @@ export function Hero({ phase, onTab }: { phase: JourneyState; onTab: (t: Tab) =>
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
             >
-              <DuringBento state={phase} />
+              <DuringBento state={phase} onTab={onTab} />
             </motion.div>
           )}
 
@@ -665,7 +677,7 @@ export function Hero({ phase, onTab }: { phase: JourneyState; onTab: (t: Tab) =>
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
             >
-              <AfterBento state={phase} />
+              <AfterBento state={phase} onTab={onTab} />
             </motion.div>
           )}
         </AnimatePresence>
