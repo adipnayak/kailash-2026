@@ -639,26 +639,29 @@ function VisualTimeline({ day }: { day: TripDay }) {
                 )}
               </div>
 
-              {/* Event content */}
+              {/* Event content -- vertical stack so every row reads the
+                  same: icon on top (aligned with the node dot to its
+                  left), event text below, duration below that. Earlier
+                  inline 'flex items-center flex-wrap' was inconsistent
+                  -- icon sat beside the text on short events, but
+                  wrapped to a solo first row on long events. */}
               <div
                 className={cn(
-                  'flex-1 pt-0',
+                  'flex-1 flex flex-col items-start gap-1 pt-0 leading-none',
                   isHighlight ? 'text-destructive' : 'text-foreground',
                 )}
               >
-                <div className="flex items-center gap-2 flex-wrap">
-                  <TimelineIcon event={ev.event} />
-                  <span
-                    className={cn(
-                      'text-xs leading-snug',
-                      isHighlight ? 'font-semibold text-destructive' : 'text-foreground',
-                    )}
-                  >
-                    {ev.event}
-                  </span>
-                </div>
+                <TimelineIcon event={ev.event} />
+                <span
+                  className={cn(
+                    'text-xs leading-snug',
+                    isHighlight ? 'font-semibold text-destructive' : 'text-foreground',
+                  )}
+                >
+                  {ev.event}
+                </span>
                 {!isLast && ev.durationMin > 0 && (
-                  <p className="font-mono text-[10px] text-muted-foreground mt-0.5">
+                  <p className="font-mono text-[10px] text-muted-foreground">
                     {ev.durationMin >= 60
                       ? Math.round((ev.durationMin / 60) * 10) / 10 + 'h'
                       : ev.durationMin + 'min'}
