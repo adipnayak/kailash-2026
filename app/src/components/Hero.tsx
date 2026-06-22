@@ -247,7 +247,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
         ariaLabel={`Open Prepare tab. ${total - completed} of ${total} things left.`}
         style={{
           backgroundImage:
-            'repeating-linear-gradient(45deg, transparent 0, transparent 8px, color-mix(in oklch, var(--muted-foreground) 10%, transparent) 8px, color-mix(in oklch, var(--muted-foreground) 10%, transparent) 9px)',
+            'repeating-linear-gradient(45deg, transparent 0, transparent 4px, color-mix(in oklch, var(--muted-foreground) 8%, transparent) 4px, color-mix(in oklch, var(--muted-foreground) 8%, transparent) 5px)',
         }}
       >
         <div className="flex items-baseline justify-between">
