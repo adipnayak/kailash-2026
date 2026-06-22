@@ -7,6 +7,7 @@
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
+import { useState } from 'react';
 import { Mountain, LayoutGrid, CalendarDays, ListChecks, BookOpen } from '@aliimam/icons';
 import type { Tab } from '../hooks/useJourneyState';
 
@@ -22,6 +23,10 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
 ];
 
 export function Footer({ onTab }: FooterProps) {
+  // Show only the first story paragraph by default; reveal the rest
+  // behind a See more toggle so the footer stays compact on first read.
+  const [storyExpanded, setStoryExpanded] = useState(false);
+
   function handleTab(t: Tab) {
     onTab(t);
     // Take the user back to the top so they actually see the section they
@@ -65,12 +70,24 @@ export function Footer({ onTab }: FooterProps) {
           <p>
             Mount Kailash, at the western edge of the Tibetan plateau, is one of the few mountains in the world considered sacred across four religions. In Hinduism it is the abode of Lord Shiva. In Buddhism it is the dwelling of Demchok, embodiment of supreme bliss. In Jainism it is where Rishabhadeva attained liberation. In Bon it is the seat of the spiritual hierarchy of the cosmos.
           </p>
-          <p>
-            Lake Mansarovar, at its base, is believed to be the lake of the mind itself. The Parikrama, the 52 km circumambulation around Kailash, is undertaken once in a lifetime by many pilgrims and is said to wash away the sins of a lifetime.
-          </p>
-          <p>
-            This yatra follows that pilgrimage. The 13 days that follow are the practical shape of an experience much older than any of us.
-          </p>
+          {storyExpanded && (
+            <>
+              <p>
+                Lake Mansarovar, at its base, is believed to be the lake of the mind itself. The Parikrama, the 52 km circumambulation around Kailash, is undertaken once in a lifetime by many pilgrims and is said to wash away the sins of a lifetime.
+              </p>
+              <p>
+                This yatra follows that pilgrimage. The 13 days that follow are the practical shape of an experience much older than any of us.
+              </p>
+            </>
+          )}
+          <button
+            type="button"
+            onClick={() => setStoryExpanded((v) => !v)}
+            aria-expanded={storyExpanded}
+            className="font-mono text-xs uppercase tracking-widest text-foreground hover:text-sacred focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {storyExpanded ? 'See less' : 'See more'}
+          </button>
         </div>
       </div>
     </footer>
