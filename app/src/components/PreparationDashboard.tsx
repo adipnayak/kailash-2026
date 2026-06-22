@@ -17,10 +17,22 @@
  * Anti-AI rules: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useJourneyState } from '../hooks/useJourneyState';
+import { Icon } from './Icon';
 import gsap from 'gsap';
+
+// Per-category icon for the sticky chip strip. Names are Material
+// Symbols Outlined (see fonts.google.com/icons).
+const CATEGORY_ICON: Record<string, string> = {
+  passport: 'badge',
+  flights: 'flight',
+  medical: 'medical_services',
+  connectivity: 'wifi',
+  packing: 'hiking',
+  carry: 'luggage',
+};
 
 /* ------------------------------------------------------------------ */
 /* Types + data                                                         */
@@ -261,6 +273,55 @@ export function PreparationDashboard() {
   const journey = useJourneyState();
   const [statusMap, setStatusMap] = useState<StatusMap>({});
   const headerRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLOListElement>(null);
+
+  // Scrollspy: active = the LAST category whose top has crossed below
+  // the sticky-nav threshold (~130 px). Same pattern as ReferenceTab
+  // post PR #175 -- works for sections of any height.
+  const [activeCategory, setActiveCategory] = useState<string | null>(CATEGORIES[0]?.id ?? null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    // Threshold sits below the sticky-nav bottom (~110 px) plus the
+    // scroll-mt-32 (128 px) used on each category section, with some
+    // buffer so small upscrolls don't push the active chip back to the
+    // previous category.
+    const THRESHOLD = 200;
+    const onScroll = () => {
+      let current = CATEGORIES[0]?.id ?? null;
+      for (const c of CATEGORIES) {
+        const el = document.getElementById(`category-${c.id}`);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= THRESHOLD) {
+          current = c.id;
+        }
+      }
+      if (current) setActiveCategory(current);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Auto-scroll active chip into view in the horizontal strip.
+  useEffect(() => {
+    if (!activeCategory || !navRef.current) return;
+    const chip = navRef.current.querySelector<HTMLElement>(
+      `[data-category="${activeCategory}"]`,
+    );
+    if (chip) {
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [activeCategory]);
+
+  const jumpToCategory = useCallback((id: string) => {
+    // Set active immediately so the chip animates on tap; the scrollspy
+    // effect above will keep it in sync once the smooth scroll settles.
+    setActiveCategory(id);
+    const el = document.getElementById(`category-${id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   // Load from localStorage on mount. Migrate/purge old keys.
   useEffect(() => {
@@ -364,11 +425,49 @@ export function PreparationDashboard() {
           )}
         </div>
 
-        {/* Category cards */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+        {/* Sticky category nav -- chip strip mirroring ItineraryTab DayNav
+            and ReferenceTab. Auto-highlights the category whose top has
+            crossed below the sticky-nav threshold. */}
+        <div className="sticky top-12 z-40 -mx-6 mt-6 border-y border-border bg-background px-6 py-4">
+          <ol ref={navRef} className="flex gap-2 overflow-x-auto">
+            {CATEGORIES.map((cat) => {
+              const isActive = activeCategory === cat.id;
+              return (
+                <li key={cat.id} className="shrink-0">
+                  <button
+                    type="button"
+                    data-category={cat.id}
+                    onClick={() => jumpToCategory(cat.id)}
+                    aria-label={'Jump to ' + cat.label}
+                    aria-current={isActive ? 'true' : undefined}
+                    className={
+                      'flex items-center gap-2 rounded-none border px-4 py-2 font-mono text-xs cursor-pointer transition-colors ' +
+                      (isActive
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-card text-muted-foreground hover:text-foreground')
+                    }
+                    title={cat.label}
+                  >
+                    <span className={isActive ? 'text-primary-foreground' : 'text-muted-foreground'}>
+                      <Icon name={CATEGORY_ICON[cat.id] ?? 'check_box'} size={14} />
+                    </span>
+                    <span>{cat.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        {/* Category cards stacked vertically (one per row). Side-by-side
+            md:grid-cols-2 broke the sticky-nav scrollspy because two
+            categories shared the same top y-coord on wide screens. */}
+        <div className="mt-6 grid gap-4 grid-cols-1">
           {CATEGORIES.map((cat, i) => (
             <motion.div
               key={cat.id}
+              id={`category-${cat.id}`}
+              className="scroll-mt-32"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: i * 0.06, ease: 'easeOut' }}
