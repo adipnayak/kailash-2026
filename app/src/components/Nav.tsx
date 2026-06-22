@@ -1,19 +1,20 @@
 /**
  * Nav: 4-tab strip (Overview, Itinerary, Prepare, Reference).
  * Persistence via useTabPersist (localStorage key kailash_tab).
- * aliimam-real: @aliimam/icons used left of each tab label.
+ * Icons via Material Symbols Outlined.
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
+
+import { Icon } from './Icon';
 import type { Tab } from '../hooks/useJourneyState';
-import { LayoutGrid, CalendarDays, ListChecks, BookOpen } from '@aliimam/icons';
 import { ThemeToggle } from './ThemeToggle';
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: 'overview',  label: 'Overview',   icon: <LayoutGrid  size={14} /> },
-  { id: 'itinerary', label: 'Itinerary',  icon: <CalendarDays size={14} /> },
-  { id: 'prepare',   label: 'Prepare',    icon: <ListChecks  size={14} /> },
-  { id: 'reference', label: 'Reference',  icon: <BookOpen    size={14} /> },
+  { id: 'overview',  label: 'Overview',   icon: <Icon name="dashboard"  size={14} /> },
+  { id: 'itinerary', label: 'Itinerary',  icon: <Icon name="calendar_month" size={14} /> },
+  { id: 'prepare',   label: 'Prepare',    icon: <Icon name="checklist"  size={14} /> },
+  { id: 'reference', label: 'Reference',  icon: <Icon name="menu_book"    size={14} /> },
 ];
 
 export function Nav({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {

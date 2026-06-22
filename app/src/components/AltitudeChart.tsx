@@ -11,8 +11,9 @@
  * Anti-AI rules: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
 
+import { Icon } from './Icon';
+
 import { useState, useCallback } from 'react';
-import { Ruler, Bed } from '@aliimam/icons';
 import { ChartArea } from './aliimam/ChartArea';
 import { DAYS } from '../lib/trip-data';
 
@@ -95,7 +96,7 @@ function SegmentedControl({
           aria-pressed={mode === m}
         >
           <span className="flex items-center justify-center gap-1">
-            {m === 'walking' ? <Ruler size={11} /> : <Bed size={11} />}
+            {m === 'walking' ? <Icon name="straighten" size={11} /> : <Icon name="hotel" size={11} />}
             {m === 'walking' ? 'Walking' : 'Sleeping'}
           </span>
         </button>

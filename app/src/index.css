@@ -1,6 +1,11 @@
 @import 'tailwindcss';
 @plugin 'tailwindcss-animate';
 
+/* Material Symbols Outlined, self-hosted via the material-symbols npm
+   package. The package's outlined.css declares @font-face with a
+   relative woff2 -- no fonts.googleapis.com (blocked in China). */
+@import 'material-symbols/outlined.css';
+
 /* =============================================================
  * Geist font faces (variable fonts, self-hosted via geist npm package).
  * Vite serves node_modules via /node_modules/ in dev.

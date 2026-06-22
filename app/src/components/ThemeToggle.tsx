@@ -5,8 +5,9 @@
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
+
+import { Icon } from './Icon';
 import { useEffect, useState } from 'react';
-import { Sun, Moon } from '@aliimam/icons';
 
 type Theme = 'light' | 'dark';
 
@@ -47,7 +48,7 @@ export function ThemeToggle() {
       title={label}
       className="inline-flex shrink-0 items-center justify-center border border-border text-muted-foreground hover:text-foreground hover:bg-border h-11 w-11 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+      {theme === 'dark' ? <Icon name="light_mode" size={14} /> : <Icon name="dark_mode" size={14} />}
     </button>
   );
 }

@@ -7,8 +7,9 @@
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
+
+import { Icon } from './Icon';
 import { useState } from 'react';
-import { Mountain, LayoutGrid, CalendarDays, ListChecks, BookOpen } from '@aliimam/icons';
 import type { Tab } from '../hooks/useJourneyState';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -17,10 +18,10 @@ interface FooterProps {
 }
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: 'overview',  label: 'Overview',  icon: <LayoutGrid  size={16} /> },
-  { id: 'itinerary', label: 'Itinerary', icon: <CalendarDays size={16} /> },
-  { id: 'prepare',   label: 'Prepare',   icon: <ListChecks  size={16} /> },
-  { id: 'reference', label: 'Reference', icon: <BookOpen    size={16} /> },
+  { id: 'overview',  label: 'Overview',  icon: <Icon name="dashboard"  size={16} /> },
+  { id: 'itinerary', label: 'Itinerary', icon: <Icon name="calendar_month" size={16} /> },
+  { id: 'prepare',   label: 'Prepare',   icon: <Icon name="checklist"  size={16} /> },
+  { id: 'reference', label: 'Reference', icon: <Icon name="menu_book"    size={16} /> },
 ];
 
 export function Footer({ onTab }: FooterProps) {
@@ -44,7 +45,7 @@ export function Footer({ onTab }: FooterProps) {
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <span className="flex items-center gap-2 font-medium text-sm text-foreground">
-              <Mountain className="size-4" />
+              <Icon name="landscape" className="size-4" />
               Kailash Mansarovar Yatra 2026
             </span>
             <p className="text-muted-foreground text-sm">

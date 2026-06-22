@@ -9,9 +9,10 @@
  *
  * Anti-AI: zero em-dashes, en-dashes, smart quotes, or emojis.
  */
+
+import { Icon } from './Icon';
 import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
-import { Wifi, WifiOff, Signal } from '@aliimam/icons';
 import { DAYS, type ConnStatus } from '../lib/trip-data';
 import { useJourneyState } from '../hooks/useJourneyState';
 
@@ -109,13 +110,13 @@ export function ConnectivityRibbon() {
 
             const { bg, border } = STATUS_DOT[d.conn_status];
 
-            // Choose icon: good -> Wifi, intermittent -> Circle (partial), offline -> WifiOff
-            const Icon =
+            // Pick the Material Symbol name based on connectivity status.
+            const iconName =
               d.conn_status === 'good'
-                ? Wifi
+                ? 'wifi'
                 : d.conn_status === 'offline'
-                ? WifiOff
-                : Signal;
+                ? 'wifi_off'
+                : 'signal_cellular_alt';
 
             return (
               <li
@@ -146,6 +147,7 @@ export function ConnectivityRibbon() {
 
                 {/* Icon */}
                 <Icon
+                  name={iconName}
                   size={12}
                   className={
                     d.conn_status === 'good'
@@ -154,7 +156,6 @@ export function ConnectivityRibbon() {
                       ? 'text-destructive'
                       : 'text-sacred'
                   }
-                  aria-hidden
                 />
 
                 {/* Day label */}

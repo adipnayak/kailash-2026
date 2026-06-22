@@ -3,30 +3,22 @@
  * 7 reference articles: Medicines/Connectivity/Bags/Customs/Acclim/Visa/Spiritual.
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
- * Icons confirmed in @aliimam/icons dist.
+ * Icons via Material Symbols Outlined.
  */
 
-import {
-  Pill,
-  Wifi,
-  Backpack,
-  ShieldCheck,
-  Mountain,
-  FileText,
-  Heart,
-} from "@aliimam/icons";
+import { Icon } from '../Icon';
 import type { RefArticle, RefBlock } from "../../lib/reference-data";
 import { REFERENCE_ARTICLES } from "../../lib/reference-data";
 
-// Map icon string names to actual icon components
+// Map icon string names to Material Symbols Outlined names.
 const ICON_MAP: Record<string, React.ReactNode> = {
-  Pill: <Pill size={20} />,
-  Wifi: <Wifi size={20} />,
-  Backpack: <Backpack size={20} />,
-  ShieldCheck: <ShieldCheck size={20} />,
-  Mountain: <Mountain size={20} />,
-  FileText: <FileText size={20} />,
-  Heart: <Heart size={20} />,
+  Pill: <Icon name="medication" size={20} />,
+  Wifi: <Icon name="wifi" size={20} />,
+  Backpack: <Icon name="backpack" size={20} />,
+  ShieldCheck: <Icon name="verified_user" size={20} />,
+  Mountain: <Icon name="landscape" size={20} />,
+  FileText: <Icon name="description" size={20} />,
+  Heart: <Icon name="favorite" size={20} />,
 };
 
 function CalloutBlock({ block }: { block: Extract<RefBlock, { type: "callout" }> }) {
@@ -136,7 +128,7 @@ function BlockRenderer({ block }: { block: RefBlock }) {
 }
 
 function ArticleSection({ article }: { article: RefArticle }) {
-  const icon = ICON_MAP[article.icon] ?? <FileText size={20} />;
+  const icon = ICON_MAP[article.icon] ?? <Icon name="description" size={20} />;
 
   return (
     <section
@@ -172,7 +164,7 @@ export function ReferenceTab() {
           </p>
           <nav className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
             {REFERENCE_ARTICLES.map((article) => {
-              const icon = ICON_MAP[article.icon] ?? <FileText size={14} />;
+              const icon = ICON_MAP[article.icon] ?? <Icon name="description" size={14} />;
               return (
                 <a
                   key={article.id}
