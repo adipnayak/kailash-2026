@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { Mountain, LayoutGrid, CalendarDays, ListChecks, BookOpen } from '@aliimam/icons';
 import type { Tab } from '../hooks/useJourneyState';
+import { ThemeToggle } from './ThemeToggle';
 
 interface FooterProps {
   onTab: (t: Tab) => void;
@@ -37,6 +38,22 @@ export function Footer({ onTab }: FooterProps) {
   return (
     <footer className="border-t border-border px-4 py-12 md:px-6">
       <div className="mx-auto max-w-6xl space-y-8">
+        {/* Brand + tagline + theme toggle. Sits above the 2-col CTA grid so
+            the footer reads brand-first; theme toggle is reachable from
+            here without scrolling back to the top nav. */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <span className="flex items-center gap-2 font-medium text-sm text-foreground">
+              <Mountain className="size-4" />
+              Kailash Mansarovar Yatra 2026
+            </span>
+            <p className="text-muted-foreground text-sm">
+              A sacred pilgrimage to Mount Kailash and Lake Manasarovar across the Tibetan Plateau.
+            </p>
+          </div>
+          <ThemeToggle />
+        </div>
+
         {/* Secondary nav: 2-col grid mirroring the top tabs */}
         <nav aria-label="Sections">
           <ol className="grid grid-cols-2 gap-2">
@@ -54,17 +71,6 @@ export function Footer({ onTab }: FooterProps) {
             ))}
           </ol>
         </nav>
-
-        <div className="space-y-2">
-          <span className="flex items-center gap-2 font-medium text-sm text-foreground">
-            <Mountain className="size-4" />
-            Kailash Mansarovar Yatra 2026
-          </span>
-
-          <p className="text-muted-foreground text-sm">
-            A sacred pilgrimage to Mount Kailash and Lake Manasarovar across the Tibetan Plateau.
-          </p>
-        </div>
 
         <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>
