@@ -543,7 +543,6 @@ export const REFERENCE_ARTICLES: RefArticle[] = [
             "402 Fourth Floor, 25/14 East Patel Nagar, New Delhi 110008. Tel: +91 11 4446 7654. Mobile: +91 98109 06771.",
           ],
           ["Yatra Admin", "Isra", "+91 81785 60740"],
-          ["Yatra Coordinator", "Astha Singh", "+233 54 012 1216"],
         ],
       },
     ],
