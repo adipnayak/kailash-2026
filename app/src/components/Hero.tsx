@@ -210,6 +210,9 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
         <p className="font-mono text-xs md:text-sm text-sacred uppercase tracking-widest">
           {JAI_BHOLE_NATH}
         </p>
+
+        {/* City tracker strip -- horizontal, embedded here (no separate BentoGridItem). */}
+        <CityTracker phase={state} onTab={onTab} />
       </BentoGridItem>
 
       {/* ------------------------------------------------------------------ */}
@@ -238,11 +241,6 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
           icon={<Icon name="straighten" size={20} />}
         />
       </BentoGridItem>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* City tracker: 2 cols x 2 rows. Between countdown and prep card.     */}
-      {/* ------------------------------------------------------------------ */}
-      <CityTracker onTab={onTab} />
 
       {/* ------------------------------------------------------------------ */}
       {/* Row 3: Outstanding prep (2 cols) + Stat 3 + Stat 4                  */}
@@ -442,10 +440,10 @@ function DuringBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
             <span className="text-muted-foreground">19 Jul 2026</span>
           </span>
         </div>
-      </BentoGridItem>
 
-      {/* City tracker */}
-      <CityTracker onTab={onTab} />
+        {/* City tracker strip -- embedded inside this card. */}
+        <CityTracker phase={state} onTab={onTab} />
+      </BentoGridItem>
 
       {/* Tomorrow card */}
       <BentoGridItem>
@@ -564,10 +562,10 @@ function AfterBento({ state: _state, onTab }: { state: JourneyState; onTab: (t: 
           Returned {returnedDaysAgo} day{returnedDaysAgo !== 1 ? 's' : ''} ago.
           13 days. 5,630m peak. Parikrama complete.
         </p>
-      </BentoGridItem>
 
-      {/* City tracker */}
-      <CityTracker onTab={onTab} />
+        {/* City tracker strip -- embedded inside this card. */}
+        <CityTracker phase={_state} onTab={onTab} />
+      </BentoGridItem>
 
       {/* Final stats */}
       <BentoGridItem>
