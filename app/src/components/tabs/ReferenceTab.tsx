@@ -186,19 +186,28 @@ export function ReferenceTab() {
   }, []);
 
   // Auto-scroll the active chip into view in the horizontal nav strip.
+  // Use the strip's own scrollLeft instead of chip.scrollIntoView so it
+  // never touches window scroll (iOS Safari can mis-route scrollIntoView
+  // on children of sticky ancestors to the window).
   useEffect(() => {
     if (!activeArticle || !navRef.current) return;
-    const chip = navRef.current.querySelector<HTMLElement>(
-      `[data-article="${activeArticle}"]`,
-    );
-    if (chip) {
-      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
+    const strip = navRef.current;
+    const chip = strip.querySelector<HTMLElement>(`[data-article="${activeArticle}"]`);
+    if (!chip) return;
+    const stripRect = strip.getBoundingClientRect();
+    const chipRect = chip.getBoundingClientRect();
+    const delta =
+      (chipRect.left + chipRect.right) / 2 - (stripRect.left + stripRect.right) / 2;
+    strip.scrollBy({ left: delta, behavior: 'smooth' });
   }, [activeArticle]);
 
   const jumpTo = useCallback((id: string) => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!el) return;
+    // window.scrollTo with explicit pixel offset -- iOS Safari is
+    // unreliable with el.scrollIntoView({behavior:'smooth'}).
+    const top = el.getBoundingClientRect().top + window.scrollY - 100;
+    window.scrollTo({ top, behavior: 'smooth' });
   }, []);
 
   return (
@@ -219,7 +228,7 @@ export function ReferenceTab() {
           the address-bar collapse. Auto-highlights via IntersectionObserver. */}
       <div className="sticky top-12 z-40 border-b border-border bg-background px-6 py-4">
         <div className="mx-auto max-w-6xl">
-          <ol ref={navRef} className="flex gap-2 overflow-x-auto">
+          <ol ref={navRef} className="flex gap-2 overflow-x-auto" style={{ overscrollBehaviorX: "contain" }}>
             {REFERENCE_ARTICLES.map((article) => {
               const icon = ICON_MAP[article.icon] ?? <Icon name="description" size={14} />;
               const isActive = activeArticle === article.id;

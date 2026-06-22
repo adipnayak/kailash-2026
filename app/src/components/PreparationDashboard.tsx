@@ -313,23 +313,33 @@ export function PreparationDashboard() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Auto-scroll active chip into view in the horizontal strip.
+  // Auto-scroll active chip into view in the horizontal strip via
+  // strip.scrollBy on the strip's own horizontal axis -- never window
+  // scroll, never scrollIntoView (iOS Safari mis-routes the latter on
+  // children of sticky ancestors).
   useEffect(() => {
     if (!activeCategory || !navRef.current) return;
-    const chip = navRef.current.querySelector<HTMLElement>(
-      `[data-category="${activeCategory}"]`,
-    );
-    if (chip) {
-      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
+    const strip = navRef.current;
+    const chip = strip.querySelector<HTMLElement>(`[data-category="${activeCategory}"]`);
+    if (!chip) return;
+    const stripRect = strip.getBoundingClientRect();
+    const chipRect = chip.getBoundingClientRect();
+    const delta =
+      (chipRect.left + chipRect.right) / 2 - (stripRect.left + stripRect.right) / 2;
+    strip.scrollBy({ left: delta, behavior: 'smooth' });
   }, [activeCategory]);
 
   const jumpToCategory = useCallback((id: string) => {
-    // Set active immediately so the chip animates on tap; the scrollspy
-    // effect above will keep it in sync once the smooth scroll settles.
+    // Set active immediately so the chip flips on tap; the scrollspy
+    // listener will keep it in sync as the smooth scroll settles.
     setActiveCategory(id);
     const el = document.getElementById(`category-${id}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!el) return;
+    // window.scrollTo with explicit pixel offset -- iOS Safari is
+    // unreliable with el.scrollIntoView({behavior:'smooth'}) and often
+    // no-ops or jerks.
+    const top = el.getBoundingClientRect().top + window.scrollY - 100;
+    window.scrollTo({ top, behavior: 'smooth' });
   }, []);
 
   // Load from localStorage on mount. Migrate/purge old keys.
@@ -438,7 +448,7 @@ export function PreparationDashboard() {
             and ReferenceTab. Auto-highlights the category whose top has
             crossed below the sticky-nav threshold. */}
         <div className="sticky top-12 z-40 -mx-6 mt-6 border-y border-border bg-background px-6 py-4">
-          <ol ref={navRef} className="flex gap-2 overflow-x-auto">
+          <ol ref={navRef} className="flex gap-2 overflow-x-auto" style={{ overscrollBehaviorX: "contain" }}>
             {CATEGORIES.map((cat) => {
               const isActive = activeCategory === cat.id;
               return (
