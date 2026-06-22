@@ -58,7 +58,72 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      Static text fallback inside #root. React replaces this on mount, so
+      JavaScript-capable browsers see the full SPA. Tools that fetch raw
+      HTML (LLM crawlers, search engines without JS execution, simple
+      browser tools) see the trip summary instead of an empty body.
+      Keep this in sync with app/public/llms.txt and lib/trip-data.ts.
+    -->
+    <div id="root">
+      <article style="max-width: 760px; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, -apple-system, sans-serif; line-height: 1.55; color: #111;">
+        <header>
+          <h1 style="margin: 0 0 0.25rem; font-size: 1.75rem;">Kailash Mansarovar Yatra 2026</h1>
+          <p style="margin: 0; color: #555;">A 13-day Hindu pilgrimage to Mt Kailash and Lake Manasarovar across the Tibetan Plateau. 7 July 2026 (Mumbai depart) to 19 July 2026 (Mumbai return).</p>
+        </header>
+
+        <section>
+          <h2 style="font-size: 1.15rem; margin-top: 1.5rem;">Route</h2>
+          <p>Mumbai (BOM) -&gt; Kathmandu (KTM, 2 nights) -&gt; Lhasa (LXA, 2 nights) -&gt; Ali (NGQ) -&gt; Lake Manasarovar (Chiu Gompa shore) -&gt; Darchen -&gt; Kailash parikrama (3-day clockwise trek, 52 km) -&gt; Darchen -&gt; Ali -&gt; Lhasa -&gt; Kathmandu -&gt; Mumbai.</p>
+          <p>High point: <strong>Dolma La pass at 5,630 m / 18,471 ft</strong> on Day 8. Longest trek day: 22 km on Day 8.</p>
+        </section>
+
+        <section>
+          <h2 style="font-size: 1.15rem; margin-top: 1.5rem;">Day-by-day</h2>
+          <ol style="padding-left: 1.25rem;">
+            <li><strong>Day 1 (Tue 7 Jul) Kathmandu:</strong> Arrival window at KTM airport. Marriott. 1,380 m.</li>
+            <li><strong>Day 2 (Wed 8 Jul) Kathmandu:</strong> Indian Embassy NOC visit, Pashupatinath darshan. 1,380 m.</li>
+            <li><strong>Day 3 (Thu 9 Jul) Lhasa:</strong> Fly KTM-LXA. First altitude jump to 3,656 m.</li>
+            <li><strong>Day 4 (Fri 10 Jul) Lhasa:</strong> Acclimatization. Jokhang, Barkhor, Potala. 3,656 m.</li>
+            <li><strong>Day 5 (Sat 11 Jul) Mansarovar:</strong> Fly LXA-Ali, drive to Lake Manasarovar. Sleep 4,670 m.</li>
+            <li><strong>Day 6 (Sun 12 Jul) Mansarovar:</strong> Holy snan (bath) at the lake, Chiu Gompa visit. 4,670 m.</li>
+            <li><strong>Day 7 (Mon 13 Jul) Dirapuk:</strong> Drive to Darchen, Yamadwar gate, trek up Lha Chu valley to Dirapuk camp on Kailash's north face. ~18 km. Sleep 4,890 m.</li>
+            <li><strong>Day 8 (Tue 14 Jul) Dolma La crossing:</strong> THE day. Steep climb past Shiva Tsal to Dolma La pass at 5,630 m, descend past Gauri Kund to Zuthulphuk. ~22 km, 8 to 9 hours active trek. Sleep 4,760 m.</li>
+            <li><strong>Day 9 (Wed 15 Jul) Darchen:</strong> Zuthulphuk to Darchen along Zhong Chu valley, parikrama closes. ~14 km. Drive to overnight stop.</li>
+            <li><strong>Day 10 (Thu 16 Jul) Lhasa:</strong> Drive to Ali, fly Ali-LXA. Return to St Regis Lhasa.</li>
+            <li><strong>Day 11 (Fri 17 Jul) Kathmandu:</strong> Fly LXA-KTM.</li>
+            <li><strong>Day 12 (Sat 18 Jul) Kathmandu:</strong> Buffer / rest day in KTM.</li>
+            <li><strong>Day 13 (Sun 19 Jul) Mumbai:</strong> Fly KTM-BOM. Yatra closes.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 style="font-size: 1.15rem; margin-top: 1.5rem;">Key facts</h2>
+          <ul>
+            <li><strong>Group:</strong> 23 yatris from 4 origin cities (Mumbai, Dubai, Port Louis, New York).</li>
+            <li><strong>Parikrama:</strong> 52 km clockwise circuit around Mt Kailash, completed over Days 7-9.</li>
+            <li><strong>Altitude profile:</strong> sea level -&gt; 1,380 m (KTM) -&gt; 3,656 m (Lhasa) -&gt; 4,670 m (Mansarovar) -&gt; 5,630 m (Dolma La).</li>
+            <li><strong>Connectivity:</strong> WiFi + phone at hotels in Kathmandu and Lhasa (some apps blocked in Tibet, VPN app needed for WhatsApp). Phone only at Mansarovar. No phone or WiFi during the 3-day parikrama; Sherpa team carries comms.</li>
+            <li><strong>Coldest expected:</strong> -5 to +5 C overnight at Dolma La. Warmest: 29 C in Kathmandu monsoon.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 style="font-size: 1.15rem; margin-top: 1.5rem;">Page sections (visible once JavaScript loads)</h2>
+          <ul>
+            <li><strong>Overview:</strong> countdown, altitude profile chart, key trip stats, preparation card.</li>
+            <li><strong>Itinerary:</strong> 13 expandable day cards with timeline, weather, map of the day's route.</li>
+            <li><strong>Prepare:</strong> 5-category preparation checklist (documents, packing, medicines, connectivity, fitness) + live weather forecast.</li>
+            <li><strong>Reference:</strong> medicines, VPN, packing list, customs, acclimatization, visa, spiritual focus.</li>
+          </ul>
+        </section>
+
+        <footer style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; color: #555; font-size: 0.9rem;">
+          <p>Sources: <a href="https://github.com/adipnayak/kailash-2026">github.com/adipnayak/kailash-2026</a> | <a href="/kailash-2026/llms.txt">llms.txt</a> (structured summary for LLM ingestion).</p>
+          <p>This static summary is replaced by an interactive React app when JavaScript is enabled. JS-less tools, AI crawlers, and search engines see this text.</p>
+        </footer>
+      </article>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
