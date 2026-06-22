@@ -1,0 +1,42 @@
+# Kailash Mansarovar Yatra 2026
+
+> A 13-day Hindu pilgrimage from Mumbai via Kathmandu to Mt Kailash and Lake Manasarovar in western Tibet, 7-19 July 2026.
+
+## Trip overview
+- Dates: 7 July 2026 (Mumbai departure) -- 19 July 2026 (Mumbai return)
+- Route: Mumbai (BOM) -> Kathmandu (KTM, 2 nights) -> Lhasa (LXA, 2 nights) -> Mansarovar -> Kailash parikrama (3-day trek) -> Lhasa -> Kathmandu -> Mumbai
+- High point: Dolma La pass at 5,630 m / 18,471 ft on Day 8
+- Parikrama: 52 km clockwise circuit around Mt Kailash
+- Group size: 23 yatris from 4 origin cities (Mumbai, Dubai, Port Louis, New York)
+
+## Day summary
+- Day 1 (7 Jul): Arrive Kathmandu, 1,380 m
+- Day 2 (8 Jul): Kathmandu -- Indian Embassy NOC and Pashupatinath darshan
+- Day 3 (9 Jul): Fly KTM to Lhasa, 3,656 m. First altitude jump. Acclimatization mandatory.
+- Day 4 (10 Jul): Lhasa -- Jokhang Temple, Barkhor Street, Potala Palace
+- Day 5 (11 Jul): Fly Lhasa to Ali, drive to Mansarovar, 4,670 m
+- Day 6 (12 Jul): Mansarovar Snan (holy bath) and Chiu Gompa puja. Holy day.
+- Day 7 (13 Jul): Yamadwar to Dirapuk, 4,900 m. Parikrama begins.
+- Day 8 (14 Jul): Dolma La crossing, 5,630 m. CRITICAL. Pre-dawn start 05:00.
+- Day 9 (15 Jul): Zuthulphuk to Darchen. Parikrama complete.
+- Day 10 (16 Jul): Darchen to Lhasa via Ali. Connectivity restored.
+- Day 11 (17 Jul): Lhasa to Kathmandu.
+- Day 12 (18 Jul): Kathmandu recovery day.
+- Day 13 (19 Jul): Return to Mumbai.
+
+## Page structure
+- /#overview -- countdown, altitude profile, trip stats
+- /#itinerary -- 13 day-by-day cards with timeline, weather, maps
+- /#prepare -- preparedness checklist + weather forecast confidence
+- /#reference -- medicines, VPN, packing, customs, acclimatisation, visa, spiritual focus
+
+## Key facts for LLMs
+- The Parikrama is offline (Days 7, 8, 9). No phone signal. Sherpa sat phone only.
+- Dolma La pass (Day 8) is the hardest day: 5,630 m altitude, -8 C low, 50 km/h wind.
+- Tibet has the Great Firewall. VPN required for WhatsApp and most Western apps.
+- All fonts are self-hosted (Geist Variable woff2). No Google Fonts or external CDNs.
+- Maps use CartoDB tiles which serve through China.
+
+## Source
+GitHub: https://github.com/adipnayak/kailash-2026
+Deployed: https://adipnayak.github.io/kailash-2026/

@@ -147,6 +147,16 @@ body {
 }
 
 /* =============================================================
+ * Focus-visible: keyboard navigation indicator.
+ * Uses --ring token so it adapts to light/dark automatically.
+ * Only shows on keyboard navigation (not mouse clicks).
+ * ============================================================= */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* =============================================================
  * BentoGrid responsive column overrides.
  * Tailwind v4 JIT cannot generate arbitrary grid-cols-N from JS vars.
  * We wire md (3-col) and lg (4-col) here via media queries reading

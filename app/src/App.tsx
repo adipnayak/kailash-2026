@@ -31,6 +31,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
+      {/* Persistent visually-hidden h1 for screen readers + crawlers.
+          Stays in the DOM on all tabs so the page always has exactly one h1. */}
+      <h1 className="sr-only">Kailash Mansarovar Yatra 2026</h1>
       <Nav tab={tab} onTab={setTab} />
       <main>
         {tab === 'overview' && <OverviewTab phase={phase} onTab={setTab} />}
