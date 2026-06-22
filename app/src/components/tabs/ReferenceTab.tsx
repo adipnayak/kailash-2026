@@ -1,6 +1,6 @@
 /**
  * ReferenceTab.
- * 7 reference articles: Medicines/Connectivity/Bags/Customs/Acclim/Visa/Spiritual.
+ * 8 reference articles: Medicines/Connectivity/Bags/Customs/Acclim/Visa/Spiritual/FAQs.
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  * Icons via Material Symbols Outlined.
@@ -8,6 +8,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Icon } from '../Icon';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '../ui/accordion';
 import type { RefArticle, RefBlock } from "../../lib/reference-data";
 import { REFERENCE_ARTICLES } from "../../lib/reference-data";
 
@@ -123,6 +129,26 @@ function BlockRenderer({ block }: { block: RefBlock }) {
 
     case "callout":
       return <CalloutBlock block={block} />;
+
+    case "accordion":
+      return (
+        <Accordion type="multiple" defaultValue={["q-0"]} className="my-4">
+          {block.items.map((item, i) => (
+            <AccordionItem
+              key={i}
+              value={`q-${i}`}
+              className="border-b border-border last:border-0"
+            >
+              <AccordionTrigger className="text-left py-3 hover:no-underline">
+                <span className="text-sm font-medium text-foreground">{item.question}</span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-3 pt-0">
+                <p className="text-sm text-foreground leading-relaxed">{item.answer}</p>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      );
 
     default:
       return null;

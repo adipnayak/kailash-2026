@@ -12,7 +12,8 @@ export type RefBlock =
   | { type: "table"; headers: string[]; rows: string[][] }
   | { type: "ordered-list"; items: string[] }
   | { type: "unordered-list"; items: string[] }
-  | { type: "callout"; tone: "info" | "warning" | "critical"; title?: string; body: string };
+  | { type: "callout"; tone: "info" | "warning" | "critical"; title?: string; body: string }
+  | { type: "accordion"; items: Array<{ question: string; answer: string }> };
 
 export interface RefArticle {
   id: string;
@@ -444,70 +445,89 @@ export const REFERENCE_ARTICLES: RefArticle[] = [
       "Common questions about the Mansarovar Yatra, sourced from the operator briefing. Sections cover insurance, the kit provided, medical support, porters and horses, cash, the China group visa, and operator contacts.",
     blocks: [
       { type: "heading", text: "INSURANCE" },
-      { type: "heading", text: "Are we getting insurance through the travel agent (Everest Travels)?" },
       {
-        type: "prose",
-        body: "Yes. Comprehensive insurance is being provided specifically for the Mansarovar Yatra, including high-altitude coverage and medical evacuation if required.",
-      },
-      { type: "heading", text: "Do participants need to purchase insurance separately for the Yatra?" },
-      { type: "prose", body: "No. Insurance coverage is being arranged and provided as part of the Yatra." },
-      { type: "heading", text: "Do we need to purchase travel insurance for July 7-17 on our own?" },
-      { type: "prose", body: "No. Insurance for the Yatra period is already being provided." },
-
-      { type: "heading", text: "KIT PROVIDED" },
-      { type: "heading", text: "What items are being provided by the travel agent / YPO?" },
-      {
-        type: "unordered-list",
+        type: "accordion",
         items: [
-          "Duffle Bag",
-          "Backpack",
-          "Side Bag",
-          "Warm Cap",
-          "Puffer Jacket (size S / M / L)",
+          {
+            question: "Are we getting insurance through the travel agent (Everest Travels)?",
+            answer: "Yes. Comprehensive insurance is being provided specifically for the Mansarovar Yatra, including high-altitude coverage and medical evacuation if required.",
+          },
+          {
+            question: "Do participants need to purchase insurance separately for the Yatra?",
+            answer: "No. Insurance coverage is being arranged and provided as part of the Yatra.",
+          },
+          {
+            question: "Do we need to purchase travel insurance for July 7-17 on our own?",
+            answer: "No. Insurance for the Yatra period is already being provided.",
+          },
         ],
       },
-      { type: "heading", text: "Is YPO providing two backpacks and a jacket?" },
+
+      { type: "heading", text: "KIT PROVIDED" },
       {
-        type: "prose",
-        body: "Yes. The provided kit includes two bags (a backpack and a side bag) along with a puffer jacket and the other items listed above.",
+        type: "accordion",
+        items: [
+          {
+            question: "What items are being provided by the travel agent / YPO?",
+            answer: "Duffle Bag, Backpack, Side Bag, Warm Cap, and Puffer Jacket (size S / M / L).",
+          },
+          {
+            question: "Is YPO providing two backpacks and a jacket?",
+            answer: "Yes. The provided kit includes two bags (a backpack and a side bag) along with a puffer jacket and the other items listed above.",
+          },
+          {
+            question: "Do we need sleeping bags during the Yatra?",
+            answer: "No. Sleeping bags are not required.",
+          },
+        ],
       },
-      { type: "heading", text: "Do we need sleeping bags during the Yatra?" },
-      { type: "prose", body: "No. Sleeping bags are not required." },
 
       { type: "heading", text: "MEDICAL SUPPORT" },
-      { type: "heading", text: "Are emergency medical kits and medications available?" },
       {
-        type: "prose",
-        body: "Yes. The travel crew is equipped with essential medical kits and oxygen cylinders to handle emergencies during the journey.",
-      },
-      { type: "heading", text: "Will a doctor accompany the group?" },
-      {
-        type: "prose",
-        body: "No. A doctor does not accompany the group. The travel team carries the necessary medical supplies. In case of a serious medical emergency, the Chinese authorities can assist in transferring participants to the nearest medical camp for first aid and further assistance.",
+        type: "accordion",
+        items: [
+          {
+            question: "Are emergency medical kits and medications available?",
+            answer: "Yes. The travel crew is equipped with essential medical kits and oxygen cylinders to handle emergencies during the journey.",
+          },
+          {
+            question: "Will a doctor accompany the group?",
+            answer: "No. A doctor does not accompany the group. The travel team carries the necessary medical supplies. In case of a serious medical emergency, the Chinese authorities can assist in transferring participants to the nearest medical camp for first aid and further assistance.",
+          },
+        ],
       },
 
       { type: "heading", text: "PORTERS AND HORSES" },
-      { type: "heading", text: "Can porters and horses be booked now?" },
       {
-        type: "prose",
-        body: "Porters and horses are available on a user-pay basis. Bookings will be arranged one day in advance, and requirements will be discussed with the group in Lhasa.",
+        type: "accordion",
+        items: [
+          {
+            question: "Can porters and horses be booked now?",
+            answer: "Porters and horses are available on a user-pay basis. Bookings will be arranged one day in advance, and requirements will be discussed with the group in Lhasa.",
+          },
+        ],
       },
 
       { type: "heading", text: "ACCOMMODATION" },
-      { type: "heading", text: "What are the hotel accommodation details?" },
       {
-        type: "unordered-list",
+        type: "accordion",
         items: [
-          "Kathmandu: Marriott Hotel",
-          "Lhasa: St. Regis Hotel",
+          {
+            question: "What are the hotel accommodation details?",
+            answer: "Kathmandu: Marriott Hotel. Lhasa: St. Regis Hotel.",
+          },
         ],
       },
 
       { type: "heading", text: "CASH" },
-      { type: "heading", text: "Do we need to carry cash? How much?" },
       {
-        type: "prose",
-        body: "We recommend 5,000 Yuan in cash. Carrying more is personal preference.",
+        type: "accordion",
+        items: [
+          {
+            question: "Do we need to carry cash? How much?",
+            answer: "We recommend 5,000 Yuan in cash. Carrying more is personal preference.",
+          },
+        ],
       },
 
       { type: "heading", text: "CHINA GROUP VISA" },
