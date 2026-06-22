@@ -42,7 +42,12 @@ const LHASA_HOTEL: Omit<DayStop, 'modeNext'> = { lat: 29.6543, lng: 91.1283, lab
 const JOKHANG: Omit<DayStop, 'modeNext'> = { lat: 29.6531, lng: 91.1313, label: 'Jokhang Temple' };
 const BARKHOR: Omit<DayStop, 'modeNext'> = { lat: 29.6537, lng: 91.1318, label: 'Barkhor Street' };
 const POTALA: Omit<DayStop, 'modeNext'> = { lat: 29.6573, lng: 91.1166, label: 'Potala Palace' };
-const NGQ_AIRPORT: Omit<DayStop, 'modeNext'> = { lat: 32.1006, lng: 80.0531, label: 'Ali Airport (NGQ)' };
+// Purang / Burang Airport (south of Mt Kailash, near the Tibet-Nepal
+// border). ~1 hour drive to Darchen, ~1.5 hour to the Mansarovar
+// hotels. Previously the data pointed at Ali / Ngari Gunsa (NGQ,
+// 32.10 N, 80.05 E) which is the wrong airport -- 6+ hours from
+// Darchen by road. Corrected per yatri feedback.
+const PURANG_AIRPORT: Omit<DayStop, 'modeNext'> = { lat: 30.275, lng: 81.20, label: 'Purang Airport' };
 // Chiu village area on the NW shore of Lake Manasarovar; this is where
 // pilgrim hotels actually sit. Earlier 30.71 placement was 6 km too far
 // north of the lake.
@@ -112,11 +117,12 @@ const DAY_STOPS_TABLE: Record<number, DayStop[]> = {
     withMode(LHASA_HOTEL),
   ],
 
-  // Day 5 · long transfer day: Lhasa -> Ali by flight -> Mansarovar by road.
+  // Day 5 · transfer day: Lhasa -> Purang by flight -> Mansarovar by road
+  // (~1.5 h drive from Purang Airport to the Mansarovar hotels).
   5: [
     withMode(LHASA_HOTEL, 'drive'),
     withMode(LXA_AIRPORT, 'flight'),
-    withMode(NGQ_AIRPORT, 'drive'),
+    withMode(PURANG_AIRPORT, 'drive'),
     withMode(MANSAROVAR_HOTEL),
   ],
 
@@ -160,10 +166,10 @@ const DAY_STOPS_TABLE: Record<number, DayStop[]> = {
     withMode(DARCHEN),
   ],
 
-  // Day 10 · Darchen -> Ali by road -> Lhasa by flight.
+  // Day 10 · Darchen -> Purang by road (~1 h) -> Lhasa by flight.
   10: [
     withMode(DARCHEN, 'drive'),
-    withMode(NGQ_AIRPORT, 'flight'),
+    withMode(PURANG_AIRPORT, 'flight'),
     withMode(LXA_AIRPORT, 'drive'),
     withMode(LHASA_HOTEL),
   ],

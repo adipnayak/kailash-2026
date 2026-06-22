@@ -429,8 +429,8 @@ export const DAYS: TripDay[] = [
     },
     timeline: [
       { time: '05:30', event: 'St Regis breakfast. Suitcase handoff to hotel storage.' },
-      { time: '07:00', event: 'Lhasa to Ali domestic flight' },
-      { time: '10:30', event: 'Ali to Mansarovar drive (long)' },
+      { time: '07:00', event: 'Lhasa to Purang domestic flight' },
+      { time: '10:30', event: 'Purang to Mansarovar drive (~1.5 h)' },
       { time: '18:00', event: 'Mansarovar hotel arrival. Light dinner. Early sleep.' },
     ],
     what_to_wear: {
@@ -463,7 +463,7 @@ export const DAYS: TripDay[] = [
     },
     carry_critical: [
       'All meds, all altitude meds',
-      'ORS, gloves (Ali cold)',
+      'ORS, gloves (altitude cold)',
       '1 L water, snacks',
       'Power bank',
     ],
@@ -835,8 +835,8 @@ export const DAYS: TripDay[] = [
     },
     timeline: [
       { time: '05:00', event: 'Packed breakfast. Cold morning.' },
-      { time: '06:00', event: 'Darchen to Ali drive' },
-      { time: '12:30', event: 'Ali to Lhasa flight' },
+      { time: '06:00', event: 'Darchen to Purang drive (~1 h)' },
+      { time: '12:30', event: 'Purang to Lhasa flight' },
       { time: '15:30', event: 'St Regis check-in. Suitcase reunion.' },
       { time: '17:00', event: 'Long hot shower. The reward shower.' },
       { time: '20:00', event: 'Concluding group dinner' },
