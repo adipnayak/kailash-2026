@@ -33,7 +33,7 @@ export default function App() {
     <div className="min-h-screen bg-background text-foreground font-sans">
       <Nav tab={tab} onTab={setTab} />
       <main>
-        {tab === 'overview' && <OverviewTab phase={phase} />}
+        {tab === 'overview' && <OverviewTab phase={phase} onTab={setTab} />}
         {tab !== 'overview' && (
           <Suspense fallback={<TabFallback />}>
             {tab === 'itinerary' && <ItineraryTab phase={phase} />}

@@ -198,7 +198,7 @@ export function AltitudeChart() {
           <div>
             <h2 className="font-sans text-2xl font-medium text-foreground">Altitude Profile</h2>
             <p className="mt-1 text-sm text-muted-foreground font-mono">
-              Origin departure to home return across the Kailash Mansarovar yatra
+              How high you go each day across the 13-day yatra
             </p>
           </div>
           <SegmentedControl mode={mode} onChange={handleModeChange} />

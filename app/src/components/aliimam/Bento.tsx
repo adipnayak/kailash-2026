@@ -72,6 +72,8 @@ export interface BentoGridItemProps {
   className?: string;
   children: React.ReactNode;
   style?: React.CSSProperties;
+  onClick?: () => void;
+  ariaLabel?: string;
 }
 
 export function BentoGridItem({
@@ -80,6 +82,8 @@ export function BentoGridItem({
   className,
   children,
   style,
+  onClick,
+  ariaLabel,
 }: BentoGridItemProps) {
   const itemStyle: React.CSSProperties = {
     ...style,
@@ -87,13 +91,30 @@ export function BentoGridItem({
     ...(rowSpan > 1 ? { gridRow: `span ${rowSpan} / span ${rowSpan}` } : {}),
   };
 
+  const interactive = !!onClick;
+
   return (
     <div
       className={cn(
         'rounded-none border border-border bg-card p-4 transition-colors hover:bg-muted/40',
+        interactive && 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         className,
       )}
       style={itemStyle}
+      onClick={onClick}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={ariaLabel}
+      onKeyDown={
+        interactive
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick?.();
+              }
+            }
+          : undefined
+      }
     >
       {children}
     </div>
