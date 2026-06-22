@@ -73,16 +73,21 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-scroll the active chip into view in the horizontal day-nav strip
-  // so the user always sees their position. Skip when activeDay is null.
+  // Auto-scroll the active chip into view in the horizontal day-nav
+  // strip. Use the strip's own scrollLeft instead of chip.scrollIntoView
+  // because iOS Safari sometimes scrolls the WINDOW when scrollIntoView
+  // is called on a child of a sticky ancestor, fighting the page-scroll
+  // triggered by tap-to-jump.
   useEffect(() => {
     if (activeDay === null || !dayNavRef.current) return;
-    const chip = dayNavRef.current.querySelector<HTMLElement>(
-      `[data-day="${activeDay}"]`,
-    );
-    if (chip) {
-      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
+    const strip = dayNavRef.current;
+    const chip = strip.querySelector<HTMLElement>(`[data-day="${activeDay}"]`);
+    if (!chip) return;
+    const stripRect = strip.getBoundingClientRect();
+    const chipRect = chip.getBoundingClientRect();
+    const delta =
+      (chipRect.left + chipRect.right) / 2 - (stripRect.left + stripRect.right) / 2;
+    strip.scrollBy({ left: delta, behavior: 'smooth' });
   }, [activeDay]);
 
   const toggleDay = useCallback((dayNum: number) => {
@@ -104,11 +109,14 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
       return next;
     });
     // Defer past the expansion animation (~250 ms) so the page measures
-    // the post-expand layout before scrolling. Two rAFs alone aren't
-    // enough because the DayCard expand uses a height tween.
+    // the post-expand layout before scrolling. Use window.scrollTo with
+    // an explicit pixel offset -- iOS Safari is unreliable with
+    // el.scrollIntoView({behavior:'smooth'}) and often no-ops or jerks.
     window.setTimeout(() => {
       const el = document.getElementById('day-' + dayNum);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top, behavior: 'smooth' });
     }, 300);
   }, []);
 
@@ -127,7 +135,7 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
               position:sticky element breaks on iOS Safari, the element
               intermittently stops sticking as the address bar collapses. */}
           <div className="sticky top-12 z-40 -mx-6 mb-6 border-b border-border bg-background px-6 py-4">
-            <ol ref={dayNavRef} className="flex gap-2 overflow-x-auto">
+            <ol ref={dayNavRef} className="flex gap-2 overflow-x-auto" style={{ overscrollBehaviorX: "contain" }}>
               {DAYS.map((d) => {
                 const isToday = phase.tripDayIndex === d.day;
                 const isDolmaLa = d.day === 8;
