@@ -19,7 +19,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CircleAlert } from '@aliimam/icons';
 import { useJourneyState } from '../hooks/useJourneyState';
 import gsap from 'gsap';
 
@@ -48,6 +47,9 @@ const saveStatus = savePrepStatus;
 /* ------------------------------------------------------------------ */
 
 function StatusIcon({ status }: { status: ItemStatus }) {
+  // Two states only: empty square (action-needed) or filled square with
+  // a white check (complete). No nested status icon inside the box --
+  // the box border itself carries the action-needed signal.
   if (status === 'complete') {
     return (
       <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-emerald bg-emerald">
@@ -58,9 +60,10 @@ function StatusIcon({ status }: { status: ItemStatus }) {
     );
   }
   return (
-    <span className="inline-flex w-4 h-4 shrink-0 items-center justify-center rounded-sm border-2 border-destructive bg-background">
-      <CircleAlert size={9} className="text-destructive" />
-    </span>
+    <span
+      className="inline-flex w-4 h-4 shrink-0 rounded-sm border-2 border-foreground bg-background"
+      aria-hidden
+    />
   );
 }
 
