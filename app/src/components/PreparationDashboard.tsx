@@ -321,6 +321,9 @@ export function PreparationDashboard() {
             <p className="mt-2 text-sm text-muted-foreground">
               Tap each item as you complete it. Your readiness updates below.
             </p>
+            <p className="mt-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              Private to this browser. Nothing leaves your device.
+            </p>
           </div>
 
           <div className="flex flex-wrap items-end justify-between gap-4">
