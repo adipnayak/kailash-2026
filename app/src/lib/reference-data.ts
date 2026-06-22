@@ -436,4 +436,116 @@ export const REFERENCE_ARTICLES: RefArticle[] = [
       },
     ],
   },
+  {
+    id: "faqs",
+    title: "FAQs",
+    icon: "HelpCircle",
+    intro:
+      "Common questions about the Mansarovar Yatra, sourced from the operator briefing. Sections cover insurance, the kit provided, medical support, porters and horses, cash, the China group visa, and operator contacts.",
+    blocks: [
+      { type: "heading", text: "INSURANCE" },
+      { type: "heading", text: "Are we getting insurance through the travel agent (Everest Travels)?" },
+      {
+        type: "prose",
+        body: "Yes. Comprehensive insurance is being provided specifically for the Mansarovar Yatra, including high-altitude coverage and medical evacuation if required.",
+      },
+      { type: "heading", text: "Do participants need to purchase insurance separately for the Yatra?" },
+      { type: "prose", body: "No. Insurance coverage is being arranged and provided as part of the Yatra." },
+      { type: "heading", text: "Do we need to purchase travel insurance for July 7-17 on our own?" },
+      { type: "prose", body: "No. Insurance for the Yatra period is already being provided." },
+
+      { type: "heading", text: "KIT PROVIDED" },
+      { type: "heading", text: "What items are being provided by the travel agent / YPO?" },
+      {
+        type: "unordered-list",
+        items: [
+          "Duffle Bag",
+          "Backpack",
+          "Side Bag",
+          "Warm Cap",
+          "Puffer Jacket (size S / M / L)",
+        ],
+      },
+      { type: "heading", text: "Is YPO providing two backpacks and a jacket?" },
+      {
+        type: "prose",
+        body: "Yes. The provided kit includes two bags (a backpack and a side bag) along with a puffer jacket and the other items listed above.",
+      },
+      { type: "heading", text: "Do we need sleeping bags during the Yatra?" },
+      { type: "prose", body: "No. Sleeping bags are not required." },
+
+      { type: "heading", text: "MEDICAL SUPPORT" },
+      { type: "heading", text: "Are emergency medical kits and medications available?" },
+      {
+        type: "prose",
+        body: "Yes. The travel crew is equipped with essential medical kits and oxygen cylinders to handle emergencies during the journey.",
+      },
+      { type: "heading", text: "Will a doctor accompany the group?" },
+      {
+        type: "prose",
+        body: "No. A doctor does not accompany the group. The travel team carries the necessary medical supplies. In case of a serious medical emergency, the Chinese authorities can assist in transferring participants to the nearest medical camp for first aid and further assistance.",
+      },
+
+      { type: "heading", text: "PORTERS AND HORSES" },
+      { type: "heading", text: "Can porters and horses be booked now?" },
+      {
+        type: "prose",
+        body: "Porters and horses are available on a user-pay basis. Bookings will be arranged one day in advance, and requirements will be discussed with the group in Lhasa.",
+      },
+
+      { type: "heading", text: "ACCOMMODATION" },
+      { type: "heading", text: "What are the hotel accommodation details?" },
+      {
+        type: "unordered-list",
+        items: [
+          "Kathmandu: Marriott Hotel",
+          "Lhasa: St. Regis Hotel",
+        ],
+      },
+
+      { type: "heading", text: "CASH" },
+      { type: "heading", text: "Do we need to carry cash? How much?" },
+      {
+        type: "prose",
+        body: "We recommend 5,000 Yuan in cash. Carrying more is personal preference.",
+      },
+
+      { type: "heading", text: "CHINA GROUP VISA" },
+      {
+        type: "prose",
+        body: "For the Kailash Mansarovar Yatra via Tibet, the Chinese visa is not an ordinary individual visa. It is a group visa issued only after the Tibet Travel Permit and other approvals are obtained, and the process differs according to nationality and passport type. All members generally have to enter and exit together.",
+      },
+      {
+        type: "prose",
+        body: "Because the visa is issued collectively, there is no fixed per-person visa fee that can easily be found online. The cost depends on several factors:",
+      },
+      {
+        type: "unordered-list",
+        items: [
+          "Nationality and passport held",
+          "Whether the traveler is an Indian citizen, NRI, OCI holder, or foreign national",
+          "Size and composition of the group",
+          "Route taken (Nepal, Lhasa, etc.)",
+          "Permit charges and government fees",
+          "Standard versus expedited processing",
+          "Additional documentation requirements",
+        ],
+      },
+
+      { type: "heading", text: "OPERATOR CONTACTS" },
+      {
+        type: "table",
+        headers: ["ROLE", "NAME", "DETAILS"],
+        rows: [
+          [
+            "Travel agency",
+            "Everest Travels (Rajan Tandan)",
+            "402 Fourth Floor, 25/14 East Patel Nagar, New Delhi 110008. Tel: +91 11 4446 7654. Mobile: +91 98109 06771.",
+          ],
+          ["Yatra Admin", "Isra", "+91 81785 60740"],
+          ["Yatra Coordinator", "Astha Singh", "+233 54 012 1216"],
+        ],
+      },
+    ],
+  },
 ];
