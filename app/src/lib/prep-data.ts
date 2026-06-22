@@ -189,12 +189,15 @@ export const CATEGORIES: Category[] = [
       },
     ],
   },
+  // The original single 'Things to Carry' category was split into 9
+  // smaller categories so each gets its own sticky-nav chip. Item ids
+  // keep the 'carry-' prefix so existing localStorage state from PR
+  // #177 is preserved across the rename.
   {
-    id: 'carry',
-    label: 'Things to Carry',
+    id: 'clothing',
+    label: 'Clothing',
     optional: false,
     items: [
-      // ---- Clothing & layers ---------------------------------------
       { id: 'carry-tshirts', label: 'Quick-dry T-shirts (4-5)', blocking: 'Cotton holds sweat at altitude. Quick-dry tops only.', defaultStatus: 'action-needed' },
       { id: 'carry-uv-shirts', label: 'Long-sleeve UV shirts (2)', blocking: 'High-altitude sun burns exposed skin within an hour. Long sleeves with UPF rating.', defaultStatus: 'action-needed' },
       { id: 'carry-thermal-top', label: 'Thermal top (2)', blocking: 'Base layer for cold mornings. Merino or synthetic, not cotton.', defaultStatus: 'action-needed' },
@@ -210,20 +213,35 @@ export const CATEGORIES: Category[] = [
       { id: 'carry-buff', label: 'Neck gaiter / buff (2)', blocking: 'Sun cover + dust filter + warmth. One on, one drying.', defaultStatus: 'action-needed' },
       { id: 'carry-gloves-light', label: 'Lightweight gloves', blocking: 'For cool mornings + sun protection during the trek.', defaultStatus: 'action-needed' },
       { id: 'carry-gloves-warm', label: 'Warm waterproof gloves', blocking: 'For Dolma La pre-dawn ascent. Lightweight gloves alone are not enough.', defaultStatus: 'action-needed' },
-
-      // ---- Footwear ------------------------------------------------
+    ],
+  },
+  {
+    id: 'footwear',
+    label: 'Footwear',
+    optional: false,
+    items: [
       { id: 'carry-trek-shoes', label: 'Trekking shoes (already broken in)', blocking: 'Same as packing-boots above. Confirm broken in.', defaultStatus: 'action-needed' },
       { id: 'carry-slippers', label: 'Hotel slippers / sandals', blocking: 'For hotel rooms and around camps. Light and packable.', defaultStatus: 'action-needed' },
       { id: 'carry-trek-socks', label: 'Trekking socks (5 pairs)', blocking: 'Merino or synthetic. Wet socks lead to blisters.', defaultStatus: 'action-needed' },
       { id: 'carry-wool-socks', label: 'Wool socks (2 pairs)', blocking: 'For Dolma La and cold camp nights. Heavyweight wool.', defaultStatus: 'action-needed' },
-
-      // ---- Electronics ---------------------------------------------
+    ],
+  },
+  {
+    id: 'electronics',
+    label: 'Electronics',
+    optional: false,
+    items: [
       { id: 'carry-phone', label: 'Phone', blocking: 'Camera + offline maps + emergency. Charged before each travel day.', defaultStatus: 'action-needed' },
       { id: 'carry-powerbank', label: 'Power bank (20,000 mAh+)', blocking: 'No mains power during Parikrama. One full-size bank, charged before Day 7.', defaultStatus: 'action-needed' },
       { id: 'carry-cables', label: 'Charging cables (2)', blocking: 'One primary, one spare. Cables fail at the worst moments.', defaultStatus: 'action-needed' },
       { id: 'carry-adapter', label: 'Universal adapter', blocking: 'Nepal + Tibet sockets differ from Indian sockets. One universal adapter covers both.', defaultStatus: 'action-needed' },
-
-      // ---- Health kit ----------------------------------------------
+    ],
+  },
+  {
+    id: 'health-kit',
+    label: 'Health Kit',
+    optional: false,
+    items: [
       { id: 'carry-prescriptions', label: 'Prescription medicines (trip + 5 extra days)', blocking: 'Tibet pharmacies are unreliable. Carry buffer doses.', defaultStatus: 'action-needed' },
       { id: 'carry-diamox', label: 'Diamox (as advised by doctor)', blocking: 'See Medical category. Start 2-3 days before departure per doctor.', defaultStatus: 'action-needed' },
       { id: 'carry-ors', label: 'ORS sachets (8-10)', blocking: 'Dehydration at altitude is the silent altitude-sickness multiplier.', defaultStatus: 'action-needed' },
@@ -236,26 +254,46 @@ export const CATEGORIES: Category[] = [
       { id: 'carry-wet-wipes', label: 'Wet wipes (2 packs)', blocking: 'Replaces showers during the offline 3-day trek.', defaultStatus: 'action-needed' },
       { id: 'carry-tissues', label: 'Tissues (2 packs)', blocking: 'Toilets along the route often lack paper.', defaultStatus: 'action-needed' },
       { id: 'carry-hand-warmers', label: 'Hand-warmer packets (4-6)', blocking: 'For the Dolma La pre-dawn ascent. Single-use chemical warmers.', defaultStatus: 'action-needed' },
-
-      // ---- Sun protection ------------------------------------------
+    ],
+  },
+  {
+    id: 'sun',
+    label: 'Sun Protection',
+    optional: false,
+    items: [
       { id: 'carry-sunglasses', label: 'Sunglasses (UV400)', blocking: 'Snow blindness at 5,630 m is a real injury. UV400 mandatory.', defaultStatus: 'action-needed' },
       { id: 'carry-sunscreen', label: 'Sunscreen SPF 50+', blocking: 'High-altitude sun burns exposed skin within an hour.', defaultStatus: 'action-needed' },
       { id: 'carry-lipbalm', label: 'Lip balm with SPF', blocking: 'Lips crack fast at altitude + sun. SPF-rated.', defaultStatus: 'action-needed' },
       { id: 'carry-moisturizer', label: 'Moisturizer', blocking: 'Dry Tibet air cracks skin within 2-3 days.', defaultStatus: 'action-needed' },
-
-      // ---- Day pack (used every Parikrama day) ---------------------
+    ],
+  },
+  {
+    id: 'day-pack',
+    label: 'Day Pack',
+    optional: false,
+    items: [
       { id: 'carry-daypack', label: 'Day pack (20-30L)', blocking: 'Carries water, snacks, layers, meds during the trek. YPO provides a backpack.', defaultStatus: 'action-needed' },
       { id: 'carry-water-bottle', label: 'Reusable water bottle (1 L)', blocking: 'Insulated metal bottle keeps water from freezing on Dolma La morning.', defaultStatus: 'action-needed' },
       { id: 'carry-snacks', label: 'Snacks / energy bars (10-15)', blocking: 'For long Parikrama days. Nuts, dried fruit, bars.', defaultStatus: 'action-needed' },
-
-      // ---- Docs and money ------------------------------------------
+    ],
+  },
+  {
+    id: 'docs-money',
+    label: 'Docs and Money',
+    optional: false,
+    items: [
       { id: 'carry-passport-copies', label: 'Passport photocopies (4)', blocking: 'Hotels and permits routinely ask for copies. Carry colour copies separately from the original.', defaultStatus: 'action-needed' },
       { id: 'carry-insurance-print', label: 'Insurance documents printed', blocking: 'Already provided by Everest Travels (see FAQs). Print a hard copy.', defaultStatus: 'action-needed' },
       { id: 'carry-cash-yuan', label: 'Cash: 5,000 Yuan (per operator)', blocking: 'Cards do not work everywhere in Tibet. Carry the recommended cash amount.', defaultStatus: 'action-needed' },
       { id: 'carry-emergency-card', label: 'Emergency contact card', blocking: 'Names + numbers for family + operator, on paper, in your wallet.', defaultStatus: 'action-needed' },
       { id: 'carry-pen', label: 'Pen (for immigration forms)', blocking: 'KTM + Tibet entry forms are filled by hand. Bring a working pen.', defaultStatus: 'action-needed' },
-
-      // ---- Personal care -------------------------------------------
+    ],
+  },
+  {
+    id: 'personal-care',
+    label: 'Personal Care',
+    optional: false,
+    items: [
       { id: 'carry-toothbrush', label: 'Toothbrush + paste', blocking: 'Travel-size paste only.', defaultStatus: 'action-needed' },
       { id: 'carry-soap', label: 'Travel soap / body wash', blocking: 'Hotel soap is variable.', defaultStatus: 'action-needed' },
       { id: 'carry-deodorant', label: 'Deodorant', blocking: 'Travel-size, alcohol-free preferred.', defaultStatus: 'action-needed' },
@@ -264,8 +302,13 @@ export const CATEGORIES: Category[] = [
       { id: 'carry-eye-mask', label: 'Eye mask', blocking: 'Lhasa sunrise is early. Eye mask helps protect rest.', defaultStatus: 'action-needed' },
       { id: 'carry-padlock', label: 'Padlock for duffel', blocking: 'Duffel changes hands at airports + hotels. Small lock + cable tie helps.', defaultStatus: 'action-needed' },
       { id: 'carry-dry-bag', label: 'Dry bag (10 L)', blocking: 'Keeps clothes dry during Parikrama rain. Doubles as a wet-clothes bag.', defaultStatus: 'action-needed' },
-
-      // ---- Spiritual (optional) ------------------------------------
+    ],
+  },
+  {
+    id: 'spiritual',
+    label: 'Spiritual',
+    optional: true,
+    items: [
       { id: 'carry-mala', label: 'Japa mala', blocking: 'For chanting Om Namah Shivaya / Om Mani Padme Hum on Parikrama. Optional.', defaultStatus: 'action-needed' },
       { id: 'carry-journal', label: 'Small journal + pen', blocking: 'Many yatris keep a daily Parikrama journal. Optional.', defaultStatus: 'action-needed' },
       { id: 'carry-puja-kit', label: 'Compact puja kit', blocking: 'For Mansarovar Day 6 puja. Operator may provide essentials -- pack personal items.', defaultStatus: 'action-needed' },
