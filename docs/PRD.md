@@ -356,6 +356,44 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
 ## Roadmap (what's plausibly next)
 
+### Locked-in (designed, not yet built)
+
+These are committed design intent. They go to `/grill-me` before implementation; this section is the source of truth for what was agreed.
+
+1. **FAQ accordion (Reference > FAQs)**. The 14 Q/A pairs currently render as alternating `heading` (question) + `prose` (answer) blocks, all open. Replace with an accordion so each question collapses, only the tapped one expands. Build with the shadcn watermelon variant:
+   ```
+   pnpm dlx shadcn@latest add https://registry.watermelon.sh/r/accordion-3.json
+   ```
+   Constraints:
+   - Material Symbols Outlined for the chevron (no new icon dependency).
+   - Anti-AI rules apply to all generated component code (zero em-dashes / en-dashes / smart quotes / emojis).
+   - Each section group (Insurance / Kit / Medical / etc.) keeps its `heading` block above its own accordion; questions sit inside the accordion of their group.
+   - First Q within each section open by default? Or all collapsed? Decide at /grill-me.
+   - Accordion state is ephemeral (no localStorage); resets on each tab visit.
+
+2. **Kailash facts between day cards (Itinerary tab)**. Insert one short fact card between every consecutive pair of `DayCard`s -- 12 facts total for 13 days. Examples:
+   - "At 5,630 m, Dolma La pass is higher than Everest Base Camp (5,364 m)."
+   - "Lake Manasarovar is one of the highest freshwater lakes in the world."
+   - "Pilgrims have circumambulated Mt Kailash for over a thousand years."
+   New data file `app/src/lib/kailash-facts.ts` exporting an ordered array indexed by day-pair (between D{n} and D{n+1}). Each fact has `title`, `body`, optional `source`. Rendered as a slim divider block: muted-foreground border-l-4 + small-caps eyebrow ("FACT") + 1-2 line body. Does NOT count as a day in the sticky chip strip. Does NOT enter the IntersectionObserver scrollspy.
+   - Source of truth for facts: this PRD section plus the data file. New facts get reviewed before merge.
+   - Anti-AI rules apply -- no flowery language, no em-dashes.
+
+3. **City-progress tracker bento (Overview > Hero)**. Below the "X days to Kailash / JAI BHOLE NATH" countdown, render a vertical chain of the yatra route cities with the visitor's CURRENT location highlighted. The chain is fixed (per the itinerary):
+   ```
+   Mumbai  ->  Kathmandu  ->  Lhasa  ->  Shigatse  ->  Saga  ->  Mansarovar
+       ->  Darchen  ->  Dirapuk  ->  Dolma La  ->  Zuthulphuk  ->  Darchen
+       ->  Saga  ->  Shigatse  ->  Lhasa  ->  Kathmandu  ->  Mumbai
+   ```
+   Geolocation source: a free IP-geo API (e.g. ipapi.co/json or ip-api.com -- pick at /grill-me, considering: China reachability, rate limits, no API key). Match the API's `city` (or country fallback) to the nearest node in the chain; nothing matches -> show the chain without a highlight + a small "We could not detect your location" footer.
+   Constraints:
+   - Visual: vertical stack of pills, current city filled (`bg-primary text-primary-foreground`), next-up showing a subtle pulse, past cities `text-muted-foreground` with strike-through, future cities default.
+   - Position: in the Hero bento, between the countdown card and the prep card. New BentoGridItem with `colSpan: 2`; diagonal stripe pattern only if the user can tap to expand details (decide at /grill-me).
+   - Data fetching: client-side on mount, cache the geolocation in `sessionStorage` for 1 hour so a refresh doesn't re-hit the API. Fail silently if unreachable (covers China + privacy blockers).
+   - Privacy note: this is the first feature that reads ANY data about the visitor. Surface that on the Hero card itself ("Approximate city detected from your IP; nothing is stored.") and also in the Prepare-tab privacy line if anyone clicks through.
+
+### Plausibly later (not designed)
+
 - Remove the dead `@aliimam/icons` manualChunks stub from `vite.config.ts`.
 - Cross-device prep sync via shareable URL token or read-only export.
 - Share-screenshot generator: one-tap export of the current day card as a shareable image.
@@ -369,3 +407,4 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
 - 2026-06-22 v1 -- initial PRD authored by Sonnet covering through PR #150.
 - 2026-06-22 v2 -- locked-in rewrite covering through PR #182. Reflects icon-system migration, sticky chip strips on all 3 content tabs, Hero countdown tappable, Purang routing, prep-checklist binary states, 14 categories, FAQs article, Clarity + GA4, full perf pass.
+- 2026-06-22 v2.1 -- locked-in next three roadmap items: shadcn watermelon FAQ accordion, per-day-pair Kailash facts between day cards, city-progress tracker bento driven by IP geolocation. Designs go to /grill-me before build.
