@@ -378,8 +378,13 @@ export function CityTracker({ phase }: Props) {
   // Render
   // -------------------------------------------------------------------------
   return (
-    <div className="flex flex-col gap-1">
-      {/* "Watching from" label -- only for OTHER cohort when geo succeeded. */}
+    <div className="flex w-full min-w-0 flex-col gap-1">
+      {/* "Watching from" label -- only for OTHER cohort when geo succeeded.
+          w-full + min-w-0 contain the strip within the parent bento box.
+          The countdown card sets items-start, which would otherwise size
+          this wrapper to the strip's intrinsic (no-wrap) min-content,
+          breaking the overflow-x-auto scroll and pushing the bento wider
+          than its grid cell. */}
       {cohortKey === 'OTHER' && rawCity && (
         <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
           Watching from {rawCity}, {rawCountry}
