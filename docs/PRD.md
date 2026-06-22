@@ -386,30 +386,46 @@ These are committed design intent post `/grill-me` resolution. This section is t
      - "Pilgrims have circumambulated Mt Kailash for over a thousand years."
    - **Anti-AI rules** apply -- no flowery language, no em-dashes.
 
-3. **City-progress tracker bento (Overview > Hero)**. Below the "X days to Kailash / JAI BHOLE NATH" countdown.
+3. **City-progress tracker EMBEDDED in the countdown bento (Overview > Hero)**.
+   Revised v2.3: the 9-city chain renders as a HORIZONTAL scrolling pill strip INSIDE the existing "X days to Kailash / JAI BHOLE NATH" countdown card. NOT a separate `BentoGridItem`. The standalone tracker bento from PR #190 gets removed; chain moves into the countdown card content.
+
    Resolved spec:
    - **Chain content** (matches the actual itinerary in `trip-data.ts`, NOT the traditional Shigatse/Saga overland route):
      ```
      Mumbai -> Kathmandu -> Lhasa -> Purang -> Mansarovar
             -> Darchen -> Dirapuk -> Dolma La -> Zuthulphuk
      ```
-     9 unique nodes vertical. Below the chain a small muted footer: "Returns via Darchen -> Purang -> Lhasa -> Kathmandu -> Mumbai".
-   - **Highlight semantics**:
-     - **Before phase** (`phase === 'before'`): highlight = visitor's CURRENT city if it matches a chain node, else country fallback (India -> Mumbai, Nepal -> Kathmandu, China/Tibet -> Lhasa). Else no highlight + small label "You: <city, country>" above the chain.
-     - **During phase** (`phase === 'during'`): highlight = where the YATRA GROUP is today, derived from `JourneyState.tripDayIndex` + day-stops mapping. No API call needed; same for every visitor. Highlight walks back up the chain on return days D10-D13.
-     - **After phase**: highlight stays at Mumbai (group has returned).
-   - **API**: `ipapi.co/json` only. HTTPS, no key, 1k req/day per IP, Cloudflare-hosted (China-reachable). NOT ip-api.com (HTTP-only, blocked in China).
-   - **Caching**: client-side on mount, store result in `sessionStorage` under key `kailash_geo_v1` with `{ city, country, fetchedAt }`. 1-hour TTL. Fail silently on network error (covers VPN'd users, blockers, transient outages).
-   - **Preconnect**: add `<link rel="preconnect" href="https://ipapi.co" crossorigin>` to `app/index.html` alongside the existing preconnect set.
-   - **Position**: new `BentoGridItem` with `colSpan: 2`, `rowSpan: 2`, sits between the countdown card and the prep card in `BeforeBento`.
-   - **Visual**: vertical stack of 9 pills.
-     - Current city: `bg-primary text-primary-foreground` (filled black).
-     - Past cities: `text-muted-foreground` with strike-through.
-     - Future cities: `text-foreground` (default).
-     - Connector: small down-arrow `Icon name="arrow_downward" size={10}` between pills.
-     - Optional next-up pulse: pill BELOW the current one in the during-phase gets a subtle `ring-1 ring-sacred/40 animate-pulse`.
-   - **Tappable** -> Itinerary tab via `onTab('itinerary')`. Gets the diagonal-stripe pattern (matches the bento rule: stripes = tappable tile).
-   - **Privacy line**: small footer text inside the tracker card. Copy: "Approximate city detected from your IP. Nothing is stored." font-mono text-[10px] uppercase tracking-widest text-muted-foreground.
+     9 unique nodes. Below the strip a small muted footer: "Returns via Darchen -> Purang -> Lhasa -> Kathmandu -> Mumbai".
+
+   - **Layout**:
+     - HORIZONTAL `<ol className="flex gap-2 overflow-x-auto">` inside the countdown bento (BeforeBento / DuringBento / AfterBento all get it).
+     - Each pill: `inline-flex items-center gap-1 rounded-none border px-3 py-2 font-mono text-xs whitespace-nowrap`.
+     - Connector between pills: `<Icon name="arrow_forward" size={10} className="self-center text-muted-foreground shrink-0" />`.
+     - Mirror the chip-strip iOS hardening from PR #180 + #181: `touchAction: 'manipulation'`, `WebkitTapHighlightColor: 'rgba(0,0,0,0.05)'`, `overscrollBehaviorX: 'contain'` on the `<ol>`.
+     - Auto-scroll the current pill into view via strip-local `scrollBy({ left: delta })` math (per PR #181 pattern). NEVER window scroll.
+     - The countdown bento keeps its existing `colSpan: 2` (no rowSpan change required unless content overflows on small screens; design for the strip to fit in the existing 2x2 tile).
+
+   - **Color rule (v2.3 simplification)**: GREEN for done + present, BLACK for upcoming.
+     - **Done** (cities the group has passed): `bg-emerald text-background border-emerald`.
+     - **Current** (where the group is right now, OR the visitor's pre-trip city): `bg-emerald text-background border-emerald`. Same as done.
+     - **Upcoming** (cities the group has not reached): `bg-foreground text-background border-foreground` (the filled-black state).
+     - No strike-through. No pulse. Optional: small `ring-2 ring-emerald/30` on the CURRENT pill to disambiguate it from a done one (decide at /grill-me).
+
+   - **Highlight semantics by phase**:
+     - **Before phase**: visitor's IP city = "current" (green). All chain cities = "upcoming" (black) since the trip hasn't started. If visitor's city matches a chain node, that node turns green; others stay black. If no match, country fallback (IN -> Mumbai, NP -> Kathmandu, CN -> Lhasa). Else: all black + "You: <city, country>" label above the strip.
+     - **During phase**: the cities the group has visited are GREEN. Current city is GREEN. Future cities are BLACK. Highlight walks forward along the chain Day 1 -> 9; on return days D10-D13 cities further along the chain (already done) stay green; the group is RETURNING THROUGH them but they were already done forward so they remain green. Current pill = today's location.
+     - **After phase**: all 9 cities GREEN (everything is done).
+
+   - **API**: `ipapi.co/json` only. HTTPS, no key, 1k req/day per IP, Cloudflare-hosted (China-reachable).
+   - **Caching**: `sessionStorage` key `kailash_geo_v1`, 1h TTL. Fail-silent on error (no console).
+   - **Preconnect**: `<link rel="preconnect" href="https://ipapi.co" crossorigin>` already added in PR #190.
+
+   - **Tappable**: the countdown bento as a whole stays tappable -> Itinerary tab via `onTab('itinerary')`. The pill strip itself is NOT individually tappable per-pill (would conflict with the parent tap target and confuse the iOS gesture path). Diagonal stripe pattern stays on the bento (it's still the tappable tile).
+
+   - **Privacy line**: keep "Approximate city detected from your IP. Nothing is stored." as a small font-mono text-[10px] uppercase tracking-widest text-muted-foreground line at the bottom of the bento, BELOW the strip and the return footer.
+
+   - **What gets removed**: the standalone `<CityTracker />` `BentoGridItem` from PR #190. The `CityTracker.tsx` file either gets deleted or refactored into an inline JSX section inside `Hero.tsx`'s countdown card render -- TBD at /grill-me (could keep it as a sub-component for cleanliness even though it no longer carries its own BentoGridItem wrapper).
+
    - **Anti-AI rules** apply.
 
 ### Plausibly later (not designed)
@@ -429,3 +445,4 @@ These are committed design intent post `/grill-me` resolution. This section is t
 - 2026-06-22 v2 -- locked-in rewrite covering through PR #182. Reflects icon-system migration, sticky chip strips on all 3 content tabs, Hero countdown tappable, Purang routing, prep-checklist binary states, 14 categories, FAQs article, Clarity + GA4, full perf pass.
 - 2026-06-22 v2.1 -- locked-in next three roadmap items: shadcn watermelon FAQ accordion, per-day-pair Kailash facts between day cards, city-progress tracker bento driven by IP geolocation. Designs go to /grill-me before build.
 - 2026-06-22 v2.2 -- post /grill-me resolution. Accordion: first Q open per section, multi-open, ephemeral state, new RefBlock variant. Facts: mix mode (contextual + general), static, slim border-l-4 sacred block, 12 facts in kailash-facts.ts. Tracker: ipapi.co/json (only), 9-node itinerary chain + return footer, before/during phase split (IP geo pre-trip, JourneyState during trip), country fallback, sessionStorage 1h cache, tappable to Itinerary with diagonal stripes, privacy line on card. Ready to build.
+- 2026-06-22 v2.3 -- city tracker REDESIGN. PR #190 shipped the vertical-chain-in-its-own-bento version; v2.3 reframes the tracker as a horizontal scroll INSIDE the existing countdown bento (no separate tile). Color rule simplified: GREEN for done + present, BLACK for upcoming. Removes the standalone CityTracker BentoGridItem; chain moves into the countdown card. Open sub-decisions go to /grill-me v2.3 before re-build.
