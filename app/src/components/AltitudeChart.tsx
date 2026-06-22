@@ -76,7 +76,7 @@ function SegmentedControl({
     <div
       role="group"
       aria-label="Altitude series"
-      className="inline-flex rounded-none border border-border overflow-hidden font-mono text-xs"
+      className="flex w-full sm:inline-flex sm:w-auto rounded-none border border-border overflow-hidden font-mono text-xs"
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
       {(['walking', 'sleeping'] as AltMode[]).map((m) => (
@@ -85,7 +85,7 @@ function SegmentedControl({
           type="button"
           onClick={() => onChange(m)}
           className={[
-            'px-4 py-2 transition-colors duration-150 cursor-pointer',
+            'flex-1 sm:flex-none px-4 py-2 transition-colors duration-150 cursor-pointer',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
             mode === m
               ? 'bg-primary text-primary-foreground'
@@ -94,7 +94,7 @@ function SegmentedControl({
           style={{ WebkitTapHighlightColor: 'transparent' }}
           aria-pressed={mode === m}
         >
-          <span className="flex items-center gap-1">
+          <span className="flex items-center justify-center gap-1">
             {m === 'walking' ? <Ruler size={11} /> : <Bed size={11} />}
             {m === 'walking' ? 'Walking' : 'Sleeping'}
           </span>
