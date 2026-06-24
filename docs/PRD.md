@@ -547,6 +547,78 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
    - [ ] Build clean
    - [ ] Mirror to `/private/tmp/ralph-v4-verify-89196/kailash-2026/`
 
+2. **Per-day bag state + airline weight allowances**. Surface "where are my bags today" inside the Itinerary tab DayCards, plus an explicit airline-weight-allowance table in Reference > Bag Transitions. Operator-sourced (existing 4-bag system in the Bag Transitions article is trusted; Adip to verify specific weight numbers with YPO before packing day).
+
+   **Data model** -- new `bagState: BagState` field on each `TripDay` in `app/src/lib/trip-data.ts`:
+
+   ```ts
+   type BagId = 'main' | 'duffle' | 'daypack-personal' | 'daypack-ypo';
+   type BagStateTag = 'with-you' | 'stowed' | 'stowed-locked' | 'with-porters' | 'in-transit' | 'not-yet';
+
+   interface BagLocationRow {
+     location: string;        // 'With you' | 'KTM Marriott' | 'Lhasa storage' | 'With porters'
+     bags: BagId[];           // multiple bags can share a location
+     state: BagStateTag;
+     note?: string;           // '4-6 kg target', 'locked, 5 nights'
+   }
+
+   interface BagState {
+     rows: BagLocationRow[];  // typically 2 rows; 3 on parikrama (D7-D9) and handoff (D5, D10)
+     flight?: {
+       leg: string;           // 'BOM -> KTM' | 'LXA -> Purang'
+       flightNo?: string;     // '6E-1157'
+       checkKg: string;       // '30' or '10-20'
+       cabinKg: string;       // '7' or '5'
+     };
+   }
+   ```
+
+   **DayCard `BAGS TODAY` block** -- renders in the EXPANDED DayCard, between the summary strip (wake/walking/sleep) and the timeline. Stacked rows, each row = `[icon] LOCATION  -  bags listed  -  [state badge + optional note]`. Block sits between the summary strip and the timeline. Flight days get an inline sub-row at the bottom: `FLIGHT ALLOWANCE: <leg> · <flightNo?> · Check <checkKg> kg + Cabin <cabinKg> kg`.
+
+   State badge colors (re-using existing tokens):
+   - `with-you` -> `bg-emerald text-background`
+   - `with-porters` -> `bg-sacred text-sacred-foreground`
+   - `stowed-locked` -> `bg-muted text-muted-foreground` + Material Symbols `lock` icon
+   - `stowed` -> `bg-muted text-muted-foreground`
+   - `in-transit` -> `bg-sacred/30 text-foreground`
+   - `not-yet` -> `bg-muted/30 text-muted-foreground` (italic)
+
+   **Per-day bagState (working draft, verify with YPO before packing day)**:
+
+   | Day | Rows | Flight |
+   |---|---|---|
+   | D1 KTM | (with-you: Personal daypack) (stowed: KTM Marriott - Main suitcase) (not-yet: YPO duffle, YPO daypack) | BOM→KTM 6E-1157 30/7 |
+   | D2 KTM | (with-you: Personal daypack, YPO daypack [PM]) (stowed: Marriott - Main suitcase, YPO duffle [PM]) | -- |
+   | D3 KTM→Lhasa | (with-you: Cabin - Personal daypack) (in-transit: Checked - Main, YPO duffle) | KTM→LXA 20/5-7 |
+   | D4 Lhasa | (with-you: Personal daypack) (stowed: St Regis room - Main, YPO duffle) | -- |
+   | D5 HANDOFF | (with-you: Cabin - Personal daypack) (stowed-locked: Lhasa St Regis storage - Main suitcase, locked 5 nights) (in-transit: With group - YPO duffle) | LXA→Purang 10-20/5 |
+   | D6 Mansarovar | (with-you: Personal daypack) (stowed: Hotel - YPO duffle) (stowed-locked: Lhasa storage - Main) | -- |
+   | D7 Dirapuk | (with-you: Personal daypack, 4-6 kg target) (with-porters: YPO duffle) (stowed-locked: Lhasa storage - Main) | -- |
+   | D8 Dolma La | same as D7 | -- |
+   | D9 Zuthulphuk→Darchen | same as D7 | -- |
+   | D10 REUNION | (with-you: Cabin - Personal daypack) (in-transit: With group - YPO duffle) (with-you: REUNION at St Regis - Main suitcase, just retrieved) | Purang→LXA 10-20/5 |
+   | D11 Lhasa→KTM | (with-you: Cabin - Personal daypack) (in-transit: Checked - Main, YPO duffle) | LXA→KTM 20/5-7 |
+   | D12 KTM | (with-you: Personal daypack) (stowed: Marriott - Main, YPO duffle) | -- |
+   | D13 KTM→Mumbai | (with-you: Cabin - Personal daypack) (in-transit: Checked - Main, YPO duffle) | KTM→BOM RA-201 30/7 |
+
+   **Reference > Bag Transitions article additions**:
+   - New `heading` block "Airline weight allowances" at the bottom of the article (after the existing 5 critical rules)
+   - `callout` (tone: warning) immediately under the heading: "Numbers below are typical for these routes. Verify with YPO before packing day. The LXA-Purang leg is the binding constraint for Days 5-10 packing."
+   - `table` block, columns: `Leg / Flight / Check (kg) / Cabin (kg) / Notes`:
+
+     | Leg | Flight | Check (kg) | Cabin (kg) | Notes |
+     |---|---|---|---|---|
+     | BOM -> KTM (Day 1) | IndiGo 6E-1157 | 30 | 7 | Standard international economy |
+     | KTM -> LXA (Day 3) | Air China / Tibet Airlines | 20 | 5 to 7 | High-altitude route, lower limits common |
+     | LXA -> Purang (Day 5) | Tibet Airlines small aircraft | 10 to 20 | 5 | Small plane, strict limits, LiPo over 100 Wh restricted, no drones |
+     | Purang -> LXA (Day 10) | Tibet Airlines small aircraft | 10 to 20 | 5 | Same as Day 5 |
+     | LXA -> KTM (Day 11) | Air China / Tibet Airlines | 20 | 5 to 7 | Same as Day 3 reverse |
+     | KTM -> BOM (Day 13) | Nepal Airlines RA-201 | 30 | 7 | Standard international economy |
+
+   - Existing 10-phase routing table stays as-is in the article (redundant with the new DayCard block, but no harm; could be flagged for future cleanup once the DayCard block proves the per-day surfacing works).
+
+   **Anti-AI rules** apply.
+
 ### Plausibly later (not designed)
 
 - Remove the dead `@aliimam/icons` manualChunks stub from `vite.config.ts`.
@@ -568,3 +640,4 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 - 2026-06-22 v2.4 -- city tracker FULL round trip. v2.3 grilled and resolved (ring on current pill, only visitor city green pre-trip, refactor CityTracker, aria-current). v2.4 then layers: (1) chain includes the FULL return leg (14 nodes for Mumbai cohort, more for Dubai/NY/Port Louis cohorts), (2) visitor's start + end city/country persisted to localStorage as `kailash_route_v1`, (3) "Returns via" footer removed (return leg now on-chain), (4) duplicate-name pills (KTM, Lhasa, Purang, Darchen each appear twice) keyed by chainIndex, labels not decorated. Open sub-decisions for v2.4 go to /grill-me.
 - 2026-06-22 v2.4-final -- v2.4 grilled and resolved. Cohort detection by IP country code (IN -> canonical, AE -> Dubai-extended, MU -> Port Louis-extended, US -> NY-extended); other countries -> canonical chain + "Watching from..." label; geo-fail -> 12-node tail-clipped chain starting at Kathmandu with sacred ochre highlight on the leading Kathmandu pill. Manual edit deferred. Privacy line removed entirely. New 4th color state: SACRED (--sacred ochre token) for the geo-fallback entry-point marker. Ready to build.
 - 2026-06-22 v2.5 -- gap-fill + new locked-in. Three previously-locked items now SHIPPED + documented in per-tab specs (FAQ accordion PR #189, Kailash facts PR #191, city tracker v2.4 PRs #196 + #197 fit fix). Documented previously-undocumented libs (`origin.ts` cohort-by-tz, `timezone.ts` local/trip mode, `city-cohort.ts`, `kailash-facts.ts`). Added localStorage keys (`kailash_route_v1`, `kailash_origin`, `kailash_tz_pref`, `kailash_tz_mode`) and sessionStorage table (`kailash_geo_v1`). Added @radix-ui/react-accordion to tech stack, ipapi.co to External APIs + preconnect list. New locked-in roadmap item: Reference article #9 "Apps and Connectivity in Tibet / China" -- yatri-facing field guide to GFW-blocked apps, Chinese alternatives, pre-departure install checklist, payment caveats, home-screen install instructions. Ready to build.
+- 2026-06-22 v2.6 -- per-day bag state + airline weight allowances. New `bagState: BagState` field on every TripDay drives a "BAGS TODAY" block at the top of each expanded DayCard, plus a flight-allowance inline sub-row on flight days (D1, 3, 5, 10, 11, 13). Variable row count per day: typically 2 rows, expands to 3 on parikrama days (D7-D9) and handoff days (D5, D10). Bag location uses 5 state tags (with-you, stowed, stowed-locked, with-porters, in-transit, not-yet) with color tokens. Reference > Bag Transitions article gets a new bottom section: "Airline weight allowances" table with typical values for all 6 flight legs + warning callout to verify with YPO. Operator-sourced (existing 4-bag system trusted); Adip confirms specific weight numbers with YPO before packing day. Ready to build.
