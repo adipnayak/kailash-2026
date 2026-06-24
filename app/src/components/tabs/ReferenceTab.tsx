@@ -21,6 +21,7 @@ import { REFERENCE_ARTICLES } from "../../lib/reference-data";
 const ICON_MAP: Record<string, React.ReactNode> = {
   Pill: <Icon name="medication" size={20} />,
   Wifi: <Icon name="wifi" size={20} />,
+  Smartphone: <Icon name="smartphone" size={20} />,
   Backpack: <Icon name="backpack" size={20} />,
   ShieldCheck: <Icon name="verified_user" size={20} />,
   Mountain: <Icon name="landscape" size={20} />,
