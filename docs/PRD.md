@@ -41,6 +41,7 @@ All three content tabs (Itinerary, Prepare, Reference) have sticky scrollspy chi
   - During phase: current day number (1-13 of 13), location, altitude, connectivity status, tomorrow card, yatra progress bar, peak and offline stat tiles.
   - After phase: "Yatra Sampoorna" completion view, route summary, days-since-return, final stats.
 - `AltitudeChart` (lazy-loaded): recharts area chart of all 15 points (D0 origins + D1-D13 + D14 return). Two series -- Walking (altitude_peak) and Sleeping (altitude_sleep). Segmented control toggles between them; preference persisted to `kailash_altitude_mode`. Dotted reference line at Dolma La (5,630 m, Day 8 red). Grey dotted markers at ACCLIM (D4), REST (D6), BUFFER (D12). Y-axis metres only, linear scale.
+- `CityTracker` (embedded in the countdown bento, NOT a separate tile): horizontal scrolling pill strip rendered INSIDE the countdown card beneath `JAI BHOLE NATH`. 14-node round trip for IN cohort (Mumbai -> KTM -> Lhasa -> Purang -> Mansarovar -> Darchen -> Dirapuk -> Dolma La -> Zuthulphuk -> Darchen -> Purang -> Lhasa -> KTM -> Mumbai); 16 nodes for AE/MU/US cohorts (cohort origin pill prepended + appended); 12-node tail-clipped chain (Kathmandu start/end) when IP geo fails. Color states: done = `bg-emerald`, current = `bg-emerald` + `ring-2 ring-foreground/40` + `aria-current="step"`, upcoming = `bg-foreground text-background`, sacred entry-point (only on geo-fail Kathmandu) = `bg-sacred`. Strip is `w-full min-w-0` so it clips inside the bento with horizontal `overflow-x-auto` internal scroll (per PR #197 fit fix). `arrow_forward` connectors between pills. iOS hardening: `touchAction: manipulation`, `WebkitTapHighlightColor`, `overscrollBehaviorX: contain`. Auto-scrolls current pill via `strip.scrollBy({ left: delta })`. Optional "Watching from <city>, <country>" label appears above the strip ONLY for non-cohort visitors (cohort = OTHER) when geo succeeded. Cohort logic in `app/src/lib/city-cohort.ts` (pure function). Persistence: localStorage `kailash_route_v1` stores `{ startCity, startCountry, endCity, endCountry, source: 'ip' | 'fallback' }` once after the first successful or failed fetch; sessionStorage `kailash_geo_v1` 1h TTL wraps the raw ipapi.co fetch. Privacy footer line removed entirely.
 
 **Data sources:** `DAYS` from `trip-data.ts`, `computeJourneyState()` from `journey-state.ts`, `loadPrepStatus()` + `overallPrepProgress()` from `prep-data.ts`.
 
@@ -56,6 +57,7 @@ All three content tabs (Itinerary, Prepare, Reference) have sticky scrollspy chi
 - `ConnectivityRibbon`: 13-day dot strip showing per-day connectivity (good/intermittent/offline). Three colours: emerald (WiFi + phone), sacred/gold (phone only), destructive/red (no signal). Phase-aware headline. Before: highlights the offline cluster D7-D9. During: today's dot gets a ring highlight. GFW note (D3-D10, VPN needed) always visible.
 - Sticky day-chip nav below "Day by Day" heading. Each chip is a vertical stack: D# icon row, then temp range + moon phase icon (10 px font). 13 chips total. Today gets a clock icon; Dolma La (Day 8) gets a landscape icon in destructive. Active chip = the day section currently in the scrollspy zone (IntersectionObserver, top-biased rootMargin). Optimistic-active: tapping a chip marks it active immediately (no wait for scroll). Auto-scrolls the active chip to center of strip using `strip.scrollBy({ left: delta })` (not `scrollIntoView` -- iOS Safari mis-routes that). `overscrollBehaviorX: contain`. `touchAction: manipulation` + `WebkitTapHighlightColor` on every chip. Tapping a chip expands that DayCard and scrolls to it via `window.scrollTo({ top, behavior: 'smooth' })` with 300 ms defer post-expand.
 - 13 `DayCard` components. All expanded on first tab visit (default state = Set of all day numbers).
+- **Kailash facts between day cards**: 12 facts from `app/src/lib/kailash-facts.ts` rendered one-per-pair between consecutive DayCards. Slim `border-l-4 border-sacred bg-card px-4 py-3 my-2` block. "FACT" eyebrow `font-mono uppercase tracking-widest text-sacred text-[10px]`. Body `text-sm text-foreground leading-snug`. Optional muted source line below. Static (no icon, no tap). NOT counted in the sticky day chip strip (chip count stays 13), NOT observed by the IntersectionObserver scrollspy (each fact div has no `id="day-N"`). Mix mode: contextual where the upcoming day has strong material (Mansarovar D6, Dolma La D8, Dirapuk D7, parikrama closing D9), general Kailash trivia for transit days.
 
 **DayCard -- compressed view:** day badge, location, risk badge, 3 chips (altitude, trek distance/time, connectivity), timeline summary, expand button.
 
@@ -116,7 +118,9 @@ All three content tabs (Itinerary, Prepare, Reference) have sticky scrollspy chi
   7. Pre-trip Spiritual Practices (icon: favorite)
   8. FAQs (icon: help) -- added PR #172
 
-Each article renders typed blocks: prose, heading, table, ordered-list, unordered-list, callout (tones: critical/warning/info). Callout borders use `--destructive` (critical), `--sacred` (warning), `--border` (info).
+Each article renders typed blocks: prose, heading, table, ordered-list, unordered-list, callout (tones: critical/warning/info), accordion. Callout borders use `--destructive` (critical), `--sacred` (warning), `--border` (info).
+
+**FAQ accordion (FAQs article only)**: the 6 Q/A section groups (Insurance / Kit Provided / Medical Support / Porters and Horses / Accommodation / Cash) plus the China Group Visa and Operator Contacts sections use the new `accordion` RefBlock variant: `{ type: 'accordion', items: Array<{ question: string, answer: string }> }`. Rendered with shadcn watermelon-style `<Accordion type="multiple" defaultValue={['q-0']}>` so the first question in each section is open by default and opening additional questions doesn't close prior ones. State ephemeral (no localStorage). Chevron uses Material Symbols `expand_more`, rotates 180deg via the modern `rotate` CSS property (Tailwind v4) on `data-state=open`. Animations `accordion-down` / `accordion-up` defined as `@keyframes` in `app/src/index.css` (tailwindcss-animate does not ship them). Built on `@radix-ui/react-accordion` (the shadcn CLI is interactive-only, so the component was authored from the watermelon registry JSON, not generated). Other reference articles continue to render heading + prose unchanged.
 
 **Data sources:** static `REFERENCE_ARTICLES` array. No live data.
 
@@ -136,7 +140,7 @@ Each article renders typed blocks: prose, heading, table, ordered-list, unordere
 - **llms.txt:** `app/public/llms.txt` -- structured brief for LLMs covering trip overview, day summary, page structure, key facts (offline days, Dolma La, GFW, self-hosted fonts, CartoDB tiles).
 - **Sitemap + robots:** `app/public/sitemap.xml` and `robots.txt` at Pages root.
 - **Date override:** `?date=YYYY-MM-DD` query param overrides `new Date()` for `computeJourneyState()`. Use `?date=2026-07-14` to simulate Day 8.
-- **Preconnect hints** in `<head>` for CartoDB, OSRM, Open-Meteo, clarity.ms, googletagmanager.com.
+- **Preconnect hints** in `<head>` for CartoDB, OSRM, Open-Meteo, ipapi.co, clarity.ms, googletagmanager.com.
 
 ---
 
@@ -231,7 +235,23 @@ Note: the original single "Things to Carry" category was split into 9 sub-catego
 
 ### reference-data.ts
 
-`REFERENCE_ARTICLES`: 8 static articles. Types: `RefBlock` (prose/heading/table/ordered-list/unordered-list/callout), `RefArticle` (id, title, icon, intro, blocks).
+`REFERENCE_ARTICLES`: 8 static articles. Types: `RefBlock` (prose/heading/table/ordered-list/unordered-list/callout/accordion), `RefArticle` (id, title, icon, intro, blocks).
+
+### kailash-facts.ts
+
+`KAILASH_FACTS: KailashFact[]` -- 12 facts indexed by day-pair (index `i` = fact rendered BETWEEN day i+1 and day i+2). Each fact: `{ title?, body, source? }`. Plain text only, no JSX. Anti-AI rules apply to the copy itself.
+
+### city-cohort.ts
+
+`getCohortChain(countryCode: string | null, countryName?: string): CohortRoute` -- pure function. Maps an IP country code to a `CohortKey` (`'IN' | 'AE' | 'MU' | 'US' | 'OTHER' | 'FALLBACK'`) plus the rendered chain and start/end city + country. `null` triggers FALLBACK (12-node tail-clipped Kathmandu chain). Side-effect free, fully unit-testable.
+
+### origin.ts
+
+Yatri cohort auto-detect from IANA timezone (originally PRD v3.10 section 0.14.3). `detectOriginFromTz(tz)` returns `OriginId = 'mumbai' | 'uae' | 'mauritius' | 'us' | 'all'`. localStorage `kailash_origin` override wins over auto-detect (used for manual cohort switching in case the visitor is travelling). The newer `city-cohort.ts` flow is the city tracker's source of truth; `origin.ts` continues to drive any per-cohort copy outside the tracker.
+
+### timezone.ts
+
+Dual-mode timezone helpers. `TzMode = 'local' | 'trip'`. In `'trip'` mode, the displayed timezone follows the itinerary: Asia/Kathmandu for Days 1-2 and 11-13, Asia/Shanghai for Days 3-10. localStorage keys: `kailash_tz_pref` (the user's chosen IANA zone), `kailash_tz_mode` (`'local'` vs `'trip'`).
 
 ### localStorage keys
 
@@ -244,6 +264,16 @@ All keys scoped to `kailash_` prefix.
 | kailash_altitude_mode | AltitudeChart | AltitudeChart | 'walking' or 'sleeping' |
 | kailash_theme | ThemeToggle | ThemeToggle | 'light' or 'dark' |
 | kailash_route_v1_{day} | road-routing.ts | road-routing.ts | cached OSRM geometry per day |
+| kailash_route_v1 | CityTracker | CityTracker | JSON `{ startCity, startCountry, endCity, endCountry, source: 'ip' \| 'fallback' }`, resolved cohort route from ipapi.co (city tracker) |
+| kailash_origin | origin.ts | origin.ts, Hero | `OriginId` override for yatri cohort. Values: `'mumbai' \| 'uae' \| 'mauritius' \| 'us' \| 'all' \| 'auto'` |
+| kailash_tz_pref | timezone.ts | timezone.ts | user's chosen IANA timezone string |
+| kailash_tz_mode | timezone.ts | timezone.ts | `'local' \| 'trip'` |
+
+**sessionStorage keys:**
+
+| Key | Written by | Read by | Contents |
+|---|---|---|---|
+| kailash_geo_v1 | CityTracker | CityTracker | JSON `{ countryCode, countryName, city, fetchedAt }` raw ipapi.co fetch, 1h TTL |
 
 Per-day DayCard expansion state is in-memory only (not persisted). Weather is cached in-memory per (date, lat, lng), 1 hour TTL.
 
@@ -265,12 +295,14 @@ Per-day DayCard expansion state is in-memory only (not persisted). Weather is ca
 | Astronomy | suncalc | 2.0.0 |
 | Fonts | geist (npm) | 1.7.2 |
 | Tailwind plugin | tailwindcss-animate | 1.0.7 |
+| Accordion primitives | @radix-ui/react-accordion | latest | Powers the FAQ accordion (shadcn watermelon-style) |
 
 **@aliimam/icons is gone.** It was a 5+ MB un-tree-shakeable barrel (all ~800 icons in one export block, no `__PURE__` annotations). Replaced with `material-symbols` + the `Icon.tsx` wrapper.
 
 **External APIs (free, no key):**
 - Open-Meteo: daily weather forecast, 16-day horizon. Graceful fallback to climatology.
 - OSRM (router.project-osrm.org): road geometry for drive/walk legs. Fallback to straight-line when no route (thin Tibet coverage).
+- ipapi.co (`/json/`): visitor IP geolocation for the city tracker. HTTPS, no key, 1k req/day per IP, Cloudflare-hosted (China-reachable). Fail-silent. Result cached 1h in sessionStorage; resolved cohort persisted in localStorage so subsequent loads skip the fetch.
 
 **Map tiles:** CartoDB Positron/DarkMatter (`{s}.basemaps.cartocdn.com`). Serves through the GFW.
 
@@ -356,101 +388,164 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
 ## Roadmap (what's plausibly next)
 
+### Recently shipped (now documented in per-tab specs above)
+
+- FAQ accordion in Reference > FAQs (PR #189). Spec lives under "Reference".
+- Kailash facts between day cards in Itinerary (PR #191). Spec lives under "Itinerary".
+- City-progress tracker embedded in the countdown bento, v2.4 with full round trip + cohort + sacred fallback + localStorage persistence (PRs #190, #196, #197). Spec lives under "Overview".
+
 ### Locked-in (designed, ready to build)
 
-These are committed design intent post `/grill-me` resolution. This section is the source of truth for what to build.
+1. **Reference article #9: "Apps and Connectivity in Tibet / China"** -- a yatri-facing field guide to which apps work behind the GFW, which require a VPN, and which Chinese alternatives to install before departure. Distinct from the existing "Connectivity Playbook" article (which covers hardware: SIMs, satellite phones, hotel WiFi). The new article covers SOFTWARE: install-before-you-leave checklist, app-by-app compatibility tables, VPN guidance, payment-app caveats.
 
-1. **FAQ accordion (Reference > FAQs)**. The 14 Q/A pairs currently render as alternating `heading` (question) + `prose` (answer) blocks, all open. Replace with an accordion:
-   ```
-   pnpm dlx shadcn@latest add https://registry.watermelon.sh/r/accordion-3.json
-   ```
-   Resolved spec:
-   - **Default state**: first Q in each section open; all others collapsed.
-   - **Open mode**: multi-open via `<Accordion type="multiple">`. Opening Q2 leaves Q1 open.
-   - **Section preservation**: the 8 section group headings (Insurance / Kit Provided / Medical Support / Porters and Horses / Accommodation / Cash / China Group Visa / Operator Contacts) stay as static `heading` blocks above their own accordion. Each section has its own independent accordion.
-   - **Chevron**: Material Symbols `expand_more` (rotates on open via CSS). No new icon dependency.
-   - **State**: ephemeral. No localStorage. Resets per tab visit.
-   - **Data shape**: new `RefBlock` variant `{ type: 'accordion', items: [{ question, answer }] }`. Migrate the FAQs article's existing heading + prose pairs into this block per section. Other articles untouched.
-   - **Anti-AI rules** apply to all generated code (zero em-dashes, en-dashes, smart quotes, emojis).
+   **Position in `REFERENCE_ARTICLES`**: between "Connectivity Playbook" (id `connectivity-playbook`) and "Bag Transitions" (id `bag-transitions`). Article id `apps-in-china`. Sticky article-nav chip count goes from 8 to 9.
 
-2. **Kailash facts between day cards (Itinerary tab)**. Insert one short fact card between every consecutive pair of `DayCard`s -- 12 facts total for 13 days.
-   Resolved spec:
-   - **Framing**: mix mode. Contextual fact where the upcoming day has strong material (Mansarovar Day 6, Dolma La Day 8, Dirapuk Day 7 north-face viewpoint, parikrama days, etc.). General Kailash trivia for transit days (KTM rest days, fly-only days).
-   - **Count**: 12 facts, one per day-pair (between D1-D2 through D12-D13).
-   - **Data file**: new `app/src/lib/kailash-facts.ts`. Ordered array indexed by day-pair, each fact `{ title?, body, source? }`. Source citation optional, displayed muted if present.
-   - **Visual**: slim block. `border-l-4 border-sacred bg-card px-4 py-3`. "FACT" eyebrow in `font-mono uppercase tracking-widest text-sacred text-[10px]`. Body in `text-sm text-foreground`. Static. No icon. No tap.
-   - **Excluded from**: sticky day chip strip (still 13 chips for 13 day cards), IntersectionObserver scrollspy, BackToTop calculations. Pure visual punctuation between day cards.
-   - **Examples**:
-     - "At 5,630 m, Dolma La pass is higher than Everest Base Camp (5,364 m)."
-     - "Lake Manasarovar is one of the highest freshwater lakes in the world."
-     - "Pilgrims have circumambulated Mt Kailash for over a thousand years."
-   - **Anti-AI rules** apply -- no flowery language, no em-dashes.
+   **Icon**: Material Symbols `smartphone` (or `apps` -- decide at build time; both already covered by the icon-font subset).
 
-3. **City-progress tracker EMBEDDED in the countdown bento (Overview > Hero)**.
-   FINAL spec v2.4 (post /grill-me, ready to build). Horizontal scrolling pill strip INSIDE the existing "X days to Kailash / JAI BHOLE NATH" countdown card. NOT a separate `BentoGridItem`. Chain is the FULL round trip (to + from), cohort-aware per visitor, with a `--sacred` fallback state when geo fails.
+   **Intro copy**:
+   > China's Great Firewall blocks most Google, Meta, Twitter, and many Western services. Install and log in to everything BEFORE entering China. Many SMS verifications and first-time activations fail inside Tibet. Once you're past the GFW, you cannot easily install new apps or sign in to old ones without a VPN that already works.
 
-   **Chain content** -- cohort-aware, by visitor's IP country code:
-   - `IN` -> canonical 14-node Mumbai round trip: `Mumbai -> KTM -> Lhasa -> Purang -> Mansarovar -> Darchen -> Dirapuk -> Dolma La -> Zuthulphuk -> Darchen -> Purang -> Lhasa -> KTM -> Mumbai`
-   - `AE` -> 16 nodes: `Dubai -> [canonical 14] -> Dubai`
-   - `MU` -> 16 nodes: `Port Louis -> [canonical 14] -> Port Louis`
-   - `US` -> 16 nodes: `New York -> [canonical 14] -> New York`
-   - any other country -> canonical 14-node Mumbai chain + small `font-mono text-[10px] uppercase tracking-widest text-muted-foreground` label above the strip: `Watching from <city>, <country>`
-   - **geo fetch fails** -> 12-node tail-clipped chain: drop the leading Mumbai AND trailing Mumbai. Chain starts at `Kathmandu` and ends at `Kathmandu`. The leading Kathmandu pill renders in the SACRED state (see Color rule below).
+   **Blocks** (in order, all rendered via the existing `RefBlock` typed system):
 
-   The "Returns via..." footer from v2.3 IS REMOVED -- the return leg lives on the chain itself.
+   1. `callout` (tone: critical) -- "Install and log in to everything before arriving in China. Many verification SMS messages and app activations do not work reliably once you are inside Tibet."
 
-   Duplicate-name pills: `Mumbai` (twice in canonical; four times for non-MU cohorts via start/end), `Kathmandu`, `Lhasa`, `Purang`, `Darchen` each appear twice. Labels are identical (no `Lhasa 2` / `Lhasa <-` decoration). React key is `${cityName}-${chainIndex}`. The current-pill ring tells the visitor which pass they're on.
+   2. `heading` "Communication apps"
 
-   **Direction**: pills flow LEFT-TO-RIGHT (default CSS direction). `arrow_forward` connectors between pills point right. Leftmost pill = chain start; rightmost = chain end.
+   3. `table` (4 columns: App, Works in China, Notes, Chinese alternative):
 
-   **localStorage**: new key `kailash_route_v1` storing `{ startCity, startCountry, endCity, endCountry, source }` where `source` is `'ip' | 'fallback'`. (`'manual'` reserved for a future editor; v2.4 ships IP-only.) Resolved from the ipapi.co country code on first visit; persists across sessions. Sits alongside the existing client-only data (prep checklist, theme, JourneyState).
-   - sessionStorage `kailash_geo_v1` 1h TTL still wraps the raw ipapi.co fetch (rate limiting + redundant fetches). localStorage stores the RESOLVED route after the fetch.
+      | App | Works in China | Notes | Chinese alternative |
+      |---|---|---|---|
+      | WhatsApp | Blocked | VPN required | WeChat |
+      | Facebook Messenger | Blocked | VPN required | WeChat |
+      | Instagram | Blocked | VPN required | Xiaohongshu (RED) |
+      | Facebook | Blocked | VPN required | Weibo |
+      | X (Twitter) | Blocked | VPN required | Weibo |
+      | Telegram | Unreliable | VPN often required | WeChat |
+      | Gmail | Blocked | VPN required | Outlook |
+      | Google Meet | Blocked | VPN required | Zoom |
+      | Zoom | Usually works | Most reliable Western option | -- |
+      | Microsoft Teams | Usually works | Generally accessible | -- |
+      | WeChat | Works | China's primary comms app -- install and verify before you go | -- |
 
-   **Layout**:
-   - HORIZONTAL `<ol aria-label="Yatra route" className="flex gap-2 overflow-x-auto">` inside the countdown bento (BeforeBento / DuringBento / AfterBento all get it).
-   - Each pill: `inline-flex items-center gap-1 rounded-none border px-3 py-2 font-mono text-xs whitespace-nowrap`.
-   - Connector between pills: `<Icon name="arrow_forward" size={10} className="self-center text-muted-foreground shrink-0" />`.
-   - iOS hardening: `touchAction: 'manipulation'`, `WebkitTapHighlightColor: 'rgba(0,0,0,0.05)'`, `overscrollBehaviorX: 'contain'`.
-   - Auto-scroll the current pill into view via strip-local `scrollBy({ left: delta })` math (per PR #181 pattern). NEVER window scroll.
-   - Countdown bento keeps its `colSpan: 2`; the strip grows the card vertically by one row beneath JAI BHOLE NATH.
+   4. `heading` "Maps and navigation"
 
-   **Color rule** -- 4 named states:
-   - **Done**: `bg-emerald text-background border-emerald`
-   - **Current**: `bg-emerald text-background border-emerald` + `ring-2 ring-foreground/40` + `aria-current="step"`
-   - **Upcoming**: `bg-foreground text-background border-foreground`
-   - **Sacred entry-point** (only on geo-fallback chain's leading Kathmandu pill): `bg-sacred text-sacred-foreground border-sacred`. Uses the existing `--sacred` ochre/gold token (same color as JAI BHOLE NATH, Dolma La marker, intermittent connectivity). Marks "we couldn't detect your location, but the trip enters via Kathmandu". No ring.
+   5. `table`:
 
-   **Phase semantics**:
-   - **before**: cohort start pill = current (green + ring). All others = upcoming (black). Done = empty. Exception: geo-fallback chain -> leading Kathmandu pill = sacred; rest = upcoming.
-   - **during**: cities the group has passed in chain order = done (green, no ring). Current chain position (mapped from `JourneyState.tripDayIndex`) = green + ring. Future = black. Walks left-to-right; on the return leg (right half of chain) the ring continues walking left-to-right through the duplicate-named return pills.
-   - **after**: all pills GREEN; the END pill (rightmost) gets the ring.
+      | App | Works | Notes |
+      |---|---|---|
+      | Google Maps | Limited / blocked | Not reliable |
+      | Apple Maps | Generally works | Default for iOS users |
+      | Maps.me | Excellent offline | Download Tibet region before departure |
+      | Organic Maps | Excellent offline | Open-source alternative to Maps.me |
+      | Amap (Gaode) | Works | China's local map app |
+      | Baidu Maps | Works | China's other local map app |
 
-   **API + cache**:
-   - `ipapi.co/json` only. HTTPS, no key, 1k req/day per IP, Cloudflare-hosted (China-reachable).
-   - sessionStorage `kailash_geo_v1` 1h TTL for the raw fetch.
-   - localStorage `kailash_route_v1` for the resolved route. Persists across sessions.
-   - Fail silently on network error -> trigger the 12-node tail-clipped fallback chain.
-   - Preconnect already in `app/index.html`.
+   6. `callout` (tone: warning) -- "For this yatra, you will not need navigation much (the operator handles all routing). But offline maps are still useful for orientation. Download Tibet region in Maps.me or Organic Maps before departure."
 
-   **Tappable**: the countdown bento as a whole stays tappable -> Itinerary tab via `onTab('itinerary')`. Pills are non-interactive `<li>` children. Diagonal stripes stay on the bento.
+   7. `heading` "Email"
 
-   **Accessibility**: `<ol aria-label="Yatra route">`. Current pill: `aria-current="step"`. Sacred entry-point pill: `aria-current="location"` (custom value to disambiguate from current).
+   8. `table`:
 
-   **Privacy footer**: REMOVED entirely. The bottom of the bento ends at the strip (or, on the canonical Mumbai chain + non-cohort country, the optional "Watching from <city>, <country>" label sits ABOVE the strip).
+      | App | Works | Notes |
+      |---|---|---|
+      | Gmail | VPN required | Both web + app blocked |
+      | Outlook | Generally works | Recommended for the trip |
+      | Yahoo Mail | Variable | Inconsistent reachability |
+      | Apple Mail | Works for non-Gmail accounts | iCloud Mail works; Gmail accounts via Apple Mail still need VPN |
 
-   **Manual edit UI for start/end**: DEFERRED. IP detection only in v2.4. A future v3 Profile tab may add an editor.
+   9. `heading` "Cloud storage"
 
-   **Component shape**: refactor existing `CityTracker.tsx`:
-   - Drop the `BentoGridItem` wrapper (parent countdown card already IS one).
-   - Drop the "Returns via..." footer.
-   - Drop the privacy line.
-   - Expand chain to 14 / 16 / 12 nodes (cohort-aware, fallback-aware).
-   - Swap layout vertical -> horizontal.
-   - Add cohort lookup + localStorage persistence.
-   - Add sacred state for the geo-fallback Kathmandu pill.
-   - Keep as a sub-component consumed by Hero countdown card.
+   10. `table`:
 
-   **Anti-AI rules** apply.
+       | App | Works | Notes |
+       |---|---|---|
+       | Google Drive | VPN required | |
+       | Google Photos | VPN required | |
+       | Dropbox | Inconsistent | Sometimes works, sometimes not |
+       | OneDrive | Usually works | |
+       | iCloud | Usually works | |
+
+   11. `callout` (tone: warning) -- "Keep offline copies on your device of: passport, visa, insurance, flight tickets. Do not rely on cloud retrieval from inside Tibet."
+
+   12. `heading` "Search and translation"
+
+   13. `table`:
+
+       | App | Works | Notes |
+       |---|---|---|
+       | Google Search | Blocked | Use Bing or DuckDuckGo |
+       | Google Translate | Blocked | Use Microsoft Translator or Apple Translate |
+       | Microsoft Translator | Works | Download offline English-Chinese pack before departure |
+       | Apple Translate | Works | Download offline packs before departure |
+       | Pleco | Works | Best Chinese-English dictionary; offline-capable |
+
+   14. `callout` (tone: warning) -- "Download offline language packs BEFORE you leave: English <-> Chinese for navigation, Hindi <-> English for the group, plus Tibetan if you want signage support."
+
+   15. `heading` "VPNs"
+
+   16. `prose` -- "Many international services require a VPN to work behind the GFW. Common options that have historically worked: ExpressVPN, NordVPN, Surfshark, Astrill (used widely by long-term China residents). VPN reliability is a moving target -- what worked last month may fail today."
+
+   17. `callout` (tone: critical) -- "Install AND test your VPN before entering China. Downloading or activating VPN services from inside China is difficult -- the VPN app stores themselves are throttled. The day you arrive is the worst day to discover your VPN does not work."
+
+   18. `heading` "Payment apps"
+
+   19. `table`:
+
+       | App | Works | Notes |
+       |---|---|---|
+       | Visa / Mastercard | Limited | Accepted at major hotels and airports; not at smaller shops |
+       | Google Pay | Blocked | |
+       | Apple Pay | Limited | Some merchants only |
+       | WeChat Pay | Limited for foreign visitors | Requires Chinese bank linkage or temporary tourist mode (recently rolled out for international cards) |
+       | Alipay | Limited for foreign visitors | Same as WeChat Pay; tourist mode available |
+       | Cash (CNY) | Always works | Carry enough for incidentals, tips, food not covered by the operator |
+
+   20. `callout` (tone: warning) -- "Carry CNY cash in small denominations for personal expenses and emergencies. The operator covers meals and accommodation, but you will want cash for snacks, water, souvenirs, and tips."
+
+   21. `heading` "Best setup for this yatra (pre-departure checklist)"
+
+   22. `unordered-list`:
+       - WhatsApp installed and logged in
+       - VPN installed and tested (not just installed -- actually connect to a foreign server once before you fly)
+       - Offline maps downloaded (Tibet region in Maps.me or Organic Maps)
+       - Passport scan saved offline on phone
+       - Visa scan saved offline on phone
+       - Insurance documents saved offline on phone
+       - Emergency contacts saved offline (not just in the cloud address book)
+       - Important PDFs downloaded to device storage
+       - Offline language packs downloaded (Microsoft Translator or Apple Translate, English <-> Chinese)
+       - WeChat installed, verified, and a small balance loaded if you want to try paying with it
+       - This site saved as a home-screen icon so it behaves like a native app during the trip
+
+   23. `heading` "Connectivity expectations during the journey"
+
+   24. `table`:
+
+       | Location | Days | Connectivity |
+       |---|---|---|
+       | Kathmandu | D1, D2, D11, D12 | Excellent |
+       | Lhasa | D3, D4, D10 | Good |
+       | Purang | D5, D10 | Moderate |
+       | Mansarovar | D5, D6 | Limited (phone only at hotel) |
+       | Darchen | D7, D9 | Limited |
+       | Dirapuk | D7 | Very limited |
+       | Dolma La | D8 | None |
+       | Zuthulphuk | D8 | Very limited |
+
+   25. `callout` (tone: info) -- "Family members: during the parikrama (Days 7-9), delayed communication is normal and expected. A 24-48 hour silence is not a cause for concern."
+
+   26. `heading` "Add the site to your home screen"
+
+   27. `prose` -- "On iPhone: open the site in Safari, tap the share icon, scroll to 'Add to Home Screen'. On Android: open the site in Chrome, tap the three-dot menu, select 'Install app' or 'Add to home screen'. The site then behaves like a native app -- launches without browser chrome, loads instantly from cache, and works during the trip even when the rest of the internet is unreachable."
+
+   **Acceptance criteria**:
+   - [ ] `apps-in-china` article inserted in `REFERENCE_ARTICLES` between `connectivity-playbook` and `bag-transitions`
+   - [ ] Article-nav sticky chip strip shows 9 chips (was 8); scrollspy continues to work
+   - [ ] All `table` blocks render with the existing table renderer (no new block type needed)
+   - [ ] All `callout` blocks use the correct tone (critical / warning / info)
+   - [ ] Anti-AI rules followed throughout (zero em-dashes, en-dashes, smart quotes, emojis)
+   - [ ] Build clean
+   - [ ] Mirror to `/private/tmp/ralph-v4-verify-89196/kailash-2026/`
 
 ### Plausibly later (not designed)
 
@@ -472,3 +567,4 @@ These are committed design intent post `/grill-me` resolution. This section is t
 - 2026-06-22 v2.3 -- city tracker REDESIGN. PR #190 shipped the vertical-chain-in-its-own-bento version; v2.3 reframes the tracker as a horizontal scroll INSIDE the existing countdown bento (no separate tile). Color rule simplified: GREEN for done + present, BLACK for upcoming. Removes the standalone CityTracker BentoGridItem; chain moves into the countdown card. Open sub-decisions go to /grill-me v2.3 before re-build.
 - 2026-06-22 v2.4 -- city tracker FULL round trip. v2.3 grilled and resolved (ring on current pill, only visitor city green pre-trip, refactor CityTracker, aria-current). v2.4 then layers: (1) chain includes the FULL return leg (14 nodes for Mumbai cohort, more for Dubai/NY/Port Louis cohorts), (2) visitor's start + end city/country persisted to localStorage as `kailash_route_v1`, (3) "Returns via" footer removed (return leg now on-chain), (4) duplicate-name pills (KTM, Lhasa, Purang, Darchen each appear twice) keyed by chainIndex, labels not decorated. Open sub-decisions for v2.4 go to /grill-me.
 - 2026-06-22 v2.4-final -- v2.4 grilled and resolved. Cohort detection by IP country code (IN -> canonical, AE -> Dubai-extended, MU -> Port Louis-extended, US -> NY-extended); other countries -> canonical chain + "Watching from..." label; geo-fail -> 12-node tail-clipped chain starting at Kathmandu with sacred ochre highlight on the leading Kathmandu pill. Manual edit deferred. Privacy line removed entirely. New 4th color state: SACRED (--sacred ochre token) for the geo-fallback entry-point marker. Ready to build.
+- 2026-06-22 v2.5 -- gap-fill + new locked-in. Three previously-locked items now SHIPPED + documented in per-tab specs (FAQ accordion PR #189, Kailash facts PR #191, city tracker v2.4 PRs #196 + #197 fit fix). Documented previously-undocumented libs (`origin.ts` cohort-by-tz, `timezone.ts` local/trip mode, `city-cohort.ts`, `kailash-facts.ts`). Added localStorage keys (`kailash_route_v1`, `kailash_origin`, `kailash_tz_pref`, `kailash_tz_mode`) and sessionStorage table (`kailash_geo_v1`). Added @radix-ui/react-accordion to tech stack, ipapi.co to External APIs + preconnect list. New locked-in roadmap item: Reference article #9 "Apps and Connectivity in Tibet / China" -- yatri-facing field guide to GFW-blocked apps, Chinese alternatives, pre-departure install checklist, payment caveats, home-screen install instructions. Ready to build.
