@@ -405,6 +405,24 @@ export const REFERENCE_ARTICLES: RefArticle[] = [
           "The handoff moment (Day 5 morning): confirm with the Lhasa hotel front desk. Get a printed claim ticket. Photograph it. Keep it in the daypack documents pouch.",
         ],
       },
+      { type: "heading", text: "AIRLINE WEIGHT ALLOWANCES" },
+      {
+        type: "callout",
+        tone: "warning",
+        body: "Numbers below are typical for these routes. Verify with YPO before packing day. The LXA-Purang leg is the binding constraint for Days 5-10 packing.",
+      },
+      {
+        type: "table",
+        headers: ["Leg", "Flight", "Check (kg)", "Cabin (kg)", "Notes"],
+        rows: [
+          ["BOM -> KTM (Day 1)", "IndiGo 6E-1157", "30", "7", "Standard international economy"],
+          ["KTM -> LXA (Day 3)", "Air China / Tibet Airlines", "20", "5 to 7", "High-altitude route, lower limits common"],
+          ["LXA -> Purang (Day 5)", "Tibet Airlines small aircraft", "10 to 20", "5", "Small plane, strict limits, LiPo over 100 Wh restricted, no drones"],
+          ["Purang -> LXA (Day 10)", "Tibet Airlines small aircraft", "10 to 20", "5", "Same as Day 5"],
+          ["LXA -> KTM (Day 11)", "Air China / Tibet Airlines", "20", "5 to 7", "Same as Day 3 reverse"],
+          ["KTM -> BOM (Day 13)", "Nepal Airlines RA-201", "30", "7", "Standard international economy"],
+        ],
+      },
     ],
   },
 

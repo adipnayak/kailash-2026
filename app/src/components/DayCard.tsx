@@ -17,7 +17,7 @@ import { Icon } from './Icon';
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { TripDay } from '../lib/trip-data';
+import type { TripDay, BagId, BagStateTag } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
 import { lazy, Suspense } from 'react';
@@ -71,6 +71,52 @@ function cn(...classes: (string | undefined | false | null)[]): string {
 
 function fmtDual(m: number): string {
   return m.toLocaleString('en-US') + ' m / ' + mToFt(m).toLocaleString('en-US') + ' ft';
+}
+
+// ---------------------------------------------------------------------------
+// Bag state helpers
+// ---------------------------------------------------------------------------
+
+function bagDisplay(id: BagId): string {
+  switch (id) {
+    case 'main': return 'Main suitcase';
+    case 'duffle': return 'YPO duffle';
+    case 'daypack-personal': return 'Personal daypack';
+    case 'daypack-ypo': return 'YPO daypack';
+  }
+}
+
+function iconForBagState(s: BagStateTag): string {
+  switch (s) {
+    case 'with-you': return 'check_circle';
+    case 'with-porters': return 'hiking';
+    case 'stowed-locked': return 'lock';
+    case 'stowed': return 'inventory_2';
+    case 'in-transit': return 'flight';
+    case 'not-yet': return 'schedule';
+  }
+}
+
+function bagStateLabel(s: BagStateTag): string {
+  switch (s) {
+    case 'with-you': return 'WITH YOU';
+    case 'with-porters': return 'WITH PORTERS';
+    case 'stowed-locked': return 'STOWED LOCKED';
+    case 'stowed': return 'STOWED';
+    case 'in-transit': return 'IN TRANSIT';
+    case 'not-yet': return 'NOT YET DISTRIBUTED';
+  }
+}
+
+function bagStateBadgeClass(s: BagStateTag): string {
+  switch (s) {
+    case 'with-you': return 'bg-emerald text-background border border-emerald';
+    case 'with-porters': return 'bg-sacred text-sacred-foreground border border-sacred';
+    case 'stowed-locked': return 'bg-muted text-muted-foreground border border-border';
+    case 'stowed': return 'bg-muted text-muted-foreground border border-border';
+    case 'in-transit': return 'bg-sacred/30 text-foreground border border-sacred/40';
+    case 'not-yet': return 'bg-muted/30 text-muted-foreground border border-border italic';
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1144,6 +1190,43 @@ function ExpandedView({ day, onToggle }: { day: TripDay; index?: number; onToggl
       <DayHeader day={day} />
       <ExpandedMap day={day} />
       <SummaryStrip day={day} />
+      {day.bagState && (
+        <section className="px-4 py-4 border-b border-border">
+          <p className="mb-2 font-mono uppercase tracking-widest text-muted-foreground text-[10px]">
+            Bags today
+          </p>
+          <ul className="flex flex-col gap-2">
+            {day.bagState.rows.map((row, i) => (
+              <li key={i} className="flex items-start gap-3 text-sm">
+                <Icon name={iconForBagState(row.state)} size={14} className="mt-0.5 text-muted-foreground shrink-0" />
+                <div className="flex flex-1 min-w-0 flex-col">
+                  <div className="flex flex-wrap items-baseline gap-x-2">
+                    <span className="font-mono uppercase tracking-wider text-xs text-muted-foreground">{row.location}</span>
+                    <span className="text-foreground text-xs">{row.bags.map(bagDisplay).join(', ')}</span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <span className={cn('inline-flex items-center gap-1 rounded-none px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest', bagStateBadgeClass(row.state))}>
+                      {row.state === 'stowed-locked' && <Icon name="lock" size={10} />}
+                      {bagStateLabel(row.state)}
+                    </span>
+                    {row.note && <span className="font-mono text-[10px] text-muted-foreground">{row.note}</span>}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {day.bagState.flight && (
+            <div className="mt-3 border-t border-border pt-3">
+              <p className="font-mono uppercase tracking-widest text-muted-foreground text-[10px]">
+                Flight allowance
+              </p>
+              <p className="mt-1 text-xs text-foreground">
+                {day.bagState.flight.leg}{day.bagState.flight.flightNo ? ` (${day.bagState.flight.flightNo})` : ''} · Check {day.bagState.flight.checkKg} kg + Cabin {day.bagState.flight.cabinKg} kg
+              </p>
+            </div>
+          )}
+        </section>
+      )}
       <VisualTimeline day={day} />
       <WeatherChips day={day} />
       <SkyChips day={day} />

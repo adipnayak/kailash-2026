@@ -12,6 +12,28 @@ export type DayType = 'normal' | 'critical' | 'holy' | 'rest';
 export type ConnStatus = 'good' | 'intermittent' | 'offline';
 export type Risk = 'easy' | 'moderate' | 'high';
 
+export type BagId = 'main' | 'duffle' | 'daypack-personal' | 'daypack-ypo';
+export type BagStateTag = 'with-you' | 'stowed' | 'stowed-locked' | 'with-porters' | 'in-transit' | 'not-yet';
+
+export interface BagLocationRow {
+  location: string;
+  bags: BagId[];
+  state: BagStateTag;
+  note?: string;
+}
+
+export interface BagFlight {
+  leg: string;
+  flightNo?: string;
+  checkKg: string;
+  cabinKg: string;
+}
+
+export interface BagState {
+  rows: BagLocationRow[];
+  flight?: BagFlight;
+}
+
 export interface WeatherData {
   temp_high: number;
   temp_low: number;
@@ -102,6 +124,7 @@ export interface TripDay {
   sleep_altitude_m: number;
   peak_altitude_m: number;
   difficulty: 'easy' | 'moderate' | 'high';
+  bagState: BagState;
 }
 
 export const DEPART = '2026-07-07';
@@ -179,6 +202,14 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 1380,
     peak_altitude_m: 1380,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'KTM Marriott', bags: ['main'], state: 'stowed' },
+        { location: 'Not yet distributed', bags: ['duffle', 'daypack-ypo'], state: 'not-yet' },
+      ],
+      flight: { leg: 'BOM -> KTM', flightNo: '6E-1157', checkKg: '30', cabinKg: '7' },
+    },
   },
   {
     day: 2,
@@ -253,6 +284,12 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 1380,
     peak_altitude_m: 1380,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal', 'daypack-ypo'], state: 'with-you', note: 'YPO bags distributed PM' },
+        { location: 'KTM Marriott', bags: ['main', 'duffle'], state: 'stowed' },
+      ],
+    },
   },
   {
     day: 3,
@@ -327,6 +364,13 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 3656,
     peak_altitude_m: 3656,
     difficulty: 'moderate',
+    bagState: {
+      rows: [
+        { location: 'Cabin', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'Checked', bags: ['main', 'duffle'], state: 'in-transit' },
+      ],
+      flight: { leg: 'KTM -> LXA', checkKg: '20', cabinKg: '5 to 7' },
+    },
   },
   {
     day: 4,
@@ -400,6 +444,12 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 3656,
     peak_altitude_m: 3656,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'St Regis Lhasa room', bags: ['main', 'duffle'], state: 'stowed' },
+      ],
+    },
   },
   {
     day: 5,
@@ -478,6 +528,14 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 4670,
     peak_altitude_m: 4670,
     difficulty: 'moderate',
+    bagState: {
+      rows: [
+        { location: 'Cabin', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'Lhasa St Regis storage', bags: ['main'], state: 'stowed-locked', note: 'locked, 5 nights' },
+        { location: 'With group', bags: ['duffle'], state: 'in-transit' },
+      ],
+      flight: { leg: 'LXA -> Purang', checkKg: '10 to 20', cabinKg: '5' },
+    },
   },
   {
     day: 6,
@@ -559,6 +617,13 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 4670,
     peak_altitude_m: 4670,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'Hotel', bags: ['duffle'], state: 'stowed' },
+        { location: 'Lhasa storage', bags: ['main'], state: 'stowed-locked' },
+      ],
+    },
   },
   {
     day: 7,
@@ -640,6 +705,13 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 4900,
     peak_altitude_m: 4900,
     difficulty: 'moderate',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal'], state: 'with-you', note: '4-6 kg target' },
+        { location: 'With porters', bags: ['duffle'], state: 'with-porters' },
+        { location: 'Lhasa storage', bags: ['main'], state: 'stowed-locked' },
+      ],
+    },
   },
   {
     day: 8,
@@ -728,6 +800,13 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 4760,
     peak_altitude_m: 5630,
     difficulty: 'high',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal'], state: 'with-you', note: '4-6 kg target' },
+        { location: 'With porters', bags: ['duffle'], state: 'with-porters' },
+        { location: 'Lhasa storage', bags: ['main'], state: 'stowed-locked' },
+      ],
+    },
   },
   {
     day: 9,
@@ -807,6 +886,13 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 4760,
     peak_altitude_m: 4900,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal'], state: 'with-you', note: '4-6 kg target' },
+        { location: 'With porters', bags: ['duffle'], state: 'with-porters' },
+        { location: 'Lhasa storage', bags: ['main'], state: 'stowed-locked' },
+      ],
+    },
   },
   {
     day: 10,
@@ -881,6 +967,14 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 3656,
     peak_altitude_m: 4575,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'Cabin', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'With group', bags: ['duffle'], state: 'in-transit' },
+        { location: 'REUNION at St Regis', bags: ['main'], state: 'with-you', note: 'just retrieved from storage' },
+      ],
+      flight: { leg: 'Purang -> LXA', checkKg: '10 to 20', cabinKg: '5' },
+    },
   },
   {
     day: 11,
@@ -954,6 +1048,13 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 1380,
     peak_altitude_m: 3656,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'Cabin', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'Checked', bags: ['main', 'duffle'], state: 'in-transit' },
+      ],
+      flight: { leg: 'LXA -> KTM', checkKg: '20', cabinKg: '5 to 7' },
+    },
   },
   {
     day: 12,
@@ -1031,6 +1132,12 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 1380,
     peak_altitude_m: 1380,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'With you', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'KTM Marriott', bags: ['main', 'duffle'], state: 'stowed' },
+      ],
+    },
   },
   {
     day: 13,
@@ -1101,6 +1208,13 @@ export const DAYS: TripDay[] = [
     sleep_altitude_m: 0,
     peak_altitude_m: 1380,
     difficulty: 'easy',
+    bagState: {
+      rows: [
+        { location: 'Cabin', bags: ['daypack-personal'], state: 'with-you' },
+        { location: 'Checked', bags: ['main', 'duffle'], state: 'in-transit' },
+      ],
+      flight: { leg: 'KTM -> BOM', flightNo: 'RA-201', checkKg: '30', cabinKg: '7' },
+    },
   },
 ];
 
