@@ -718,6 +718,82 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
    **Anti-AI rules** apply.
 
+5. **v2.9 bundle: step count chip + Diamox bookend cards + 17-chip strip + live weather everywhere + precip type (rain / snow / hail)**. Four logically separate adds bundled into one PR because of heavy file overlap (DayCard.tsx + ItineraryTab.tsx + weather.ts shared across multiple changes). One Sonnet ralph loop, sequential.
+
+   **5a. Step count chip on the existing walk/trek chip (DayCard)**:
+   - Extend the existing walk chip in `DayCard.tsx` chips builder (around the `directions_walk` icon block) to append derived step count
+   - Computation: `const totalSteps = Math.round((day.timing.walk_h * 5500 + day.timing.active_trek_h * 4500) / 500) * 500;`
+   - Constants: `5500 steps/hour` for `walk_h` (KTM/Lhasa sightseeing pace), `4500 steps/hour` for `active_trek_h` (altitude + uneven terrain + daypack slows the pace)
+   - Display format: `8h trek - ~36,000 steps` / `2h walk - ~11,000 steps`. Comma-grouped via `toLocaleString('en-US')`. `~` prefix to signal approximation. Plain ASCII hyphen separator (or middle dot `·` if it's already used in the file).
+   - No new data, no new types, no new field on TripDay. Pure derivation from existing `timing` fields.
+
+   **5b. Diamox bookend mini-cards (Itinerary)**:
+   - New `app/src/components/DiamoxBookendCard.tsx` component. Props: `{ dose: DiamoxDose }`. Renders a compact card with:
+     - Header: date (e.g. "Sun 28 Jun 2026") + uppercase badge (`PRE-TRIP - TEST DOSE`, `PRE-TRIP - START TONIGHT`, `POST-TRIP - BUFFER`, `POST-TRIP - FINAL DOSE`)
+     - Body: the same DIAMOX TODAY block already used in DayCard (sacred-ochre left border, "DIAMOX TODAY" eyebrow, the `describeDose(dose)` line)
+     - Footer: 1-line context note per dose type (see context lines in the table below)
+     - NO bagState, weather, timeline, map, spiritual focus, walking chips. This is a Diamox-only card.
+     - Anchor `id="diamox-{dateISO}"` (e.g. `id="diamox-2026-06-28"`) for scrollspy + jump-to.
+   - 4 instances rendered in `ItineraryTab`:
+     - 2 PRE-trip cards rendered ABOVE the D1 card (28 Jun first, 6 Jul second)
+     - 2 POST-trip cards rendered BELOW the D13 card (20 Jul first, 21 Jul second)
+   - Context-note copy per dose (verbatim):
+
+     | Date | Type | Badge | Context line |
+     |---|---|---|---|
+     | Sun 28 Jun 2026 | test | `PRE-TRIP - TEST DOSE` | "Test dose at home. Watch for sulfa allergy reaction within 1 hour." |
+     | Mon 6 Jul 2026 | start | `PRE-TRIP - START TONIGHT` | "Start prophylaxis tonight. From tomorrow take twice daily through 21 Jul." |
+     | Mon 20 Jul 2026 | buffer | `POST-TRIP - BUFFER` | "Continue twice daily at home. Do not stop yet, the buffer prevents rebound." |
+     | Tue 21 Jul 2026 | buffer | `POST-TRIP - FINAL DOSE` | "Final twice-daily dose today. Tomorrow you can stop." |
+
+   **5c. 17-chip sticky day strip (Itinerary)**:
+   - Sticky day chip strip grows from 13 to 17 chips. Order (left to right): `28 JUN`, `6 JUL`, `D1`, `D2`, ..., `D13`, `20 JUL`, `21 JUL`.
+   - Bookend chips render with a different visual treatment:
+     - Smaller font (text-[10px] instead of text-xs)
+     - `border-sacred bg-card text-sacred` (sacred ochre border + text, vs the existing chip’s border-border / bg-card / text-muted-foreground)
+     - Label: date only (`28 JUN`) + small `PRE` or `POST` badge underneath (font-mono uppercase tracking-widest text-[9px])
+     - NO temp/moon row (these are not trip days; no weather data exists for them)
+   - Scrollspy + jump-to behavior matches the existing trip chips. The scrollspy logic queries `id="day-N"` for trip days and `id="diamox-{dateISO}"` for bookends; the active chip is set per the section whose top has crossed the threshold.
+   - Auto-scroll-active-chip via `strip.scrollBy({ left: delta })` continues to work; the strip just has 4 more chips to scroll through.
+
+   **5d. Live weather everywhere (cross-cutting)**:
+   - New shared hook `useLiveDayWeather(day: TripDay): { temp_low: number; temp_high: number; precip_pct: number; precip_type: 'rain' | 'snow' | 'storm'; wind_kmh: number; uv: number; source: 'live' | 'climatology' }` in `app/src/lib/weather.ts`. Wraps the existing `useLiveWeather` and fills the same shape regardless of live or fallback source.
+   - All 5 currently-static temperature surfaces switch to it:
+     - `DayCard` compressed-view header temp (`{low}-{high}C`)
+     - `DayCard` chips row temp chip
+     - `DayCard` summary header (B1)
+     - `ItineraryTab` day-chip strip per-chip temp (the `{d.weather.temp_low}-{d.weather.temp_high}C` line under each `D#`)
+     - `Hero` `coldest expected` / `warmest expected` stat tiles (re-derive `min`/`max` across all 13 days from the live hook results)
+   - Fallback: when `useLiveWeather` returns null (outside 16-day window, fetch fails, no route coords), return `day.weather` mapped into the same shape with `source: 'climatology'`.
+   - Cache: existing in-memory 1-hour TTL in `weather.ts` continues to deduplicate location fetches (~3 API calls total per page load).
+   - NO per-number visual marker. The Prepare > WeatherConfidence widget remains the single confidence-explanation surface.
+   - Hero stat tiles re-derive every render. As days enter the 16-day window the displayed `min`/`max` shift toward the live forecast.
+
+   **5e. Precip type (rain / snow / hail) (cross-cutting with 5d)**:
+   - Extend `weather.ts` Open-Meteo parser to additionally read `weather_code`, `snowfall_sum`, `precipitation_probability_max` from the daily API response.
+   - Derive `precip_type: 'rain' | 'snow' | 'storm'` from the WMO `weather_code`:
+     - WMO 51-67 OR 80-82 OR 95 (without 96/99) -> `rain`
+     - WMO 71-77 OR 85-86 -> `snow`
+     - WMO 95 with snow context OR 96 OR 99 (thunder + hail) -> `storm`
+     - Default (no precip) -> `rain` (chip won’t render dramatically; 0% reads as dry)
+   - Climatology fallback heuristic: if `day.altitude_peak >= 4500 && (day.weather.temp_high <= 0 || day.weather.temp_low <= -5)` -> `snow`. Else -> `rain`.
+   - Replace the existing `rainy` chip in `DayCard.tsx` chips builder with a single PRECIP chip whose ICON swaps by type:
+     - `rain` -> `<Icon name="rainy" .../>` label `Rain N%`
+     - `snow` -> `<Icon name="ac_unit" .../>` label `Snow N%`
+     - `storm` -> `<Icon name="thunderstorm" .../>` label `Storm N%`
+   - Same chip slot, same row footprint, no row crowding.
+
+   **Files touched in v2.9 bundle**:
+   - **New**: `app/src/components/DiamoxBookendCard.tsx`
+   - **Edit**: `app/src/lib/weather.ts` (shared hook + precip type extension)
+   - **Edit**: `app/src/components/DayCard.tsx` (step count chip + live-weather wiring + precip chip swap)
+   - **Edit**: `app/src/components/tabs/ItineraryTab.tsx` (4 bookend card inserts + 17-chip strip + live-weather wiring on chip strip)
+   - **Edit**: `app/src/components/Hero.tsx` (re-derive coldest/warmest from live hook)
+
+   Heavy file overlap across the 4 sub-changes prevents safe parallelization; one Sonnet sequential.
+
+   **Anti-AI rules** apply throughout. Zero em-dashes, en-dashes, smart quotes, emojis. User-facing copy spells out "twice daily" everywhere; the BID Latin abbreviation never reaches yatris.
+
 ### Plausibly later (not designed)
 
 - Remove the dead `@aliimam/icons` manualChunks stub from `vite.config.ts`.
@@ -742,3 +818,4 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 - 2026-06-22 v2.6 -- per-day bag state + airline weight allowances. New `bagState: BagState` field on every TripDay drives a "BAGS TODAY" block at the top of each expanded DayCard, plus a flight-allowance inline sub-row on flight days (D1, 3, 5, 10, 11, 13). Variable row count per day: typically 2 rows, expands to 3 on parikrama days (D7-D9) and handoff days (D5, D10). Bag location uses 5 state tags (with-you, stowed, stowed-locked, with-porters, in-transit, not-yet) with color tokens. Reference > Bag Transitions article gets a new bottom section: "Airline weight allowances" table with typical values for all 6 flight legs + warning callout to verify with YPO. Operator-sourced (existing 4-bag system trusted); Adip confirms specific weight numbers with YPO before packing day. Ready to build.
 - 2026-06-22 v2.7 -- day-wise Diamox regime. New `app/src/lib/diamox-regime.ts` ISO-date-keyed map covers the full 24-day canonical Mumbai regime (28 Jun test, 6 Jul evening start, 7-19 Jul twice-daily maintenance, 20-21 Jul post-descent buffer) = 32 doses, 16 tabs of 250 mg. DayCard renders a slim sacred-ochre DIAMOX TODAY single-line block above BAGS TODAY for the 13 trip days. Reference > Medicines article gets a new "DIAMOX REGIME CALENDAR" section between PROTOCOL and SIDE EFFECTS: 17-row table covering bookend days too, with TODAY-row highlight via JourneyState. Plus new "WHY WE DO NOT STOP ABRUPTLY" prose + cohort-aware warning callout (Dubai/Mauritius/NY cohorts extend buffer past 21 Jul to match their own return-home day). Existing protocol Q&A "Duration" row updated from "Stop Day 10 at Lhasa" to "Continue through your return-home day + 1-2 day buffer". User-facing copy spells out "twice daily" everywhere; never uses the BID Latin abbreviation. Ready to build.
 - 2026-06-22 v2.8 -- LIVE location pin on city tracker. Small visual addition: Material Symbols `my_location` (concentric circles, Google Maps live-GPS dot) renders inline INSIDE the current pill, BEFORE the city name. Subtle opacity pulse (1 -> 0.6 -> 1, 2s ease-in-out, infinite) via new `@keyframes pulse-live` in index.css. Wrapped in `prefers-reduced-motion: no-preference` for a11y. Co-exists with the existing ring; ring marks "current in chain order", pin marks "this is YOU LIVE". Applies to all `current` pill conditions EXCEPT the sacred geo-fail fallback pill (which means "we don't know where you are"). Implementation: CityTracker.tsx + index.css only. No data model changes. Ready to build.
+- 2026-06-22 v2.9 -- four-add bundle. (5a) Step count chip appended to existing walk/trek chip in DayCard, derived from `walk_h * 5500 + active_trek_h * 4500` rounded to nearest 500. (5b) Diamox bookend mini-cards: new DiamoxBookendCard component renders 4 instances (28 Jun + 6 Jul above D1, 20 Jul + 21 Jul below D13) with date + PRE/POST badge + the existing DIAMOX TODAY block + a 1-line context note per dose. No bagState/weather/timeline/map. (5c) Day chip strip grows 13 -> 17 with bookend chips visually distinct (smaller font, sacred ochre border, date label + PRE/POST badge, no temp/moon row). Scrollspy + jump-to extends via `id="diamox-{dateISO}"`. (5d) Live weather EVERYWHERE: new shared useLiveDayWeather hook in weather.ts replaces static day.weather lookups in 5 surfaces (chip strip per-chip temp, DayCard compressed header, DayCard chips row, DayCard summary header, Hero coldest/warmest stat tiles). Climatology fallback when outside 16-day window or fetch fails. No per-number marker; Prepare WeatherConfidence widget stays the single confidence surface. (5e) Precip type detection: extends Open-Meteo parser to read weather_code + snowfall_sum, replaces "rain %" chip with single PRECIP chip whose icon swaps by dominant type (rainy / ac_unit / thunderstorm). Climatology fallback heuristic: high altitude + freezing -> snow icon. Heavy file overlap (DayCard.tsx + ItineraryTab.tsx + weather.ts) prevents parallelization; one Sonnet sequential. Ready to build.
