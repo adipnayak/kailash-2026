@@ -16,6 +16,8 @@ import {
 } from '../ui/accordion';
 import type { RefArticle, RefBlock } from "../../lib/reference-data";
 import { REFERENCE_ARTICLES } from "../../lib/reference-data";
+import { DIAMOX_REGIME } from "../../lib/diamox-regime";
+import { getReferenceDate } from "../../lib/journey-state";
 
 // Map icon string names to Material Symbols Outlined names.
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -150,6 +152,88 @@ function BlockRenderer({ block }: { block: RefBlock }) {
           ))}
         </Accordion>
       );
+
+    case "diamox-calendar": {
+      const todayISO = (() => {
+        const d = getReferenceDate();
+        return (
+          d.getFullYear() +
+          '-' +
+          String(d.getMonth() + 1).padStart(2, '0') +
+          '-' +
+          String(d.getDate()).padStart(2, '0')
+        );
+      })();
+      return (
+        <div className="my-4 w-full overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-border bg-card">
+                {["Date", "Phase", "Use", "Dose", "mg", "Tabs"].map((h, i) => (
+                  <th
+                    key={i}
+                    className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {DIAMOX_REGIME.map((row, ri) => {
+                const isToday = row.dateISO === todayISO;
+                const rowClass = isToday
+                  ? 'ring-2 ring-sacred bg-background'
+                  : ri % 2 === 0
+                  ? 'bg-background'
+                  : 'bg-card';
+                const doseCopy =
+                  row.schedule === 'twice-daily'
+                    ? '2 twice daily'
+                    : row.doses === 1
+                    ? '1 ' + row.schedule
+                    : String(row.doses) + ' ' + row.schedule;
+                return (
+                  <tr key={ri} className={rowClass}>
+                    <td className="px-4 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed whitespace-nowrap">
+                      {isToday && (
+                        <span className="mr-2 inline-block font-mono text-sacred text-[10px] uppercase tracking-widest border border-sacred px-1 py-0.5 leading-none">
+                          TODAY
+                        </span>
+                      )}
+                      {row.dayLabel}
+                    </td>
+                    <td className="px-4 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed font-mono">
+                      {row.phaseLabel}
+                    </td>
+                    <td className="px-4 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed">
+                      {row.use}
+                    </td>
+                    <td className="px-4 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed whitespace-nowrap">
+                      {doseCopy}
+                    </td>
+                    <td className="px-4 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed">
+                      {row.mg}
+                    </td>
+                    <td className="px-4 py-2 text-xs text-foreground align-top border-b border-border leading-relaxed">
+                      {row.tabs}
+                    </td>
+                  </tr>
+                );
+              })}
+              <tr className="bg-card border-t-2 border-sacred">
+                <td
+                  colSpan={6}
+                  className="px-4 py-2 text-xs font-semibold text-sacred border-b border-border"
+                >
+                  Total - 32 doses - 16 tabs (of 250 mg)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      );
+    }
 
     default:
       return null;

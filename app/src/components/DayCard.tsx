@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { TripDay, BagId, BagStateTag } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
+import { DIAMOX_REGIME_BY_DATE, type DiamoxDose } from '../lib/diamox-regime';
 import { lazy, Suspense } from 'react';
 import { getDayRoute, ALL_TRIP_STOPS } from '../lib/day-routes';
 import { getDayStops, haversineKm, fmtKm, modeLabel } from '../lib/day-stops';
@@ -84,6 +85,14 @@ function bagDisplay(id: BagId): string {
     case 'daypack-personal': return 'Personal daypack';
     case 'daypack-ypo': return 'YPO daypack';
   }
+}
+
+function describeDose(dose: DiamoxDose): string {
+  if (dose.type === 'test') return 'TEST DOSE - ' + dose.mg + ' mg evening (sulfa allergy + tolerance check)';
+  if (dose.type === 'start') return 'START - ' + dose.mg + ' mg evening (begin prophylaxis tonight)';
+  if (dose.schedule === 'twice-daily') return dose.mg + ' mg morning + ' + dose.mg + ' mg evening (twice daily)';
+  if (dose.schedule === 'morning') return dose.mg + ' mg morning';
+  return dose.mg + ' mg evening';
 }
 
 function iconForBagState(s: BagStateTag): string {
@@ -1190,6 +1199,19 @@ function ExpandedView({ day, onToggle }: { day: TripDay; index?: number; onToggl
       <DayHeader day={day} />
       <ExpandedMap day={day} />
       <SummaryStrip day={day} />
+      {(() => {
+        const dose = DIAMOX_REGIME_BY_DATE[day.date];
+        if (!dose) return null;
+        return (
+          <section className="my-4 border-l-4 border-sacred bg-card px-4 py-2 flex items-start gap-2">
+            <Icon name="medication" size={14} className="mt-0.5 text-sacred shrink-0" />
+            <div className="flex flex-1 min-w-0 flex-col">
+              <p className="font-mono uppercase tracking-widest text-sacred text-[10px]">Diamox today</p>
+              <p className="mt-0.5 text-sm text-foreground">{describeDose(dose)}</p>
+            </div>
+          </section>
+        );
+      })()}
       {day.bagState && (
         <section className="px-4 py-4 border-b border-border">
           <p className="mb-2 font-mono uppercase tracking-widest text-muted-foreground text-[10px]">
