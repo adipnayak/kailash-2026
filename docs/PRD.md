@@ -794,6 +794,60 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
    **Anti-AI rules** apply throughout. Zero em-dashes, en-dashes, smart quotes, emojis. User-facing copy spells out "twice daily" everywhere; the BID Latin abbreviation never reaches yatris.
 
+6. **Offline-capable PWA**. Make the entire site work without internet after the first visit. Critical for the Tibet leg (parikrama days D7-D9 are mostly offline; cell coverage in Mansarovar / Darchen / Dirapuk is limited). Yatris install the site as a PWA at home on WiFi and have full coverage during the trip.
+
+   **Library**: `vite-plugin-pwa` (Workbox under the hood). Battle-tested for React + Vite + GitHub Pages. Configured in `app/vite.config.ts` with `registerType: 'autoUpdate'` and `injectRegister: 'auto'`. Silent SW updates on next page load (`skipWaiting: true`, `clientsClaim: true`).
+
+   **Web manifest** (auto-generated as `app/dist/manifest.webmanifest` at build time):
+   - `name`: `Kailash Mansarovar Yatra 2026`
+   - `short_name`: `Kailash 2026`
+   - `description`: `13-day Hindu pilgrimage tracker for the yatra to Mt Kailash and Lake Manasarovar (7 to 19 July 2026).`
+   - `theme_color`: `#c69347` (sacred ochre, hex resolved from `oklch(0.65 0.13 75)`)
+   - `background_color`: `#ffffff`
+   - `display`: `'standalone'`
+   - `start_url`: `/kailash-2026/`
+   - `scope`: `/kailash-2026/`
+   - Icons: `icon-192.png` (192x192), `icon-512.png` (512x512), `icon-512-maskable.png` (512x512, `purpose: 'maskable'`). Placeholder artwork: Material Symbols `landscape` glyph on a sacred-ochre square background. Sonnet generates the PNGs at build time (e.g. via a small Node script using `canvas` or by hand-authoring SVG and rasterizing). Adip can swap with custom artwork later.
+
+   **Workbox cache strategy** (in `VitePWA({ workbox: {...} })`):
+
+   Pre-cached at install time (`globPatterns`): `**/*.{html,js,css,woff2,svg,png,jpg,jpeg,gif,webp}` -- everything in `dist/` except map tiles + API responses. Total ~500 KB-1 MB app shell.
+
+   Runtime caching rules:
+
+   | URL pattern | Strategy | TTL | Max entries |
+   |---|---|---|---|
+   | `basemaps.cartocdn.com/.*` | CacheFirst | 30 days | 500 |
+   | `api.open-meteo.com/.*` | NetworkFirst (3s timeout, fallback to cache) | 24 hours | 50 |
+   | `ipapi.co/.*` | NetworkFirst (2s timeout, fallback to cache) | 1 hour | 5 |
+   | `router.project-osrm.org/.*` | CacheFirst | 30 days | 100 |
+
+   **Map tile pre-warming**: on SW `activate` event, fetch a curated list of CartoDB tile URLs covering all 13 day routes at relevant zoom levels (probably z=10 + z=13 + z=15). Total ~5-10 MB, ~200-400 tiles. Background fetch, doesn't block page load. List lives in `app/src/lib/precache-tiles.ts` (new file) generated from `day-routes.ts` + `day-stops.ts` bounding boxes.
+
+   **Offline badge**: new `app/src/components/OfflineBadge.tsx`. Reads `navigator.onLine` + subscribes to `online`/`offline` events. Fixed position top-right, BELOW the main nav (e.g. `top-14 right-4`, z-index just below nav at `z-30`). Visual: `bg-destructive text-destructive-foreground font-mono uppercase tracking-widest text-[10px] px-2 py-1 rounded-none border border-destructive`. Label: `OFFLINE`. `aria-live="polite"` so screen readers announce when it appears. Mounted globally in `App.tsx` next to `BackToTop`. Hidden (returns `null`) when `navigator.onLine === true`.
+
+   **Existing static HTML fallback in `#root`**: continues to work alongside the SW. SW intercepts navigation requests for users who have the app installed; for JS-less crawlers (which don't register the SW), the static fallback is what they see. No changes needed.
+
+   **Tech stack dependencies added**:
+   - `vite-plugin-pwa` (devDependency, ~latest)
+   - `workbox-window` (runtime dependency, ~3 KB gzipped, exposes SW registration helpers)
+
+   **Out-of-scope for this PR**:
+   - Push notifications (still in PRD non-goals)
+   - Background sync (no writes anyway, so nothing to sync)
+   - Periodic sync (no need)
+   - Web Share API integration
+   - Storage estimation UI ("you've cached X MB")
+   - Custom install-prompt component (browser native A2HS is sufficient; the existing "Apps in China" article already explains how)
+
+   **Files touched**:
+   - **New**: `app/src/components/OfflineBadge.tsx`, `app/src/lib/precache-tiles.ts`, `app/public/icon-192.png`, `app/public/icon-512.png`, `app/public/icon-512-maskable.png`
+   - **Edit**: `app/vite.config.ts` (add `VitePWA(...)` plugin), `app/package.json` + `app/package-lock.json` (add deps), `app/src/App.tsx` (mount `<OfflineBadge />`)
+
+   **Verification approach**: build + serve locally + Chrome DevTools > Application > Service Workers + Lighthouse PWA audit. Manual offline test: install via "Add to Home Screen", disable network, navigate. All previously-visited content should work; new day cards should at least show the chrome + climatology fallback weather.
+
+   **Anti-AI rules** apply.
+
 ### Plausibly later (not designed)
 
 - Remove the dead `@aliimam/icons` manualChunks stub from `vite.config.ts`.
@@ -818,4 +872,5 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 - 2026-06-22 v2.6 -- per-day bag state + airline weight allowances. New `bagState: BagState` field on every TripDay drives a "BAGS TODAY" block at the top of each expanded DayCard, plus a flight-allowance inline sub-row on flight days (D1, 3, 5, 10, 11, 13). Variable row count per day: typically 2 rows, expands to 3 on parikrama days (D7-D9) and handoff days (D5, D10). Bag location uses 5 state tags (with-you, stowed, stowed-locked, with-porters, in-transit, not-yet) with color tokens. Reference > Bag Transitions article gets a new bottom section: "Airline weight allowances" table with typical values for all 6 flight legs + warning callout to verify with YPO. Operator-sourced (existing 4-bag system trusted); Adip confirms specific weight numbers with YPO before packing day. Ready to build.
 - 2026-06-22 v2.7 -- day-wise Diamox regime. New `app/src/lib/diamox-regime.ts` ISO-date-keyed map covers the full 24-day canonical Mumbai regime (28 Jun test, 6 Jul evening start, 7-19 Jul twice-daily maintenance, 20-21 Jul post-descent buffer) = 32 doses, 16 tabs of 250 mg. DayCard renders a slim sacred-ochre DIAMOX TODAY single-line block above BAGS TODAY for the 13 trip days. Reference > Medicines article gets a new "DIAMOX REGIME CALENDAR" section between PROTOCOL and SIDE EFFECTS: 17-row table covering bookend days too, with TODAY-row highlight via JourneyState. Plus new "WHY WE DO NOT STOP ABRUPTLY" prose + cohort-aware warning callout (Dubai/Mauritius/NY cohorts extend buffer past 21 Jul to match their own return-home day). Existing protocol Q&A "Duration" row updated from "Stop Day 10 at Lhasa" to "Continue through your return-home day + 1-2 day buffer". User-facing copy spells out "twice daily" everywhere; never uses the BID Latin abbreviation. Ready to build.
 - 2026-06-22 v2.8 -- LIVE location pin on city tracker. Small visual addition: Material Symbols `my_location` (concentric circles, Google Maps live-GPS dot) renders inline INSIDE the current pill, BEFORE the city name. Subtle opacity pulse (1 -> 0.6 -> 1, 2s ease-in-out, infinite) via new `@keyframes pulse-live` in index.css. Wrapped in `prefers-reduced-motion: no-preference` for a11y. Co-exists with the existing ring; ring marks "current in chain order", pin marks "this is YOU LIVE". Applies to all `current` pill conditions EXCEPT the sacred geo-fail fallback pill (which means "we don't know where you are"). Implementation: CityTracker.tsx + index.css only. No data model changes. Ready to build.
+- 2026-06-22 v2.10 -- offline-capable PWA. `vite-plugin-pwa` (Workbox) added. Auto-generated web manifest (name "Kailash Mansarovar Yatra 2026", short_name "Kailash 2026", standalone display mode, sacred-ochre theme color, 192/512/maskable icon set). Silent auto-update (skipWaiting + clientsClaim). Cache strategies: CartoDB tiles CacheFirst 30d, Open-Meteo NetworkFirst with 24h cache fallback, ipapi.co NetworkFirst with 1h cache fallback, OSRM CacheFirst 30d. Map tile pre-warming on SW activate fetches ~200-400 tiles (~5-10 MB) covering all 13 day routes. New OfflineBadge component renders top-right when navigator.onLine === false. Existing static HTML fallback in #root continues to work for JS-less crawlers alongside the SW. Out-of-scope: push notifications, background sync, periodic sync, custom install prompt (browser native A2HS sufficient). Files: new OfflineBadge.tsx + precache-tiles.ts + 3 icon PNGs; edit vite.config.ts + package.json + App.tsx. Ready to build.
 - 2026-06-22 v2.9 -- four-add bundle. (5a) Step count chip appended to existing walk/trek chip in DayCard, derived from `walk_h * 5500 + active_trek_h * 4500` rounded to nearest 500. (5b) Diamox bookend mini-cards: new DiamoxBookendCard component renders 4 instances (28 Jun + 6 Jul above D1, 20 Jul + 21 Jul below D13) with date + PRE/POST badge + the existing DIAMOX TODAY block + a 1-line context note per dose. No bagState/weather/timeline/map. (5c) Day chip strip grows 13 -> 17 with bookend chips visually distinct (smaller font, sacred ochre border, date label + PRE/POST badge, no temp/moon row). Scrollspy + jump-to extends via `id="diamox-{dateISO}"`. (5d) Live weather EVERYWHERE: new shared useLiveDayWeather hook in weather.ts replaces static day.weather lookups in 5 surfaces (chip strip per-chip temp, DayCard compressed header, DayCard chips row, DayCard summary header, Hero coldest/warmest stat tiles). Climatology fallback when outside 16-day window or fetch fails. No per-number marker; Prepare WeatherConfidence widget stays the single confidence surface. (5e) Precip type detection: extends Open-Meteo parser to read weather_code + snowfall_sum, replaces "rain %" chip with single PRECIP chip whose icon swaps by dominant type (rainy / ac_unit / thunderstorm). Climatology fallback heuristic: high altitude + freezing -> snow icon. Heavy file overlap (DayCard.tsx + ItineraryTab.tsx + weather.ts) prevents parallelization; one Sonnet sequential. Ready to build.
