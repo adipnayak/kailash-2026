@@ -619,6 +619,79 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
    **Anti-AI rules** apply.
 
+3. **Day-wise Diamox regime**. Surface Adip's prescribed Diamox (acetazolamide) regime as the canonical Mumbai-cohort example, day-wise, INCLUDING days outside the 13-day itinerary (T-9 test dose 28 Jun, T-1 start 6 Jul, post-descent buffer 20-21 Jul). Each yatri compares against their own doctor's Rx.
+
+   **Data shape** -- new file `app/src/lib/diamox-regime.ts`:
+
+   ```ts
+   export type DiamoxDoseType = 'test' | 'start' | 'maintenance' | 'buffer';
+
+   export interface DiamoxDose {
+     dateISO: string;            // '2026-06-28'
+     dayLabel: string;           // 'Sun 28 Jun' (rendered)
+     phaseLabel: string;         // 'T-9' | 'T-1' | 'D1' | 'D8' | 'D14' (buffer)
+     type: DiamoxDoseType;
+     doses: number;              // 1 or 2
+     mg: number;                 // 125
+     tabs: string;               // 'half' or '1' (250 mg tablets, plain English, no fractions glyph)
+     schedule: 'morning' | 'evening' | 'twice-daily';
+     use: string;                // human-readable purpose
+   }
+
+   export const DIAMOX_REGIME: DiamoxDose[];
+   export const DIAMOX_REGIME_BY_DATE: Record<string, DiamoxDose>;  // derived map for O(1) date lookups
+   ```
+
+   **Canonical 24-day regime (Mumbai cohort)**:
+
+   | Date | Phase | Type | Doses | mg each | Tabs (250 mg) | Use |
+   |---|---|---|---|---|---|---|
+   | Sun 28 Jun 2026 | T-9 | test | 1 evening | 125 | half | Test dose (sulfa allergy + tolerance check) |
+   | Mon 6 Jul 2026 | T-1 | start | 1 evening | 125 | half | Prophylactic start, evening before first altitude exposure (D3 Lhasa) |
+   | Tue 7 Jul | D1 | maintenance | 2 twice-daily | 125 | 1 | Maintenance |
+   | Wed 8 Jul | D2 | maintenance | 2 twice-daily | 125 | 1 | Maintenance |
+   | Thu 9 Jul | D3 | maintenance | 2 twice-daily | 125 | 1 | Maintenance (first altitude jump to Lhasa) |
+   | Fri 10 Jul | D4 | maintenance | 2 twice-daily | 125 | 1 | Maintenance |
+   | Sat 11 Jul | D5 | maintenance | 2 twice-daily | 125 | 1 | Maintenance (Lhasa to Mansarovar) |
+   | Sun 12 Jul | D6 | maintenance | 2 twice-daily | 125 | 1 | Maintenance |
+   | Mon 13 Jul | D7 | maintenance | 2 twice-daily | 125 | 1 | Maintenance (parikrama starts) |
+   | Tue 14 Jul | D8 | maintenance | 2 twice-daily | 125 | 1 | Maintenance (Dolma La 5,630 m) |
+   | Wed 15 Jul | D9 | maintenance | 2 twice-daily | 125 | 1 | Maintenance |
+   | Thu 16 Jul | D10 | maintenance | 2 twice-daily | 125 | 1 | Maintenance (return to Lhasa) |
+   | Fri 17 Jul | D11 | maintenance | 2 twice-daily | 125 | 1 | Maintenance |
+   | Sat 18 Jul | D12 | maintenance | 2 twice-daily | 125 | 1 | Maintenance |
+   | Sun 19 Jul | D13 | maintenance | 2 twice-daily | 125 | 1 | Maintenance (return to Mumbai) |
+   | Mon 20 Jul | D14 | buffer | 2 twice-daily | 125 | 1 | Post-descent buffer (do not stop abruptly) |
+   | Tue 21 Jul | D15 | buffer | 2 twice-daily | 125 | 1 | Post-descent buffer |
+   | **Total** | | | **32 doses** | | **16 tabs** | |
+
+   **DayCard DIAMOX TODAY block**:
+   - Slim single-line block, `border-l-4 border-sacred bg-card px-4 py-2`, sits ABOVE the BAGS TODAY block in the expanded DayCard.
+   - Format on a maintenance day: `[pill icon] DIAMOX TODAY  -  125 mg morning + 125 mg evening (twice daily)`.
+   - On the test day (28 Jun, NOT a TripDay) and start day (6 Jul, NOT a TripDay), there is no DayCard to render into -- those bookend dates are surfaced only in the Reference calendar.
+   - Renders only when `DIAMOX_REGIME_BY_DATE[day.date]` is defined.
+   - Anti-AI: "twice daily" spelled out; do not surface "BID" jargon to yatris.
+
+   **Reference > Medicines article additions** -- inserted AFTER the existing "DIAMOX (ACETAZOLAMIDE) PROTOCOL" Q&A table, BEFORE "DIAMOX COMMON SIDE EFFECTS":
+
+   1. `heading` "DIAMOX REGIME CALENDAR"
+
+   2. `callout` (tone: info): "Canonical regime for the Mumbai cohort (28 Jun to 21 Jul). If your return-home is later than 19 Jul (Dubai, Mauritius, New York cohorts), continue twice daily through YOUR return-home day plus 1 to 2 day buffer. Your doctor confirms exact dose and timing for your medical profile."
+
+   3. `table` columns `Date / Phase / Use / Dose / mg / Tabs` with all 17 rows from the regime table above (test + start + 13 maintenance + 2 buffer). Rendering layer adds `ring-2 ring-sacred` + a `TODAY` chip on the row matching `journeyState.todayISO` if today falls anywhere in the regime window (covers bookends too, not just trip days).
+
+   4. `heading` "WHY WE DO NOT STOP ABRUPTLY"
+
+   5. `prose`: "After Diamox prophylaxis, do not stop abruptly. Continue twice daily for 1 to 2 days after you reach your final return-home destination, so the body's compensatory respiratory drive (increased ventilation that the drug induced) tapers smoothly as the drug clears. Diamox elimination half-life is roughly 4 to 9 hours; full physiological reset takes about 24 to 48 hours. The buffer also provides safety margin against unexpected re-ascent (delayed flight, missed connection, layover at altitude). For most adults at 125 mg twice daily, no formal taper is needed; the 1 to 2 day continuation IS the taper."
+
+   6. `callout` (tone: warning): "If you have onward travel from Mumbai (Dubai, Mauritius, New York, etc.), continue twice daily through your return-home day plus 1 to 2 day buffer. Your buffer dates shift later than 20 to 21 Jul. Your doctor confirms."
+
+   **Existing protocol Q&A row update** -- change the `Duration` row in the existing DIAMOX PROTOCOL table:
+   - Current: `["Duration", "Continue through the high-altitude leg. Stop on Day 10 evening at Lhasa.", "Doctor confirms."]`
+   - New: `["Duration", "Continue twice daily through your return-home day. Add a 1 to 2 day post-descent buffer. Do not stop abruptly. See the regime calendar below for exact dates.", "Doctor confirms exact dose, end date, and taper."]`
+
+   **Anti-AI rules** apply. Never write "BID" in user-facing copy -- always spell out "twice daily" or "morning + evening". The Latin abbreviation is medical jargon; the audience is 23 yatris, not clinicians.
+
 ### Plausibly later (not designed)
 
 - Remove the dead `@aliimam/icons` manualChunks stub from `vite.config.ts`.
@@ -641,3 +714,4 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 - 2026-06-22 v2.4-final -- v2.4 grilled and resolved. Cohort detection by IP country code (IN -> canonical, AE -> Dubai-extended, MU -> Port Louis-extended, US -> NY-extended); other countries -> canonical chain + "Watching from..." label; geo-fail -> 12-node tail-clipped chain starting at Kathmandu with sacred ochre highlight on the leading Kathmandu pill. Manual edit deferred. Privacy line removed entirely. New 4th color state: SACRED (--sacred ochre token) for the geo-fallback entry-point marker. Ready to build.
 - 2026-06-22 v2.5 -- gap-fill + new locked-in. Three previously-locked items now SHIPPED + documented in per-tab specs (FAQ accordion PR #189, Kailash facts PR #191, city tracker v2.4 PRs #196 + #197 fit fix). Documented previously-undocumented libs (`origin.ts` cohort-by-tz, `timezone.ts` local/trip mode, `city-cohort.ts`, `kailash-facts.ts`). Added localStorage keys (`kailash_route_v1`, `kailash_origin`, `kailash_tz_pref`, `kailash_tz_mode`) and sessionStorage table (`kailash_geo_v1`). Added @radix-ui/react-accordion to tech stack, ipapi.co to External APIs + preconnect list. New locked-in roadmap item: Reference article #9 "Apps and Connectivity in Tibet / China" -- yatri-facing field guide to GFW-blocked apps, Chinese alternatives, pre-departure install checklist, payment caveats, home-screen install instructions. Ready to build.
 - 2026-06-22 v2.6 -- per-day bag state + airline weight allowances. New `bagState: BagState` field on every TripDay drives a "BAGS TODAY" block at the top of each expanded DayCard, plus a flight-allowance inline sub-row on flight days (D1, 3, 5, 10, 11, 13). Variable row count per day: typically 2 rows, expands to 3 on parikrama days (D7-D9) and handoff days (D5, D10). Bag location uses 5 state tags (with-you, stowed, stowed-locked, with-porters, in-transit, not-yet) with color tokens. Reference > Bag Transitions article gets a new bottom section: "Airline weight allowances" table with typical values for all 6 flight legs + warning callout to verify with YPO. Operator-sourced (existing 4-bag system trusted); Adip confirms specific weight numbers with YPO before packing day. Ready to build.
+- 2026-06-22 v2.7 -- day-wise Diamox regime. New `app/src/lib/diamox-regime.ts` ISO-date-keyed map covers the full 24-day canonical Mumbai regime (28 Jun test, 6 Jul evening start, 7-19 Jul twice-daily maintenance, 20-21 Jul post-descent buffer) = 32 doses, 16 tabs of 250 mg. DayCard renders a slim sacred-ochre DIAMOX TODAY single-line block above BAGS TODAY for the 13 trip days. Reference > Medicines article gets a new "DIAMOX REGIME CALENDAR" section between PROTOCOL and SIDE EFFECTS: 17-row table covering bookend days too, with TODAY-row highlight via JourneyState. Plus new "WHY WE DO NOT STOP ABRUPTLY" prose + cohort-aware warning callout (Dubai/Mauritius/NY cohorts extend buffer past 21 Jul to match their own return-home day). Existing protocol Q&A "Duration" row updated from "Stop Day 10 at Lhasa" to "Continue through your return-home day + 1-2 day buffer". User-facing copy spells out "twice daily" everywhere; never uses the BID Latin abbreviation. Ready to build.
