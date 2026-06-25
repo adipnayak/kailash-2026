@@ -19,6 +19,7 @@ export interface CheckItem {
   label: string;
   blocking: string;
   defaultStatus: ItemStatus;
+  suggested?: boolean;
 }
 
 export interface Category {
@@ -254,6 +255,36 @@ export const CATEGORIES: Category[] = [
       { id: 'carry-wet-wipes', label: 'Wet wipes (2 packs)', blocking: 'Replaces showers during the offline 3-day trek.', defaultStatus: 'action-needed' },
       { id: 'carry-tissues', label: 'Tissues (2 packs)', blocking: 'Toilets along the route often lack paper.', defaultStatus: 'action-needed' },
       { id: 'carry-hand-warmers', label: 'Hand-warmer packets (4-6)', blocking: 'For the Dolma La pre-dawn ascent. Single-use chemical warmers.', defaultStatus: 'action-needed' },
+      { id: 'sg-nasal-gel', label: 'Saline nasal gel (Ayr with aloe, 0.5 oz)', blocking: 'Yatri-recommended. Not operator-mandated.', defaultStatus: 'action-needed', suggested: true },
+      { id: 'sg-salt-caps', label: 'Electrolyte salt capsules (Unived, 30 caps)', blocking: 'Yatri-recommended. Not operator-mandated.', defaultStatus: 'action-needed', suggested: true },
+    ],
+  },
+  {
+    id: 'ayurvedic-medicines',
+    label: 'Ayurvedic Medicines',
+    optional: true,
+    items: [
+      {
+        id: 'ayur-yogi-kanthika',
+        label: 'Yogi Kanthika',
+        blocking: 'Ayurvedic throat-relief pills. Helpful for sore throat from cold dry mountain air.',
+        defaultStatus: 'action-needed',
+        suggested: true,
+      },
+      {
+        id: 'ayur-amritdhara',
+        label: 'Herbal Amritdhara capsules',
+        blocking: 'Multi-purpose Ayurvedic. Internal: diarrhea, vomiting, indigestion, gas, stomach pain. External: cuts, joint pain, headache, cold/cough.',
+        defaultStatus: 'action-needed',
+        suggested: true,
+      },
+      {
+        id: 'ayur-kailas-jeevan',
+        label: 'Kailas Jeevan',
+        blocking: 'Multipurpose Ayurvedic cream. Cooling. Acidity, gas, joint relief. Named for this trip context.',
+        defaultStatus: 'action-needed',
+        suggested: true,
+      },
     ],
   },
   {
@@ -265,6 +296,7 @@ export const CATEGORIES: Category[] = [
       { id: 'carry-sunscreen', label: 'Sunscreen SPF 50+', blocking: 'High-altitude sun burns exposed skin within an hour.', defaultStatus: 'action-needed' },
       { id: 'carry-lipbalm', label: 'Lip balm with SPF', blocking: 'Lips crack fast at altitude + sun. SPF-rated.', defaultStatus: 'action-needed' },
       { id: 'carry-moisturizer', label: 'Moisturizer', blocking: 'Dry Tibet air cracks skin within 2-3 days.', defaultStatus: 'action-needed' },
+      { id: 'sg-vaseline-lip', label: 'Vaseline Lip Care (Original lip balm stick, 4.8g)', blocking: 'Yatri-recommended. Not operator-mandated.', defaultStatus: 'action-needed', suggested: true },
     ],
   },
   {
@@ -275,6 +307,9 @@ export const CATEGORIES: Category[] = [
       { id: 'carry-daypack', label: 'Day pack (20-30L)', blocking: 'Carries water, snacks, layers, meds during the trek. YPO provides a backpack.', defaultStatus: 'action-needed' },
       { id: 'carry-water-bottle', label: 'Reusable water bottle (1 L)', blocking: 'Insulated metal bottle keeps water from freezing on Dolma La morning.', defaultStatus: 'action-needed' },
       { id: 'carry-snacks', label: 'Snacks / energy bars (10-15)', blocking: 'For long Parikrama days. Nuts, dried fruit, bars.', defaultStatus: 'action-needed' },
+      { id: 'sg-hydration-bladder', label: '3L hydration bladder (BPA-free, leakproof foldable, straw)', blocking: 'Yatri-recommended. Not operator-mandated.', defaultStatus: 'action-needed', suggested: true },
+      { id: 'sg-protein-bars', label: 'Protein bars (Phab chocolate brownie, 21g protein)', blocking: 'Yatri-recommended. Not operator-mandated.', defaultStatus: 'action-needed', suggested: true },
+      { id: 'sg-dry-fruits', label: 'Dry fruits mix (Paper Boat Mega Omega: almonds, walnuts, cranberry, pumpkin)', blocking: 'Yatri-recommended. Not operator-mandated.', defaultStatus: 'action-needed', suggested: true },
     ],
   },
   {
@@ -302,6 +337,7 @@ export const CATEGORIES: Category[] = [
       { id: 'carry-eye-mask', label: 'Eye mask', blocking: 'Lhasa sunrise is early. Eye mask helps protect rest.', defaultStatus: 'action-needed' },
       { id: 'carry-padlock', label: 'Padlock for duffel', blocking: 'Duffel changes hands at airports + hotels. Small lock + cable tie helps.', defaultStatus: 'action-needed' },
       { id: 'carry-dry-bag', label: 'Dry bag (10 L)', blocking: 'Keeps clothes dry during Parikrama rain. Doubles as a wet-clothes bag.', defaultStatus: 'action-needed' },
+      { id: 'sg-wet-wipes', label: 'Body cleansing wet wipes (CIR Soft, XL, 80 pack)', blocking: 'Yatri-recommended. Not operator-mandated.', defaultStatus: 'action-needed', suggested: true },
     ],
   },
   {
@@ -388,6 +424,9 @@ export function overallPrepProgress(statusMap: StatusMap): { complete: number; t
   let total = 0;
   for (const cat of CATEGORIES) {
     for (const item of cat.items) {
+      // Exclude items that are both suggested AND in an optional category
+      // from the headline denominator. They are still individually checkable.
+      if (item.suggested && cat.optional) continue;
       total += 1;
       if ((statusMap[item.id] ?? item.defaultStatus) === 'complete') complete += 1;
     }
