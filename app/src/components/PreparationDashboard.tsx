@@ -41,6 +41,7 @@ const CATEGORY_ICON: Record<string, string> = {
   'docs-money': 'fact_check',
   'personal-care': 'soap',
   spiritual: 'self_improvement',
+  'ayurvedic-medicines': 'spa',
 };
 
 /* ------------------------------------------------------------------ */
@@ -127,6 +128,11 @@ function ItemRow({ item, status, isOptionalCategory, onCycle }: ItemRowProps) {
             ].join(' ')}
           >
             {item.label}
+            {item.suggested && (
+              <span className="ml-2 inline-flex items-center rounded-none border border-sacred/30 bg-sacred/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest text-sacred">
+                Suggested
+              </span>
+            )}
           </span>
           {isOptionalCategory && !isComplete && (
             <span className="mt-0.5 block text-xs text-muted-foreground">Optional</span>
