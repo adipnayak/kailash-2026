@@ -430,6 +430,14 @@ export function CityTracker({ phase }: Props) {
                     WebkitTapHighlightColor: 'rgba(0,0,0,0.05)',
                   }}
                 >
+                  {state === 'current' && (
+                    <Icon
+                      name="my_location"
+                      size={12}
+                      className="animate-pulse-live shrink-0"
+                      aria-hidden="true"
+                    />
+                  )}
                   {city}
                 </span>
               </li>

@@ -198,7 +198,24 @@ body {
   to { height: 0; }
 }
 
+/* =============================================================
+ * LIVE location pin pulse (city tracker current pill).
+ * Subtle opacity breathing to convey real-time presence.
+ * Paused for users who prefer reduced motion.
+ *
+ * Anti-AI: no em-dashes, no smart quotes.
+ * ============================================================= */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-live { animation: none !important; }
+}
+
 @theme {
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-live: pulse-live 2s ease-in-out infinite;
 }
