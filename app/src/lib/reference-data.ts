@@ -13,7 +13,8 @@ export type RefBlock =
   | { type: "ordered-list"; items: string[] }
   | { type: "unordered-list"; items: string[] }
   | { type: "callout"; tone: "info" | "warning" | "critical"; title?: string; body: string }
-  | { type: "accordion"; items: Array<{ question: string; answer: string }> };
+  | { type: "accordion"; items: Array<{ question: string; answer: string }> }
+  | { type: "diamox-calendar" };
 
 export interface RefArticle {
   id: string;
@@ -51,12 +52,29 @@ export const REFERENCE_ARTICLES: RefArticle[] = [
           ["What is it", "Carbonic anhydrase inhibitor. Increases respiratory drive at altitude. Speeds acclimatization.", "Confirm at doctor consult."],
           ["When to start", "T-3 to T-2 before arriving at the first high-altitude location.", "Doctor-led decision."],
           ["Standard dose (prophylaxis)", "125 mg twice daily for most adults. 250 mg twice daily if higher risk.", "Doctor sets per yatri."],
-          ["Duration", "Continue through the high-altitude leg. Stop on Day 10 evening at Lhasa.", "Doctor confirms."],
+          ["Duration", "Continue twice daily through your return-home day. Add a 1 to 2 day post-descent buffer. Do not stop abruptly. See the regime calendar below for exact dates.", "Doctor confirms exact dose, end date, and taper."],
           ["Taper", "Most protocols do not require a taper at this dose.", "Doctor confirms."],
           ["Sulfa allergy check", "Diamox IS a sulfonamide. Contraindicated if sulfa-allergic.", "CRITICAL pre-Rx check."],
           ["Sulfa allergy alternative", "Ginkgo Biloba (less effective but viable).", "Doctor confirms alternative dose."],
           ["Pregnancy or breastfeeding", "Discuss with doctor.", "Doctor confirms."],
         ],
+      },
+      { type: "heading", text: "DIAMOX REGIME CALENDAR" },
+      {
+        type: "callout",
+        tone: "info",
+        body: "Canonical regime for the Mumbai cohort (28 Jun to 21 Jul). If your return-home is later than 19 Jul (Dubai, Mauritius, New York cohorts), continue twice daily through YOUR return-home day plus 1 to 2 day buffer. Your doctor confirms exact dose and timing for your medical profile.",
+      },
+      { type: "diamox-calendar" },
+      { type: "heading", text: "WHY WE DO NOT STOP ABRUPTLY" },
+      {
+        type: "prose",
+        body: "After Diamox prophylaxis, do not stop abruptly. Continue twice daily for 1 to 2 days after you reach your final return-home destination, so the body's compensatory respiratory drive (increased ventilation that the drug induced) tapers smoothly as the drug clears. Diamox elimination half-life is roughly 4 to 9 hours; full physiological reset takes about 24 to 48 hours. The buffer also provides safety margin against unexpected re-ascent (delayed flight, missed connection, layover at altitude). For most adults at 125 mg twice daily, no formal taper is needed; the 1 to 2 day continuation IS the taper.",
+      },
+      {
+        type: "callout",
+        tone: "warning",
+        body: "If you have onward travel from Mumbai (Dubai, Mauritius, New York, etc.), continue twice daily through your return-home day plus 1 to 2 day buffer. Your buffer dates shift later than 20 to 21 Jul. Your doctor confirms.",
       },
       { type: "heading", text: "DIAMOX COMMON SIDE EFFECTS" },
       {
