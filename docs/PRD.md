@@ -692,6 +692,32 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
    **Anti-AI rules** apply. Never write "BID" in user-facing copy -- always spell out "twice daily" or "morning + evening". The Latin abbreviation is medical jargon; the audience is 23 yatris, not clinicians.
 
+4. **LIVE location pin on the city tracker current pill**. Small visual addition to the city tracker (`CityTracker` component) to make the "you are here" semantic explicit and real-time. Layers on top of the existing `current` pill rules from PRD v2.4-final; adds nothing to the cohort detection / fallback / chain logic.
+
+   **Where**: inline INSIDE the current pill, BEFORE the city name. Pill content goes from `Mumbai` to `[my_location] Mumbai`.
+
+   **Icon**: Material Symbols `my_location` (concentric circles, Google Maps live-GPS dot). Size `12px` to match the pill's `text-xs`. `aria-hidden="true"` -- city name + `aria-current="step"` already convey the "current" semantic to AT.
+
+   **Color**: inherits via `currentColor` from the pill's text. On the emerald `current` state that means `text-background` (light on emerald). No new color token.
+
+   **Stacking with the existing ring**: pin and ring COEXIST. Ring continues to mark "current in chain order" (structural cursor); pin adds the "LIVE -- this is YOU" semantic. No conflict.
+
+   **Animation** -- subtle pulse on the pin only:
+   - Opacity `1 -> 0.6 -> 1` over `2s`, `ease-in-out`, `infinite`.
+   - New keyframe `@keyframes pulse-live` in `app/src/index.css`. Utility class `animate-pulse-live` registered via `@theme` (matches the accordion-down/up pattern already in the file).
+   - Wrapped in `@media (prefers-reduced-motion: no-preference)` so it pauses for users who've opted out.
+
+   **When the pin renders** (follows the existing `current` pill rules, NOT a new state machine):
+   - **before** phase + cohort matched (IN/AE/MU/US): pin on the cohort start pill (visitor's home city)
+   - **before** phase + cohort OTHER: no current pill exists -> no pin (consistent with current ring behavior)
+   - **during** phase: pin on the chain index mapped from `JourneyState.tripDayIndex`
+   - **after** phase: pin on the END pill (rightmost)
+   - **Geo-fail fallback (sacred Kathmandu pill)**: NO pin. The sacred marker means "we don't know where you are" -- a LIVE pin would be misleading. Sacred state visually stays as-is. This is the only "current-like" state that does NOT get the pin.
+
+   **Implementation locus**: edit `app/src/components/CityTracker.tsx` (add the pin element inside the current pill JSX) + `app/src/index.css` (add the `pulse-live` keyframe + theme registration). That's it. No data model changes. No new RefBlock variant. No new exported types.
+
+   **Anti-AI rules** apply.
+
 ### Plausibly later (not designed)
 
 - Remove the dead `@aliimam/icons` manualChunks stub from `vite.config.ts`.
@@ -715,3 +741,4 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 - 2026-06-22 v2.5 -- gap-fill + new locked-in. Three previously-locked items now SHIPPED + documented in per-tab specs (FAQ accordion PR #189, Kailash facts PR #191, city tracker v2.4 PRs #196 + #197 fit fix). Documented previously-undocumented libs (`origin.ts` cohort-by-tz, `timezone.ts` local/trip mode, `city-cohort.ts`, `kailash-facts.ts`). Added localStorage keys (`kailash_route_v1`, `kailash_origin`, `kailash_tz_pref`, `kailash_tz_mode`) and sessionStorage table (`kailash_geo_v1`). Added @radix-ui/react-accordion to tech stack, ipapi.co to External APIs + preconnect list. New locked-in roadmap item: Reference article #9 "Apps and Connectivity in Tibet / China" -- yatri-facing field guide to GFW-blocked apps, Chinese alternatives, pre-departure install checklist, payment caveats, home-screen install instructions. Ready to build.
 - 2026-06-22 v2.6 -- per-day bag state + airline weight allowances. New `bagState: BagState` field on every TripDay drives a "BAGS TODAY" block at the top of each expanded DayCard, plus a flight-allowance inline sub-row on flight days (D1, 3, 5, 10, 11, 13). Variable row count per day: typically 2 rows, expands to 3 on parikrama days (D7-D9) and handoff days (D5, D10). Bag location uses 5 state tags (with-you, stowed, stowed-locked, with-porters, in-transit, not-yet) with color tokens. Reference > Bag Transitions article gets a new bottom section: "Airline weight allowances" table with typical values for all 6 flight legs + warning callout to verify with YPO. Operator-sourced (existing 4-bag system trusted); Adip confirms specific weight numbers with YPO before packing day. Ready to build.
 - 2026-06-22 v2.7 -- day-wise Diamox regime. New `app/src/lib/diamox-regime.ts` ISO-date-keyed map covers the full 24-day canonical Mumbai regime (28 Jun test, 6 Jul evening start, 7-19 Jul twice-daily maintenance, 20-21 Jul post-descent buffer) = 32 doses, 16 tabs of 250 mg. DayCard renders a slim sacred-ochre DIAMOX TODAY single-line block above BAGS TODAY for the 13 trip days. Reference > Medicines article gets a new "DIAMOX REGIME CALENDAR" section between PROTOCOL and SIDE EFFECTS: 17-row table covering bookend days too, with TODAY-row highlight via JourneyState. Plus new "WHY WE DO NOT STOP ABRUPTLY" prose + cohort-aware warning callout (Dubai/Mauritius/NY cohorts extend buffer past 21 Jul to match their own return-home day). Existing protocol Q&A "Duration" row updated from "Stop Day 10 at Lhasa" to "Continue through your return-home day + 1-2 day buffer". User-facing copy spells out "twice daily" everywhere; never uses the BID Latin abbreviation. Ready to build.
+- 2026-06-22 v2.8 -- LIVE location pin on city tracker. Small visual addition: Material Symbols `my_location` (concentric circles, Google Maps live-GPS dot) renders inline INSIDE the current pill, BEFORE the city name. Subtle opacity pulse (1 -> 0.6 -> 1, 2s ease-in-out, infinite) via new `@keyframes pulse-live` in index.css. Wrapped in `prefers-reduced-motion: no-preference` for a11y. Co-exists with the existing ring; ring marks "current in chain order", pin marks "this is YOU LIVE". Applies to all `current` pill conditions EXCEPT the sacred geo-fail fallback pill (which means "we don't know where you are"). Implementation: CityTracker.tsx + index.css only. No data model changes. Ready to build.
