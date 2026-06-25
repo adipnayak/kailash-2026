@@ -237,11 +237,72 @@ export function useLiveDayWeather(day: TripDay): LiveDayWeather {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Weather freshness -- reads the in-memory cache
+// ---------------------------------------------------------------------------
+
+export interface WeatherFreshness {
+  /** Unix ms of the oldest fetchedAt across all queried locations. */
+  fetchedAt: number;
+  /** fetchedAt + CACHE_TTL_MS -- when the next refresh will trigger. */
+  nextRefreshAt: number;
+  /** 'live' if all locations have a cached live forecast; 'climatology' if any
+   *  returned null (fallback); 'none' if no cache entry exists yet. */
+  source: 'live' | 'climatology' | 'none';
+}
+
 /**
- * Aggregator hook: calls useLiveDayWeather for every trip day and returns
- * the overall coldest temp_low and warmest temp_high across all 13 days.
- * DAYS is a stable 13-entry array so hook call order is fixed.
+ * Returns freshness info for a set of (location, date) pairs by reading the
+ * in-memory cache. Does NOT trigger any network requests.
+ *
+ * The returned fetchedAt is the OLDEST (most-stale) timestamp across all
+ * locations so the widget shows the worst-case age.
  */
+export function getWeatherFreshness(
+  locations: Array<{ lat: number; lng: number }>,
+  dateISO: string,
+): WeatherFreshness {
+  let oldestFetchedAt = Infinity;
+  let anyMissing = false;
+  let anyClimatology = false;
+
+  for (const loc of locations) {
+    const k = cacheKey(dateISO, loc.lat, loc.lng);
+    const entry = cache.get(k);
+    if (!entry) {
+      anyMissing = true;
+      continue;
+    }
+    if (entry.weather === null) {
+      anyClimatology = true;
+    }
+    if (entry.fetchedAt < oldestFetchedAt) {
+      oldestFetchedAt = entry.fetchedAt;
+    }
+  }
+
+  if (anyMissing || oldestFetchedAt === Infinity) {
+    return { fetchedAt: 0, nextRefreshAt: 0, source: 'none' };
+  }
+  if (anyClimatology) {
+    return {
+      fetchedAt: oldestFetchedAt,
+      nextRefreshAt: oldestFetchedAt + CACHE_TTL_MS,
+      source: 'climatology',
+    };
+  }
+  return {
+    fetchedAt: oldestFetchedAt,
+    nextRefreshAt: oldestFetchedAt + CACHE_TTL_MS,
+    source: 'live',
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Aggregator hook: calls useLiveDayWeather for every trip day and returns
+// the overall coldest temp_low and warmest temp_high across all 13 days.
+// DAYS is a stable 13-entry array so hook call order is fixed.
+// ---------------------------------------------------------------------------
 import { DAYS } from './trip-data';
 
 export function useLiveTripExtremes(): { coldest: number; warmest: number } {

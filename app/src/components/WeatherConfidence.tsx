@@ -68,25 +68,27 @@ interface CacheEntry {
   data: WeatherPoint[];
 }
 
-function readCache(): WeatherPoint[] | null {
+function readCache(): { data: WeatherPoint[]; ts: number } | null {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
     const entry: CacheEntry = JSON.parse(raw) as CacheEntry;
     if (Date.now() - entry.ts > CACHE_TTL_MS) return null;
-    return entry.data;
+    return { data: entry.data, ts: entry.ts };
   } catch {
     return null;
   }
 }
 
-function writeCache(data: WeatherPoint[]): void {
+function writeCache(data: WeatherPoint[]): number {
+  const ts = Date.now();
   try {
-    const entry: CacheEntry = { ts: Date.now(), data };
+    const entry: CacheEntry = { ts, data };
     localStorage.setItem(CACHE_KEY, JSON.stringify(entry));
   } catch {
     // quota exceeded -- ignore
   }
+  return ts;
 }
 
 // ---------------------------------------------------------------------------
@@ -300,21 +302,30 @@ export function WeatherConfidence() {
 
   const [weather, setWeather] = useState<WeatherPoint[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fetchedAt, setFetchedAt] = useState<number | null>(null);
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (phase === 'after') return;
 
     const cached = readCache();
     if (cached) {
-      setWeather(cached);
+      setWeather(cached.data);
+      setFetchedAt(cached.ts);
       return;
     }
 
     setLoading(true);
     Promise.all(LOCATIONS.map((loc) => fetchLocation(loc)))
       .then((points) => {
-        writeCache(points);
+        const ts = writeCache(points);
         setWeather(points);
+        setFetchedAt(ts);
       })
       .catch(() => {
         // fail silently -- fall back to static
@@ -326,6 +337,26 @@ export function WeatherConfidence() {
 
   const confidence = phase === 'before' ? computeConfidence(daysToDeparture) : 0;
   const ktm = weather?.find((w) => w.location === 'Kathmandu');
+
+  const showTimestamp =
+    fetchedAt !== null &&
+    (phase === 'during' || (phase === 'before' && confidence > 0 && weather !== null));
+  const nextRefreshAt = fetchedAt !== null ? fetchedAt + CACHE_TTL_MS : 0;
+  const minsLeft = Math.max(0, Math.round((nextRefreshAt - now) / 60_000));
+  const tzParts =
+    fetchedAt !== null
+      ? new Intl.DateTimeFormat(undefined, {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short',
+        }).formatToParts(new Date(fetchedAt))
+      : [];
+  const timeStr = tzParts
+    .filter((p) => p.type !== 'timeZoneName')
+    .map((p) => p.value)
+    .join('')
+    .trim();
+  const tzAbbrev = tzParts.find((p) => p.type === 'timeZoneName')?.value ?? '';
 
   return (
     <section
@@ -398,6 +429,16 @@ export function WeatherConfidence() {
               )
             )}
           </>
+        )}
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Freshness line (live data only)                                  */}
+        {/* ---------------------------------------------------------------- */}
+        {showTimestamp && (
+          <p className="mt-4 font-mono uppercase tracking-widest text-[10px] text-muted-foreground">
+            Last updated {timeStr} {tzAbbrev} -{' '}
+            {minsLeft <= 0 ? 'Next update due now' : `Next update in ${minsLeft} min`}
+          </p>
         )}
       </div>
     </section>
