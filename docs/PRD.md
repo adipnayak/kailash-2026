@@ -848,6 +848,51 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 
    **Anti-AI rules** apply.
 
+7. **v2.11 bundle: weather timestamp + suggested packing items + new Ayurvedic Medicines category + Reference master meds list extension**. Three logically separable clusters with disjoint file overlap, parallelizable across 3 worktree-isolated agents.
+
+   **Cluster A: weather timestamp** (`weather.ts` + `WeatherConfidence.tsx`):
+   - `weather.ts`: expose the existing fetch's `fetchedAt` timestamp + the `TTL_MS` constant via the existing in-memory cache. Add `getWeatherFreshness(date, lat, lng): { fetchedAt: number; nextRefreshAt: number; source: 'live' | 'climatology' | 'none' } | null`.
+   - `WeatherConfidence.tsx`: render one new line at the bottom of the widget: `LAST UPDATED 10:25 IST  -  NEXT UPDATE IN 47 MIN`. Style `font-mono uppercase tracking-widest text-[10px] text-muted-foreground`. Timezone follows the existing TzMode (local by default). The "in X min" countdown re-renders via a `setInterval` every 30 s. Hidden when `source === 'climatology'` (no live update happened) or `null` (no fetch yet).
+
+   **Cluster B: prep changes** (`prep-data.ts` + `PreparationDashboard.tsx`):
+   - New `CheckItem.suggested?: boolean` field (default false). Backward-compatible.
+   - Add 7 SUGGESTED items to existing categories:
+
+     | Item label | Brand/spec | Category id |
+     |---|---|---|
+     | Vaseline Lip Care | Original Lip Balm Stick, 4.8g | sun |
+     | Body cleansing wet wipes | CIR Soft Body Cleansing Wet Bed Bath Wipes, XL, 80 pack | personal-care |
+     | Saline nasal gel | Ayr Saline Nasal Gel with aloe, 0.5 oz | health-kit |
+     | 3L hydration bladder | BPA-free leakproof foldable with straw | day-pack |
+     | Electrolyte salt capsules | Unived Salt Capsules, 30 caps | health-kit |
+     | Protein bars | Phab Protein Bars chocolate brownie, 21g protein | day-pack |
+     | Dry fruits mix | Paper Boat Mega Omega (almonds + walnuts + cranberry + pumpkin seeds) | day-pack |
+
+   - Each gets `suggested: true`, a unique stable id with prefix `sg-`, an empty `blocking` copy (or short note like "Yatri-recommended"), `defaultStatus: 'action-needed'`.
+   - New category `ayurvedic-medicines` inserted RIGHT AFTER `health-kit`:
+     ```ts
+     { id: 'ayurvedic-medicines', label: 'Ayurvedic Medicines', optional: true, items: [...3 items...] }
+     ```
+     - 3 items inside (Yogi Kanthika, Herbal Amritdhara, Kailas Jeevan). Each `suggested: true`, `defaultStatus: 'action-needed'`.
+     - Item labels + descriptions per the Reference Medicines extension table below.
+   - `overallPrepProgress()` filter update: only count items where `!item.suggested && !category.optional`. Suggested items + Ayurvedic category items are bonus; don't count toward the denominator.
+   - `PreparationDashboard.tsx`: render a small `SUGGESTED` chip inline at the end of any item label where `item.suggested === true`. Style: `font-mono uppercase tracking-widest text-[9px] text-sacred bg-sacred/10 border border-sacred/30 rounded-none px-1.5 py-0.5 ml-2`. The sticky-nav chip strip auto-extends to 15 chips (the strip already maps over `CATEGORIES`); confirm the new chip renders correctly.
+
+   **Cluster C: Reference master meds list extension** (`reference-data.ts` only):
+   - Add 5 new rows to the existing `MASTER MEDICINES LIST` table in the `medicines-and-diamox` article:
+
+     | WHAT | WHY | WHEN | NOTES |
+     |---|---|---|---|
+     | Yogi Kanthika | Sore throat from cold dry mountain air | As needed | Ayurvedic. Lozenge-style pills. |
+     | Herbal Amritdhara | Multi-purpose. Internal: stomach upset, gas, indigestion. External: cuts, joint pain, headache, cold/cough. | As needed | Ayurvedic capsules. Both internal and external use. |
+     | Kailas Jeevan | Acidity, gas, joint relief. Cooling cream. | As needed | Ayurvedic multipurpose cream. Named for this trip context. |
+     | Ayr Saline Nasal Gel | Nasal dryness at altitude | Daily Days 3-10 | Aloe-based. Apply morning + evening. |
+     | Unived Salt Capsules | Electrolyte replacement during sweat-heavy days | Days 5-10 | Especially helpful on trek days. |
+
+   **Parallelization**: 3 worktree-isolated agents (Cluster A, Cluster B, Cluster C). Cluster files are disjoint; safe to run concurrently. Each opens its own PR; all 3 merge cleanly.
+
+   **Anti-AI rules** apply throughout.
+
 ### Plausibly later (not designed)
 
 - Remove the dead `@aliimam/icons` manualChunks stub from `vite.config.ts`.
@@ -872,5 +917,6 @@ The Tibet leg is Days 3-10. All decisions made to ensure usability behind the GF
 - 2026-06-22 v2.6 -- per-day bag state + airline weight allowances. New `bagState: BagState` field on every TripDay drives a "BAGS TODAY" block at the top of each expanded DayCard, plus a flight-allowance inline sub-row on flight days (D1, 3, 5, 10, 11, 13). Variable row count per day: typically 2 rows, expands to 3 on parikrama days (D7-D9) and handoff days (D5, D10). Bag location uses 5 state tags (with-you, stowed, stowed-locked, with-porters, in-transit, not-yet) with color tokens. Reference > Bag Transitions article gets a new bottom section: "Airline weight allowances" table with typical values for all 6 flight legs + warning callout to verify with YPO. Operator-sourced (existing 4-bag system trusted); Adip confirms specific weight numbers with YPO before packing day. Ready to build.
 - 2026-06-22 v2.7 -- day-wise Diamox regime. New `app/src/lib/diamox-regime.ts` ISO-date-keyed map covers the full 24-day canonical Mumbai regime (28 Jun test, 6 Jul evening start, 7-19 Jul twice-daily maintenance, 20-21 Jul post-descent buffer) = 32 doses, 16 tabs of 250 mg. DayCard renders a slim sacred-ochre DIAMOX TODAY single-line block above BAGS TODAY for the 13 trip days. Reference > Medicines article gets a new "DIAMOX REGIME CALENDAR" section between PROTOCOL and SIDE EFFECTS: 17-row table covering bookend days too, with TODAY-row highlight via JourneyState. Plus new "WHY WE DO NOT STOP ABRUPTLY" prose + cohort-aware warning callout (Dubai/Mauritius/NY cohorts extend buffer past 21 Jul to match their own return-home day). Existing protocol Q&A "Duration" row updated from "Stop Day 10 at Lhasa" to "Continue through your return-home day + 1-2 day buffer". User-facing copy spells out "twice daily" everywhere; never uses the BID Latin abbreviation. Ready to build.
 - 2026-06-22 v2.8 -- LIVE location pin on city tracker. Small visual addition: Material Symbols `my_location` (concentric circles, Google Maps live-GPS dot) renders inline INSIDE the current pill, BEFORE the city name. Subtle opacity pulse (1 -> 0.6 -> 1, 2s ease-in-out, infinite) via new `@keyframes pulse-live` in index.css. Wrapped in `prefers-reduced-motion: no-preference` for a11y. Co-exists with the existing ring; ring marks "current in chain order", pin marks "this is YOU LIVE". Applies to all `current` pill conditions EXCEPT the sacred geo-fail fallback pill (which means "we don't know where you are"). Implementation: CityTracker.tsx + index.css only. No data model changes. Ready to build.
+- 2026-06-22 v2.11 -- weather timestamp + suggested packing items + new Ayurvedic Medicines category + Reference master meds extension. Parallelized into 3 worktree-isolated agents (disjoint file overlap). Cluster A: WeatherConfidence widget gets a 'LAST UPDATED ... NEXT UPDATE IN X MIN' line driven by the existing in-memory weather cache fetchedAt + 1h TTL, refreshes every 30s. Cluster B: new CheckItem.suggested field + 7 SUGGESTED items slotted into existing categories (sun, personal-care, health-kit, day-pack) + new 'Ayurvedic Medicines' optional sub-category with 3 items (Yogi Kanthika, Amritdhara, Kailas Jeevan) inserted after Health Kit. Progress bar excludes suggested + optional-category items. Sticky-nav 14 -> 15 chips automatically. Cluster C: Reference > Medicines master meds list grows from 7 to 12 rows (adds the 3 Ayurvedic + Ayr nasal gel + Unived salt caps). Ready to build.
 - 2026-06-22 v2.10 -- offline-capable PWA. `vite-plugin-pwa` (Workbox) added. Auto-generated web manifest (name "Kailash Mansarovar Yatra 2026", short_name "Kailash 2026", standalone display mode, sacred-ochre theme color, 192/512/maskable icon set). Silent auto-update (skipWaiting + clientsClaim). Cache strategies: CartoDB tiles CacheFirst 30d, Open-Meteo NetworkFirst with 24h cache fallback, ipapi.co NetworkFirst with 1h cache fallback, OSRM CacheFirst 30d. Map tile pre-warming on SW activate fetches ~200-400 tiles (~5-10 MB) covering all 13 day routes. New OfflineBadge component renders top-right when navigator.onLine === false. Existing static HTML fallback in #root continues to work for JS-less crawlers alongside the SW. Out-of-scope: push notifications, background sync, periodic sync, custom install prompt (browser native A2HS sufficient). Files: new OfflineBadge.tsx + precache-tiles.ts + 3 icon PNGs; edit vite.config.ts + package.json + App.tsx. Ready to build.
 - 2026-06-22 v2.9 -- four-add bundle. (5a) Step count chip appended to existing walk/trek chip in DayCard, derived from `walk_h * 5500 + active_trek_h * 4500` rounded to nearest 500. (5b) Diamox bookend mini-cards: new DiamoxBookendCard component renders 4 instances (28 Jun + 6 Jul above D1, 20 Jul + 21 Jul below D13) with date + PRE/POST badge + the existing DIAMOX TODAY block + a 1-line context note per dose. No bagState/weather/timeline/map. (5c) Day chip strip grows 13 -> 17 with bookend chips visually distinct (smaller font, sacred ochre border, date label + PRE/POST badge, no temp/moon row). Scrollspy + jump-to extends via `id="diamox-{dateISO}"`. (5d) Live weather EVERYWHERE: new shared useLiveDayWeather hook in weather.ts replaces static day.weather lookups in 5 surfaces (chip strip per-chip temp, DayCard compressed header, DayCard chips row, DayCard summary header, Hero coldest/warmest stat tiles). Climatology fallback when outside 16-day window or fetch fails. No per-number marker; Prepare WeatherConfidence widget stays the single confidence surface. (5e) Precip type detection: extends Open-Meteo parser to read weather_code + snowfall_sum, replaces "rain %" chip with single PRECIP chip whose icon swaps by dominant type (rainy / ac_unit / thunderstorm). Climatology fallback heuristic: high altitude + freezing -> snow icon. Heavy file overlap (DayCard.tsx + ItineraryTab.tsx + weather.ts) prevents parallelization; one Sonnet sequential. Ready to build.
