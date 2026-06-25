@@ -17,13 +17,6 @@ export default defineConfig({
         // leaflet -> map-libs chunk (already lazy but keep isolated)
         // recharts + d3 -> chart-libs chunk (already lazy but keep isolated)
         manualChunks(id) {
-          // @aliimam/icons: 8 MB source file that does not tree-shake
-          // (all ~800 icons bundled via a single export{} block, no /*#__PURE__*/
-          // annotations on forwardRef calls). Isolate it so it caches as a
-          // stable vendor chunk and never invalidates with app-code changes.
-          if (id.includes('node_modules/@aliimam/icons')) {
-            return 'icons-vendor'
-          }
           if (id.includes('node_modules/gsap') || id.includes('node_modules/@gsap')) {
             return 'animation-libs'
           }
