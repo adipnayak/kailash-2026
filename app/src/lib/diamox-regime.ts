@@ -214,3 +214,15 @@ export const DIAMOX_REGIME: DiamoxDose[] = [
 export const DIAMOX_REGIME_BY_DATE: Record<string, DiamoxDose> = Object.fromEntries(
   DIAMOX_REGIME.map((d) => [d.dateISO, d])
 );
+
+/**
+ * Human-readable description of a single Diamox dose entry.
+ * Shared by DayCard and DiamoxBookendCard.
+ */
+export function describeDose(dose: DiamoxDose): string {
+  if (dose.type === 'test') return 'TEST DOSE - ' + dose.mg + ' mg evening (sulfa allergy + tolerance check)';
+  if (dose.type === 'start') return 'START - ' + dose.mg + ' mg evening (begin prophylaxis tonight)';
+  if (dose.schedule === 'twice-daily') return dose.mg + ' mg morning + ' + dose.mg + ' mg evening (twice daily)';
+  if (dose.schedule === 'morning') return dose.mg + ' mg morning';
+  return dose.mg + ' mg evening';
+}

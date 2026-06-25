@@ -20,7 +20,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { TripDay, BagId, BagStateTag } from '../lib/trip-data';
 import { mToFt } from '../lib/conversions';
 import { computeJourneyState } from '../lib/journey-state';
-import { DIAMOX_REGIME_BY_DATE, type DiamoxDose } from '../lib/diamox-regime';
+import { DIAMOX_REGIME_BY_DATE, describeDose } from '../lib/diamox-regime';
 import { lazy, Suspense } from 'react';
 import { getDayRoute, ALL_TRIP_STOPS } from '../lib/day-routes';
 import { getDayStops, haversineKm, fmtKm, modeLabel } from '../lib/day-stops';
@@ -60,7 +60,7 @@ function useInView(rootMargin = '200px 0px'): [React.RefObject<HTMLDivElement | 
 }
 import { getDayAstro } from '../lib/astro';
 import { MoonPhase } from './MoonPhase';
-import { useLiveWeather } from '../lib/weather';
+import { useLiveDayWeather, type PrecipType } from '../lib/weather';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -85,14 +85,6 @@ function bagDisplay(id: BagId): string {
     case 'daypack-personal': return 'Personal daypack';
     case 'daypack-ypo': return 'YPO daypack';
   }
-}
-
-function describeDose(dose: DiamoxDose): string {
-  if (dose.type === 'test') return 'TEST DOSE - ' + dose.mg + ' mg evening (sulfa allergy + tolerance check)';
-  if (dose.type === 'start') return 'START - ' + dose.mg + ' mg evening (begin prophylaxis tonight)';
-  if (dose.schedule === 'twice-daily') return dose.mg + ' mg morning + ' + dose.mg + ' mg evening (twice daily)';
-  if (dose.schedule === 'morning') return dose.mg + ' mg morning';
-  return dose.mg + ' mg evening';
 }
 
 function iconForBagState(s: BagStateTag): string {
@@ -303,6 +295,7 @@ function CompressedView({
   void index;
   const badge = getDayTypeBadge(day);
   const isCritical = day.day === 8;
+  const liveDay = useLiveDayWeather(day);
   // Show up to 4-5 timeline items as highlights
   const highlights = (day.timeline || []).slice(0, 5);
   const route = getDayRoute(day.day - 1);
@@ -415,10 +408,10 @@ function CompressedView({
 
       {/* Row 3: Status chips */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {/* Temperature */}
+        {/* Temperature (live or climatology) */}
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-foreground">
           <Icon name="device_thermostat" size={10} className="shrink-0 text-muted-foreground" />
-          {day.weather.temp_low}-{day.weather.temp_high}C
+          {liveDay.temp_low}-{liveDay.temp_high}C
         </span>
         {/* Connectivity */}
         <span className="inline-flex items-center gap-1 rounded-none border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-foreground">
@@ -543,6 +536,7 @@ function DayHeader({ day }: { day: TripDay; index?: number }) {
 
 function SummaryStrip({ day }: { day: TripDay }) {
   const isCritical = day.day === 8;
+  const liveDay = useLiveDayWeather(day);
   const chips: Array<{ icon: React.ReactNode; value: string; red?: boolean }> = [];
 
   // Altitude
@@ -554,10 +548,12 @@ function SummaryStrip({ day }: { day: TripDay }) {
     red: isCritical,
   });
 
-  // Walk hours
+  // Walk hours + step count
   if (day.timing.walk_h > 0 || day.timing.active_trek_h > 0) {
     const walkH = day.timing.walk_h + day.timing.active_trek_h;
-    const label = day.timing.active_trek_h > 0 ? walkH + 'h trek' : walkH + 'h walk';
+    const baseLabel = day.timing.active_trek_h > 0 ? walkH + 'h trek' : walkH + 'h walk';
+    const totalSteps = Math.round((day.timing.walk_h * 5500 + day.timing.active_trek_h * 4500) / 500) * 500;
+    const label = totalSteps > 0 ? baseLabel + ' - ~' + totalSteps.toLocaleString('en-US') + ' steps' : baseLabel;
     chips.push({ icon: <Icon name="directions_walk" size={12} className="shrink-0 text-muted-foreground" />, value: label });
   }
 
@@ -572,10 +568,10 @@ function SummaryStrip({ day }: { day: TripDay }) {
     value: connLabel(day.conn_status),
   });
 
-  // Temperature
+  // Temperature (live or climatology)
   chips.push({
     icon: <Icon name="device_thermostat" size={12} className="shrink-0 text-muted-foreground" />,
-    value: day.weather.temp_low + '-' + day.weather.temp_high + 'C',
+    value: liveDay.temp_low + '-' + liveDay.temp_high + 'C',
   });
 
   // Stay
@@ -803,27 +799,23 @@ function ExpandedMap({ day }: { day: TripDay }) {
 // B4. WEATHER SNAPSHOT
 // ---------------------------------------------------------------------------
 
+function precipIcon(t: PrecipType): React.ReactNode {
+  if (t === 'snow') return <Icon name="ac_unit" size={11} className="shrink-0 text-muted-foreground" />;
+  if (t === 'storm') return <Icon name="thunderstorm" size={11} className="shrink-0 text-muted-foreground" />;
+  return <Icon name="rainy" size={11} className="shrink-0 text-muted-foreground" />;
+}
+
+function precipLabel(t: PrecipType): string {
+  if (t === 'snow') return 'Snow';
+  if (t === 'storm') return 'Storm';
+  return 'Rain';
+}
+
 function WeatherChips({ day }: { day: TripDay }) {
-  const route = getDayRoute(day.day - 1);
-  const live = useLiveWeather(
-    day.date,
-    route?.start.lat ?? 0,
-    route?.start.lng ?? 0,
-  );
-  // Live forecast wins when available (within Open-Meteo's 16-day window);
-  // otherwise fall back to the day's climatology block from trip-data.
-  const w = live
-    ? {
-        temp_high: live.temp_high,
-        rain_pct: live.rain_pct,
-        wind_kmh: live.wind_kmh,
-        uv: live.uv,
-        source: 'live forecast',
-      }
-    : day.weather;
+  const w = useLiveDayWeather(day);
   const chips: Array<{ icon: React.ReactNode; value: string }> = [
     { icon: <Icon name="device_thermostat" size={11} className="shrink-0 text-muted-foreground" />, value: w.temp_high + 'C' },
-    { icon: <Icon name="rainy" size={11} className="shrink-0 text-muted-foreground" />, value: w.rain_pct + '%' },
+    { icon: precipIcon(w.precip_type), value: precipLabel(w.precip_type) + ' ' + w.precip_pct + '%' },
     { icon: <Icon name="air" filled size={11} className="shrink-0 text-muted-foreground" />, value: w.wind_kmh + ' km/h' },
     { icon: <Icon name="light_mode" size={11} className="shrink-0 text-muted-foreground" />, value: 'UV ' + w.uv },
   ];

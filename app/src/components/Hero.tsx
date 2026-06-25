@@ -23,6 +23,7 @@ import type { JourneyState } from '../lib/journey-state';
 import type { Tab } from '../hooks/useJourneyState';
 import { loadPrepStatus, isCategoryComplete, overallPrepProgress } from '../lib/prep-data';
 import { JAI_BHOLE_NATH, YATRA_SAMPOORNA } from '../lib/devotional';
+import { useLiveTripExtremes } from '../lib/weather';
 import { mToFt } from '../lib/conversions';
 import { BentoGrid, BentoGridItem } from './aliimam/Bento';
 import { CityTracker } from './CityTracker';
@@ -138,6 +139,7 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
   const countdownRef = useRef<HTMLSpanElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const { completed, total, doneSet, itemPct } = usePrepProgress();
+  const { coldest, warmest } = useLiveTripExtremes();
   // Use item-level pct for the bar so any single tap on Prepare moves it
   // (avoids the "5 items checked but bar still 0%" trap when no full
   // category is done yet).
@@ -311,24 +313,24 @@ function BeforeBento({ state, onTab }: { state: JourneyState; onTab: (t: Tab) =>
         </div>
       </BentoGridItem>
 
-      {/* Stat 3: Coldest expected */}
+      {/* Stat 3: Coldest expected (live or climatology) */}
       <BentoGridItem>
         <StatTile
-          value="-5 to +5"
+          value={String(coldest)}
           unit="C"
           label="COLDEST EXPECTED"
-          sublabel="Pass overnight low"
+          sublabel="Lowest low across all days"
           icon={<Icon name="ac_unit" size={20} />}
         />
       </BentoGridItem>
 
-      {/* Stat 4: Warmest expected */}
+      {/* Stat 4: Warmest expected (live or climatology) */}
       <BentoGridItem>
         <StatTile
-          value="29"
+          value={String(warmest)}
           unit="C"
           label="WARMEST EXPECTED"
-          sublabel="Kathmandu monsoon"
+          sublabel="Highest high across all days"
           icon={<Icon name="light_mode" size={20} />}
         />
       </BentoGridItem>

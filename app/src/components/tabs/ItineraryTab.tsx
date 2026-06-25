@@ -5,6 +5,8 @@
  *   that scrolls + expands the matching DayCard when tapped.
  * - Day 1 expanded by default. Other days stay collapsed until clicked
  *   (via the sticky nav or their own header).
+ * - 17-chip strip: 2 PRE bookend chips + 13 day chips + 2 POST bookend chips.
+ * - 4 DiamoxBookendCard instances: 2 above D1, 2 below D13.
  *
  * Anti-AI: 0 em-dashes, 0 en-dashes, 0 smart quotes, 0 emojis.
  */
@@ -15,10 +17,67 @@ import type { JourneyState } from '../../lib/journey-state';
 import { ConnectivityRibbon } from '../ConnectivityRibbon';
 import { DayCard } from '../DayCard';
 import { DAYS } from '../../lib/trip-data';
+import type { TripDay } from '../../lib/trip-data';
 import { getDayRoute } from '../../lib/day-routes';
 import { getDayAstro } from '../../lib/astro';
 import { MoonPhase } from '../MoonPhase';
 import { KAILASH_FACTS } from '../../lib/kailash-facts';
+import { DIAMOX_REGIME_BY_DATE, type DiamoxDose } from '../../lib/diamox-regime';
+import { DiamoxBookendCard } from '../DiamoxBookendCard';
+import { useLiveDayWeather } from '../../lib/weather';
+
+// ---------------------------------------------------------------------------
+// Bookend dates in order
+// ---------------------------------------------------------------------------
+
+const PRE_BOOKEND_ISOS = ['2026-06-28', '2026-07-06'] as const;
+const POST_BOOKEND_ISOS = ['2026-07-20', '2026-07-21'] as const;
+
+// ---------------------------------------------------------------------------
+// Short date helper: '2026-06-28' -> '28 JUN'
+// ---------------------------------------------------------------------------
+
+function shortDate(iso: string): string {
+  const d = new Date(iso + 'T12:00:00Z');
+  const day = d.getUTCDate();
+  const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  return day + ' ' + monthNames[d.getUTCMonth()];
+}
+
+// ---------------------------------------------------------------------------
+// ChipEntry tagged union for the 17-chip strip
+// ---------------------------------------------------------------------------
+
+type ChipEntry =
+  | { kind: 'day'; day: TripDay }
+  | { kind: 'bookend'; dose: DiamoxDose; position: 'pre' | 'post' };
+
+const CHIPS: ChipEntry[] = [
+  { kind: 'bookend', dose: DIAMOX_REGIME_BY_DATE['2026-06-28'], position: 'pre' },
+  { kind: 'bookend', dose: DIAMOX_REGIME_BY_DATE['2026-07-06'], position: 'pre' },
+  ...DAYS.map((d) => ({ kind: 'day' as const, day: d })),
+  { kind: 'bookend', dose: DIAMOX_REGIME_BY_DATE['2026-07-20'], position: 'post' },
+  { kind: 'bookend', dose: DIAMOX_REGIME_BY_DATE['2026-07-21'], position: 'post' },
+];
+
+// ---------------------------------------------------------------------------
+// DayChipTempLine -- calls useLiveDayWeather internally so each chip can
+// show live temp without the parent mapping hooks in a loop.
+// ---------------------------------------------------------------------------
+
+function DayChipTempLine({ day }: { day: TripDay }) {
+  const w = useLiveDayWeather(day);
+  const route = getDayRoute(day.day - 1);
+  const lat = route?.start.lat ?? 27.7;
+  const lng = route?.start.lng ?? 85.3;
+  const moonPhase = getDayAstro(day.date, lat, lng).moonPhase;
+  return (
+    <span className="flex items-center gap-1 font-mono text-[10px] leading-none opacity-75">
+      {w.temp_low}-{w.temp_high}C
+      <MoonPhase phase={moonPhase} size={12} />
+    </span>
+  );
+}
 
 export function ItineraryTab({ phase }: { phase: JourneyState }) {
   // Controlled expansion state. Every card starts open so a fresh tab
@@ -29,67 +88,87 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
     () => new Set(DAYS.map((d) => d.day)),
   );
 
-  // Scrollspy: as the user scrolls through the itinerary, the chip for the
-  // day section currently sitting at the top of the viewport becomes the
-  // active chip. We use IntersectionObserver with a top-biased rootMargin
-  // so the "active" day is the one whose header has just crossed below
-  // the sticky nav strip.
+  // Scrollspy: track the active day (1-13) and active bookend (dateISO) independently.
+  // Only one is active at a time: when a bookend enters view activeDay is cleared,
+  // and vice versa.
   const [activeDay, setActiveDay] = useState<number | null>(null);
+  const [activeBookend, setActiveBookend] = useState<string | null>(null);
   const dayNavRef = useRef<HTMLOListElement>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const visibility = new Map<number, number>();
+    const dayVisibility = new Map<number, number>();
+    const bookendVisibility = new Map<string, number>();
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           const id = entry.target.getAttribute('id');
           if (!id) continue;
-          const dayNum = parseInt(id.replace('day-', ''), 10);
-          if (isNaN(dayNum)) continue;
-          visibility.set(dayNum, entry.intersectionRatio);
-        }
-        // Pick the day with the highest intersection ratio.
-        let bestDay: number | null = null;
-        let bestRatio = 0;
-        for (const [d, r] of visibility) {
-          if (r > bestRatio) {
-            bestRatio = r;
-            bestDay = d;
+          if (id.startsWith('day-')) {
+            const dayNum = parseInt(id.replace('day-', ''), 10);
+            if (!isNaN(dayNum)) dayVisibility.set(dayNum, entry.intersectionRatio);
+          } else if (id.startsWith('diamox-')) {
+            const iso = id.replace('diamox-', '');
+            bookendVisibility.set(iso, entry.intersectionRatio);
           }
         }
-        if (bestDay !== null) setActiveDay(bestDay);
+
+        // Pick the element with the highest intersection ratio across both maps.
+        let bestDay: number | null = null;
+        let bestDayRatio = 0;
+        for (const [d, r] of dayVisibility) {
+          if (r > bestDayRatio) { bestDayRatio = r; bestDay = d; }
+        }
+
+        let bestBookend: string | null = null;
+        let bestBookendRatio = 0;
+        for (const [iso, r] of bookendVisibility) {
+          if (r > bestBookendRatio) { bestBookendRatio = r; bestBookend = iso; }
+        }
+
+        if (bestDayRatio >= bestBookendRatio) {
+          if (bestDay !== null) { setActiveDay(bestDay); setActiveBookend(null); }
+        } else {
+          if (bestBookend !== null) { setActiveBookend(bestBookend); setActiveDay(null); }
+        }
       },
       {
-        // The "active zone" is roughly the band from just below the sticky
-        // nav (~110 px from the viewport top) down to the bottom 30 percent.
         rootMargin: '-110px 0px -30% 0px',
         threshold: [0, 0.25, 0.5, 0.75, 1],
       },
     );
+
     for (const d of DAYS) {
       const el = document.getElementById('day-' + d.day);
       if (el) observer.observe(el);
     }
+    for (const iso of [...PRE_BOOKEND_ISOS, ...POST_BOOKEND_ISOS]) {
+      const el = document.getElementById('diamox-' + iso);
+      if (el) observer.observe(el);
+    }
+
     return () => observer.disconnect();
   }, []);
 
-  // Auto-scroll the active chip into view in the horizontal day-nav
-  // strip. Use the strip's own scrollLeft instead of chip.scrollIntoView
-  // because iOS Safari sometimes scrolls the WINDOW when scrollIntoView
-  // is called on a child of a sticky ancestor, fighting the page-scroll
-  // triggered by tap-to-jump.
+  // Auto-scroll the active chip into view in the horizontal strip.
+  // Works for both day chips ([data-day]) and bookend chips ([data-bookend-iso]).
   useEffect(() => {
-    if (activeDay === null || !dayNavRef.current) return;
+    if (!dayNavRef.current) return;
     const strip = dayNavRef.current;
-    const chip = strip.querySelector<HTMLElement>(`[data-day="${activeDay}"]`);
+    let chip: HTMLElement | null = null;
+    if (activeDay !== null) {
+      chip = strip.querySelector<HTMLElement>(`[data-day="${activeDay}"]`);
+    } else if (activeBookend !== null) {
+      chip = strip.querySelector<HTMLElement>(`[data-bookend-iso="${activeBookend}"]`);
+    }
     if (!chip) return;
     const stripRect = strip.getBoundingClientRect();
     const chipRect = chip.getBoundingClientRect();
     const delta =
       (chipRect.left + chipRect.right) / 2 - (stripRect.left + stripRect.right) / 2;
     strip.scrollBy({ left: delta, behavior: 'smooth' });
-  }, [activeDay]);
+  }, [activeDay, activeBookend]);
 
   const toggleDay = useCallback((dayNum: number) => {
     setExpandedDays((prev) => {
@@ -109,16 +188,21 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
       next.add(dayNum);
       return next;
     });
-    // Defer past the expansion animation (~250 ms) so the page measures
-    // the post-expand layout before scrolling. Use window.scrollTo with
-    // an explicit pixel offset -- iOS Safari is unreliable with
-    // el.scrollIntoView({behavior:'smooth'}) and often no-ops or jerks.
     window.setTimeout(() => {
       const el = document.getElementById('day-' + dayNum);
       if (!el) return;
       const top = el.getBoundingClientRect().top + window.scrollY - 100;
       window.scrollTo({ top, behavior: 'smooth' });
     }, 300);
+  }, []);
+
+  const jumpToBookend = useCallback((dateISO: string) => {
+    window.setTimeout(() => {
+      const el = document.getElementById('diamox-' + dateISO);
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }, 50);
   }, []);
 
   return (
@@ -131,19 +215,44 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
             Day by Day
           </h2>
 
-          {/* Sticky day-nav. top-12 sits under the main nav (47 px).
-              Solid bg (no backdrop-blur) -- backdrop-filter on a
-              position:sticky element breaks on iOS Safari, the element
-              intermittently stops sticking as the address bar collapses. */}
+          {/* Sticky 17-chip nav strip. top-12 sits under the main nav (47 px). */}
           <div className="sticky top-12 z-40 -mx-6 mb-6 border-b border-border bg-background px-6 py-4">
-            <ol ref={dayNavRef} className="flex gap-2 overflow-x-auto" style={{ overscrollBehaviorX: "contain" }}>
-              {DAYS.map((d) => {
+            <ol ref={dayNavRef} className="flex gap-2 overflow-x-auto" style={{ overscrollBehaviorX: 'contain' }}>
+              {CHIPS.map((entry, idx) => {
+                if (entry.kind === 'bookend') {
+                  const { dose, position } = entry;
+                  const isActive = activeBookend === dose.dateISO;
+                  return (
+                    <li key={'bookend-' + dose.dateISO} className="shrink-0">
+                      <button
+                        type="button"
+                        data-bookend-iso={dose.dateISO}
+                        onClick={() => jumpToBookend(dose.dateISO)}
+                        aria-label={'Jump to ' + dose.dayLabel + ' ' + (position === 'pre' ? 'pre-trip' : 'post-trip') + ' diamox dose'}
+                        aria-current={isActive ? 'true' : undefined}
+                        style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'rgba(0,0,0,0.05)' }}
+                        className={
+                          'flex flex-col items-center gap-0.5 rounded-none border px-3 py-2 font-mono cursor-pointer transition-colors ' +
+                          (isActive
+                            ? 'border-sacred bg-sacred text-sacred-foreground'
+                            : 'border-sacred bg-card text-sacred')
+                        }
+                      >
+                        <span className="text-[10px]">{shortDate(dose.dateISO)}</span>
+                        <span className="text-[9px] opacity-75">{position === 'pre' ? 'PRE' : 'POST'}</span>
+                      </button>
+                    </li>
+                  );
+                }
+
+                // Day chip
+                const { day: d } = entry;
                 const isToday = phase.tripDayIndex === d.day;
                 const isDolmaLa = d.day === 8;
                 const isOpen = expandedDays.has(d.day);
                 const isActive = activeDay === d.day;
                 return (
-                  <li key={d.day} className="shrink-0">
+                  <li key={'day-' + d.day + '-' + idx} className="shrink-0">
                     <button
                       type="button"
                       data-day={d.day}
@@ -177,11 +286,8 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
                         )}
                         D{d.day}
                       </span>
-                      {/* Temp + moon row */}
-                      <span className="flex items-center gap-1 font-mono text-[10px] leading-none opacity-75">
-                        {d.weather.temp_low}-{d.weather.temp_high}C
-                        <MoonPhase phase={(() => { const route = getDayRoute(d.day - 1); const lat = route?.start.lat ?? 27.7; const lng = route?.start.lng ?? 85.3; return getDayAstro(d.date, lat, lng).moonPhase; })()} size={12} />
-                      </span>
+                      {/* Temp + moon row (live or climatology) */}
+                      <DayChipTempLine day={d} />
                     </button>
                   </li>
                 );
@@ -190,6 +296,12 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
           </div>
 
           <div className="space-y-6">
+            {/* PRE-TRIP bookend cards */}
+            {PRE_BOOKEND_ISOS.map((iso) => (
+              <DiamoxBookendCard key={iso} dose={DIAMOX_REGIME_BY_DATE[iso]} />
+            ))}
+
+            {/* Trip day cards */}
             {DAYS.map((d, i) => (
               <Fragment key={d.day}>
                 <div id={'day-' + d.day} className="scroll-mt-24">
@@ -213,6 +325,11 @@ export function ItineraryTab({ phase }: { phase: JourneyState }) {
                   </div>
                 )}
               </Fragment>
+            ))}
+
+            {/* POST-TRIP bookend cards */}
+            {POST_BOOKEND_ISOS.map((iso) => (
+              <DiamoxBookendCard key={iso} dose={DIAMOX_REGIME_BY_DATE[iso]} />
             ))}
           </div>
         </div>

@@ -13,6 +13,8 @@
  */
 
 import { useEffect, useState } from 'react';
+import type { TripDay } from './trip-data';
+import { getDayRoute } from './day-routes';
 
 export interface DailyWeather {
   temp_high: number;
@@ -20,9 +22,37 @@ export interface DailyWeather {
   rain_pct: number;
   wind_kmh: number;
   uv: number;
+  weather_code?: number;
   source: 'climatology' | 'forecast';
   /** Unix ms the forecast was fetched, if source === 'forecast'. */
   fetchedAt?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Precip type derivation
+// ---------------------------------------------------------------------------
+
+export type PrecipType = 'rain' | 'snow' | 'storm';
+
+export function precipTypeFromCode(code: number | undefined | null): PrecipType {
+  if (typeof code !== 'number') return 'rain';
+  if (code >= 95 && code <= 99) return 'storm';
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'snow';
+  return 'rain';
+}
+
+// ---------------------------------------------------------------------------
+// LiveDayWeather shape -- unified surface for all 5 temp/weather UIs
+// ---------------------------------------------------------------------------
+
+export interface LiveDayWeather {
+  temp_low: number;
+  temp_high: number;
+  precip_pct: number;
+  precip_type: PrecipType;
+  wind_kmh: number;
+  uv: number;
+  source: 'live' | 'climatology';
 }
 
 interface CacheEntry {
@@ -57,7 +87,7 @@ async function fetchOpenMeteo(
       latitude: lat.toString(),
       longitude: lng.toString(),
       daily:
-        'temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,uv_index_max',
+        'temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,uv_index_max,weather_code,snowfall_sum',
       timezone: 'auto',
       start_date: dateIso,
       end_date: dateIso,
@@ -72,6 +102,8 @@ async function fetchOpenMeteo(
         precipitation_probability_max?: number[];
         wind_speed_10m_max?: number[];
         uv_index_max?: number[];
+        weather_code?: number[];
+        snowfall_sum?: number[];
       };
     };
     const d = data.daily;
@@ -82,6 +114,7 @@ async function fetchOpenMeteo(
       rain_pct: Math.round(d.precipitation_probability_max?.[0] ?? 0),
       wind_kmh: Math.round(d.wind_speed_10m_max?.[0] ?? 0),
       uv: Math.round(d.uv_index_max?.[0] ?? 0),
+      weather_code: d.weather_code?.[0],
       source: 'forecast',
       fetchedAt: Date.now(),
     };
@@ -151,4 +184,71 @@ export function useLiveWeather(
   }, [dateIso, lat, lng]);
 
   return weather;
+}
+
+// ---------------------------------------------------------------------------
+// Climatology precip-type heuristic: high-altitude + freezing -> snow
+// ---------------------------------------------------------------------------
+
+function climatologyPrecipType(day: TripDay): PrecipType {
+  if (
+    day.altitude_peak >= 4500 &&
+    (day.weather.temp_high <= 0 || day.weather.temp_low <= -5)
+  ) {
+    return 'snow';
+  }
+  return 'rain';
+}
+
+/**
+ * Unified hook: returns live weather for a single trip day merged into the
+ * LiveDayWeather shape, falling back to day.weather (climatology) when live
+ * data is unavailable (outside forecast window or network failure).
+ *
+ * Consumers get a stable shape regardless of source. The 'source' field
+ * distinguishes live vs climatology so confidence surfaces can display it.
+ */
+export function useLiveDayWeather(day: TripDay): LiveDayWeather {
+  const route = getDayRoute(day.day - 1);
+  const lat = route?.start.lat ?? 0;
+  const lng = route?.start.lng ?? 0;
+  const live = useLiveWeather(day.date, lat, lng);
+
+  if (live) {
+    return {
+      temp_low: live.temp_low,
+      temp_high: live.temp_high,
+      precip_pct: live.rain_pct,
+      precip_type: precipTypeFromCode(live.weather_code),
+      wind_kmh: live.wind_kmh,
+      uv: live.uv,
+      source: 'live',
+    };
+  }
+
+  return {
+    temp_low: day.weather.temp_low,
+    temp_high: day.weather.temp_high,
+    precip_pct: day.weather.rain_pct,
+    precip_type: climatologyPrecipType(day),
+    wind_kmh: day.weather.wind_kmh,
+    uv: day.weather.uv,
+    source: 'climatology',
+  };
+}
+
+/**
+ * Aggregator hook: calls useLiveDayWeather for every trip day and returns
+ * the overall coldest temp_low and warmest temp_high across all 13 days.
+ * DAYS is a stable 13-entry array so hook call order is fixed.
+ */
+import { DAYS } from './trip-data';
+
+export function useLiveTripExtremes(): { coldest: number; warmest: number } {
+  // One hook call per day -- order is stable because DAYS is a module-level
+  // constant array of exactly 13 entries. React rules of hooks are satisfied.
+  const weathers = DAYS.map((d) => useLiveDayWeather(d));
+  const coldest = Math.min(...weathers.map((w) => w.temp_low));
+  const warmest = Math.max(...weathers.map((w) => w.temp_high));
+  return { coldest, warmest };
 }
