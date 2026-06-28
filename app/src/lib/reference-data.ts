@@ -64,6 +64,29 @@ export const REFERENCE_ARTICLES: RefArticle[] = [
           ["Pregnancy or breastfeeding", "Discuss with doctor.", "Doctor confirms."],
         ],
       },
+      { type: "heading", text: "CAPSULES VS TABLETS - DO NOT SPLIT CAPSULES" },
+      {
+        type: "callout",
+        tone: "critical",
+        body: "Capsules cannot be safely split. Three problems: powder spills make dosing inconsistent; if it is an extended-release SR or ER capsule, breaking it destroys the timed-release mechanism and dumps the full dose at once; the capsule cannot be resealed accurately.",
+      },
+      { type: "heading", text: "CHECK YOUR STRIP LABEL FIRST" },
+      { type: "prose", body: "Before you take your first dose, read the strip the pharmacy gave you." },
+      {
+        type: "table",
+        headers: ["Strip says", "Form", "Protocol"],
+        rows: [
+          ["Iopar SR, Diamox SR, Acetazolamide ER, XR, or SR", "Extended-release 500 mg capsule", "ONCE daily. Take whole. Do not cut. Different protocol entirely from the 125 mg twice-daily plan below. Ask your doctor to confirm."],
+          ["Acetazolamide 250 mg (no SR or ER marker) capsule", "Plain immediate-release capsule", "Do not cut. Capsules cannot be split safely. Ask your pharmacy for 250 mg TABLETS instead, so you can split them in half (125 mg twice daily per the regime calendar below)."],
+          ["Acetazolamide 250 mg tablet", "Standard tablet", "Splittable. Half tab twice daily per the regime calendar below. This is the canonical regime."],
+          ["Acetazolamide 125 mg tablet", "Pre-split tablet", "Take one whole twice daily per the regime calendar below. No cutting needed."],
+        ],
+      },
+      {
+        type: "callout",
+        tone: "warning",
+        body: "If you ended up with SR or ER capsules instead of standard tablets, do NOT just take half. The regime calendar below ASSUMES standard 250 mg tablets. Confirm your formulation with the prescribing doctor before your first dose.",
+      },
       { type: "heading", text: "DIAMOX REGIME CALENDAR" },
       {
         type: "callout",
